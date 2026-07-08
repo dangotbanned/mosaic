@@ -1,14 +1,19 @@
 from __future__ import annotations
 
+from collections.abc import Collection
 from typing import TYPE_CHECKING, Any, Literal, TypeAlias, TypedDict, TypeVar, overload
 
 if TYPE_CHECKING:
-    from collections.abc import Collection, Iterable
-
     from typing_extensions import Unpack
 
 
 _T = TypeVar("_T")
+
+ParamLiteral: TypeAlias = str | float | bool | None
+"""Literal Param values."""
+
+# TODO @dangotbanned: Suggest using `datetime.{date,datetime}`
+ParamDate: TypeAlias = dict[Literal["date"], str]
 
 
 @overload
@@ -47,10 +52,10 @@ class _ParamBase:
 
 
 class ParamValue(_ParamBase):
-    def __init__(self, value: Any = None) -> None:
-        self._value: Any | None = value
+    def __init__(self, value: IntoParamValue = None) -> None:
+        self._value: IntoParamValue = value
 
-    def param_def(self, *, param_names: dict[int, str] | None = None) -> Any | None:
+    def param_def(self, *, param_names: dict[int, str] | None = None) -> IntoParamValue:
         return self._value
 
     def __repr__(self) -> str:
@@ -58,8 +63,8 @@ class ParamValue(_ParamBase):
 
 
 class ParamArray(_ParamBase):
-    def __init__(self, values: Iterable[Any]) -> None:
-        self._values: list[Any] = list(values)
+    def __init__(self, values: IntoParamArray) -> None:
+        self._values: list[ParamLiteral | IntoParamRef] = list(values)
 
     def param_def(self, *, param_names: dict[int, str] | None = None) -> list[Any]:
         return [_resolve(v, param_names) for v in self._values]
@@ -129,11 +134,17 @@ ParamRef: TypeAlias = str
 IntoParamRef: TypeAlias = ParamDef | ParamRef
 """Anything that can be resolved into a `ParamRef`."""
 
+IntoParamArray: TypeAlias = Collection[ParamLiteral | IntoParamRef]
+IntoParamValue: TypeAlias = ParamLiteral | ParamDate
 
-def param(value: Any = None) -> ParamArray | ParamValue:
+
+# TODO @dangotbanned: Swap `list` for a careful `Collection` check (avoid `str | dict`)
+# TODO @dangotbanned: Add overloads
+# TODO @dangotbanned: Make `Param*` generic?
+def param(value: IntoParamValue | IntoParamArray = None) -> ParamArray | ParamValue:
     if isinstance(value, list):
         return ParamArray(value)
-    return ParamValue(value)
+    return ParamValue(value)  # pyright: ignore[reportArgumentType] # ty: ignore[invalid-argument-type]
 
 
 class selection:
