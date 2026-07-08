@@ -12,7 +12,6 @@ _T = TypeVar("_T")
 ParamLiteral: TypeAlias = str | float | bool | None
 """Literal Param values."""
 
-# TODO @dangotbanned: Suggest using `datetime.{date,datetime}`
 ParamDate: TypeAlias = dict[Literal["date"], str]
 
 
