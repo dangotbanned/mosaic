@@ -151,7 +151,9 @@ def param(
     value: ParamLiteral | ParamDate | IntoParamArray = None,
 ) -> ParamArray | ParamValue:
     if isinstance(value, Sequence) and not isinstance(value, str):
-        return ParamArray(value)
+        # NOTE: Not sure how `int` got in there?
+        #   `int & Sequence[object]`
+        return ParamArray(value)  # ty: ignore[invalid-argument-type]
     return ParamValue(value)
 
 
