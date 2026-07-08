@@ -16,23 +16,21 @@ ParamDate: TypeAlias = dict[Literal["date"], str]
 
 
 @overload
-def _resolve(v: None, param_names: dict[int, str] | None) -> None: ...
+def _resolve(v: None, param_names: dict[int, str]) -> None: ...
 @overload
-def _resolve(v: list[Any], param_names: dict[int, str] | None) -> list[Any]: ...
+def _resolve(v: list[Any], param_names: dict[int, str]) -> list[Any]: ...
 @overload
 def _resolve(
-    v: dict[str, Any] | _SelectionOpts, param_names: dict[int, str] | None
+    v: dict[str, Any] | _SelectionOpts, param_names: dict[int, str]
 ) -> dict[str, Any]: ...
 @overload
-def _resolve(v: _ParamBase, param_names: dict[int, str] | None) -> str | _ParamBase: ...
+def _resolve(v: _ParamBase, param_names: dict[int, str]) -> str | _ParamBase: ...
 @overload
-def _resolve(v: _T, param_names: dict[int, str] | None) -> _T: ...
+def _resolve(v: _T, param_names: dict[int, str]) -> _T: ...
 def _resolve(
-    v: _T | Any, param_names: dict[int, str] | None
+    v: _T | Any, param_names: dict[int, str]
 ) -> str | _ParamBase | list[Any] | dict[str, Any] | _T | None:
     """Recursively resolve _ParamBase objects to "$name" ref strings."""
-    if param_names is None:
-        return v
     if isinstance(v, _ParamBase):
         name = param_names.get(id(v))
         return f"${name}" if name is not None else v
@@ -46,7 +44,7 @@ def _resolve(
 class _ParamBase:
     """Base for Param and Selection instances used as param ref tokens."""
 
-    def param_def(self, *, param_names: dict[int, str] | None = None) -> Any:
+    def param_def(self, *, param_names: dict[int, str]) -> Any:
         raise NotImplementedError
 
 
@@ -54,9 +52,7 @@ class ParamValue(_ParamBase):
     def __init__(self, value: ParamLiteral | ParamDate = None) -> None:
         self._value: ParamLiteral | ParamDate = value
 
-    def param_def(
-        self, *, param_names: dict[int, str] | None = None
-    ) -> ParamLiteral | ParamDate:
+    def param_def(self, *, param_names: dict[int, str]) -> ParamLiteral | ParamDate:
         return self._value
 
     def __repr__(self) -> str:
@@ -67,7 +63,7 @@ class ParamArray(_ParamBase):
     def __init__(self, values: IntoParamArray) -> None:
         self._values: list[ParamLiteral | IntoParamRef] = list(values)
 
-    def param_def(self, *, param_names: dict[int, str] | None = None) -> list[Any]:
+    def param_def(self, *, param_names: dict[int, str]) -> list[Any]:
         return [_resolve(v, param_names) for v in self._values]
 
     def __repr__(self) -> str:
@@ -112,9 +108,7 @@ class SelectionDef(_ParamBase):
         self._select: _Select = select
         self._opts: _SelectionOpts = opts
 
-    def param_def(
-        self, *, param_names: dict[int, str] | None = None
-    ) -> dict[str, str | Any]:
+    def param_def(self, *, param_names: dict[int, str]) -> dict[str, str | Any]:
         d = {"select": self._select}
         d.update(_resolve(self._opts, param_names))
         return d
