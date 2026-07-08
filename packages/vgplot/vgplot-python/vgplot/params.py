@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Literal, TypeAlias, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Literal, TypeAlias, TypedDict, TypeVar, overload
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Collection, Iterable
+
+    from typing_extensions import Unpack
 
 
 _T = TypeVar("_T")
@@ -15,7 +17,7 @@ def _resolve(v: None, param_names: dict[int, str] | None) -> None: ...
 def _resolve(v: list[Any], param_names: dict[int, str] | None) -> list[Any]: ...
 @overload
 def _resolve(
-    v: dict[str, Any], param_names: dict[int, str] | None
+    v: dict[str, Any] | _SelectionOpts, param_names: dict[int, str] | None
 ) -> dict[str, Any]: ...
 @overload
 def _resolve(v: _ParamBase, param_names: dict[int, str] | None) -> str | _ParamBase: ...
@@ -78,10 +80,32 @@ One of:
 """
 
 
+class _SelectionOpts(TypedDict, total=False):
+    cross: bool
+    """A flag for cross-filtering, where selections made in a plot filter others but not oneself.
+
+    (default `False`, except for `crossfilter` selections).
+    """
+
+    empty: bool
+    """A flag for setting an initial empty selection state.
+    
+    - If `True`, a selection with no clauses corresponds to an empty selection with no records. 
+    - If `False`, a selection with no clauses selects all values.
+    """
+
+    include: IntoParamRef | Collection[IntoParamRef]
+    """Upstream selections whose clauses should be included as part of this selection.
+    
+    Any clauses or activations published to the upstream selections will be relayed to this selection.
+    """
+
+
 class SelectionDef(_ParamBase):
-    def __init__(self, select: _Select, **opts: Any) -> None:
+    def __init__(self, select: _Select, **opts: Unpack[_SelectionOpts]) -> None:
         self._select: _Select = select
-        self._opts: dict[str, Any] = {k: v for k, v in opts.items() if v is not None}
+        # NOTE: `None` isn't a valid argument type and never used in an example?
+        self._opts: _SelectionOpts = {k: v for k, v in opts.items() if v is not None}  # pyright: ignore[reportAttributeAccessIssue] # ty: ignore[invalid-assignment]
 
     def param_def(
         self, *, param_names: dict[int, str] | None = None
@@ -95,6 +119,17 @@ class SelectionDef(_ParamBase):
         return f"selection.{self._select}({opts})"
 
 
+ParamDef: TypeAlias = ParamValue | ParamArray | SelectionDef
+"""A Param or Selection definition."""
+
+
+# TODO @dangotbanned: Figure out if this is before/after `$`-prefixing
+ParamRef: TypeAlias = str
+
+IntoParamRef: TypeAlias = ParamDef | ParamRef
+"""Anything that can be resolved into a `ParamRef`."""
+
+
 def param(value: Any = None) -> ParamArray | ParamValue:
     if isinstance(value, list):
         return ParamArray(value)
@@ -105,17 +140,17 @@ class selection:
     """Namespace for creating selection params."""
 
     @staticmethod
-    def intersect(**opts: Any) -> SelectionDef:
+    def intersect(**opts: Unpack[_SelectionOpts]) -> SelectionDef:
         return SelectionDef("intersect", **opts)
 
     @staticmethod
-    def crossfilter(**opts: Any) -> SelectionDef:
+    def crossfilter(**opts: Unpack[_SelectionOpts]) -> SelectionDef:
         return SelectionDef("crossfilter", **opts)
 
     @staticmethod
-    def union(**opts: Any) -> SelectionDef:
+    def union(**opts: Unpack[_SelectionOpts]) -> SelectionDef:
         return SelectionDef("union", **opts)
 
     @staticmethod
-    def single(**opts: Any) -> SelectionDef:
+    def single(**opts: Unpack[_SelectionOpts]) -> SelectionDef:
         return SelectionDef("single", **opts)
