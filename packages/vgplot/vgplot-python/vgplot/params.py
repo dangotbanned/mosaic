@@ -111,8 +111,7 @@ class _SelectionOpts(TypedDict, total=False):
 class SelectionDef(_ParamBase):
     def __init__(self, select: _Select, **opts: Unpack[_SelectionOpts]) -> None:
         self._select: _Select = select
-        # NOTE: `None` isn't a valid argument type and never used in an example?
-        self._opts: _SelectionOpts = {k: v for k, v in opts.items() if v is not None}  # pyright: ignore[reportAttributeAccessIssue] # ty: ignore[invalid-assignment]
+        self._opts: _SelectionOpts = opts
 
     def param_def(
         self, *, param_names: dict[int, str] | None = None
