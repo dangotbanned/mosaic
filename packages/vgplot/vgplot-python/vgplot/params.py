@@ -139,8 +139,13 @@ IntoParamValue: TypeAlias = ParamLiteral | ParamDate
 
 
 # TODO @dangotbanned: Swap `list` for a careful `Collection` check (avoid `str | dict`)
-# TODO @dangotbanned: Add overloads
 # TODO @dangotbanned: Make `Param*` generic?
+@overload
+def param(value: IntoParamValue = None) -> ParamValue: ...
+@overload
+def param(value: IntoParamArray) -> ParamArray: ...
+@overload
+def param(value: IntoParamValue | IntoParamArray) -> ParamArray | ParamValue: ...
 def param(value: IntoParamValue | IntoParamArray = None) -> ParamArray | ParamValue:
     if isinstance(value, list):
         return ParamArray(value)
