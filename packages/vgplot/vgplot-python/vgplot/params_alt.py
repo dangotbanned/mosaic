@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 ParamRef: TypeAlias = str
 """`$${string}`."""
 
-_Select: TypeAlias = Literal["crossfilter", "intersect", "single", "union"]
+Select: TypeAlias = Literal["crossfilter", "intersect", "single", "union"]
 """The type of reactive parameter.
 
 One of:
@@ -44,13 +44,11 @@ One of:
 - `"crossfilter"` for a cross-filtered intersection `Selection`
 """
 
-Select: TypeAlias = Literal["value"] | _Select
-
 
 class ParamBase(Protocol):
     """Base properties shared by Param definitions."""
 
-    select: Select
+    select: Select | Literal["value"]
     """The type of reactive parameter."""
 
     @property
@@ -123,7 +121,7 @@ class _SelectionOpts(TypedDict, total=False):
 
 
 class Selection(Protocol):
-    select: _Select
+    select: Select
     """The type of reactive parameter."""
 
     cross: bool
@@ -149,7 +147,7 @@ class Selection(Protocol):
     def name(self) -> ParamRef: ...
 
     @classmethod
-    def _from_options(cls, select: _Select, /, kwds: _SelectionOpts) -> Self:
+    def _from_options(cls, select: Select, /, kwds: _SelectionOpts) -> Self:
         """Normalize `include`."""
         ...
 
