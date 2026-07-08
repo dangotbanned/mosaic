@@ -4,7 +4,7 @@ from collections.abc import Collection
 from typing import TYPE_CHECKING, Any, Literal, TypeAlias, TypedDict, TypeVar, overload
 
 if TYPE_CHECKING:
-    from typing_extensions import Unpack
+    from typing_extensions import TypeIs, Unpack
 
 
 _T = TypeVar("_T")
@@ -138,7 +138,6 @@ IntoParamArray: TypeAlias = Collection[ParamLiteral | IntoParamRef]
 IntoParamValue: TypeAlias = ParamLiteral | ParamDate
 
 
-# TODO @dangotbanned: Swap `list` for a careful `Collection` check (avoid `str | dict`)
 # TODO @dangotbanned: Make `Param*` generic?
 @overload
 def param(value: IntoParamValue = None) -> ParamValue: ...
@@ -147,9 +146,14 @@ def param(value: IntoParamArray) -> ParamArray: ...
 @overload
 def param(value: IntoParamValue | IntoParamArray) -> ParamArray | ParamValue: ...
 def param(value: IntoParamValue | IntoParamArray = None) -> ParamArray | ParamValue:
-    if isinstance(value, list):
-        return ParamArray(value)
-    return ParamValue(value)  # pyright: ignore[reportArgumentType] # ty: ignore[invalid-argument-type]
+    # TODO @dangotbanned: Create the intersection in a more permissive way
+    if isinstance(value, (str, bool, float, int, type(None))) or _is_param_date(value):
+        return ParamValue(value)
+    return ParamArray(value)
+
+
+def _is_param_date(obj: Any) -> TypeIs[ParamDate]:
+    return isinstance(obj, dict) and obj.keys() == {"date"}
 
 
 class selection:
