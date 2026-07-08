@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from collections.abc import Collection
+from collections.abc import Collection, Sequence
 from typing import TYPE_CHECKING, Any, Literal, TypeAlias, TypedDict, TypeVar, overload
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeIs, Unpack
+    from typing_extensions import Unpack
 
 
 _T = TypeVar("_T")
@@ -52,10 +52,12 @@ class _ParamBase:
 
 
 class ParamValue(_ParamBase):
-    def __init__(self, value: IntoParamValue = None) -> None:
-        self._value: IntoParamValue = value
+    def __init__(self, value: ParamLiteral | ParamDate = None) -> None:
+        self._value: ParamLiteral | ParamDate = value
 
-    def param_def(self, *, param_names: dict[int, str] | None = None) -> IntoParamValue:
+    def param_def(
+        self, *, param_names: dict[int, str] | None = None
+    ) -> ParamLiteral | ParamDate:
         return self._value
 
     def __repr__(self) -> str:
@@ -94,14 +96,14 @@ class _SelectionOpts(TypedDict, total=False):
 
     empty: bool
     """A flag for setting an initial empty selection state.
-    
-    - If `True`, a selection with no clauses corresponds to an empty selection with no records. 
+
+    - If `True`, a selection with no clauses corresponds to an empty selection with no records.
     - If `False`, a selection with no clauses selects all values.
     """
 
     include: IntoParamRef | Collection[IntoParamRef]
     """Upstream selections whose clauses should be included as part of this selection.
-    
+
     Any clauses or activations published to the upstream selections will be relayed to this selection.
     """
 
@@ -134,26 +136,24 @@ ParamRef: TypeAlias = str
 IntoParamRef: TypeAlias = ParamDef | ParamRef
 """Anything that can be resolved into a `ParamRef`."""
 
-IntoParamArray: TypeAlias = Collection[ParamLiteral | IntoParamRef]
-IntoParamValue: TypeAlias = ParamLiteral | ParamDate
+IntoParamArray: TypeAlias = Sequence[ParamLiteral | IntoParamRef]
 
 
 # TODO @dangotbanned: Make `Param*` generic?
 @overload
-def param(value: IntoParamValue = None) -> ParamValue: ...
+def param(value: ParamLiteral | ParamDate = None) -> ParamValue: ...
 @overload
 def param(value: IntoParamArray) -> ParamArray: ...
 @overload
-def param(value: IntoParamValue | IntoParamArray) -> ParamArray | ParamValue: ...
-def param(value: IntoParamValue | IntoParamArray = None) -> ParamArray | ParamValue:
-    # TODO @dangotbanned: Create the intersection in a more permissive way
-    if isinstance(value, (str, bool, float, int, type(None))) or _is_param_date(value):
-        return ParamValue(value)
-    return ParamArray(value)
-
-
-def _is_param_date(obj: Any) -> TypeIs[ParamDate]:
-    return isinstance(obj, dict) and obj.keys() == {"date"}
+def param(
+    value: ParamLiteral | ParamDate | IntoParamArray,
+) -> ParamArray | ParamValue: ...
+def param(
+    value: ParamLiteral | ParamDate | IntoParamArray = None,
+) -> ParamArray | ParamValue:
+    if isinstance(value, Sequence) and not isinstance(value, str):
+        return ParamArray(value)
+    return ParamValue(value)
 
 
 class selection:
