@@ -23,7 +23,17 @@ If this were the direction to go in, it could be (at least partially) generated 
 from __future__ import annotations
 
 import datetime as dt
-from typing import TYPE_CHECKING, Literal, Protocol, TypeAlias, TypedDict, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Final,
+    Literal,
+    Protocol,
+    TypeAlias,
+    TypedDict,
+    TypeVar,
+    final,
+    overload,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Sequence
@@ -31,8 +41,11 @@ if TYPE_CHECKING:
     from typing_extensions import Self, Unpack
 
 
-ParamRef: TypeAlias = str
-"""`$${string}`."""
+Name: TypeAlias = str
+"""`{name}`"""
+
+Ref: TypeAlias = str
+"""`${name}`"""
 
 Select: TypeAlias = Literal["crossfilter", "intersect", "single", "union"]
 """The type of reactive parameter.
@@ -52,37 +65,39 @@ class ParamBase(Protocol):
     """The type of reactive parameter."""
 
     @property
-    def name(self) -> ParamRef:
-        """Either `"name"` or `"$name"`.
-
-        Help me!
-        """
+    def name(self) -> Name:
+        """The name of the parameter."""
         ...
 
+    def __repr__(self) -> Ref:
+        """Interpolate the parameter in a query."""
+        return f"${self.name}"
 
-NumericLiteral: TypeAlias = int | float
-TemporalLiteral: TypeAlias = dt.date | dt.datetime | dt.time
-ParamLiteral: TypeAlias = str | NumericLiteral | bool | None
+
+NumericLit: TypeAlias = int | float
+TemporalLit: TypeAlias = dt.date | dt.datetime | dt.time
+ParamLit: TypeAlias = str | NumericLit | bool | None
 """Literal Param values."""
+
+NonNestedLit: TypeAlias = ParamLit | TemporalLit
+
+_T = TypeVar("_T", bound=TemporalLit, covariant=True)
+ISO_8601: TypeAlias = str
 
 
 class Param(ParamBase, Protocol):
     """A Param definition."""
 
     @property
-    def value(self) -> ParamLiteral:
+    def value(self) -> ParamLit:
         """The initial parameter value."""
 
 
 class ParamArray(ParamBase, Protocol):
     @property
-    def value(self) -> Sequence[ParamLiteral | ParamRef]:
+    def value(self) -> Sequence[ParamLit | ParamRef]:
         """The initial parameter values."""
         ...
-
-
-_T = TypeVar("_T", bound=TemporalLiteral, covariant=True)
-ISO_8601: TypeAlias = str
 
 
 class ParamTemporal(ParamBase, Protocol[_T]):
@@ -126,13 +141,13 @@ class Selection(Protocol):
 
     cross: bool
     """A flag for cross-filtering, where selections made in a plot filter others but not oneself.
-    
+
     (default `False`, except for `crossfilter` selections).
     """
 
     empty: bool
     """A flag for setting an initial empty selection state.
-    
+
     - If `True`, a selection with no clauses corresponds to an empty selection with no records.
     - If `False`, a selection with no clauses selects all values.
     """
@@ -144,7 +159,11 @@ class Selection(Protocol):
     """
 
     @property
-    def name(self) -> ParamRef: ...
+    def name(self) -> Name: ...
+
+    def __repr__(self) -> Ref:
+        msg = "TODO @dangotbanned: figure out naming for these guys"
+        raise NotImplementedError(msg)
 
     @classmethod
     def _from_options(cls, select: Select, /, kwds: _SelectionOpts) -> Self:
@@ -168,11 +187,69 @@ class Selection(Protocol):
         return cls._from_options("single", kwds)
 
 
-ParamDef: TypeAlias = Param | ParamArray | ParamTemporal[TemporalLiteral] | Selection
+ParamDef: TypeAlias = Param | ParamArray | ParamTemporal[TemporalLit] | Selection
 """A Param or Selection definition."""
+
+
+Params: TypeAlias = dict[str, ParamDef]
+"""Top-level Param and Selection definitions."""
+
+
+def sql(expr: str) -> str:
+    return expr
+
+
+@final
+class ParamRef:
+    """A reference to a parameter."""
+
+    __slots__ = ("_name",)
+
+    def __init__(self, name: Name, /) -> None:
+        self._name: Final[Name] = name
+
+    def __eq__(self, other: object) -> bool:
+        if type(other) is ParamRef:
+            return other._name == self._name
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash((ParamRef, self._name))
+
+    def __repr__(self) -> Ref:
+        return f"${self._name}"
+
+    @overload
+    def __call__(self, value: ParamLit = None, /) -> Param: ...
+    @overload
+    def __call__(self, value: TemporalLit, /) -> ParamTemporal[TemporalLit]: ...
+    @overload
+    def __call__(self, value: Sequence[ParamLit | ParamRef], /) -> ParamArray: ...
+    def __call__(
+        self, value: NonNestedLit | Sequence[ParamLit | ParamRef] = None, /
+    ) -> Param | ParamArray | ParamTemporal[TemporalLit]:
+        """Initialize a param with a value."""
+        raise NotImplementedError
+
 
 IntoParamRef: TypeAlias = ParamDef | ParamRef
 """Anything that can be resolved into a `ParamRef`."""
 
-Params: TypeAlias = dict[str, ParamDef]
-"""Top-level Param and Selection definitions."""
+
+class _ParamBuilder:
+    def __getattr__(self, name: Name) -> ParamRef:
+        """Create a `Param`/`ParamRef`."""
+        raise NotImplementedError
+
+
+p = _ParamBuilder()
+"""Create a `Param`/`ParamRef`."""
+
+
+# ruff: noqa: F841
+def ctx() -> None:
+    point = p.point(dt.date(2013, 5, 13))
+
+    y = sql(
+        f"Close / (SELECT max(Close) FROM stocks WHERE Symbol = source.Symbol AND Date = {p.point})"
+    )
