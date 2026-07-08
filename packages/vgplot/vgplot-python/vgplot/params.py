@@ -1,9 +1,29 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any, TypeVar, overload
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
-def _resolve(v: Any, param_names: dict[int, str] | None) -> Any:
+_T = TypeVar("_T")
+
+
+@overload
+def _resolve(v: None, param_names: dict[int, str] | None) -> None: ...
+@overload
+def _resolve(v: list[Any], param_names: dict[int, str] | None) -> list[Any]: ...
+@overload
+def _resolve(
+    v: dict[str, Any], param_names: dict[int, str] | None
+) -> dict[str, Any]: ...
+@overload
+def _resolve(v: _ParamBase, param_names: dict[int, str] | None) -> str | _ParamBase: ...
+@overload
+def _resolve(v: _T, param_names: dict[int, str] | None) -> _T: ...
+def _resolve(
+    v: _T | Any, param_names: dict[int, str] | None
+) -> str | _ParamBase | list[Any] | dict[str, Any] | _T | None:
     """Recursively resolve _ParamBase objects to "$name" ref strings."""
     if param_names is None:
         return v
@@ -13,7 +33,7 @@ def _resolve(v: Any, param_names: dict[int, str] | None) -> Any:
     if isinstance(v, list):
         return [_resolve(x, param_names) for x in v]
     if isinstance(v, dict):
-        return {k: _resolve(val, param_names) for k, val in v.items()}
+        return {k: _resolve(val, param_names) for k, val in v.items()}  # ty: ignore[invalid-return-type]
     return v
 
 
@@ -26,9 +46,9 @@ class _ParamBase:
 
 class ParamValue(_ParamBase):
     def __init__(self, value: Any = None) -> None:
-        self._value = value
+        self._value: Any | None = value
 
-    def param_def(self, *, param_names: dict[int, str] | None = None) -> Any:
+    def param_def(self, *, param_names: dict[int, str] | None = None) -> Any | None:
         return self._value
 
     def __repr__(self) -> str:
@@ -36,10 +56,10 @@ class ParamValue(_ParamBase):
 
 
 class ParamArray(_ParamBase):
-    def __init__(self, values: list) -> None:
-        self._values = list(values)
+    def __init__(self, values: Iterable[Any]) -> None:
+        self._values: list[Any] = list(values)
 
-    def param_def(self, *, param_names: dict[int, str] | None = None) -> Any:
+    def param_def(self, *, param_names: dict[int, str] | None = None) -> list[Any]:
         return [_resolve(v, param_names) for v in self._values]
 
     def __repr__(self) -> str:
@@ -48,11 +68,13 @@ class ParamArray(_ParamBase):
 
 class SelectionDef(_ParamBase):
     def __init__(self, select: str, **opts: Any) -> None:
-        self._select = select
-        self._opts = {k: v for k, v in opts.items() if v is not None}
+        self._select: str = select
+        self._opts: dict[str, Any] = {k: v for k, v in opts.items() if v is not None}
 
-    def param_def(self, *, param_names: dict[int, str] | None = None) -> Any:
-        d: dict = {"select": self._select}
+    def param_def(
+        self, *, param_names: dict[int, str] | None = None
+    ) -> dict[str, str | Any]:
+        d = {"select": self._select}
         d.update(_resolve(self._opts, param_names))
         return d
 
@@ -61,7 +83,7 @@ class SelectionDef(_ParamBase):
         return f"selection.{self._select}({opts})"
 
 
-def param(value: Any = None) -> _ParamBase:
+def param(value: Any = None) -> ParamArray | ParamValue:
     if isinstance(value, list):
         return ParamArray(value)
     return ParamValue(value)
