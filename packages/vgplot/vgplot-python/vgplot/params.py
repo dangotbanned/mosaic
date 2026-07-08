@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Literal, TypeAlias, TypeVar, overload
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -66,9 +66,21 @@ class ParamArray(_ParamBase):
         return f"param.array({self._values!r})"
 
 
+# NOTE: `"value"` is mentioned in the docs, but not the type?
+_Select: TypeAlias = Literal["crossfilter", "intersect", "single", "union"]
+"""The type of reactive parameter.
+
+One of:
+- `"intersect"` for a `Selection` that intersects clauses (logical "and")
+- `"union"` for a `Selection` that unions clauses (logical "or")
+- `"single"` for a `Selection` that retains a single clause only
+- `"crossfilter"` for a cross-filtered intersection `Selection`
+"""
+
+
 class SelectionDef(_ParamBase):
-    def __init__(self, select: str, **opts: Any) -> None:
-        self._select: str = select
+    def __init__(self, select: _Select, **opts: Any) -> None:
+        self._select: _Select = select
         self._opts: dict[str, Any] = {k: v for k, v in opts.items() if v is not None}
 
     def param_def(
