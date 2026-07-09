@@ -37,7 +37,7 @@ from typing import Literal as L
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from typing_extensions import Required
+    from typing_extensions import NotRequired, Required
 
 ParamRef: TypeAlias = Any
 """Placeholder as I should probably move this idea to another branch."""
@@ -94,12 +94,26 @@ class Highlight(TypedDict, total=False):
     By default the stroke is unchanged."""
 
 
-class Interval1DOptions(TypedDict, total=False):
+# fmt: off
+# NOTE: Common fields, these *can* have docstrings attatch which should propagate to children
+class _Bind(TypedDict):
     bind: Required[ParamRef]
+class _Brush(TypedDict):
+    brush: NotRequired[BrushStyles]
+class _Peers(TypedDict):
+    peers: NotRequired[bool]
+class _Channels(TypedDict):
+    channels: Required[Sequence[str]]
+class _XYField(TypedDict):
+    xfield: NotRequired[str]
+    yfield: NotRequired[str]
+class _PixelSize(TypedDict):
+    pixel_size: NotRequired[float]
+# fmt: on
+
+
+class Interval1DOptions(_Bind, _Peers, _Brush, _PixelSize, total=False):
     field: str
-    pixel_size: float
-    peers: bool
-    brush: BrushStyles
 
 
 # NOTE: https://typing.python.org/en/latest/spec/typeddict.html#class-based-syntax
@@ -115,21 +129,14 @@ class IntervalY(Interval1DOptions):
     select: L["intervalY"]
 
 
-class Interval2DOptions(TypedDict, total=False):
-    bind: Required[ParamRef]
-    xfield: str
-    yfield: str
-    pixel_size: float
-    peers: bool
-    brush: BrushStyles
+class Interval2DOptions(_Bind, _Peers, _Brush, _XYField, _PixelSize): ...
 
 
 class IntervalXY(Interval2DOptions):
     select: L["intervalXY"]
 
 
-class NearestOptions(TypedDict, total=False):
-    bind: Required[ParamRef]
+class NearestOptions(_Bind, total=False):
     channels: Sequence[str]
     fields: Sequence[str]
     max_radius: float
@@ -147,11 +154,9 @@ class NearestY(NearestOptions):
     select: L["nearestY"]
 
 
-class PanZoomOptions(TypedDict, total=False):
+class PanZoomOptions(_XYField, TypedDict, total=False):
     x: ParamRef
     y: ParamRef
-    xfield: str
-    yfield: str
 
 
 class Pan(PanZoomOptions):
@@ -178,25 +183,18 @@ class PanZoomY(PanZoomOptions):
     select: L["panZoomY"]
 
 
-class RegionOptions(TypedDict, total=False):
-    bind: Required[ParamRef]
-    channels: Required[Sequence[str]]
-    peers: bool
-    brush: BrushStyles
+class RegionOptions(_Bind, _Peers, _Brush, _Channels): ...
 
 
 class Region(RegionOptions):
     select: L["region"]
 
 
-class ToggleOptions(TypedDict, total=False):
-    bind: Required[ParamRef]
-    peers: bool
+class ToggleOptions(_Bind, _Peers): ...
 
 
-class Toggle(ToggleOptions):
+class Toggle(ToggleOptions, _Channels):
     select: L["toggle"]
-    channels: Sequence[str]
 
 
 class ToggleX(ToggleOptions):
