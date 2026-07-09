@@ -37,6 +37,8 @@ from typing import (
     overload,
 )
 
+from vgplot import _util
+
 if TYPE_CHECKING:
     from typing_extensions import Self, Unpack
 
@@ -60,22 +62,20 @@ One of:
 _SelectT = TypeVar("_SelectT", bound=Select | Literal["value"])
 
 
-# TODO @dangotbanned: If keeping the protocol, make `name` an attribute
 # TODO @dangotbanned: Add `{crossfilter, intersect, single, union}` methods, e.g.
 #   `def union(self, *extra_include: ParamDef, **kwds: Unpack[_SelectionOptsBase]) -> Selection: ...`
 # TODO @dangotbanned: Add `to_dict`, `to_json`
 class ParamBase(Protocol[_SelectT]):
     """Base properties shared by Param definitions."""
 
-    __slots__ = ()
+    __slots__ = ("name",)
 
+    # NOTE: Excluded from `__slots__` as its a class-var for value, but instance-attr for select
     select: _SelectT
     """The type of reactive parameter."""
 
-    @property
-    def name(self) -> Name:
-        """The name of the parameter."""
-        ...
+    name: Name
+    """The name of the parameter."""
 
     def __repr__(self) -> Ref:
         """Interpolate the parameter in a query."""
@@ -101,21 +101,14 @@ ISO_8601: TypeAlias = str
 class Param(ParamBase[Literal["value"]]):
     """A Param definition."""
 
-    __slots__ = ("_name", "_value")
+    __slots__ = ("value",)
     select = "value"
-
-    @property
-    def name(self) -> Name:
-        return self._name
-
-    @property
-    def value(self) -> ParamLit:
-        """The initial parameter value."""
-        return self._value
+    value: ParamLit
+    """The initial parameter value."""
 
     def __init__(self, name: Name, value: ParamLit) -> None:
-        self._name: Name = name
-        self._value: ParamLit = value
+        self.name = name
+        self.value = value
 
 
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
@@ -124,21 +117,14 @@ class Param(ParamBase[Literal["value"]]):
 #  - convert to list (if needed) for json
 @final
 class ParamArray(ParamBase[Literal["value"]]):
-    __slots__ = ("_name", "_value")
+    __slots__ = ("value",)
     select = "value"
-
-    @property
-    def name(self) -> Name:
-        return self._name
-
-    @property
-    def value(self) -> Sequence[ParamLit | ParamRef]:
-        """The initial parameter values."""
-        return self._value
+    value: Sequence[ParamLit | ParamRef]
+    """The initial parameter values."""
 
     def __init__(self, name: Name, value: Sequence[ParamLit | ParamRef]) -> None:
-        self._name: Name = name
-        self._value: Sequence[ParamLit | ParamRef] = value
+        self.name = name
+        self.value = value
 
 
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
@@ -146,21 +132,14 @@ class ParamArray(ParamBase[Literal["value"]]):
 class ParamTemporal(ParamBase[Literal["value"]], Generic[_TemporalT]):
     """A Temporal-valued Param definition."""
 
-    __slots__ = ("_name", "_value")
+    __slots__ = ("value",)
     select = "value"
-
-    @property
-    def name(self) -> Name:
-        return self._name
-
-    @property
-    def value(self) -> _TemporalT:
-        """The initial parameter value."""
-        return self._value
+    value: _TemporalT
+    """The initial parameter value."""
 
     def __init__(self, name: Name, value: _TemporalT) -> None:
-        self._name: Name = name
-        self._value: _TemporalT = value
+        self.name = name
+        self.value = value
 
     @property
     def date(self) -> ISO_8601:
@@ -207,16 +186,15 @@ class _SelectionOpts(_SelectionOptsBase, total=False):
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
 class Selection(ParamBase[Select]):
-    __slots__ = ("_name", "opts", "select")
+    __slots__ = ("opts", "select")
     select: Select
     """The type of reactive parameter."""
 
     opts: _SelectionOpts
 
-    @property
-    def name(self) -> Name:
-        msg = "TODO @dangotbanned: figure out naming for these guys"
-        raise NotImplementedError(msg)
+    name = _util.todo(
+        "Need something more ergonomic than `vg.selection.<name>.union(include=...)`"
+    )  # pyright: ignore[reportAssignmentType]
 
     def __init__(self, select: Select, /, kwds: _SelectionOpts) -> None:
         self.select = select
