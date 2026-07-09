@@ -63,6 +63,8 @@ _SelectT = TypeVar("_SelectT", bound=Select | Literal["value"])
 class ParamBase(Protocol[_SelectT]):
     """Base properties shared by Param definitions."""
 
+    __slots__ = ()
+
     select: _SelectT
     """The type of reactive parameter."""
 
@@ -90,6 +92,7 @@ ISO_8601: TypeAlias = str
 class Param(ParamBase[Literal["value"]], Protocol):
     """A Param definition."""
 
+    __slots__ = ("_name", "_value")
     select = "value"
 
     @property
@@ -98,6 +101,7 @@ class Param(ParamBase[Literal["value"]], Protocol):
 
 
 class ParamArray(ParamBase[Literal["value"]], Protocol):
+    __slots__ = ("_name", "_value")
     select = "value"
 
     @property
@@ -109,6 +113,7 @@ class ParamArray(ParamBase[Literal["value"]], Protocol):
 class ParamTemporal(ParamBase[Literal["value"]], Protocol[_T]):
     """A Temporal-valued Param definition."""
 
+    __slots__ = ("_name", "_value")
     select = "value"
 
     @property
@@ -146,6 +151,7 @@ class _SelectionOpts(TypedDict, total=False):
 
 
 class Selection(ParamBase[Select], Protocol):
+    __slots__ = ("_name", "cross", "empty", "include", "select")
     select: Select
     """The type of reactive parameter."""
 
