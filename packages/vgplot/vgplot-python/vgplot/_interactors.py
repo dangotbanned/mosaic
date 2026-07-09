@@ -1,13 +1,31 @@
 """A manual example of translating `spec/interactors` to [`TypedDict`]s.
 
-[`TypedDict`]: https://typing.python.org/en/latest/spec/typeddict.html
-[`Unpack` for keyword arguments]: https://typing.python.org/en/latest/spec/callables.html#unpack-for-keyword-arguments
+## This is not a new idea
+- In ([vega/altair#3536]) I did a (crude) heuristic-based translation for part of the [vega-lite schema]
+    - The expressiveness of JSON schema made this task difficult
+- I've found an active project [`ts2python`] that looks like a better direction
+    - Python's type system is less expressive than TypeScript's (for now [PEP 827 - Type Manipulation])
+    - But [`TypedDict`] can:
+        - model optionality, [openness] and mutability
+        - use [multiple inheritance]
+        - define type parameters
+        - use a [functional syntax] to **define keys that are not valid Python identifiers**
 
 ## Notes
 - [`BrushStyles`][] and [`Highlight`][] demo translating `.ts` comments -> `.py` docstrings
     - Not doing that for everything
     - Need to give an example because Ruff doesn't format them
 - A [`TypedDict`] can also be used with [`Unpack` for keyword arguments]
+
+[`TypedDict`]: https://typing.python.org/en/latest/spec/typeddict.html
+[`Unpack` for keyword arguments]: https://typing.python.org/en/latest/spec/callables.html#unpack-for-keyword-arguments
+[vega/altair#3536]: https://github.com/vega/altair/pull/3536
+[vega-lite schema]: https://github.com/vega/schema/tree/master/vega-lite
+[`ts2python`]: https://github.com/jecki/ts2python
+[PEP 827 - Type Manipulation]: https://peps.python.org/pep-0827/
+[multiple inheritance]: https://typing.python.org/en/latest/spec/typeddict.html#multiple-inheritance
+[openness]: https://typing.python.org/en/latest/spec/typeddict.html#openness
+[functional syntax]: https://typing.python.org/en/latest/spec/typeddict.html#functional-syntax
 """
 
 from __future__ import annotations
