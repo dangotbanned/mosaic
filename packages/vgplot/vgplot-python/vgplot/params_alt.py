@@ -119,7 +119,9 @@ class ParamTemporal(ParamBase[Literal["value"]], Protocol[_T]):
     @property
     def date(self) -> ISO_8601:
         """Convert to an ISO date/time string to be parsed to a Date object."""
-        return self.value.isoformat()
+        # TODO @dangotbanned: Raise a ty issue?
+        # all 3 signatures allow 0-args, return type is the same
+        return self.value.isoformat()  # ty: ignore[invalid-argument-type]
 
 
 class _SelectionOpts(TypedDict, total=False):
