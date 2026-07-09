@@ -21,8 +21,8 @@ if TYPE_CHECKING:
 
     from typing_extensions import Required
 
-Incomplete: TypeAlias = Any
-ParamRef: TypeAlias = Incomplete
+ParamRef: TypeAlias = Any
+"""Placeholder as I should probably move this idea to another branch."""
 
 
 # NOTE: One-line docstring
@@ -84,14 +84,17 @@ class Interval1DOptions(TypedDict, total=False):
     brush: BrushStyles
 
 
-# TODO @dangotbanned: Double-check the spec if `Required` is implicit
-# when inheriting from a `total=False` and not redfining it
+# NOTE: https://typing.python.org/en/latest/spec/typeddict.html#class-based-syntax
+# > `total`: a boolean literal ... indicating whether all items are required
+# > (`True`, the default) or non-required (`False`).
+# > This affects only items defined in this class, not in any base classes,
+# > and it does not affect any items that use an explicit `Required[]`` or `NotRequired[]` qualifier.
 class IntervalX(Interval1DOptions):
-    select: Required[L["intervalX"]]
+    select: L["intervalX"]
 
 
 class IntervalY(Interval1DOptions):
-    select: Required[L["intervalY"]]
+    select: L["intervalY"]
 
 
 class Interval2DOptions(TypedDict, total=False):
@@ -104,7 +107,7 @@ class Interval2DOptions(TypedDict, total=False):
 
 
 class IntervalXY(Interval2DOptions):
-    select: Required[L["intervalXY"]]
+    select: L["intervalXY"]
 
 
 class NearestOptions(TypedDict, total=False):
@@ -115,15 +118,15 @@ class NearestOptions(TypedDict, total=False):
 
 
 class Nearest(NearestOptions):
-    select: Required[L["nearest"]]
+    select: L["nearest"]
 
 
 class NearestX(NearestOptions):
-    select: Required[L["nearestX"]]
+    select: L["nearestX"]
 
 
 class NearestY(NearestOptions):
-    select: Required[L["nearestY"]]
+    select: L["nearestY"]
 
 
 class PanZoomOptions(TypedDict, total=False):
@@ -134,27 +137,27 @@ class PanZoomOptions(TypedDict, total=False):
 
 
 class Pan(PanZoomOptions):
-    select: Required[L["pan"]]
+    select: L["pan"]
 
 
 class PanX(PanZoomOptions):
-    select: Required[L["panX"]]
+    select: L["panX"]
 
 
 class PanY(PanZoomOptions):
-    select: Required[L["panY"]]
+    select: L["panY"]
 
 
 class PanZoom(PanZoomOptions):
-    select: Required[L["panZoom"]]
+    select: L["panZoom"]
 
 
 class PanZoomX(PanZoomOptions):
-    select: Required[L["panZoomX"]]
+    select: L["panZoomX"]
 
 
 class PanZoomY(PanZoomOptions):
-    select: Required[L["panZoomY"]]
+    select: L["panZoomY"]
 
 
 class RegionOptions(TypedDict, total=False):
@@ -165,7 +168,7 @@ class RegionOptions(TypedDict, total=False):
 
 
 class Region(RegionOptions):
-    select: Required[L["region"]]
+    select: L["region"]
 
 
 class ToggleOptions(TypedDict, total=False):
@@ -174,24 +177,24 @@ class ToggleOptions(TypedDict, total=False):
 
 
 class Toggle(ToggleOptions):
-    select: Required[L["toggle"]]
-    channels: Required[Sequence[str]]
+    select: L["toggle"]
+    channels: Sequence[str]
 
 
 class ToggleX(ToggleOptions):
-    select: Required[L["toggleX"]]
+    select: L["toggleX"]
 
 
 class ToggleY(ToggleOptions):
-    select: Required[L["toggleY"]]
+    select: L["toggleY"]
 
 
 class ToggleZ(ToggleOptions):
-    select: Required[L["toggleZ"]]
+    select: L["toggleZ"]
 
 
 class ToggleColor(ToggleOptions):
-    select: Required[L["toggleColor"]]
+    select: L["toggleColor"]
 
 
 PlotInteractor: TypeAlias = (
