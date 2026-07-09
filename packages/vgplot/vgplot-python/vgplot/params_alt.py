@@ -60,6 +60,17 @@ One of:
 """
 
 _SelectT = TypeVar("_SelectT", bound=Select | Literal["value"])
+_ValueT = TypeVar("_ValueT", covariant=True)
+
+# TODO @dangotbanned: Remove `Lit` suffixes & avoid `Param` prefix (`NonTemporal`?)
+NumericLit: TypeAlias = int | float
+TemporalLit: TypeAlias = dt.date | dt.datetime | dt.time
+ParamLit: TypeAlias = str | NumericLit | bool | None
+"""Literal Param values."""
+NonNestedLit: TypeAlias = ParamLit | TemporalLit
+
+_TemporalT = TypeVar("_TemporalT", bound=TemporalLit, covariant=True)
+ISO_8601: TypeAlias = str
 
 
 # TODO @dangotbanned: Add `{crossfilter, intersect, single, union}` methods, e.g.
@@ -85,30 +96,25 @@ class ParamBase(Protocol[_SelectT]):
         return ParamRef(self.name)
 
 
-NumericLit: TypeAlias = int | float
-TemporalLit: TypeAlias = dt.date | dt.datetime | dt.time
-ParamLit: TypeAlias = str | NumericLit | bool | None
-"""Literal Param values."""
+class _ParamValue(ParamBase[Literal["value"]], Generic[_ValueT]):
+    """A Param that wraps a value."""
 
-NonNestedLit: TypeAlias = ParamLit | TemporalLit
+    __slots__ = ("value",)
+    select = "value"
+    value: _ValueT
+    """The initial parameter value."""
 
-_TemporalT = TypeVar("_TemporalT", bound=TemporalLit, covariant=True)
-ISO_8601: TypeAlias = str
+    def __init__(self, name: Name, value: _ValueT) -> None:
+        self.name = name
+        self.value = value
 
 
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
-class Param(ParamBase[Literal["value"]]):
+class Param(_ParamValue[ParamLit]):
     """A Param definition."""
 
-    __slots__ = ("value",)
-    select = "value"
-    value: ParamLit
-    """The initial parameter value."""
-
-    def __init__(self, name: Name, value: ParamLit) -> None:
-        self.name = name
-        self.value = value
+    __slots__ = ()
 
 
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
@@ -116,30 +122,18 @@ class Param(ParamBase[Literal["value"]]):
 #  - accept Sequence on entry
 #  - convert to list (if needed) for json
 @final
-class ParamArray(ParamBase[Literal["value"]]):
-    __slots__ = ("value",)
-    select = "value"
-    value: Sequence[ParamLit | ParamRef]
-    """The initial parameter values."""
+class ParamArray(_ParamValue[Sequence["ParamLit | ParamRef"]]):
+    """An Array-valued Param definition."""
 
-    def __init__(self, name: Name, value: Sequence[ParamLit | ParamRef]) -> None:
-        self.name = name
-        self.value = value
+    __slots__ = ()
 
 
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
-class ParamTemporal(ParamBase[Literal["value"]], Generic[_TemporalT]):
+class ParamTemporal(_ParamValue[_TemporalT]):
     """A Temporal-valued Param definition."""
 
-    __slots__ = ("value",)
-    select = "value"
-    value: _TemporalT
-    """The initial parameter value."""
-
-    def __init__(self, name: Name, value: _TemporalT) -> None:
-        self.name = name
-        self.value = value
+    __slots__ = ()
 
     @property
     def date(self) -> ISO_8601:
