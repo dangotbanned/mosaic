@@ -57,11 +57,13 @@ One of:
 - `"crossfilter"` for a cross-filtered intersection `Selection`
 """
 
+_SelectT = TypeVar("_SelectT", bound=Select | Literal["value"])
 
-class ParamBase(Protocol):
+
+class ParamBase(Protocol[_SelectT]):
     """Base properties shared by Param definitions."""
 
-    select: Select | Literal["value"]
+    select: _SelectT
     """The type of reactive parameter."""
 
     @property
@@ -85,23 +87,29 @@ _T = TypeVar("_T", bound=TemporalLit, covariant=True)
 ISO_8601: TypeAlias = str
 
 
-class Param(ParamBase, Protocol):
+class Param(ParamBase[Literal["value"]], Protocol):
     """A Param definition."""
+
+    select = "value"
 
     @property
     def value(self) -> ParamLit:
         """The initial parameter value."""
 
 
-class ParamArray(ParamBase, Protocol):
+class ParamArray(ParamBase[Literal["value"]], Protocol):
+    select = "value"
+
     @property
     def value(self) -> Sequence[ParamLit | ParamRef]:
         """The initial parameter values."""
         ...
 
 
-class ParamTemporal(ParamBase, Protocol[_T]):
+class ParamTemporal(ParamBase[Literal["value"]], Protocol[_T]):
     """A Temporal-valued Param definition."""
+
+    select = "value"
 
     @property
     def value(self) -> _T:
@@ -135,7 +143,7 @@ class _SelectionOpts(TypedDict, total=False):
     """
 
 
-class Selection(Protocol):
+class Selection(ParamBase[Select], Protocol):
     select: Select
     """The type of reactive parameter."""
 
