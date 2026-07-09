@@ -118,11 +118,8 @@ class Param(_ParamValue[ParamLit]):
 
 
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
-# TODO @dangotbanned: Use a tuple for internal storage, so it stays hashable
-#  - accept Sequence on entry
-#  - convert to list (if needed) for json
 @final
-class ParamArray(_ParamValue[Sequence["ParamLit | ParamRef"]]):
+class ParamArray(_ParamValue[tuple["ParamLit | ParamRef", ...]]):
     """An Array-valued Param definition."""
 
     __slots__ = ()
@@ -279,7 +276,7 @@ class ParamRef:
         name = self._name
         if isinstance(value, Sequence):
             if not isinstance(value, str):
-                return ParamArray(name, value)  # ty: ignore[invalid-argument-type]
+                return ParamArray(name, tuple(value))  # ty: ignore[invalid-argument-type]
         elif isinstance(value, (dt.date, dt.datetime, dt.time)):
             return ParamTemporal(name, value)
         return Param(name, value)
