@@ -33,5 +33,5 @@ pattern = "\"version\": \"(?P<version>.+?)\""
 packages = ["vgplot"]
 
 [tool.pyright]
-ignore = ["../**/.venv/"]  # Do not display diagnostics in external source code
+ignore = ["../**/.venv/", "../../../../../../../.vscode/"]  # Do not display diagnostics in external source code
 typeCheckingMode = "standard"
