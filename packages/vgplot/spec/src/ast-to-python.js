@@ -1,4 +1,5 @@
 import { camelCaseToSnake } from './util.js';
+import { TRANSFORM_KEYS } from './generated/transform-keys.js';
 import {
   PYTHON_KEYWORDS,
   kwarg,
@@ -35,6 +36,10 @@ export function astToPython(ast) {
     ctx.dataVarMap.set(name, paramNameSet.has(name) ? safe + '_data' : safe);
   }
 
+  if (Object.values(params).some(dateParamParts)) {
+    ctx.emit('from datetime import date');
+    ctx.blank();
+  }
   ctx.emit('import vgplot as vg');
   ctx.blank();
 
@@ -67,12 +72,24 @@ export function astToPython(ast) {
   return ctx.toString();
 }
 
+/** Year/month/day parts of a date-valued param def ({date: 'YYYY-MM-DD'}), or null. */
+function dateParamParts(def) {
+  if (def && typeof def === 'object' && !Array.isArray(def) &&
+      Object.keys(def).length === 1 && typeof def.date === 'string') {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(def.date);
+    if (m) return m.slice(1).map(Number);
+  }
+  return null;
+}
+
 function emitParamDef(name, def, ctx) {
   if (def === null || def === undefined) return `${name} = vg.param(None)`;
   if (typeof def !== 'object') return `${name} = vg.param(${literal(def, 0, ctx)})`;
   if (Array.isArray(def)) {
     return `${name} = vg.param([${def.map(v => literal(v, 0, ctx)).join(', ')}])`;
   }
+  const parts = dateParamParts(def);
+  if (parts) return `${name} = vg.param(date(${parts.join(', ')}))`;
   const { select, ...opts } = def;
   if (select) {
     const optArgs = buildArgs(opts, ctx);
@@ -177,14 +194,10 @@ function emitDataDef(def, ctx) {
   return literal(def, 0, ctx);
 }
 
-// Keep in sync with the JS/Python API surface — new encodings need entries here.
-const ENCODING_SIMPLE = new Set([
-  'count', 'min', 'max', 'median',
-  'dateMonth', 'dateMonthDay', 'centroidX', 'centroidY',
-]);
-const ENCODING_WITH_OPTS = new Set(['avg', 'mean', 'sum', 'bin']);
-
 /**
+ * Emit a channel value: a transform dict becomes a call to the corresponding
+ * generated vgplot function (positional transform args + option kwargs);
+ * anything else is a literal.
  * @param {any} v
  * @param {PythonCodegenContext} ctx
  */
@@ -194,25 +207,14 @@ function emitEncoding(v, ctx) {
   if (!keys.length) return literal(v, 0, ctx);
   const key = keys[0];
   if (key === 'sql' && keys.length === 1) return `vg.sql(${literal(v.sql, 0, ctx)})`;
-  if ((key === 'argmax' || key === 'argmin') && Array.isArray(v[key])) {
-    return `vg.${key}(${v[key].map(x => literal(x, 0, ctx)).join(', ')})`;
-  }
-  if (ENCODING_WITH_OPTS.has(key)) {
-    const { [key]: col, ...opts } = v;
-    const args = [literal(col, 0, ctx),
-      ...Object.entries(opts)
-        .filter(([, val]) => val !== null && val !== undefined)
-        .map(([k, val]) => kwarg(camelCaseToSnake(k), literal(val, 0, ctx)))];
-    return `vg.${key}(${args.join(', ')})`;
-  }
-  if (keys.length === 1 && ENCODING_SIMPLE.has(key)) {
-    const val = v[key];
-    const fn = camelCaseToSnake(key);
-    return (val === '' || val == null) ? `vg.${fn}()` : `vg.${fn}(${literal(val, 0, ctx)})`;
-  }
-  if (key === 'column' && keys.length === 1) return `vg.column(${literal(v.column, 0, ctx)})`;
-  if (key === 'geojson' && keys.length === 1) return `vg.geojson(${literal(v.geojson, 0, ctx)})`;
-  return literal(v, 0, ctx);
+  if (!TRANSFORM_KEYS.has(key)) return literal(v, 0, ctx);
+  const { [key]: val, ...opts } = v;
+  const args = (val === '' || val == null) ? []
+    : (Array.isArray(val) ? val : [val]).map(x => literal(x, 0, ctx));
+  args.push(...Object.entries(opts)
+    .filter(([, o]) => o !== null && o !== undefined)
+    .map(([k, o]) => kwarg(camelCaseToSnake(k), literal(o, 0, ctx))));
+  return `vg.${camelCaseToSnake(key)}(${args.join(', ')})`;
 }
 
 /** @param {PythonCodegenContext} ctx */

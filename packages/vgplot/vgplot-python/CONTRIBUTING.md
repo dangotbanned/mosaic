@@ -1,12 +1,16 @@
 # Contributing to the vgplot Python API
 
-Most of the API — every **mark** and **plot attribute** — is generated from the
-Mosaic JSON schema, which is itself generated from the JavaScript spec
-(`packages/vgplot/spec/src/spec/Spec.ts`). The JS API is the source of truth.
+Most of the API — every **mark**, **plot attribute**, and **encoding
+transform** (aggregates, window functions, column transforms) — is generated
+from the Mosaic JSON schema, which is itself generated from the JavaScript
+spec ([`Spec.ts`]). The JS API is the source of truth.
 
 Hand-written (not generated): the runtime core (`plot.py`, `spec.py`), data
-sources (`data.py`), params (`params.py`), SQL encodings (`encodings.py`), and
-the interactor / input / legend helpers.
+sources (`data.py`), params (`params.py`), the shared value types
+(`_types.py`), the `sql()` / `channels()` helpers (`encodings.py`), and the
+interactor / input / legend helpers.
+
+[`Spec.ts`]: ../../../packages/vgplot/spec/src/spec/Spec.ts
 
 ## Regenerating the API
 
@@ -16,15 +20,18 @@ After any change to the vgplot spec types (or the generator), regenerate:
 pnpm run generate:python-api
 ```
 
-This rebuilds the schema, runs `bin/generate-python-api.js`, and formats the
-output into `vgplot/_generated/`. Commit the regenerated files.
+This rebuilds the schema, runs [`bin/generate-python-api.js`], and formats the
+output into [`vgplot/_generated/`]. Commit the regenerated files.
 
-CI fails if the committed `vgplot/_generated/` output does not match a fresh
+CI fails if the committed [`vgplot/_generated/`] output does not match a fresh
 regeneration, so the generated code always matches the schema.
 
-## Adding a new mark or attribute
+[`bin/generate-python-api.js`]: ../../../bin/generate-python-api.js
+[`vgplot/_generated/`]: ./vgplot/_generated/__init__.py
 
-Add it on the JS side (`Spec.ts`), then run `pnpm run generate:python-api`.
+## Adding a new mark, attribute, or transform
+
+Add it on the JS side ([`Spec.ts`]), then run `pnpm run generate:python-api`.
 Nothing in the Python package needs hand-editing — there is no dynamic
 fallback, so a name that is missing from the generated API raises
 `AttributeError` (and is flagged by type checkers) rather than silently

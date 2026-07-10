@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Collection, Sequence
+from datetime import date
 from typing import TYPE_CHECKING, Any, Literal, TypeAlias, TypedDict, TypeVar, overload
 
 if TYPE_CHECKING:
@@ -53,7 +54,8 @@ class ParamValue(_ParamBase):
         self._value: ParamLiteral | ParamDate = value
 
     def param_def(self, *, param_names: dict[int, str]) -> ParamLiteral | ParamDate:
-        return self._value
+        if isinstance(self._value, date):
+            return {"date": self._value.isoformat()}
 
     def __repr__(self) -> str:
         return f"param.value({self._value!r})"
