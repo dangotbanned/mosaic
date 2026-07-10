@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import datetime as dt
 from collections.abc import Collection, Sequence
-from datetime import date
 from typing import TYPE_CHECKING, Any, Literal, TypeAlias, TypedDict, TypeVar, overload
 
 if TYPE_CHECKING:
@@ -13,7 +13,7 @@ _T = TypeVar("_T")
 ParamLiteral: TypeAlias = str | float | bool | None
 """Literal Param values."""
 
-ParamDate: TypeAlias = dict[Literal["date"], str]
+ParamDate: TypeAlias = dt.date | dt.datetime | dt.time
 
 
 @overload
@@ -53,9 +53,12 @@ class ParamValue(_ParamBase):
     def __init__(self, value: ParamLiteral | ParamDate = None) -> None:
         self._value: ParamLiteral | ParamDate = value
 
-    def param_def(self, *, param_names: dict[int, str]) -> ParamLiteral | ParamDate:
-        if isinstance(self._value, date):
+    def param_def(
+        self, *, param_names: dict[int, str]
+    ) -> ParamLiteral | dict[Literal["date"], str]:
+        if isinstance(self._value, (dt.date, dt.datetime, dt.time)):
             return {"date": self._value.isoformat()}
+        return self._value
 
     def __repr__(self) -> str:
         return f"param.value({self._value!r})"
