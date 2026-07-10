@@ -56,12 +56,14 @@ class TestParams:
     def test_date_param(self):
         from datetime import date
 
-        assert vg.param(date(2013, 5, 13)).param_def() == {"date": "2013-05-13"}  # pyright: ignore[reportCallIssue] # ty: ignore[missing-argument]
+        assert vg.param(date(2013, 5, 13)).param_def(param_names={}) == {
+            "date": "2013-05-13"
+        }
 
     def test_datetime_param(self):
         from datetime import datetime
 
-        assert vg.param(datetime(2013, 5, 13, 10, 30)).param_def() == {  # pyright: ignore[reportCallIssue] # ty: ignore[missing-argument]
+        assert vg.param(datetime(2013, 5, 13, 10, 30)).param_def(param_names={}) == {
             "date": "2013-05-13T10:30:00"
         }
 
