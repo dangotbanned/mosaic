@@ -1,6 +1,8 @@
 from collections.abc import Sequence
 from datetime import date
-from typing import Any
+from typing import Any, TypeAlias
+
+from narwhals.typing import IntoDataFrame
 
 from .data import DataDef
 from .params import _ParamBase
@@ -15,7 +17,16 @@ ChannelValue = (
 AttrValue = (
     str | float | bool | date | dict[str, Any] | Sequence[Any] | _ParamBase | None
 )
-MarkData = str | FromRef | DataDef | dict[str, Any] | Sequence[Any] | _ParamBase | None
+MarkData: TypeAlias = (
+    str
+    | FromRef
+    | DataDef
+    | dict[str, Any]
+    | Sequence[Any]
+    | _ParamBase
+    | IntoDataFrame
+    | None
+)
 TransformArg = str | float | bool | _ParamBase
 
 

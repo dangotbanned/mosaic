@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import narwhals as nw
+from narwhals.dependencies import is_into_dataframe
+from narwhals.typing import IntoDataFrame
+
+if TYPE_CHECKING:
+    from typing_extensions import TypeIs
 
 
 @dataclass
@@ -14,17 +18,11 @@ class DataDef:
         return self.payload
 
 
-def is_frame(obj: Any) -> bool:
+def is_frame(obj: Any) -> TypeIs[IntoDataFrame]:
     """True if `obj` is a dataframe-like object (pandas/polars/Arrow/...)."""
-    if obj is None or isinstance(
-        obj, (str, bytes, int, float, bool, dict, list, tuple)
-    ):
-        return False
-    try:
-        nw.from_native(obj)
-    except TypeError:
-        return False
-    return True
+    return not isinstance(
+        obj, (str, bytes, int, float, bool, dict, list, tuple, type(None))
+    ) and is_into_dataframe(obj)
 
 
 def parquet(file: str, select: Any = None, where: Any = None, **kwargs: Any) -> DataDef:

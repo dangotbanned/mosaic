@@ -2,11 +2,15 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
 
 from .util import camelize, omit_none
 from .params import _ParamBase
 from .data import DataDef, is_frame
+
+if TYPE_CHECKING:
+    from vgplot._types import MarkData
 
 
 class FromRef:
@@ -34,7 +38,7 @@ class Directive:
 @dataclass
 class Mark:
     mark: str
-    data: Any | None = None
+    data: MarkData = None
     enc: dict[str, Any] | None = None
 
     def to_dict(self, param_names: dict[int, str] | None = None) -> dict[str, Any]:
@@ -44,7 +48,7 @@ class Mark:
         data_opts = {out: enc.pop(key) for key, out in _DATA_OPTS.items() if key in enc}
         if self.data is not None:
             if isinstance(self.data, (str, _ParamBase)):
-                data_dict: Any = {"from": self.data}
+                data_dict = {"from": self.data}
             elif isinstance(self.data, FromRef):
                 data_dict = dict(self.data.to_dict())
             elif isinstance(self.data, DataDef) or is_frame(self.data):
