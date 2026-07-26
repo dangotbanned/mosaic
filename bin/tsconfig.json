@@ -1,0 +1,17 @@
+{
+    "buildOptions": {
+        "dry": true
+    },
+    "compilerOptions": {
+        "emitDeclarationOnly": true
+    },
+    "extends": "../tsconfig.base.json",
+    "files": [
+        "generate-python-api.js",
+    ],
+    "references": [
+        {
+            "path": "../packages/vgplot/spec"
+        },
+    ]
+}
