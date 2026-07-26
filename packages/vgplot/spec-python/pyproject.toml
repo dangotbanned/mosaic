@@ -83,6 +83,7 @@ docstring-code-format     = true
 [tool.ruff.lint]
 isort.split-on-trailing-comma = false
 extend-select                 = ["ALL"]
+future-annotations            = true
 
 ignore = [
   "A001",     # builtin-variable-shadowing
