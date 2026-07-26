@@ -104,4 +104,16 @@ skip-root-model = true
 # }
 
 # TODO @dangotbanned: Open feature request
-aliases = '{"as": "bind", "from": "source", "for": "plot"}' 
+aliases = '{"as": "bind", "from": "source", "for": "plot"}'
+# https://datamodel-code-generator.koxudaxi.dev/presets/#practical-py310-20260619
+# allow-population-by-field-name = true
+# collapse-root-models = true
+# disable-timestamp = true
+# enum-field-as-literal = "one"
+# naming-strategy = "primary-first"
+# set-default-enum-member = true
+# strict-nullable = true
+# use-annotated = true
+# use-default-kwarg = true
+# use-subclass-enum = true
+# use-frozen-field = true
