@@ -72,7 +72,7 @@ ignore = [
 [tool.datamodel-codegen]
 input-file-type = "jsonschema"
 input = "../spec/dist/mosaic-schema.json"
-output = "src/mosaic_spec/_models.py"
+output = "src/mosaic_spec/_models.pyi"
 custom-file-header = "# NOTE: DO NOT EDIT.\n# Generated from `packages/vgplot/spec/dist/mosaic-schema.json` by `datamodel-code-generator` with:\n# uv run --with datamodel-code-generator datamodel-codegen"
 output-model-type = "typing.TypedDict"
 formatters = ["ruff-check", "ruff-format"]
