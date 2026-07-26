@@ -7,8 +7,9 @@ dependencies    = []
 dynamic         = ["version"]
 
 [dependency-groups]
-dev = ["ruff", { include-group = "gen" }]
-gen = ["datamodel-code-generator"]
+dev    = ["ruff", { include-group = "gen" }, { include-group = "typing" }]
+gen    = ["datamodel-code-generator"]
+typing = ["pyright", "ty"]
 
 [build-system]
 requires      = ["hatchling"]
@@ -70,6 +71,10 @@ pattern = "\"version\": \"(?P<version>.+?)\""
 
 [tool.hatch.build.targets.wheel]
 packages = ["mosaic_spec"]
+
+[tool.pyright]
+ignore           = ["../**/.venv/"]  # Do not display diagnostics in external source code
+typeCheckingMode = "standard"
 
 [tool.ruff]
 fix         = true
