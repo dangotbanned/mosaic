@@ -1,5 +1,8 @@
 {
   "name": "spec-python",
   "private": true,
+  "scripts": {
+    "generate": "uv run datamodel-codegen && uv run ruff check && uv run ruff format"
+  },
   "version": "0.29.2"
 }
