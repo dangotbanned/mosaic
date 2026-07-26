@@ -1532,6 +1532,16 @@ wheels = [
 name = "mosaic-spec"
 source = { editable = "packages/vgplot/spec-python" }
 
+[package.dev-dependencies]
+dev = [
+    { name = "ruff" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [{ name = "ruff" }]
+
 [[package]]
 name = "mosaic-widget"
 source = { editable = "packages/vgplot/widget" }
