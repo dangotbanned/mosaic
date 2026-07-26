@@ -16,3 +16,40 @@ pattern = "\"version\": \"(?P<version>.+?)\""
 
 [tool.hatch.build.targets.wheel]
 packages = ["mosaic_spec"]
+
+[tool.datamodel-codegen]
+input-file-type = "jsonschema"
+input = "../spec/dist/mosaic-schema.json"
+output = "src/mosaic_spec/_models.py"
+custom-file-header = "# NOTE: DO NOT EDIT.\n# Generated from `packages/vgplot/spec/dist/mosaic-schema.json` by `datamodel-code-generator` with:\n# uv run --with datamodel-code-generator datamodel-codegen"
+output-model-type = "typing.TypedDict"
+formatters = ["builtin"]
+target-python-version = "3.10"
+use-generic-container-types = true
+reuse-model = true
+
+# frustratingly broken (replaces ParamRef -> DataQuery), but need to use for `Tip*` dedup
+collapse-reuse-models = true 
+# keep-model-order = true
+# all-exports-scope = "children"
+snake-case-field = true
+infer-union-variant-names = true
+
+# TODO @dangotbanned: configure docs last
+# use-schema-description = true
+# use-field-description = true
+# use-attribute-docstrings = true
+# use-single-line-docstring = true
+use-title-as-name = true
+use-tuple-for-fixed-items = true
+skip-root-model = true
+
+# broken, requires json as string
+# aliases = { 
+#     "as" = "bind",
+#     "from" = "source",
+#     "for" = "plot",
+# }
+
+# TODO @dangotbanned: Open feature request
+aliases = '{"as": "bind", "from": "source", "for": "plot"}' 
