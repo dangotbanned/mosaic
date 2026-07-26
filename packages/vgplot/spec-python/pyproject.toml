@@ -1,90 +1,34 @@
 [project]
-name = "mosaic-spec"
-dynamic = ["version"]
-description = "Declarative specification of Mosaic-powered applications."
-readme = "README.md"
+name            = "mosaic-spec"
+description     = "Declarative specification of Mosaic-powered applications."
+readme          = "README.md"
 requires-python = ">=3.10"
-dependencies = []
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.version]
-path = "package.json"
-pattern = "\"version\": \"(?P<version>.+?)\""
-
-[tool.hatch.build.targets.wheel]
-packages = ["mosaic_spec"]
+dependencies    = []
+dynamic         = ["version"]
 
 [dependency-groups]
 dev = ["ruff"]
 
-[tool.ruff]
-fix = true
-line-length = 100
-[tool.ruff.format]
-skip-magic-trailing-comma = true
-quote-style = "single"
-[tool.ruff.lint]
-isort.split-on-trailing-comma = false
-
-extend-select     = ["ALL"]
-
-ignore = [
-    "A001",                                             # builtin-variable-shadowing
-    "A004",                                             # builtin-import-shadowing
-    "ARG002",                                           # unused-method-argument
-    "ANN401",                                           # any-type
-    "COM812",                                           # missing-trailing-comma
-    "D100",                                             # undocumented-public-module
-    "D101",                                             # undocumented-public-class
-    "D102",                                             # undocumented-public-method
-    "D103",                                             # undocumented-public-function
-    "D104",                                             # undocumented-public-package
-    "D105",                                             # undocumented-magic-method
-    "D107",                                             # undocumented-public-init
-    "D203",                                             # incorrect-blank-line-before-class
-    "D213",                                             # multi-line-summary-second-line
-    "DTZ001",                                           # call-datetime-without-tzinfo
-    "E501",                                             # line-too-long
-    "FBT003",                                           # We enforce at definition site when it is a flag, not a value
-    "FIX",                                              # flake8-fixme
-    "PLC0415",                                          # `import` should be at the top-level of a file
-    "PLR0913",                                          # too-many-arguments
-    "PLR2004",                                          # magic-value-comparison
-    "PLW1641",                                          # Object does not implement `__hash__` method
-    "SLF001",                                           # private-member-access
-    "TD003",                                            # missing-todo-link
-    "TD004",                                            # missing-todo-colon
-    "N801",                                             # capwords naming
-    "N806",                                             # lowercase variable
-    "S608",                                             # sql injection
-    "PYI051",                                           # redundant-literal-union (opinionated)
-]
-
-[tool.ruff.lint.per-file-ignores]
-"tests/*" = [
-  "D",
-  "S101",
-]
+[build-system]
+requires      = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.datamodel-codegen]
-input-file-type = "jsonschema"
-input = "../spec/dist/mosaic-schema.json"
-output = "src/mosaic_spec/_models.pyi"
-custom-file-header = "# NOTE: DO NOT EDIT.\n# Generated from `packages/vgplot/spec/dist/mosaic-schema.json` by `datamodel-code-generator` with:\n# uv run --with datamodel-code-generator datamodel-codegen"
-output-model-type = "typing.TypedDict"
-formatters = ["ruff-check", "ruff-format"]
-target-python-version = "3.10"
+input-file-type             = "jsonschema"
+input                       = "../spec/dist/mosaic-schema.json"
+output                      = "src/mosaic_spec/_models.pyi"
+custom-file-header          = "# NOTE: DO NOT EDIT.\n# Generated from `packages/vgplot/spec/dist/mosaic-schema.json` by `datamodel-code-generator` with:\n# uv run --with datamodel-code-generator datamodel-codegen"
+output-model-type           = "typing.TypedDict"
+formatters                  = ["ruff-check", "ruff-format"]
+target-python-version       = "3.10"
 use-generic-container-types = true
-reuse-model = true
+reuse-model                 = true
 
 # frustratingly broken (replaces ParamRef -> DataQuery), but need to use for `Tip*` dedup
-collapse-reuse-models = true 
+collapse-reuse-models     = true
 # keep-model-order = true
 # all-exports-scope = "children"
-snake-case-field = true
+snake-case-field          = true
 infer-union-variant-names = true
 
 # TODO @dangotbanned: configure docs last
@@ -92,12 +36,12 @@ infer-union-variant-names = true
 # use-field-description = true
 # use-attribute-docstrings = true
 # use-single-line-docstring = true
-use-title-as-name = true
+use-title-as-name         = true
 use-tuple-for-fixed-items = true
-skip-root-model = true
+skip-root-model           = true
 
 # broken, requires json as string
-# aliases = { 
+# aliases = {
 #     "as" = "bind",
 #     "from" = "source",
 #     "for" = "plot",
@@ -117,3 +61,60 @@ aliases = '{"as": "bind", "from": "source", "for": "plot"}'
 # use-default-kwarg = true
 # use-subclass-enum = true
 # use-frozen-field = true
+
+[tool.hatch.version]
+path    = "package.json"
+pattern = "\"version\": \"(?P<version>.+?)\""
+
+[tool.hatch.build.targets.wheel]
+packages = ["mosaic_spec"]
+
+[tool.ruff]
+fix         = true
+line-length = 100
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+quote-style               = "single"
+
+[tool.ruff.lint]
+isort.split-on-trailing-comma = false
+extend-select                 = ["ALL"]
+
+ignore = [
+  "A001",     # builtin-variable-shadowing
+  "A004",     # builtin-import-shadowing
+  "ARG002",   # unused-method-argument
+  "ANN401",   # any-type
+  "COM812",   # missing-trailing-comma
+  "D100",     # undocumented-public-module
+  "D101",     # undocumented-public-class
+  "D102",     # undocumented-public-method
+  "D103",     # undocumented-public-function
+  "D104",     # undocumented-public-package
+  "D105",     # undocumented-magic-method
+  "D107",     # undocumented-public-init
+  "D203",     # incorrect-blank-line-before-class
+  "D213",     # multi-line-summary-second-line
+  "DTZ001",   # call-datetime-without-tzinfo
+  "E501",     # line-too-long
+  "FBT003",   # We enforce at definition site when it is a flag, not a value
+  "FIX",      # flake8-fixme
+  "PLC0415",  # `import` should be at the top-level of a file
+  "PLR0913",  # too-many-arguments
+  "PLR2004",  # magic-value-comparison
+  "PLW1641",  # Object does not implement `__hash__` method
+  "SLF001",   # private-member-access
+  "TD003",    # missing-todo-link
+  "TD004",    # missing-todo-colon
+  "N801",     # capwords naming
+  "N806",     # lowercase variable
+  "S608",     # sql injection
+  "PYI051",   # redundant-literal-union (opinionated)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+  "D",
+  "S101",
+]
