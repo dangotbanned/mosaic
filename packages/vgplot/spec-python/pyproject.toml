@@ -15,22 +15,23 @@ requires      = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.datamodel-codegen]
-input-file-type             = "jsonschema"
-input                       = "../spec/dist/mosaic-schema.json"
-output                      = "src/mosaic_spec/_models.pyi"
-custom-file-header          = "# NOTE: DO NOT EDIT.\n# Generated from `packages/vgplot/spec/dist/mosaic-schema.json` by `datamodel-code-generator` with:\n# uv run datamodel-codegen"
-output-model-type           = "typing.TypedDict"
-formatters                  = ["ruff-check", "ruff-format"]
-target-python-version       = "3.10"
+input-file-type       = "jsonschema"
+input                 = "../spec/dist/mosaic-schema.json"
+output                = "src/mosaic_spec/_models.pyi"
+custom-file-header    = "# NOTE: DO NOT EDIT.\n# Generated from `packages/vgplot/spec/dist/mosaic-schema.json` by `datamodel-code-generator` with:\n# uv run datamodel-codegen"
+output-model-type     = "typing.TypedDict"
+formatters            = ["ruff-check", "ruff-format"]
+target-python-version = "3.10"
+
 use-generic-container-types = true
-reuse-model                 = true
+use-tuple-for-fixed-items   = true
 
 # frustratingly broken (replaces ParamRef -> DataQuery), but need to use for `Tip*` dedup
-collapse-reuse-models     = true
+collapse-reuse-models = true
+skip-root-model       = true
+reuse-model           = true
 # keep-model-order = true
 # all-exports-scope = "children"
-snake-case-field          = true
-infer-union-variant-names = true
 
 # TODO @dangotbanned: configure docs last
 # use-schema-description = true
@@ -38,8 +39,8 @@ infer-union-variant-names = true
 # use-attribute-docstrings = true
 # use-single-line-docstring = true
 use-title-as-name         = true
-use-tuple-for-fixed-items = true
-skip-root-model           = true
+snake-case-field          = true
+infer-union-variant-names = true
 
 # broken, requires json as string
 # aliases = {
