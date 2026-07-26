@@ -17,6 +17,7 @@ resolution-markers = [
 [manifest]
 members = [
     "duckdb-server",
+    "mosaic-spec",
     "mosaic-widget",
     "vgplot",
 ]
@@ -1526,6 +1527,10 @@ sdist = { url = "https://files.pythonhosted.org/packages/83/3d/ae84a61a19f61e4a0
 wheels = [
     { url = "https://files.pythonhosted.org/packages/39/98/027653454863ee32379faa5b9242ab4e9540c4da2a9427d0ceaa5169478b/modin-0.37.1-py3-none-any.whl", hash = "sha256:afb96c4b1fc4953c6895f5376b49af765575ad6f4d948a7726055614777e7b90", size = 1187899, upload-time = "2025-10-02T19:20:27.559Z" },
 ]
+
+[[package]]
+name = "mosaic-spec"
+source = { editable = "packages/vgplot/spec-python" }
 
 [[package]]
 name = "mosaic-widget"

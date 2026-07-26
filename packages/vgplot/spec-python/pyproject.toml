@@ -1,0 +1,18 @@
+[project]
+name = "mosaic-spec"
+dynamic = ["version"]
+description = "Declarative specification of Mosaic-powered applications."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "package.json"
+pattern = "\"version\": \"(?P<version>.+?)\""
+
+[tool.hatch.build.targets.wheel]
+packages = ["mosaic_spec"]

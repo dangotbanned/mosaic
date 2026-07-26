@@ -226,6 +226,8 @@ importers:
         specifier: ^2.9.0
         version: 2.9.0
 
+  packages/vgplot/spec-python: {}
+
   packages/vgplot/vgplot:
     dependencies:
       '@uwdata/mosaic-core':
