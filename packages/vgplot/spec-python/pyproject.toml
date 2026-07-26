@@ -7,7 +7,8 @@ dependencies    = []
 dynamic         = ["version"]
 
 [dependency-groups]
-dev = ["ruff"]
+dev = ["ruff", { include-group = "gen" }]
+gen = ["datamodel-code-generator"]
 
 [build-system]
 requires      = ["hatchling"]
@@ -17,7 +18,7 @@ build-backend = "hatchling.build"
 input-file-type             = "jsonschema"
 input                       = "../spec/dist/mosaic-schema.json"
 output                      = "src/mosaic_spec/_models.pyi"
-custom-file-header          = "# NOTE: DO NOT EDIT.\n# Generated from `packages/vgplot/spec/dist/mosaic-schema.json` by `datamodel-code-generator` with:\n# uv run --with datamodel-code-generator datamodel-codegen"
+custom-file-header          = "# NOTE: DO NOT EDIT.\n# Generated from `packages/vgplot/spec/dist/mosaic-schema.json` by `datamodel-code-generator` with:\n# uv run datamodel-codegen"
 output-model-type           = "typing.TypedDict"
 formatters                  = ["ruff-check", "ruff-format"]
 target-python-version       = "3.10"
