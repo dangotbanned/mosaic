@@ -80,4 +80,4 @@ if __name__ == "__main__":
     schema = read_schema(SCHEMA_IN)
     replaced = replace_schema_keys(schema)
     write_schema(SCHEMA_OUT, replaced)
-    print(f"Generated python schema at: {SCHEMA_OUT.relative_to(fs.SPEC_PYTHON).as_posix()}")
+    print(f"Generated python schema at: {fs.repo_relative_str(SCHEMA_OUT)}")

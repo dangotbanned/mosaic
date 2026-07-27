@@ -44,3 +44,8 @@ MOSAIC_SPEC_INIT = MOSAIC_SPEC / "__init__.py"
 
 PYPROJECT_TOML = SPEC_PYTHON / "pyproject.toml"
 """`mosaic/packages/vgplot/spec-python/pyproject.toml`"""
+
+
+def repo_relative_str(source: str | Path) -> str:
+    """Return a path representation for errors/logs."""
+    return Path(source).relative_to(SPEC_PYTHON).as_posix()
