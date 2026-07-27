@@ -17,9 +17,9 @@ build-backend = "hatchling.build"
 
 [tool.datamodel-codegen]
 input-file-type       = "jsonschema"
-input                 = "../spec/dist/mosaic-schema.json"
+input                 = "schema/mosaic-schema.json"
 output                = "src/mosaic_spec/_models.pyi"
-custom-file-header    = "# NOTE: DO NOT EDIT.\n# Generated from `packages/vgplot/spec/dist/mosaic-schema.json` by `datamodel-code-generator` with:\n# uv run datamodel-codegen"
+custom-file-header    = "# NOTE: DO NOT EDIT.\n# Generated from `schema/mosaic-schema.json` by `datamodel-code-generator` with:\n# pnpm generate"
 output-model-type     = "typing.TypedDict"
 formatters            = ["ruff-check", "ruff-format"]
 target-python-version = "3.10"
