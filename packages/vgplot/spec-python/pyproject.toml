@@ -16,13 +16,14 @@ requires      = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.datamodel-codegen]
-input-file-type       = "jsonschema"
-input                 = "schema/mosaic-schema.json"
-output                = "src/mosaic_spec/_models.pyi"
-custom-file-header    = "# NOTE: DO NOT EDIT.\n# Generated from `schema/mosaic-schema.json` by `datamodel-code-generator` with:\n# pnpm generate"
-output-model-type     = "typing.TypedDict"
-formatters            = ["ruff-check", "ruff-format"]
-target-python-version = "3.10"
+input-file-type         = "jsonschema"
+custom-file-header      = "# NOTE: DO NOT EDIT."
+custom-file-header-mode = "prepend"
+enable-command-header   = true
+disable-timestamp       = true
+output-model-type       = "typing.TypedDict"
+formatters              = ["ruff-check", "ruff-format"]
+target-python-version   = "3.10"
 
 use-generic-container-types = true
 use-tuple-for-fixed-items   = true
@@ -57,6 +58,12 @@ aliases = '{"as": "bind", "from": "source", "for": "plot"}'
 # use-default-kwarg = true
 # use-subclass-enum = true
 # use-frozen-field = true
+
+[tool.datamodel-codegen.profiles.spec]
+input                   = "schema/mosaic-schema.json"
+output                  = "src/mosaic_spec/_models.pyi"
+custom-file-header-mode = "replace"
+custom-file-header      = "# NOTE: DO NOT EDIT.\n# Regenerate with: pnpm generate"
 
 [tool.hatch.version]
 path    = "package.json"
