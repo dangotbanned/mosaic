@@ -103,6 +103,7 @@ docstring-code-format     = true
 [tool.ruff.lint]
 isort.split-on-trailing-comma = false
 extend-select                 = ["ALL"]
+extend-safe-fixes             = ["FA", "TC", "UP"]
 future-annotations            = true
 
 ignore = [
