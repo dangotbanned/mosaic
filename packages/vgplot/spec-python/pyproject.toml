@@ -67,6 +67,18 @@ output                  = "src/mosaic_spec/_models.pyi"
 custom-file-header-mode = "replace"
 custom-file-header      = "# NOTE: DO NOT EDIT.\n# Regenerate with: pnpm generate"
 
+[tool.datamodel-codegen.profiles.draft-07]
+url                     = "http://json-schema.org/draft-07/schema#"
+output                  = "scripts/_json_schema.pyi"
+model-name-map          = '{"CoreSchemaMetaSchema1": "JsonSchema", "SimpleTypes": "Primitive"}'
+custom-file-header-mode = "replace"
+custom-file-header      = """
+'''Stubs for [json-schema draft-07](http://json-schema.org/draft-07/schema#).'''
+
+# NOTE: DO NOT EDIT.
+# Regenerate with: uv run datamodel-codegen --profile=draft-07 && pnpm run lint
+"""
+
 [tool.hatch.version]
 path    = "package.json"
 pattern = "\"version\": \"(?P<version>.+?)\""
@@ -123,6 +135,7 @@ ignore = [
   "N806",     # lowercase variable
   "S608",     # sql injection
   "PYI051",   # redundant-literal-union (opinionated)
+  "PYI021",   # docstrings can be allowed in stubs
   "Q000",     # conflicts with formatter
 ]
 
