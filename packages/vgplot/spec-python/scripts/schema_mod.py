@@ -11,20 +11,16 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
 
+from scripts import fs
+
 if TYPE_CHECKING:
     from collections.abc import Iterator, Mapping
 
     from scripts._json_schema import JsonSchema
 
 
-SCRIPTS_DIR = Path(__file__).parent
-SPEC_PYTHON_DIR = SCRIPTS_DIR.parent
-SCHEMA_DIR = SPEC_PYTHON_DIR / "schema"
-
-VGPLOT_DIR = SPEC_PYTHON_DIR.parent
-
-SCHEMA_IN = VGPLOT_DIR / "spec/dist/mosaic-schema.json"
-SCHEMA_OUT = SCHEMA_DIR / SCHEMA_IN.name
+SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
+SCHEMA_OUT = fs.SPEC_PYTHON / "schema" / SCHEMA_IN.name
 
 
 KEYS_REMAP: Final = {"as": "bind", "from": "source", "for": "plot"}
@@ -82,4 +78,4 @@ if __name__ == "__main__":
     schema = read_schema(SCHEMA_IN)
     replaced = replace_schema_keys(schema)
     write_schema(SCHEMA_OUT, replaced)
-    print(f"Generated python schema at: {SCHEMA_OUT.relative_to(SPEC_PYTHON_DIR).as_posix()}")
+    print(f"Generated python schema at: {SCHEMA_OUT.relative_to(fs.SPEC_PYTHON).as_posix()}")
