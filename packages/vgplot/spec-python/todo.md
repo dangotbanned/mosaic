@@ -1,6 +1,6 @@
 # Todo
 
-- [ ] Experiment with docs config
+- [x] Experiment with docs config
   - [x] **Fixed** `ParamRef` being "deduplicated" to `DataQuery`
 - [ ] Try to split up output into modules
   - **14k**/**53k** LOC with/out docs

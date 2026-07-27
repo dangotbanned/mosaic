@@ -41,9 +41,9 @@ all-exports-scope     = "children"
 # NOTE: Docs
 use-schema-description    = true
 use-field-description     = true
-# use-attribute-docstrings = true
+use-attribute-docstrings  = true
 use-single-line-docstring = true
-# wrap-string-literal = true
+
 use-title-as-name         = true
 snake-case-field          = true
 infer-union-variant-names = true
