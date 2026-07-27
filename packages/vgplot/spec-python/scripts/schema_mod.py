@@ -11,7 +11,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
 
-from scripts import fs
+import fs
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Mapping
@@ -19,8 +19,10 @@ if TYPE_CHECKING:
     from scripts._json_schema import JsonSchema
 
 
+GENERATED_MODULE_NAME = "mosaic"
+
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
-SCHEMA_OUT = fs.SPEC_PYTHON / "schema" / SCHEMA_IN.name
+SCHEMA_OUT = fs.SPEC_PYTHON / "schema" / f"{GENERATED_MODULE_NAME}.json"
 
 
 KEYS_REMAP: Final = {"as": "bind", "from": "source", "for": "plot"}

@@ -35,7 +35,7 @@ collapse-reuse-models = true
 skip-root-model       = true
 reuse-model           = true
 # keep-model-order = true
-# all-exports-scope = "children"
+all-exports-scope     = "children"
 
 # NOTE: Docs
 # use-schema-description = true
@@ -60,8 +60,8 @@ infer-union-variant-names = true
 # use-frozen-field = true
 
 [tool.datamodel-codegen.profiles.spec]
-input                   = "schema/mosaic-schema.json"
-output                  = "src/mosaic_spec/_models.py"
+input                   = "schema/"
+output                  = "src/mosaic_spec/_gen/"
 custom-file-header-mode = "replace"
 custom-file-header      = "# NOTE: DO NOT EDIT.\n# Regenerate with: pnpm generate"
 
