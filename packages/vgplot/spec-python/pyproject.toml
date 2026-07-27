@@ -99,10 +99,12 @@ line-ending               = "lf"
 docstring-code-format     = true
 
 [tool.ruff.lint]
-isort.split-on-trailing-comma = false
-extend-select                 = ["ALL"]
-extend-safe-fixes             = ["FA", "TC", "UP"]
-future-annotations            = true
+extend-select                            = ["ALL"]
+extend-safe-fixes                        = ["FA", "TC", "UP", "TID252"]
+future-annotations                       = true
+flake8-tidy-imports.ban-relative-imports = "all"
+
+isort = { split-on-trailing-comma = false, required-imports = ["from __future__ import annotations"] }
 
 ignore = [
   "A001",     # builtin-variable-shadowing
