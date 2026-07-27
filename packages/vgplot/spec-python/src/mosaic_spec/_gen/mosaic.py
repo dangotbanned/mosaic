@@ -700,9 +700,7 @@ CurveName: TypeAlias = Literal[
 
 
 DataArray: TypeAlias = Sequence[Mapping[str, Any]]
-"""
-An inline array of data objects to treat as JSON data.
-"""
+"""An inline array of data objects to treat as JSON data."""
 
 
 class DataCSV(TypedDict, closed=True):
@@ -912,9 +910,7 @@ Y1: TypeAlias = float | DataQuery
 
 
 PlotDataInline: TypeAlias = Sequence[Any]
-"""
-An array of inline data values to visualize. As this data does not come from a database, it can not be filtered by interactive selections.
-"""
+"""An array of inline data values to visualize. As this data does not come from a database, it can not be filtered by interactive selections."""
 
 
 class PlotFrom(TypedDict, closed=True):
@@ -1671,9 +1667,7 @@ ParamDefinition: TypeAlias = ParamValue | Param | ParamDate | Selection
 
 
 Params: TypeAlias = Mapping[str, ParamDefinition]
-"""
-Top-level Param and Selection definitions.
-"""
+"""Top-level Param and Selection definitions."""
 
 
 PlotInteractor: TypeAlias = (
@@ -1754,9 +1748,7 @@ ColumnTransform: TypeAlias = (
 
 
 Data: TypeAlias = Mapping[str, DataDefinition]
-"""
-Top-level dataset definitions.
-"""
+"""Top-level dataset definitions."""
 
 
 FrameValue: TypeAlias = float | IntervalTransform | None
