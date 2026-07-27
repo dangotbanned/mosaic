@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 _HERE = Path(__file__)
 
@@ -52,3 +53,10 @@ PYPROJECT_TOML = SPEC_PYTHON / "pyproject.toml"
 def repo_relative_str(source: str | Path) -> str:
     """Return a path representation for errors/logs."""
     return Path(source).relative_to(SPEC_PYTHON).as_posix()
+
+
+def read_pyproject() -> dict[str, Any]:
+    """`["tool"]["datamodel-codegen"]["profiles"]["spec"]["output"]`."""
+    import tomllib
+
+    return tomllib.loads(PYPROJECT_TOML.read_text("utf8"))
