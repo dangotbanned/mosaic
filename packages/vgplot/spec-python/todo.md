@@ -1,12 +1,9 @@
 # Todo
 
-- [ ] Fix `collapse-reuse-models`
-  - [ ] Avoid `ParamRef` -> `DataQuery`
-    - Maybe replace `DataQuery` in the schema with `{"type": "string"}`?
-    - Or find a way to configure priority
 - [ ] Experiment with docs config
+  - [x] **Fixed** `ParamRef` being "deduplicated" to `DataQuery`
 - [ ] Try to split up output into modules
-  - 14k LOC (already) without docs
+  - **14k**/**53k** LOC with/out docs
   - Huge files kill language servers
 - [x] Generate an `__all__`
   - [x] `_gen`
@@ -24,6 +21,6 @@
   - [ ] Generally, try to provide names for complex, repeated types
   - [ ] Output multiple schemas -> fixes one big file issue
   - [ ] Add `"x-*"` [extension fields](https://datamodel-code-generator.koxudaxi.dev/custom_template/#schema-extensions) into the schema which can be used here for templating
-    - Which file did the symbol come from?
-    - Inheritance?
+  - Which file did the symbol come from?
+  - Inheritance?
 - [ ] Add some tests once the top-level namespace starts stabilizing

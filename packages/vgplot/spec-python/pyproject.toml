@@ -40,7 +40,7 @@ all-exports-scope     = "children"
 
 # NOTE: Docs
 use-schema-description    = true
-# use-field-description = true
+use-field-description     = true
 # use-attribute-docstrings = true
 use-single-line-docstring = true
 # wrap-string-literal = true
@@ -145,7 +145,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*"                   = ["D", "S101"]
-"**/*.pyi"                  = ["ERA001"]          # false positive for commented out code
-"scripts/**.py"             = ["T201"]            # print is ok in scripts
+"**/*.pyi"                  = ["ERA001"]                    # false positive for commented out code
+"scripts/**.py"             = ["T201"]                      # print is ok in scripts
 # TODO @dangotbanned: Clean these up before writing to `mosaic.json`
-"src/mosaic_spec/_gen/*.py" = ["RUF002", "D415"]
+"src/mosaic_spec/_gen/*.py" = ["RUF001", "RUF002", "D415"]
