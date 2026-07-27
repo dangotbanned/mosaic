@@ -13,7 +13,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Iterator, Mapping
+
+    from scripts._json_schema import JsonSchema
 
 
 SCRIPTS_DIR = Path(__file__).parent
@@ -30,15 +32,15 @@ KEYS_REMAP: Final = {"as": "bind", "from": "source", "for": "plot"}
 """Keys that collide with [`keyword.kwlist`][]."""
 
 
-def read_schema(path: str | Path) -> dict[str, Any]:
+def read_schema(path: str | Path) -> JsonSchema:
     import msgspec
 
     with Path(path).open(encoding="utf8") as fd:
-        schema: dict[str, Any] = msgspec.json.decode(fd.read())
+        schema: JsonSchema = msgspec.json.decode(fd.read())
         return schema
 
 
-def write_schema(path: str | Path, schema: dict[str, Any]) -> None:
+def write_schema(path: str | Path, schema: JsonSchema) -> None:
     import json
 
     path = Path(path)
@@ -47,11 +49,17 @@ def write_schema(path: str | Path, schema: dict[str, Any]) -> None:
         json.dump(schema, fd, separators=(",", ":"))
 
 
-def replace_schema_keys(root: dict[str, Any]) -> dict[str, Any]:
-    return dict(_recursive_replace(root))
+# TODO @dangotbanned: Remove `"$schema"` for everything except the root
+def replace_schema_keys(root: JsonSchema) -> JsonSchema:
+    result = dict(_recursive_replace(root))
+    return {
+        "$ref": result["$ref"],
+        "$schema": result["$schema"],
+        "definitions": result["definitions"],
+    }
 
 
-def _recursive_replace(m: dict[str, Any]) -> Iterator[tuple[str, Any]]:
+def _recursive_replace(m: Mapping[str, Any]) -> Iterator[tuple[str, Any]]:
     remap = KEYS_REMAP
     for k, v in m.items():
         k_out = remap.get(k, k)
