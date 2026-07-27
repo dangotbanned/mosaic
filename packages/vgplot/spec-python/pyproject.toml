@@ -43,13 +43,6 @@ use-title-as-name         = true
 snake-case-field          = true
 infer-union-variant-names = true
 
-# broken, requires json as string
-# aliases = {
-#     "as" = "bind",
-#     "from" = "source",
-#     "for" = "plot",
-# }
-
 # TODO @dangotbanned: Open feature request
 aliases = '{"as": "bind", "from": "source", "for": "plot"}'
 # https://datamodel-code-generator.koxudaxi.dev/presets/#practical-py310-20260619
