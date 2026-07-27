@@ -26,3 +26,4 @@
   - [ ] Add `"x-*"` [extension fields](https://datamodel-code-generator.koxudaxi.dev/custom_template/#schema-extensions) into the schema which can be used here for templating
     - Which file did the symbol come from?
     - Inheritance?
+- [ ] Add some tests once the top-level namespace starts stabilizing
