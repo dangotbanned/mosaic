@@ -26,6 +26,10 @@ SCHEMA_IN = VGPLOT_DIR / "spec/dist/mosaic-schema.json"
 SCHEMA_OUT = SCHEMA_DIR / SCHEMA_IN.name
 
 
+KEYS_REMAP: Final = {"as": "bind", "from": "source", "for": "plot"}
+"""Keys that collide with [`keyword.kwlist`][]."""
+
+
 def read_schema(path: str | Path) -> dict[str, Any]:
     import msgspec
 
@@ -47,11 +51,8 @@ def replace_schema_keys(root: dict[str, Any]) -> dict[str, Any]:
     return dict(_recursive_replace(root))
 
 
-ARG_REMAP: Final = {"as": "bind", "from": "source", "for": "plot"}
-
-
 def _recursive_replace(m: dict[str, Any]) -> Iterator[tuple[str, Any]]:
-    remap = ARG_REMAP
+    remap = KEYS_REMAP
     for k, v in m.items():
         k_out = remap.get(k, k)
         if isinstance(v, dict):
