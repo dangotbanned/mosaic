@@ -13,7 +13,11 @@ import ast
 import dataclasses
 from pathlib import Path
 
-import fs
+# TODO @dangotbanned: Unbreak path for `../*.ipynb`
+try:
+    import fs
+except ModuleNotFoundError:
+    from scripts import fs
 
 
 @dataclasses.dataclass(slots=True, frozen=True)

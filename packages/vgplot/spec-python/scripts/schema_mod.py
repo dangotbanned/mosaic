@@ -11,7 +11,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
 
-import fs
+# TODO @dangotbanned: Unbreak path for `../*.ipynb`
+try:
+    import fs
+except ModuleNotFoundError:
+    from scripts import fs
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Mapping
