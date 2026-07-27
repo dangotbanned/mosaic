@@ -86,7 +86,8 @@ pattern = "\"version\": \"(?P<version>.+?)\""
 packages = ["mosaic_spec"]
 
 [tool.pyright]
-ignore           = ["../**/.venv/"]  # Do not display diagnostics in external source code
+ignore           = ["../**/.venv/"]                       # Do not display diagnostics in external source code
+include          = ["src", "scripts", "*.py", "*.ipynb"]
 typeCheckingMode = "standard"
 
 [tool.ruff]
@@ -101,7 +102,7 @@ docstring-code-format     = true
 
 [tool.ruff.lint]
 extend-select                            = ["ALL"]
-extend-safe-fixes                        = ["FA", "TC", "UP", "TID252"]
+extend-safe-fixes                        = ["FA", "TC", "UP", "TID252", "EM", "TRY"]
 future-annotations                       = true
 flake8-tidy-imports.ban-relative-imports = "all"
 
