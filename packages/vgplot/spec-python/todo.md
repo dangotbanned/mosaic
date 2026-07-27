@@ -8,9 +8,9 @@
 - [ ] Try to split up output into modules
   - 14k LOC (already) without docs
   - Huge files kill language servers
-- [ ] Generate an `__all__`
+- [x] Generate an `__all__`
   - [x] `_gen`
-  - [ ] `mosaic_spec`
+  - [x] `mosaic_spec`
 - [ ] Open an issue about preference for `total=False` instead of 90237393x `NotRequired`
   - When most are `NotRequired`, the important bit is which one's are `Required`
 - [x] Try out using `.py` for target output

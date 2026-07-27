@@ -42,6 +42,9 @@ MOSAIC_SPEC = SRC / "mosaic_spec"
 MOSAIC_SPEC_INIT = MOSAIC_SPEC / "__init__.py"
 """`mosaic/packages/vgplot/spec-python/src/mosaic_spec/__init__.py`"""
 
+MOSAIC_SPEC_GEN_INIT = MOSAIC_SPEC / "_gen" / "__init__.py"
+"""`mosaic/packages/vgplot/spec-python/src/mosaic_spec/__init__.py`"""
+
 PYPROJECT_TOML = SPEC_PYTHON / "pyproject.toml"
 """`mosaic/packages/vgplot/spec-python/pyproject.toml`"""
 
