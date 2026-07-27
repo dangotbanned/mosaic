@@ -27,6 +27,7 @@ target-python-version   = "3.10"
 
 use-generic-container-types = true
 use-tuple-for-fixed-items   = true
+use-type-checking-imports   = true
 
 # frustratingly broken (replaces ParamRef -> DataQuery), but need to use for `Tip*` dedup
 collapse-reuse-models = true
@@ -40,6 +41,7 @@ reuse-model           = true
 # use-field-description = true
 # use-attribute-docstrings = true
 # use-single-line-docstring = true
+# wrap-string-literal = true
 use-title-as-name         = true
 snake-case-field          = true
 infer-union-variant-names = true
@@ -125,7 +127,8 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = [
+"tests/*"  = [
   "D",
   "S101",
 ]
+"**/*.pyi" = ["ERA001"]  # false positive for commented out code
