@@ -29,14 +29,13 @@ use-generic-container-types = true
 use-tuple-for-fixed-items   = true
 use-type-checking-imports   = true
 
-# frustratingly broken (replaces ParamRef -> DataQuery), but need to use for `Tip*` dedup
 collapse-reuse-models = true
 skip-root-model       = true
 reuse-model           = true
 # keep-model-order = true
 # all-exports-scope = "children"
 
-# TODO @dangotbanned: configure docs last
+# NOTE: Docs
 # use-schema-description = true
 # use-field-description = true
 # use-attribute-docstrings = true
@@ -46,12 +45,9 @@ use-title-as-name         = true
 snake-case-field          = true
 infer-union-variant-names = true
 
-# TODO @dangotbanned: Open feature request
-aliases = '{"as": "bind", "from": "source", "for": "plot"}'
 # https://datamodel-code-generator.koxudaxi.dev/presets/#practical-py310-20260619
 # allow-population-by-field-name = true
 # collapse-root-models = true
-# disable-timestamp = true
 # enum-field-as-literal = "one"
 # naming-strategy = "primary-first"
 # set-default-enum-member = true

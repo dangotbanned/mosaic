@@ -1,0 +1,26 @@
+# Todo
+
+- [ ] Fix `collapse-reuse-models`
+  - [ ] Avoid `ParamRef` -> `DataQuery`
+    - Maybe replace `DataQuery` in the schema with `{"type": "string"}`?
+    - Or find a way to configure priority
+- [ ] Experiment with docs config
+- [ ] Try to split up output into modules
+  - 14k LOC (already) without docs
+  - Huge files kill language servers
+- [ ] Generate an `__all__`
+- [ ] Open an issue about preference for `total=False` instead of 90237393x `NotRequired`
+  - When most are `NotRequired`, the important bit is which one's are `Required`
+- [ ] Try out using `.py` for target output
+  - Needed to use stubs when functional syntax prevented forward refs
+  - Will need to add `typing_extensions` dependency
+- [ ] Ordering of `TypeAlias`s
+  - Possibly move to another file, instead of sctattered between `TypedDict` defs
+- [ ] Figure out why there is `Spec1` - `Spec81`
+- [ ] `mosaic-spec` feedback
+  - [ ] Avoid anonymous literal/enums
+  - [ ] Generally, try to provide names for complex, repeated types
+  - [ ] Output multiple schemas -> fixes one big file issue
+  - [ ] Add `"x-*"` [extension fields](https://datamodel-code-generator.koxudaxi.dev/custom_template/#schema-extensions) into the schema which can be used here for templating
+    - Which file did the symbol come from?
+    - Inheritance?
