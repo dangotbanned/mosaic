@@ -10,6 +10,8 @@ from typing_extensions import NotRequired, TypedDict
 
 
 class AggregateExpression(TypedDict, closed=True):
+    """A custom SQL aggregate expression."""
+
     agg: str
     label: NotRequired[str]
 
@@ -20,6 +22,8 @@ BinInterval: TypeAlias = Literal[
 
 
 class BrushStyles(TypedDict, closed=True):
+    """Styles for rectangular selection brushes."""
+
     fill: NotRequired[str]
     fill_opacity: NotRequired[float]
     opacity: NotRequired[float]
@@ -661,6 +665,8 @@ ColorScheme: TypeAlias = (
 
 
 class Config(TypedDict):
+    """Configuration options."""
+
     extensions: NotRequired[str | Sequence[str]]
 
 
@@ -694,9 +700,14 @@ CurveName: TypeAlias = Literal[
 
 
 DataArray: TypeAlias = Sequence[Mapping[str, Any]]
+"""
+An inline array of data objects to treat as JSON data.
+"""
 
 
 class DataCSV(TypedDict, closed=True):
+    """A data definition that loads a csv file."""
+
     delimiter: NotRequired[str]
     file: str
     replace: NotRequired[bool]
@@ -709,6 +720,8 @@ class DataCSV(TypedDict, closed=True):
 
 
 class DataFile(TypedDict, closed=True):
+    """A data definition that loads an external data file."""
+
     file: str
     replace: NotRequired[bool]
     select: NotRequired[Sequence[str]]
@@ -738,6 +751,8 @@ class DataJSONObjects(TypedDict, closed=True):
 
 
 class DataParquet(TypedDict, closed=True):
+    """A data definition that loads a parquet file."""
+
     file: str
     replace: NotRequired[bool]
     select: NotRequired[Sequence[str]]
@@ -751,6 +766,8 @@ DataQuery: TypeAlias = str
 
 
 class DataSpatial(TypedDict, closed=True):
+    """A data definition that loads a supported spatial data file format."""
+
     file: str
     layer: NotRequired[str]
     replace: NotRequired[bool]
@@ -762,6 +779,8 @@ class DataSpatial(TypedDict, closed=True):
 
 
 class DataTable(TypedDict, closed=True):
+    """A data definition that queries an existing table."""
+
     query: str
     replace: NotRequired[bool]
     select: NotRequired[Sequence[str]]
@@ -772,6 +791,8 @@ class DataTable(TypedDict, closed=True):
 
 
 class Days(TypedDict, closed=True):
+    """A date/time interval in units of days."""
+
     days: float
 
 
@@ -798,10 +819,14 @@ GridInterpolate: TypeAlias = Literal["none", "linear", "nearest", "barycentric",
 
 
 class HSpace(TypedDict, closed=True):
+    """An hspace component."""
+
     hspace: float | str
 
 
 class Hours(TypedDict, closed=True):
+    """A date/time interval in units of hours."""
+
     hours: float
 
 
@@ -830,28 +855,40 @@ class Options(TypedDict, closed=True):
 
 
 class Meta(TypedDict):
+    """Specification metadata."""
+
     credit: NotRequired[str]
     description: NotRequired[str]
     title: NotRequired[str]
 
 
 class Microseconds(TypedDict, closed=True):
+    """A date/time interval in units of microseconds."""
+
     microseconds: float
 
 
 class Milliseconds(TypedDict, closed=True):
+    """A date/time interval in units of milliseconds."""
+
     milliseconds: float
 
 
 class Minutes(TypedDict, closed=True):
+    """A date/time interval in units of minutes."""
+
     minutes: float
 
 
 class Months(TypedDict, closed=True):
+    """A date/time interval in units of months."""
+
     months: float
 
 
 class ParamDate(TypedDict, closed=True):
+    """A Date-valued Param definition."""
+
     date: str
     select: NotRequired[Literal["value"]]
 
@@ -863,6 +900,8 @@ ParamValue: TypeAlias = ParamLiteral | Sequence[ParamLiteral | DataQuery]
 
 
 class Margins(TypedDict, closed=True):
+    """A shorthand object notation for setting multiple margin values. The object keys are margin names (top, right, etc)."""
+
     bottom: NotRequired[float | DataQuery]
     left: NotRequired[float | DataQuery]
     right: NotRequired[float | DataQuery]
@@ -873,15 +912,22 @@ Y1: TypeAlias = float | DataQuery
 
 
 PlotDataInline: TypeAlias = Sequence[Any]
+"""
+An array of inline data values to visualize. As this data does not come from a database, it can not be filtered by interactive selections.
+"""
 
 
 class PlotFrom(TypedDict, closed=True):
+    """Input data specification for a plot mark."""
+
     filter_by: NotRequired[DataQuery]
     source: NotRequired[str | DataQuery]
     optimize: NotRequired[bool]
 
 
 class PlotLegend(TypedDict, closed=True):
+    """A legend defined as an entry within a plot."""
+
     bind: NotRequired[DataQuery]
     columns: NotRequired[float]
     field: NotRequired[str]
@@ -937,6 +983,8 @@ ProjectionName: TypeAlias = Literal[
 
 
 class Format(TypedDict, closed=True):
+    """How channel values are formatted for display. If a format is a string, it is interpreted as a (UTC) time format for temporal channels, and otherwise a number format."""
+
     aria_label: NotRequired[bool | str | DataQuery]
     fill: NotRequired[bool | str | DataQuery]
     fill_opacity: NotRequired[bool | str | DataQuery]
@@ -1074,6 +1122,8 @@ ReducerPercentile: TypeAlias = Literal[
 
 
 class Region(TypedDict, closed=True):
+    """A rectangular region interactor."""
+
     bind: NotRequired[DataQuery]
     brush: NotRequired[BrushStyles]
     channels: Sequence[str]
@@ -1082,6 +1132,8 @@ class Region(TypedDict, closed=True):
 
 
 class SQLExpression(TypedDict, closed=True):
+    """A custom SQL expression."""
+
     label: NotRequired[str]
     sql: str
 
@@ -1090,6 +1142,8 @@ ScaleName: TypeAlias = Literal["x", "y", "fx", "fy", "r", "color", "opacity", "s
 
 
 class Search(TypedDict, closed=True):
+    """A search input component."""
+
     bind: NotRequired[DataQuery]
     column: NotRequired[str]
     field: NotRequired[str]
@@ -1101,6 +1155,8 @@ class Search(TypedDict, closed=True):
 
 
 class Seconds(TypedDict, closed=True):
+    """A date/time interval in units of seconds."""
+
     seconds: float
 
 
@@ -1110,6 +1166,8 @@ SelectFilter: TypeAlias = Literal[
 
 
 class Selection(TypedDict, closed=True):
+    """A Selection definition."""
+
     cross: NotRequired[bool]
     empty: NotRequired[bool]
     include: NotRequired[DataQuery | Sequence[DataQuery]]
@@ -1117,6 +1175,8 @@ class Selection(TypedDict, closed=True):
 
 
 class Slider(TypedDict, closed=True):
+    """A slider input component."""
+
     bind: NotRequired[DataQuery]
     column: NotRequired[str]
     field: NotRequired[str]
@@ -1133,6 +1193,14 @@ class Slider(TypedDict, closed=True):
 
 
 class SortOrder2(TypedDict, closed=True):
+    """How to order values; one of:
+
+    - a function for comparing data, returning a signed number
+    - a channel value definition for sorting given values in ascending order
+    - a {value, order} object for sorting given values
+    - a {channel, order} object for sorting the named channel’s values
+    """
+
     channel: NotRequired[
         Literal[
             "-ariaLabel",
@@ -1196,6 +1264,8 @@ SymbolType: TypeAlias = Literal[
 
 
 class Table(TypedDict, closed=True):
+    """A table grid view component."""
+
     align: NotRequired[Mapping[str, Literal["left", "right", "center", "justify"]]]
     bind: NotRequired[DataQuery]
     columns: NotRequired[Sequence[str]]
@@ -1232,6 +1302,8 @@ TipPointer: TypeAlias = Literal["x", "y", "xy"]
 
 
 class Toggle(TypedDict, closed=True):
+    """A toggle interactor."""
+
     bind: NotRequired[DataQuery]
     channels: Sequence[str]
     peers: NotRequired[bool]
@@ -1239,18 +1311,24 @@ class Toggle(TypedDict, closed=True):
 
 
 class ToggleColor(TypedDict, closed=True):
+    """A toggleColor interactor."""
+
     bind: NotRequired[DataQuery]
     peers: NotRequired[bool]
     select: Literal["toggleColor"]
 
 
 class ToggleX(TypedDict, closed=True):
+    """A toggleX interactor."""
+
     bind: NotRequired[DataQuery]
     peers: NotRequired[bool]
     select: Literal["toggleX"]
 
 
 class ToggleY(TypedDict, closed=True):
+    """A toggleY interactor."""
+
     bind: NotRequired[DataQuery]
     peers: NotRequired[bool]
     select: Literal["toggleY"]
@@ -1260,6 +1338,8 @@ TransformField: TypeAlias = str | DataQuery
 
 
 class VSpace(TypedDict, closed=True):
+    """A vspace component."""
+
     vspace: float | str
 
 
@@ -1267,10 +1347,14 @@ VectorShapeName: TypeAlias = Literal["arrow", "spike"]
 
 
 class Years(TypedDict, closed=True):
+    """A date/time interval in units of years."""
+
     years: float
 
 
 class Bin(TypedDict, closed=True):
+    """A bin transform."""
+
     bin: str | float | bool | DataQuery | Sequence[str | float | bool | DataQuery]
     interval: NotRequired[BinInterval]
     minstep: NotRequired[float]
@@ -1281,14 +1365,20 @@ class Bin(TypedDict, closed=True):
 
 
 class Centroid(TypedDict, closed=True):
+    """A centroid transform."""
+
     centroid: str | float | bool | DataQuery | Sequence[str | float | bool | DataQuery]
 
 
 class CentroidX(TypedDict, closed=True):
+    """A centroidX transform."""
+
     centroid_x: str | float | bool | DataQuery | Sequence[str | float | bool | DataQuery]
 
 
 class CentroidY(TypedDict, closed=True):
+    """A centroidY transform."""
+
     centroid_y: str | float | bool | DataQuery | Sequence[str | float | bool | DataQuery]
 
 
@@ -1335,6 +1425,8 @@ ChannelDomainValue: TypeAlias = (
 
 
 class Column(TypedDict, closed=True):
+    """A column transform."""
+
     column: str | float | bool | DataQuery | Sequence[str | float | bool | DataQuery]
 
 
@@ -1355,22 +1447,32 @@ DataDefinition: TypeAlias = (
 
 
 class DateDay(TypedDict, closed=True):
+    """A dateDay transform."""
+
     date_day: str | float | bool | DataQuery | Sequence[str | float | bool | DataQuery]
 
 
 class DateMonth(TypedDict, closed=True):
+    """A dateMonth transform."""
+
     date_month: str | float | bool | DataQuery | Sequence[str | float | bool | DataQuery]
 
 
 class DateMonthDay(TypedDict, closed=True):
+    """A dateMonthDay transform."""
+
     date_month_day: str | float | bool | DataQuery | Sequence[str | float | bool | DataQuery]
 
 
 class GeoJSON(TypedDict, closed=True):
+    """A geojson transform."""
+
     geojson: str | float | bool | DataQuery | Sequence[str | float | bool | DataQuery]
 
 
 class Highlight(TypedDict, closed=True):
+    """A highlight interactor."""
+
     by: DataQuery
     fill: NotRequired[str]
     fill_opacity: NotRequired[float]
@@ -1386,6 +1488,8 @@ IntervalTransform: TypeAlias = (
 
 
 class IntervalX(TypedDict, closed=True):
+    """An intervalX interactor."""
+
     bind: NotRequired[DataQuery]
     brush: NotRequired[BrushStyles]
     field: NotRequired[str]
@@ -1395,6 +1499,8 @@ class IntervalX(TypedDict, closed=True):
 
 
 class IntervalXY(TypedDict, closed=True):
+    """An intervalXY interactor."""
+
     bind: NotRequired[DataQuery]
     brush: NotRequired[BrushStyles]
     peers: NotRequired[bool]
@@ -1405,6 +1511,8 @@ class IntervalXY(TypedDict, closed=True):
 
 
 class IntervalY(TypedDict, closed=True):
+    """An intervalY interactor."""
+
     bind: NotRequired[DataQuery]
     brush: NotRequired[BrushStyles]
     field: NotRequired[str]
@@ -1414,6 +1522,8 @@ class IntervalY(TypedDict, closed=True):
 
 
 class Legend(TypedDict, closed=True):
+    """A legend defined as a top-level spec component."""
+
     bind: NotRequired[DataQuery]
     columns: NotRequired[float]
     field: NotRequired[str]
@@ -1456,6 +1566,8 @@ LiteralTimeInterval: TypeAlias = (
 
 
 class Menu(TypedDict, closed=True):
+    """A menu input component."""
+
     bind: NotRequired[DataQuery]
     column: NotRequired[str]
     field: NotRequired[str]
@@ -1469,6 +1581,8 @@ class Menu(TypedDict, closed=True):
 
 
 class NearestX(TypedDict, closed=True):
+    """A nearestX interactor."""
+
     bind: NotRequired[DataQuery]
     channels: NotRequired[Sequence[str]]
     fields: NotRequired[Sequence[str]]
@@ -1477,6 +1591,8 @@ class NearestX(TypedDict, closed=True):
 
 
 class NearestY(TypedDict, closed=True):
+    """A nearestY interactor."""
+
     bind: NotRequired[DataQuery]
     channels: NotRequired[Sequence[str]]
     fields: NotRequired[Sequence[str]]
@@ -1485,6 +1601,8 @@ class NearestY(TypedDict, closed=True):
 
 
 class Pan(TypedDict, closed=True):
+    """A pan interactor."""
+
     select: Literal["pan"]
     x: NotRequired[DataQuery]
     xfield: NotRequired[str]
@@ -1493,6 +1611,8 @@ class Pan(TypedDict, closed=True):
 
 
 class PanX(TypedDict, closed=True):
+    """A panX interactor."""
+
     select: Literal["panX"]
     x: NotRequired[DataQuery]
     xfield: NotRequired[str]
@@ -1501,6 +1621,8 @@ class PanX(TypedDict, closed=True):
 
 
 class PanY(TypedDict, closed=True):
+    """A panY interactor."""
+
     select: Literal["panY"]
     x: NotRequired[DataQuery]
     xfield: NotRequired[str]
@@ -1509,6 +1631,8 @@ class PanY(TypedDict, closed=True):
 
 
 class PanZoom(TypedDict, closed=True):
+    """A panZoom interactor."""
+
     select: Literal["panZoom"]
     x: NotRequired[DataQuery]
     xfield: NotRequired[str]
@@ -1517,6 +1641,8 @@ class PanZoom(TypedDict, closed=True):
 
 
 class PanZoomX(TypedDict, closed=True):
+    """A panZoomX interactor."""
+
     select: Literal["panZoomX"]
     x: NotRequired[DataQuery]
     xfield: NotRequired[str]
@@ -1525,6 +1651,8 @@ class PanZoomX(TypedDict, closed=True):
 
 
 class PanZoomY(TypedDict, closed=True):
+    """A panZoomY interactor."""
+
     select: Literal["panZoomY"]
     x: NotRequired[DataQuery]
     xfield: NotRequired[str]
@@ -1533,6 +1661,8 @@ class PanZoomY(TypedDict, closed=True):
 
 
 class Param(TypedDict, closed=True):
+    """A Param definition."""
+
     select: NotRequired[Literal["value"]]
     value: ParamValue
 
@@ -1541,6 +1671,9 @@ ParamDefinition: TypeAlias = ParamValue | Param | ParamDate | Selection
 
 
 Params: TypeAlias = Mapping[str, ParamDefinition]
+"""
+Top-level Param and Selection definitions.
+"""
 
 
 PlotInteractor: TypeAlias = (
@@ -1603,6 +1736,8 @@ VectorShape: TypeAlias = VectorShapeName
 
 
 class ChannelDomainValueSpec1(TypedDict, closed=True):
+    """How to derive a scale’s domain from a channel’s values."""
+
     limit: NotRequired[float | tuple[Lo, Lo]]
     order: NotRequired[Literal["ascending", "descending"] | None]
     reduce: NotRequired[Reducer | bool | None]
@@ -1619,6 +1754,9 @@ ColumnTransform: TypeAlias = (
 
 
 Data: TypeAlias = Mapping[str, DataDefinition]
+"""
+Top-level dataset definitions.
+"""
 
 
 FrameValue: TypeAlias = float | IntervalTransform | None
@@ -1628,6 +1766,8 @@ Interval: TypeAlias = LiteralTimeInterval
 
 
 class Lag(TypedDict, closed=True):
+    """A lag window transform."""
+
     exclude: NotRequired[
         Literal[
             "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
@@ -1642,6 +1782,8 @@ class Lag(TypedDict, closed=True):
 
 
 class Last(TypedDict, closed=True):
+    """A last aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -1657,6 +1799,8 @@ class Last(TypedDict, closed=True):
 
 
 class LastValue(TypedDict, closed=True):
+    """A last_value window transform."""
+
     exclude: NotRequired[
         Literal[
             "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
@@ -1671,6 +1815,8 @@ class LastValue(TypedDict, closed=True):
 
 
 class Lead(TypedDict, closed=True):
+    """A lead window transform."""
+
     exclude: NotRequired[
         Literal[
             "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
@@ -1685,6 +1831,8 @@ class Lead(TypedDict, closed=True):
 
 
 class Max(TypedDict, closed=True):
+    """A max aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -1700,6 +1848,8 @@ class Max(TypedDict, closed=True):
 
 
 class Median(TypedDict, closed=True):
+    """A median aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -1715,6 +1865,8 @@ class Median(TypedDict, closed=True):
 
 
 class Min(TypedDict, closed=True):
+    """A min aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -1730,6 +1882,8 @@ class Min(TypedDict, closed=True):
 
 
 class Mode(TypedDict, closed=True):
+    """A mode aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -1745,6 +1899,8 @@ class Mode(TypedDict, closed=True):
 
 
 class NTile(TypedDict, closed=True):
+    """An ntile window transform."""
+
     exclude: NotRequired[
         Literal[
             "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
@@ -1759,6 +1915,8 @@ class NTile(TypedDict, closed=True):
 
 
 class NthValue(TypedDict, closed=True):
+    """An nth_value window transform."""
+
     exclude: NotRequired[
         Literal[
             "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
@@ -1773,6 +1931,8 @@ class NthValue(TypedDict, closed=True):
 
 
 class PercentRank(TypedDict, closed=True):
+    """A percent_rank window transform."""
+
     exclude: NotRequired[
         Literal[
             "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
@@ -1787,6 +1947,8 @@ class PercentRank(TypedDict, closed=True):
 
 
 class PlotAttributes(TypedDict, closed=True):
+    """Plot attributes."""
+
     align: NotRequired[float | DataQuery]
     aria_description: NotRequired[str | None]
     aria_label: NotRequired[str | None]
@@ -2005,6 +2167,8 @@ class PlotAttributes(TypedDict, closed=True):
 
 
 class Product(TypedDict, closed=True):
+    """A product aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -2020,6 +2184,8 @@ class Product(TypedDict, closed=True):
 
 
 class Quantile(TypedDict, closed=True):
+    """A quantile aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -2035,6 +2201,8 @@ class Quantile(TypedDict, closed=True):
 
 
 class Rank(TypedDict, closed=True):
+    """A rank window transform."""
+
     exclude: NotRequired[
         Literal[
             "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
@@ -2049,6 +2217,8 @@ class Rank(TypedDict, closed=True):
 
 
 class RowNumber(TypedDict, closed=True):
+    """A row_number window transform."""
+
     exclude: NotRequired[
         Literal[
             "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
@@ -2063,6 +2233,8 @@ class RowNumber(TypedDict, closed=True):
 
 
 class Spec3(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     config: NotRequired[Config]
     data: NotRequired[Data]
     hspace: float | str
@@ -2072,6 +2244,8 @@ class Spec3(TypedDict, closed=True):
 
 
 class Spec4(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     config: NotRequired[Config]
     data: NotRequired[Data]
     meta: NotRequired[Meta]
@@ -2081,6 +2255,8 @@ class Spec4(TypedDict, closed=True):
 
 
 class Spec5(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     bind: NotRequired[DataQuery]
     column: NotRequired[str]
     config: NotRequired[Config]
@@ -2099,6 +2275,8 @@ class Spec5(TypedDict, closed=True):
 
 
 class Spec6(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     bind: NotRequired[DataQuery]
     column: NotRequired[str]
     config: NotRequired[Config]
@@ -2115,6 +2293,8 @@ class Spec6(TypedDict, closed=True):
 
 
 class Spec7(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     bind: NotRequired[DataQuery]
     column: NotRequired[str]
     config: NotRequired[Config]
@@ -2136,6 +2316,8 @@ class Spec7(TypedDict, closed=True):
 
 
 class Spec8(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     align: NotRequired[Mapping[str, Literal["left", "right", "center", "justify"]]]
     bind: NotRequired[DataQuery]
     columns: NotRequired[Sequence[str]]
@@ -2154,6 +2336,8 @@ class Spec8(TypedDict, closed=True):
 
 
 class Spec81(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     bind: NotRequired[DataQuery]
     columns: NotRequired[float]
     config: NotRequired[Config]
@@ -2175,6 +2359,8 @@ class Spec81(TypedDict, closed=True):
 
 
 class Stddev(TypedDict, closed=True):
+    """A sample standard deviation aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -2190,6 +2376,8 @@ class Stddev(TypedDict, closed=True):
 
 
 class StddevPop(TypedDict, closed=True):
+    """A population standard deviation aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -2205,6 +2393,8 @@ class StddevPop(TypedDict, closed=True):
 
 
 class Sum(TypedDict, closed=True):
+    """A sum aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -2220,6 +2410,8 @@ class Sum(TypedDict, closed=True):
 
 
 class VarPop(TypedDict, closed=True):
+    """A population variance aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -2235,6 +2427,8 @@ class VarPop(TypedDict, closed=True):
 
 
 class Variance(TypedDict, closed=True):
+    """A sample variance aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -2250,6 +2444,8 @@ class Variance(TypedDict, closed=True):
 
 
 class Argmax(TypedDict, closed=True):
+    """An argmax aggregate transform."""
+
     argmax: Sequence[str | float | bool | DataQuery]
     distinct: NotRequired[bool]
     exclude: NotRequired[
@@ -2265,6 +2461,8 @@ class Argmax(TypedDict, closed=True):
 
 
 class Argmin(TypedDict, closed=True):
+    """An argmin aggregate transform."""
+
     argmin: Sequence[str | float | bool | DataQuery]
     distinct: NotRequired[bool]
     exclude: NotRequired[
@@ -2280,6 +2478,8 @@ class Argmin(TypedDict, closed=True):
 
 
 class Avg(TypedDict, closed=True):
+    """An avg (average, or mean) aggregate transform."""
+
     avg: str | float | bool | DataQuery | Sequence[str | float | bool | DataQuery]
     distinct: NotRequired[bool]
     exclude: NotRequired[
@@ -2295,6 +2495,8 @@ class Avg(TypedDict, closed=True):
 
 
 class ChannelDomainSort(TypedDict, closed=True):
+    """How to impute scale domains from channel values."""
+
     color: NotRequired[ChannelDomainValueSpec]
     fx: NotRequired[ChannelDomainValueSpec]
     fy: NotRequired[ChannelDomainValueSpec]
@@ -2311,6 +2513,8 @@ class ChannelDomainSort(TypedDict, closed=True):
 
 
 class Count(TypedDict, closed=True):
+    """A count aggregate transform."""
+
     count: (
         Sequence[Any]
         | str
@@ -2334,6 +2538,8 @@ class Count(TypedDict, closed=True):
 
 
 class CumeDist(TypedDict, closed=True):
+    """A cume_dist window transform."""
+
     cume_dist: Sequence[Any] | None
     exclude: NotRequired[
         Literal[
@@ -2348,6 +2554,8 @@ class CumeDist(TypedDict, closed=True):
 
 
 class DenseRank(TypedDict, closed=True):
+    """A dense_rank window transform."""
+
     dense_rank: Sequence[Any] | None
     exclude: NotRequired[
         Literal[
@@ -2362,6 +2570,8 @@ class DenseRank(TypedDict, closed=True):
 
 
 class First(TypedDict, closed=True):
+    """A first aggregate transform."""
+
     distinct: NotRequired[bool]
     exclude: NotRequired[
         Literal[
@@ -2377,6 +2587,8 @@ class First(TypedDict, closed=True):
 
 
 class FirstValue(TypedDict, closed=True):
+    """A first_value window transform."""
+
     exclude: NotRequired[
         Literal[
             "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
@@ -2435,11 +2647,15 @@ ChannelValue: TypeAlias = (
 
 
 class ChannelValueIntervalSpec1(TypedDict, closed=True):
+    """In some contexts, when specifying a mark channel’s value, you can provide a {value, interval} object to specify an associated interval."""
+
     interval: Interval
     value: ChannelValue
 
 
 class ChannelValueSpec1(TypedDict, closed=True):
+    """When specifying a mark channel’s value, you can provide a {value, scale} object to override the scale that would normally be associated with the channel."""
+
     label: NotRequired[str]
     scale: NotRequired[ScaleName | Literal["auto"] | bool | None]
     value: ChannelValue
@@ -2449,6 +2665,8 @@ ChannelValueSpec: TypeAlias = ChannelValue | ChannelValueSpec1
 
 
 class Tip(TypedDict):
+    """Whether to generate a tooltip for this mark, and any tip options."""
+
     anchor: NotRequired[FrameAnchor | DataQuery]
     font_family: NotRequired[str | DataQuery]
     font_size: NotRequired[ChannelValue | DataQuery]
@@ -2488,6 +2706,14 @@ class Tip(TypedDict):
 
 
 class SortOrder1(TypedDict, closed=True):
+    """How to order values; one of:
+
+    - a function for comparing data, returning a signed number
+    - a channel value definition for sorting given values in ascending order
+    - a {value, order} object for sorting given values
+    - a {channel, order} object for sorting the named channel’s values
+    """
+
     order: NotRequired[Literal["ascending", "descending"]]
     value: NotRequired[ChannelValue]
 
@@ -2496,6 +2722,8 @@ SortOrder: TypeAlias = ChannelValue | SortOrder1 | SortOrder2
 
 
 class Spec10(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -2572,6 +2800,8 @@ class Spec10(TypedDict, closed=True):
 
 
 class Spec11(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -2648,6 +2878,8 @@ class Spec11(TypedDict, closed=True):
 
 
 class Spec12(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -2724,6 +2956,8 @@ class Spec12(TypedDict, closed=True):
 
 
 class Spec13(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -2804,6 +3038,8 @@ class Spec13(TypedDict, closed=True):
 
 
 class Spec14(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -2925,6 +3161,8 @@ class Spec14(TypedDict, closed=True):
 
 
 class Spec15(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -3046,6 +3284,8 @@ class Spec15(TypedDict, closed=True):
 
 
 class Spec16(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -3167,6 +3407,8 @@ class Spec16(TypedDict, closed=True):
 
 
 class Spec17(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -3288,6 +3530,8 @@ class Spec17(TypedDict, closed=True):
 
 
 class Spec24(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -3364,6 +3608,8 @@ class Spec24(TypedDict, closed=True):
 
 
 class Spec25(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -3440,6 +3686,8 @@ class Spec25(TypedDict, closed=True):
 
 
 class Spec26(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -3516,6 +3764,8 @@ class Spec26(TypedDict, closed=True):
 
 
 class Spec27(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -3592,6 +3842,8 @@ class Spec27(TypedDict, closed=True):
 
 
 class Spec28(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -3668,6 +3920,8 @@ class Spec28(TypedDict, closed=True):
 
 
 class Spec29(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -3744,6 +3998,8 @@ class Spec29(TypedDict, closed=True):
 
 
 class Spec30(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -3820,6 +4076,8 @@ class Spec30(TypedDict, closed=True):
 
 
 class Spec31(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -3896,6 +4154,8 @@ class Spec31(TypedDict, closed=True):
 
 
 class Spec32(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -3972,6 +4232,8 @@ class Spec32(TypedDict, closed=True):
 
 
 class Spec33(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4050,6 +4312,8 @@ class Spec33(TypedDict, closed=True):
 
 
 class Spec34(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4153,6 +4417,8 @@ class Spec34(TypedDict, closed=True):
 
 
 class Spec35(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4231,6 +4497,8 @@ class Spec35(TypedDict, closed=True):
 
 
 class Spec36(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4310,6 +4578,8 @@ class Spec36(TypedDict, closed=True):
 
 
 class Spec37(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4387,6 +4657,8 @@ class Spec37(TypedDict, closed=True):
 
 
 class Spec38(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4486,6 +4758,8 @@ class Spec38(TypedDict, closed=True):
 
 
 class Spec39(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4564,6 +4838,8 @@ class Spec39(TypedDict, closed=True):
 
 
 class Spec40(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4643,6 +4919,8 @@ class Spec40(TypedDict, closed=True):
 
 
 class Spec41(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4720,6 +4998,8 @@ class Spec41(TypedDict, closed=True):
 
 
 class Spec42(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4819,6 +5099,8 @@ class Spec42(TypedDict, closed=True):
 
 
 class Spec43(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4893,6 +5175,8 @@ class Spec43(TypedDict, closed=True):
 
 
 class Spec46(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -4967,6 +5251,8 @@ class Spec46(TypedDict, closed=True):
 
 
 class Spec47(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5041,6 +5327,8 @@ class Spec47(TypedDict, closed=True):
 
 
 class Spec48(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5116,6 +5404,8 @@ class Spec48(TypedDict, closed=True):
 
 
 class Spec49(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5191,6 +5481,8 @@ class Spec49(TypedDict, closed=True):
 
 
 class Spec50(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery | None]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -5266,6 +5558,8 @@ class Spec50(TypedDict, closed=True):
 
 
 class Spec51(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5335,6 +5629,8 @@ class Spec51(TypedDict, closed=True):
 
 
 class Spec52(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5402,6 +5698,8 @@ class Spec52(TypedDict, closed=True):
 
 
 class Spec53(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5469,6 +5767,8 @@ class Spec53(TypedDict, closed=True):
 
 
 class Spec54(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5567,6 +5867,8 @@ class Spec54(TypedDict, closed=True):
 
 
 class Spec55(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5635,6 +5937,8 @@ class Spec55(TypedDict, closed=True):
 
 
 class Spec56(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5713,6 +6017,8 @@ class Spec56(TypedDict, closed=True):
 
 
 class Spec57(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5789,6 +6095,8 @@ class Spec57(TypedDict, closed=True):
 
 
 class Spec58(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5865,6 +6173,8 @@ class Spec58(TypedDict, closed=True):
 
 
 class Spec59(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -5941,6 +6251,8 @@ class Spec59(TypedDict, closed=True):
 
 
 class Spec60(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -6020,6 +6332,8 @@ class Spec60(TypedDict, closed=True):
 
 
 class Spec61(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -6096,6 +6410,8 @@ class Spec61(TypedDict, closed=True):
 
 
 class Spec62(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -6172,6 +6488,8 @@ class Spec62(TypedDict, closed=True):
 
 
 class Spec63(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -6249,6 +6567,8 @@ class Spec63(TypedDict, closed=True):
 
 
 class Spec67(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -6321,6 +6641,8 @@ class Spec67(TypedDict, closed=True):
 
 
 class Spec70(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -6417,6 +6739,8 @@ class Spec70(TypedDict, closed=True):
 
 
 class Spec73(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -6493,6 +6817,8 @@ class Spec73(TypedDict, closed=True):
 
 
 class Spec74(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -6569,6 +6895,8 @@ class Spec74(TypedDict, closed=True):
 
 
 class Spec75(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["start", "middle", "end"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -6644,6 +6972,8 @@ class Spec75(TypedDict, closed=True):
 
 
 class Spec76(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["start", "middle", "end"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -6719,6 +7049,8 @@ class Spec76(TypedDict, closed=True):
 
 
 class Spec77(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["start", "middle", "end"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -6794,6 +7126,8 @@ class Spec77(TypedDict, closed=True):
 
 
 class Spec78(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["start", "middle", "end"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -6869,6 +7203,8 @@ class Spec78(TypedDict, closed=True):
 
 
 class Sphere(TypedDict, closed=True):
+    """The sphere mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -6931,6 +7267,8 @@ class Sphere(TypedDict, closed=True):
 
 
 class Spike(TypedDict, closed=True):
+    """The spike mark."""
+
     anchor: NotRequired[Literal["start", "middle", "end"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -7002,6 +7340,8 @@ class Spike(TypedDict, closed=True):
 
 
 class Text(TypedDict, closed=True):
+    """The text mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -7094,6 +7434,8 @@ class Text(TypedDict, closed=True):
 
 
 class TickX(TypedDict, closed=True):
+    """The tickX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -7166,6 +7508,8 @@ class TickX(TypedDict, closed=True):
 
 
 class TickY(TypedDict, closed=True):
+    """The tickY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -7238,6 +7582,8 @@ class TickY(TypedDict, closed=True):
 
 
 class Vector(TypedDict, closed=True):
+    """The vector mark."""
+
     anchor: NotRequired[Literal["start", "middle", "end"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -7309,6 +7655,8 @@ class Vector(TypedDict, closed=True):
 
 
 class VectorX(TypedDict, closed=True):
+    """The vectorX mark."""
+
     anchor: NotRequired[Literal["start", "middle", "end"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -7380,6 +7728,8 @@ class VectorX(TypedDict, closed=True):
 
 
 class VectorY(TypedDict, closed=True):
+    """The vectorY mark."""
+
     anchor: NotRequired[Literal["start", "middle", "end"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -7451,6 +7801,8 @@ class VectorY(TypedDict, closed=True):
 
 
 class Voronoi(TypedDict, closed=True):
+    """The voronoi mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -7523,6 +7875,8 @@ class Voronoi(TypedDict, closed=True):
 
 
 class VoronoiMesh(TypedDict, closed=True):
+    """The voronoiMesh mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -7595,6 +7949,8 @@ class VoronoiMesh(TypedDict, closed=True):
 
 
 class Area(TypedDict, closed=True):
+    """The area mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -7667,6 +8023,8 @@ class Area(TypedDict, closed=True):
 
 
 class AreaX(TypedDict, closed=True):
+    """The areaX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -7739,6 +8097,8 @@ class AreaX(TypedDict, closed=True):
 
 
 class AreaY(TypedDict, closed=True):
+    """The areaY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -7811,6 +8171,8 @@ class AreaY(TypedDict, closed=True):
 
 
 class Arrow(TypedDict, closed=True):
+    """The arrow mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -7887,6 +8249,8 @@ class Arrow(TypedDict, closed=True):
 
 
 class AxisFx(TypedDict, closed=True):
+    """The axisFx mark."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -8003,6 +8367,8 @@ class AxisFx(TypedDict, closed=True):
 
 
 class AxisFy(TypedDict, closed=True):
+    """The axisFy mark."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -8119,6 +8485,8 @@ class AxisFy(TypedDict, closed=True):
 
 
 class AxisX(TypedDict, closed=True):
+    """The axisX mark."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -8235,6 +8603,8 @@ class AxisX(TypedDict, closed=True):
 
 
 class AxisY(TypedDict, closed=True):
+    """The axisY mark."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -8351,6 +8721,8 @@ class AxisY(TypedDict, closed=True):
 
 
 class Cell(TypedDict, closed=True):
+    """The cell mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -8423,6 +8795,8 @@ class Cell(TypedDict, closed=True):
 
 
 class CellX(TypedDict, closed=True):
+    """The cellX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -8495,6 +8869,8 @@ class CellX(TypedDict, closed=True):
 
 
 class CellY(TypedDict, closed=True):
+    """The cellY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -8570,6 +8946,8 @@ ChannelValueIntervalSpec: TypeAlias = ChannelValueSpec | ChannelValueIntervalSpe
 
 
 class Circle(TypedDict, closed=True):
+    """The circle mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -8640,6 +9018,8 @@ class Circle(TypedDict, closed=True):
 
 
 class Contour(TypedDict, closed=True):
+    """The contour mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -8712,6 +9092,8 @@ class Contour(TypedDict, closed=True):
 
 
 class DelaunayLink(TypedDict, closed=True):
+    """The delaunayLink mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -8784,6 +9166,8 @@ class DelaunayLink(TypedDict, closed=True):
 
 
 class DelaunayMesh(TypedDict, closed=True):
+    """The delaunayMesh mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -8856,6 +9240,8 @@ class DelaunayMesh(TypedDict, closed=True):
 
 
 class DenseLine(TypedDict, closed=True):
+    """The denseLine mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -8930,6 +9316,8 @@ class DenseLine(TypedDict, closed=True):
 
 
 class Density(TypedDict, closed=True):
+    """The density mark for 2D densities."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9029,6 +9417,8 @@ class Density(TypedDict, closed=True):
 
 
 class DensityXAreaX(TypedDict, closed=True):
+    """The densityX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9103,6 +9493,8 @@ class DensityXAreaX(TypedDict, closed=True):
 
 
 class DensityXLineX(TypedDict, closed=True):
+    """The densityX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9178,6 +9570,8 @@ class DensityXLineX(TypedDict, closed=True):
 
 
 class DensityXDotX(TypedDict, closed=True):
+    """The densityX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9251,6 +9645,8 @@ class DensityXDotX(TypedDict, closed=True):
 
 
 class DensityXTextX(TypedDict, closed=True):
+    """The densityX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9349,6 +9745,8 @@ DensityX: TypeAlias = DensityXAreaX | DensityXLineX | DensityXDotX | DensityXTex
 
 
 class DensityY1(TypedDict, closed=True):
+    """The densityY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9423,6 +9821,8 @@ class DensityY1(TypedDict, closed=True):
 
 
 class DensityY2(TypedDict, closed=True):
+    """The densityY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9498,6 +9898,8 @@ class DensityY2(TypedDict, closed=True):
 
 
 class DensityY3(TypedDict, closed=True):
+    """The densityY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9571,6 +9973,8 @@ class DensityY3(TypedDict, closed=True):
 
 
 class DensityY4(TypedDict, closed=True):
+    """The densityY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9669,6 +10073,8 @@ DensityY: TypeAlias = DensityY1 | DensityY2 | DensityY3 | DensityY4
 
 
 class Dot(TypedDict, closed=True):
+    """The dot mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9739,6 +10145,8 @@ class Dot(TypedDict, closed=True):
 
 
 class DotX(TypedDict, closed=True):
+    """The dotX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9810,6 +10218,8 @@ class DotX(TypedDict, closed=True):
 
 
 class DotY(TypedDict, closed=True):
+    """The dotY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9881,6 +10291,8 @@ class DotY(TypedDict, closed=True):
 
 
 class ErrorBarX(TypedDict, closed=True):
+    """The errorbarX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -9952,6 +10364,8 @@ class ErrorBarX(TypedDict, closed=True):
 
 
 class ErrorBarY(TypedDict, closed=True):
+    """The errorbarY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -10023,6 +10437,8 @@ class ErrorBarY(TypedDict, closed=True):
 
 
 class Frame(TypedDict, closed=True):
+    """The frame mark."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery | None]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -10093,6 +10509,8 @@ class Frame(TypedDict, closed=True):
 
 
 class Geo(TypedDict, closed=True):
+    """The geo mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -10158,6 +10576,8 @@ class Geo(TypedDict, closed=True):
 
 
 class Graticule(TypedDict, closed=True):
+    """The graticule mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -10220,6 +10640,8 @@ class Graticule(TypedDict, closed=True):
 
 
 class GridFx(TypedDict, closed=True):
+    """The gridFx mark."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -10298,6 +10720,8 @@ class GridFx(TypedDict, closed=True):
 
 
 class GridFy(TypedDict, closed=True):
+    """The gridFy mark."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -10376,6 +10800,8 @@ class GridFy(TypedDict, closed=True):
 
 
 class GridX(TypedDict, closed=True):
+    """The gridX mark."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -10454,6 +10880,8 @@ class GridX(TypedDict, closed=True):
 
 
 class GridY(TypedDict, closed=True):
+    """The gridY mark."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -10532,6 +10960,8 @@ class GridY(TypedDict, closed=True):
 
 
 class Heatmap(TypedDict, closed=True):
+    """The heatmap mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -10604,6 +11034,8 @@ class Heatmap(TypedDict, closed=True):
 
 
 class Hexagon(TypedDict, closed=True):
+    """The hexagon mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -10674,6 +11106,8 @@ class Hexagon(TypedDict, closed=True):
 
 
 class Hexbin(TypedDict, closed=True):
+    """The hexbin mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -10768,6 +11202,8 @@ class Hexbin(TypedDict, closed=True):
 
 
 class Hexgrid(TypedDict, closed=True):
+    """The hexgrid mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -10831,6 +11267,8 @@ class Hexgrid(TypedDict, closed=True):
 
 
 class Hull(TypedDict, closed=True):
+    """The hull mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -10977,6 +11415,8 @@ class Image(TypedDict, closed=True):
 
 
 class Line(TypedDict, closed=True):
+    """The line mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11049,6 +11489,8 @@ class Line(TypedDict, closed=True):
 
 
 class LineX(TypedDict, closed=True):
+    """The lineX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11121,6 +11563,8 @@ class LineX(TypedDict, closed=True):
 
 
 class LineY(TypedDict, closed=True):
+    """The lineY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11193,6 +11637,8 @@ class LineY(TypedDict, closed=True):
 
 
 class Link(TypedDict, closed=True):
+    """The link mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11268,6 +11714,8 @@ class Link(TypedDict, closed=True):
 
 
 class Raster(TypedDict, closed=True):
+    """The raster mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11340,6 +11788,8 @@ class Raster(TypedDict, closed=True):
 
 
 class RasterTile(TypedDict, closed=True):
+    """The rasterTile mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11413,6 +11863,8 @@ class RasterTile(TypedDict, closed=True):
 
 
 class Rect(TypedDict, closed=True):
+    """The rect mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11493,6 +11945,8 @@ class Rect(TypedDict, closed=True):
 
 
 class RectX(TypedDict, closed=True):
+    """The rectX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11573,6 +12027,8 @@ class RectX(TypedDict, closed=True):
 
 
 class RectY(TypedDict, closed=True):
+    """The rectY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11653,6 +12109,8 @@ class RectY(TypedDict, closed=True):
 
 
 class RegressionY(TypedDict, closed=True):
+    """The regressionY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11721,6 +12179,8 @@ class RegressionY(TypedDict, closed=True):
 
 
 class RuleX(TypedDict, closed=True):
+    """The ruleX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11796,6 +12256,8 @@ class RuleX(TypedDict, closed=True):
 
 
 class RuleY(TypedDict, closed=True):
+    """The ruleY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -11871,6 +12333,8 @@ class RuleY(TypedDict, closed=True):
 
 
 class Spec18(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -11954,6 +12418,8 @@ class Spec18(TypedDict, closed=True):
 
 
 class Spec19(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -12037,6 +12503,8 @@ class Spec19(TypedDict, closed=True):
 
 
 class Spec20(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -12120,6 +12588,8 @@ class Spec20(TypedDict, closed=True):
 
 
 class Spec21(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | DataQuery]
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
@@ -12203,6 +12673,8 @@ class Spec21(TypedDict, closed=True):
 
 
 class Spec22(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -12285,6 +12757,8 @@ class Spec22(TypedDict, closed=True):
 
 
 class Spec23(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -12367,6 +12841,8 @@ class Spec23(TypedDict, closed=True):
 
 
 class Spec44(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -12442,6 +12918,8 @@ class Spec44(TypedDict, closed=True):
 
 
 class Spec45(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -12517,6 +12995,8 @@ class Spec45(TypedDict, closed=True):
 
 
 class Spec64(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -12601,6 +13081,8 @@ class Spec64(TypedDict, closed=True):
 
 
 class Spec65(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -12685,6 +13167,8 @@ class Spec65(TypedDict, closed=True):
 
 
 class Spec66(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -12769,6 +13253,8 @@ class Spec66(TypedDict, closed=True):
 
 
 class Spec68(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -12848,6 +13334,8 @@ class Spec68(TypedDict, closed=True):
 
 
 class Spec69(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -12927,6 +13415,8 @@ class Spec69(TypedDict, closed=True):
 
 
 class Spec71(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -13024,6 +13514,8 @@ class Spec71(TypedDict, closed=True):
 
 
 class Spec72(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -13121,6 +13613,8 @@ class Spec72(TypedDict, closed=True):
 
 
 class Spec79(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -13207,6 +13701,8 @@ class Spec79(TypedDict, closed=True):
 
 
 class Spec80(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -13293,6 +13789,8 @@ class Spec80(TypedDict, closed=True):
 
 
 class TextX(TypedDict, closed=True):
+    """The textX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -13386,6 +13884,8 @@ class TextX(TypedDict, closed=True):
 
 
 class TextY(TypedDict, closed=True):
+    """The textY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -13479,6 +13979,8 @@ class TextY(TypedDict, closed=True):
 
 
 class WaffleX(TypedDict, closed=True):
+    """The waffleX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -13561,6 +14063,8 @@ class WaffleX(TypedDict, closed=True):
 
 
 class WaffleY(TypedDict, closed=True):
+    """The waffleY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -13643,6 +14147,8 @@ class WaffleY(TypedDict, closed=True):
 
 
 class BarX(TypedDict, closed=True):
+    """The barX mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -13721,6 +14227,8 @@ class BarX(TypedDict, closed=True):
 
 
 class BarY(TypedDict, closed=True):
+    """The barY mark."""
+
     aria_description: NotRequired[str | DataQuery]
     aria_hidden: NotRequired[str | DataQuery]
     aria_label: NotRequired[ChannelValue]
@@ -13868,6 +14376,8 @@ PlotMark: TypeAlias = (
 
 
 class Spec9(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     align: NotRequired[float | DataQuery]
     aria_description: NotRequired[str | None]
     aria_label: NotRequired[str | None]
@@ -14092,6 +14602,8 @@ class Spec9(TypedDict, closed=True):
 
 
 class Plot(TypedDict, closed=True):
+    """A plot component."""
+
     align: NotRequired[float | DataQuery]
     aria_description: NotRequired[str | None]
     aria_label: NotRequired[str | None]
@@ -14316,10 +14828,14 @@ Component: TypeAlias = Union[
 
 
 class HConcat(TypedDict, closed=True):
+    """An hconcat component."""
+
     hconcat: Sequence[Component]
 
 
 class Spec1(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     config: NotRequired[Config]
     data: NotRequired[Data]
     hconcat: Sequence[Component]
@@ -14329,6 +14845,8 @@ class Spec1(TypedDict, closed=True):
 
 
 class Spec2(TypedDict, closed=True):
+    """A declarative Mosaic specification."""
+
     config: NotRequired[Config]
     data: NotRequired[Data]
     meta: NotRequired[Meta]
@@ -14423,4 +14941,6 @@ Spec: TypeAlias = (
 
 
 class VConcat(TypedDict, closed=True):
+    """A vconcat component."""
+
     vconcat: Sequence[Component]
