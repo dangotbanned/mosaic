@@ -11,7 +11,7 @@
 - [ ] Generate an `__all__`
 - [ ] Open an issue about preference for `total=False` instead of 90237393x `NotRequired`
   - When most are `NotRequired`, the important bit is which one's are `Required`
-- [ ] Try out using `.py` for target output
+- [x] Try out using `.py` for target output
   - Needed to use stubs when functional syntax prevented forward refs
   - Will need to add `typing_extensions` dependency
 - [ ] Ordering of `TypeAlias`s

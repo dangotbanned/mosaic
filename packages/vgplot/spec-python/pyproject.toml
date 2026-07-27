@@ -3,7 +3,9 @@ name            = "mosaic-spec"
 description     = "Declarative specification of Mosaic-powered applications."
 readme          = "README.md"
 requires-python = ">=3.10"
-dependencies    = []
+dependencies    = [
+  "typing-extensions>=4.16 ; python_full_version < '3.15'",
+]
 dynamic         = ["version"]
 
 [dependency-groups]
@@ -59,7 +61,7 @@ infer-union-variant-names = true
 
 [tool.datamodel-codegen.profiles.spec]
 input                   = "schema/mosaic-schema.json"
-output                  = "src/mosaic_spec/_models.pyi"
+output                  = "src/mosaic_spec/_models.py"
 custom-file-header-mode = "replace"
 custom-file-header      = "# NOTE: DO NOT EDIT.\n# Regenerate with: pnpm generate"
 
