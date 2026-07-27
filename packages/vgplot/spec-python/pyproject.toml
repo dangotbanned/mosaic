@@ -30,6 +30,7 @@ target-python-version   = "3.10"
 use-generic-container-types = true
 use-tuple-for-fixed-items   = true
 use-type-checking-imports   = true
+# use-type-alias              = true
 
 collapse-reuse-models = true
 skip-root-model       = true
