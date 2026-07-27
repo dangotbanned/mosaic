@@ -30,7 +30,6 @@ target-python-version   = "3.10"
 use-generic-container-types = true
 use-tuple-for-fixed-items   = true
 use-type-checking-imports   = true
-# use-type-alias              = true
 
 collapse-reuse-models = true
 skip-root-model       = true
@@ -47,18 +46,6 @@ use-single-line-docstring = true
 use-title-as-name         = true
 snake-case-field          = true
 infer-union-variant-names = true
-
-# https://datamodel-code-generator.koxudaxi.dev/presets/#practical-py310-20260619
-# allow-population-by-field-name = true
-# collapse-root-models = true
-# enum-field-as-literal = "one"
-# naming-strategy = "primary-first"
-# set-default-enum-member = true
-# strict-nullable = true
-# use-annotated = true
-# use-default-kwarg = true
-# use-subclass-enum = true
-# use-frozen-field = true
 
 [tool.datamodel-codegen.profiles.spec]
 input                   = "schema/"
