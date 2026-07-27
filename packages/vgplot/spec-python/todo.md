@@ -1,17 +1,21 @@
 # Todo
 
+[datamodel-code-generator issue]: https://github.com/koxudaxi/datamodel-code-generator/issues/new?template=feature_request.md
+
 - [x] Experiment with docs config
   - [x] **Fixed** `ParamRef` being "deduplicated" to `DataQuery`
-- [ ] Try to split up output into modules
-  - **14k**/**53k** LOC with/out docs
-  - Huge files kill language servers
+- [ ] Try to split up output into modules (*huge files kill language servers*)
+  - **14k** LOC without docs
+  - ~~**53k**~~ **28k** LOC with docs
+    - After removing `Spec`
 - [x] Generate an `__all__`
   - [x] `_gen`
   - [x] `mosaic_spec`
 - [ ] Fix `Spec1` - `Spec81`
   - [x] Caused by a huge intersection type `Spec = SpecHead & Component`
-  - [ ] Replace with manual inheritance?
-- [ ] Open an issue about preference for `total=False` instead of 90237393x `NotRequired`
+  - [x] Remove `Spec` from `mosaic.json`
+  - [ ] Add a manual version of `Spec`
+- [ ] Open a [datamodel-code-generator issue] about preference for `total=False` instead of 90237393x `NotRequired`
   - When most are `NotRequired`, the important bit is which one's are `Required`
 - [x] Using `.py` for target output
   - Needed to use stubs when functional syntax prevented forward refs

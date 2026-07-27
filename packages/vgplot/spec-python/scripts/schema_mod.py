@@ -22,6 +22,11 @@ if TYPE_CHECKING:
 
     from scripts._json_schema import JsonSchema
 
+    class Schema(JsonSchema, closed=True):
+        """`dist/mosaic-schema.json`."""
+
+        definitions: dict[str, JsonSchema]
+
 
 GENERATED_MODULE_NAME = "mosaic"
 
@@ -33,23 +38,33 @@ KEYS_REMAP: Final = {"as": "bind", "from": "source", "for": "plot"}
 """Keys that collide with [`keyword.kwlist`][], but must be preserved."""
 
 KEYS_EXCLUDE: Final = frozenset(("$schema",))
-"""Keys to entirely ignore in the output.
+"""Keys to ignore in the output.
 
 Excluding `"$schema"` avoids all usage of the more limited [functional-syntax].
 
 [functional-syntax]: https://typing.python.org/en/latest/spec/typeddict.html#functional-syntax.
 """
 
+DEFINITIONS_EXCLUDE = frozenset(("Spec",))
+"""Top-level definitions to ignore in the output.
 
-def read_schema(path: str | Path) -> JsonSchema:
+## Warning
+This is very likely to break the schema if you are not careful.
+
+- References to the definition(s) are not removed
+- Every member of the set must be present
+"""
+
+
+def read_schema(path: str | Path) -> Schema:
     import msgspec
 
     with Path(path).open(encoding="utf8") as fd:
-        schema: JsonSchema = msgspec.json.decode(fd.read())
+        schema: Schema = msgspec.json.decode(fd.read())
         return schema
 
 
-def write_schema(path: str | Path, schema: JsonSchema) -> None:
+def write_schema(path: str | Path, schema: Schema) -> None:
     import json
 
     path = Path(path)
@@ -58,8 +73,11 @@ def write_schema(path: str | Path, schema: JsonSchema) -> None:
         json.dump(schema, fd, separators=(",", ":"))
 
 
-def replace_schema_keys(root: JsonSchema) -> JsonSchema:
-    definitions = dict(_recursive_replace(root.get("definitions", {})))
+def replace_schema_keys(root: Schema) -> Schema:
+    definitions = root["definitions"]
+    for exclude in DEFINITIONS_EXCLUDE:
+        definitions.pop(exclude)
+    definitions = dict(_recursive_replace(definitions))
     return root | {"definitions": definitions}
 
 
