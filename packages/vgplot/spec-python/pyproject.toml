@@ -141,8 +141,9 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*"  = [
+"tests/*"       = [
   "D",
   "S101",
 ]
-"**/*.pyi" = ["ERA001"]  # false positive for commented out code
+"**/*.pyi"      = ["ERA001"]  # false positive for commented out code
+"scripts/**.py" = ["T201"]    # print is ok in scripts

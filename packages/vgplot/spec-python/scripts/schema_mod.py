@@ -6,7 +6,6 @@
 # ///
 """Transform `packages/vgplot/spec/dist/mosaic-schema.json` for use in python."""
 
-# ruff: noqa: T201
 from __future__ import annotations
 
 from pathlib import Path
@@ -29,7 +28,15 @@ SCHEMA_OUT = SCHEMA_DIR / SCHEMA_IN.name
 
 
 KEYS_REMAP: Final = {"as": "bind", "from": "source", "for": "plot"}
-"""Keys that collide with [`keyword.kwlist`][]."""
+"""Keys that collide with [`keyword.kwlist`][], but must be preserved."""
+
+KEYS_EXCLUDE: Final = frozenset(("$schema",))
+"""Keys to entirely ignore in the output.
+
+Excluding `"$schema"` avoids all usage of the more limited [functional-syntax].
+
+[functional-syntax]: https://typing.python.org/en/latest/spec/typeddict.html#functional-syntax.
+"""
 
 
 def read_schema(path: str | Path) -> JsonSchema:
@@ -49,19 +56,16 @@ def write_schema(path: str | Path, schema: JsonSchema) -> None:
         json.dump(schema, fd, separators=(",", ":"))
 
 
-# TODO @dangotbanned: Remove `"$schema"` for everything except the root
 def replace_schema_keys(root: JsonSchema) -> JsonSchema:
-    result = dict(_recursive_replace(root))
-    return {
-        "$ref": result["$ref"],
-        "$schema": result["$schema"],
-        "definitions": result["definitions"],
-    }
+    definitions = dict(_recursive_replace(root.get("definitions", {})))
+    return root | {"definitions": definitions}
 
 
 def _recursive_replace(m: Mapping[str, Any]) -> Iterator[tuple[str, Any]]:
     remap = KEYS_REMAP
-    for k, v in m.items():
+    exclude = KEYS_EXCLUDE
+    it = ((k, v) for k, v in m.items() if k not in exclude)
+    for k, v in it:
         k_out = remap.get(k, k)
         if isinstance(v, dict):
             yield k_out, dict(_recursive_replace(v))
