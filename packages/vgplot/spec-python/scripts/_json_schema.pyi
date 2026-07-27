@@ -4,19 +4,17 @@
 # Regenerate with: uv run datamodel-codegen --profile=draft-07 && pnpm run lint
 
 from collections.abc import Mapping, Sequence
-from typing import Any, Literal, TypeAlias, TypedDict
+from typing import Any, Literal, NotRequired, TypedDict
 
-from typing_extensions import NotRequired
-
-NonNegativeInteger: TypeAlias = int
+type NonNegativeInteger = int
 
 class NonNegativeIntegerDefault0(TypedDict): ...
 
-Primitive: TypeAlias = Literal["array", "boolean", "integer", "null", "number", "object", "string"]
+type Primitive = Literal["array", "boolean", "integer", "null", "number", "object", "string"]
 
-StringArray: TypeAlias = Sequence[str]
+type StringArray = Sequence[str]
 
-SchemaArray: TypeAlias = Sequence[CoreSchemaMetaSchema]
+type SchemaArray = Sequence[CoreSchemaMetaSchema]
 
 JsonSchema = TypedDict(
     "JsonSchema",
@@ -70,4 +68,4 @@ JsonSchema = TypedDict(
     },
 )
 
-CoreSchemaMetaSchema: TypeAlias = JsonSchema | bool
+type CoreSchemaMetaSchema = JsonSchema | bool
