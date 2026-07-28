@@ -35,6 +35,7 @@ target-python-version   = "3.10"
 use-generic-container-types = true
 use-tuple-for-fixed-items   = true
 use-type-checking-imports   = true
+enum-field-as-literal       = "all"
 
 collapse-reuse-models = true
 skip-root-model       = true
@@ -60,8 +61,10 @@ custom-file-header      = "# NOTE: DO NOT EDIT.\n# Regenerate with: pnpm generat
 
 [tool.datamodel-codegen.profiles.draft-07]
 url                     = "http://json-schema.org/draft-07/schema#"
-output                  = "scripts/_json_schema.pyi"
+output                  = "scripts/_json_schema_msg.py"
+output-model-type       = "msgspec.Struct"
 model-name-map          = '{"CoreSchemaMetaSchema1": "JsonSchema", "SimpleTypes": "Primitive"}'
+aliases                 = '{"$id": "id", "$schema": "schema", "$ref": "ref", "$comment": "comment"}'
 custom-file-header-mode = "replace"
 custom-file-header      = """
 '''Stubs for [json-schema draft-07](http://json-schema.org/draft-07/schema#).'''
@@ -75,7 +78,7 @@ path    = "package.json"
 pattern = "\"version\": \"(?P<version>.+?)\""
 
 [tool.hatch.build]
-dev-mode-dirs = ["."]
+dev-mode-dirs = [".", "src", "scripts"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["mosaic_spec"]
