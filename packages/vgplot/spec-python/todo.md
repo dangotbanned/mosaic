@@ -23,6 +23,9 @@
 - [ ] Ordering of `TypeAlias`s
   - Possibly move to another file, instead of sctattered between `TypedDict` defs
 - [ ] Add some tests once the top-level namespace starts stabilizing
+- [ ] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
+  - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
+  - [ ] Use `_typing_compat.py` imports for codegen
 
 ## `mosaic-spec` feedback
 

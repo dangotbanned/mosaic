@@ -92,6 +92,7 @@ extend-select                            = ["ALL"]
 extend-safe-fixes                        = ["FA", "TC", "UP", "TID252", "EM", "TRY"]
 future-annotations                       = true
 flake8-tidy-imports.ban-relative-imports = "all"
+typing-modules                           = ["mosaic_spec._typing_compat"]
 
 isort = { split-on-trailing-comma = false, required-imports = ["from __future__ import annotations"] }
 
