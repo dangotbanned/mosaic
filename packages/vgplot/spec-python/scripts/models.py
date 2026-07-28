@@ -11,7 +11,6 @@ type _JsonSchema = JsonSchema
 
 type Ref = str
 type Resolved[T] = An[T, L["Resolved"]]
-type Unresolved[T] = An[T, L["Unresolved"]]
 
 
 # TODO @dangotbanned: disable `forbid_unknown_fields=True` after figuring out exactly what isn't used
@@ -53,3 +52,36 @@ class InputSchema(Struct, omit_defaults=True, repr_omit_defaults=True):
     def get(self, target: Resolved[Ref], /) -> Resolved[JsonSchema]:
         return self.definitions[target]
 
+    def flatten_union(
+        self, target: Resolved[Ref] | JsonSchema, /
+    ) -> dict[Resolved[Ref], Resolved[JsonSchema]]:
+        """`Component` flattening.
+
+        ## Notes
+
+        - Might be resuable elsewhere later
+        - Only requires 2 levels
+            - `Component` -> `(..., PlotMark, ...)`
+            - `PlotMark`  -> `(...)`
+        - Think I only need the names?
+            - Then generate the new `TypedDict`s from imports?
+        """
+        if isinstance(target, str):
+            target = self.get(target)
+        match target:
+            case JsonSchema(any_of=(_first, *_rest) as union):
+                result = {}
+                for member in union:
+                    name = member.ref_name
+                    member_resolved = self.get(name)
+                    if not (nested := member_resolved.any_of):
+                        result[name] = member_resolved
+                    else:
+                        for nested_member in nested:
+                            name = nested_member.ref_name
+                            result[name] = self.get(name)
+                return result
+
+            case _:
+                msg = f"`target` is not a union, got:\n{target!r}"
+                raise TypeError(msg)

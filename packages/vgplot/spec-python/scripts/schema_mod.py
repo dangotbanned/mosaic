@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.12"
+# requires-python = ">=3.14"
 # dependencies = [
 #     "msgspec>=0.21.1",
 # ]
@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
+from warnings import deprecated
 
 # TODO @dangotbanned: Unbreak path for `../*.ipynb`
 try:
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterator, Mapping
 
     from scripts._json_schema import JsonSchema
+    from scripts.models import InputSchema
 
     class Schema(JsonSchema, closed=True):
         """`dist/mosaic-schema.json`."""
@@ -56,12 +58,26 @@ This is very likely to break the schema if you are not careful.
 """
 
 
+@deprecated("switch to `msgspec` instead", category=None)
 def read_schema(path: str | Path) -> Schema:
     import msgspec
 
     with Path(path).open(encoding="utf8") as fd:
         schema: Schema = msgspec.json.decode(fd.read())
         return schema
+
+
+# TODO @dangotbanned: Integrate into everything else
+def read_schema_typed(path: str | Path) -> InputSchema:
+    import msgspec
+
+    try:
+        import models
+    except ModuleNotFoundError:
+        from scripts import models
+
+    with Path(path).open(encoding="utf8") as fd:
+        return msgspec.json.decode(fd.read(), type=models.InputSchema)
 
 
 def write_schema(path: str | Path, schema: Schema) -> None:
@@ -99,7 +115,7 @@ def _recursive_replace(m: Mapping[str, Any]) -> Iterator[tuple[str, Any]]:
 
 
 if __name__ == "__main__":
-    schema = read_schema(SCHEMA_IN)
+    schema = read_schema(SCHEMA_IN)  # ty: ignore[deprecated]
     replaced = replace_schema_keys(schema)
     write_schema(SCHEMA_OUT, replaced)
     print(f"Generated python schema at: {fs.repo_relative_str(SCHEMA_OUT)}")

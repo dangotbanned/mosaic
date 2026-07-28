@@ -27,8 +27,8 @@
   - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
   - [ ] Use `_typing_compat.py` imports for codegen
 - [ ] Use `msgspec` for models in `schema_mod`
-  - [ ] Input json schema
-  - [ ] Any intermediates
+  - [x] Input json schema
+  - [ ] Replace non-msgspec pipeline
   - [ ] Output schema
 
 [^1]: Huge files kill language servers. Having to disable pylance because it is too slow now
