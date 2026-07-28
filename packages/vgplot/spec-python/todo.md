@@ -26,6 +26,10 @@
 - [ ] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
   - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
   - [ ] Use `_typing_compat.py` imports for codegen
+- [ ] Use `msgspec` for models in `schema_mod`
+  - [ ] Input json schema
+  - [ ] Any intermediates
+  - [ ] Output schema
 
 [^1]: Huge files kill language servers. Having to disable pylance because it is too slow now
 

@@ -9,7 +9,12 @@ dependencies    = [
 dynamic         = ["version"]
 
 [dependency-groups]
-dev    = ["ruff", { include-group = "gen" }, { include-group = "typing" }]
+dev    = [
+  "msgspec>=0.21.1",
+  "ruff",
+  { include-group = "gen" },
+  { include-group = "typing" },
+]
 gen    = ["datamodel-code-generator"]
 typing = ["pyright", "ty>=0.0.63"]
 

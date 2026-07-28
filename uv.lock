@@ -1671,6 +1671,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "datamodel-code-generator" },
+    { name = "msgspec" },
     { name = "pyright" },
     { name = "ruff" },
     { name = "ty" },
@@ -1689,6 +1690,7 @@ requires-dist = [{ name = "typing-extensions", marker = "python_full_version < '
 [package.metadata.requires-dev]
 dev = [
     { name = "datamodel-code-generator" },
+    { name = "msgspec", specifier = ">=0.21.1" },
     { name = "pyright" },
     { name = "ruff" },
     { name = "ty", specifier = ">=0.0.63" },
