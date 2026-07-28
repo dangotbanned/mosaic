@@ -1,3 +1,6 @@
 [tool.ruff]
-target-version = "py315"
-extend         = "../pyproject.toml"
+# Minimum required changes for using PEP 695 & 728 in this directory
+target-version              = "py315"
+extend                      = "../pyproject.toml"
+preview                     = true
+lint.explicit-preview-rules = true
