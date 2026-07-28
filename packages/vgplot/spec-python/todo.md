@@ -15,7 +15,7 @@
   - [x] Caused by a huge intersection type `Spec = SpecHead & Component`
   - [x] Remove `Spec` from `mosaic.json`
   - [ ] Add a manual version of `Spec`
-- [ ] Open a [datamodel-code-generator issue] about preference for `total=False` instead of 90237393x `NotRequired`
+- [ ] Open a [datamodel-code-generator issue] about preference for `total=False` instead of **5129x** `NotRequired`
   - When most are `NotRequired`, the important bit is which one's are `Required`
 - [x] Using `.py` for target output
   - Needed to use stubs when functional syntax prevented forward refs
