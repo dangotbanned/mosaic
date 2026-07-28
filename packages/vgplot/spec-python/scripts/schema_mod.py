@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     class Schema(JsonSchema, closed=True):
         """`dist/mosaic-schema.json`."""
 
-        definitions: dict[str, JsonSchema]
+        definitions: dict[str, JsonSchema]  # ty: ignore[invalid-typed-dict-field]
 
 
 GENERATED_MODULE_NAME = "mosaic"

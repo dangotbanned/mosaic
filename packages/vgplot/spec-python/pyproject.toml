@@ -137,3 +137,9 @@ ignore = [
 "scripts/**.py"             = ["T201"]                      # print is ok in scripts
 # TODO @dangotbanned: Clean these up before writing to `mosaic.json`
 "src/mosaic_spec/_gen/*.py" = ["RUF001", "RUF002", "D415"]
+
+[tool.src]
+include = ["**/*.py", "**/*.pyi", "**/*.ipynb"]
+
+[tool.ty.environment]
+python-version = "3.15"

@@ -4,7 +4,9 @@
 # Regenerate with: uv run datamodel-codegen --profile=draft-07 && pnpm run lint
 
 from collections.abc import Mapping, Sequence
-from typing import Any, Literal, NotRequired, TypedDict
+from typing import Any, Literal, NotRequired
+
+from typing_extensions import TypedDict
 
 type NonNegativeInteger = int
 

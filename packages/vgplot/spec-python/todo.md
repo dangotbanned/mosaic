@@ -4,7 +4,7 @@
 
 - [x] Experiment with docs config
   - [x] **Fixed** `ParamRef` being "deduplicated" to `DataQuery`
-- [ ] Try to split up output into modules (*huge files kill language servers*)
+- [ ] Try to split up output into modules [^1]
   - **14k** LOC without docs
   - ~~**53k**~~ **28k** LOC with docs
     - After removing `Spec`
@@ -26,6 +26,8 @@
 - [ ] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
   - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
   - [ ] Use `_typing_compat.py` imports for codegen
+
+[^1]: Huge files kill language servers. Having to disable pylance because it is too slow now
 
 ## `mosaic-spec` feedback
 
