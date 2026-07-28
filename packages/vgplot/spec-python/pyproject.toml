@@ -11,7 +11,7 @@ dynamic         = ["version"]
 [dependency-groups]
 dev    = ["ruff", { include-group = "gen" }, { include-group = "typing" }]
 gen    = ["datamodel-code-generator"]
-typing = ["pyright", "ty"]
+typing = ["pyright", "ty>=0.0.63"]
 
 [build-system]
 requires      = ["hatchling"]
