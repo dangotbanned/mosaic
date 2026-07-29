@@ -1,8 +1,5 @@
-# ruff: noqa: I002, TC003, N817
 from collections.abc import Mapping, Sequence
-from typing import Annotated as An
-from typing import Any, final
-from typing import Literal as L
+from typing import Annotated as A, Any, Literal as L, final
 
 from msgspec import UNSET, Struct, UnsetType, field
 
@@ -10,7 +7,7 @@ type Primitive = L["array", "boolean", "integer", "null", "number", "object", "s
 type _JsonSchema = JsonSchema
 
 type Ref = str
-type Resolved[T] = An[T, L["Resolved"]]
+type Resolved[T] = A[T, L["Resolved"]]
 
 
 # TODO @dangotbanned: disable `forbid_unknown_fields=True` after figuring out exactly what isn't used

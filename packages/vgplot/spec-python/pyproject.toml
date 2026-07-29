@@ -92,6 +92,10 @@ typeCheckingMode = "standard"
 fix         = true
 line-length = 100
 
+[tool.ruff.per-file-target-version]
+"scripts/*" = "py315"  # PEP 695 & PEP 728
+"*.ipynb"   = "py314"  # PEP 750
+
 [tool.ruff.format]
 skip-magic-trailing-comma = true
 quote-style               = "double"
@@ -104,8 +108,6 @@ extend-safe-fixes                        = ["FA", "TC", "UP", "TID252", "EM", "T
 future-annotations                       = true
 flake8-tidy-imports.ban-relative-imports = "all"
 typing-modules                           = ["mosaic_spec._typing_compat"]
-
-isort = { split-on-trailing-comma = false, required-imports = ["from __future__ import annotations"] }
 
 ignore = [
   "A001",     # builtin-variable-shadowing
@@ -142,12 +144,27 @@ ignore = [
   "Q000",     # conflicts with formatter
 ]
 
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+required-imports        = ["from __future__ import annotations"]
+combine-as-imports      = true
+
 [tool.ruff.lint.per-file-ignores]
 "tests/*"                   = ["D", "S101"]
 "**/*.pyi"                  = ["ERA001"]                    # false positive for commented out code
 "scripts/**.py"             = ["T201"]                      # print is ok in scripts
-# TODO @dangotbanned: Clean these up before writing to `mosaic.json`
+"scripts/models.py"         = ["I002", "TC003"]             # `msgspec` does runtime introspection
+# TODO @dangotbanned: Clean these up before they reach source code, either:
+# 1. [At the source](https://github.com/uwdata/mosaic/tree/main/packages/vgplot/spec)
+# 2. [During initial schema gen](https://github.com/vega/ts-json-schema-generator)
+# 3. [Before emitting schema mod](https://github.com/dangotbanned/mosaic/tree/36a37efabfdda195158712fecdedb6540ea028ac/packages/vgplot/spec-python/schema)
 "src/mosaic_spec/_gen/*.py" = ["RUF001", "RUF002", "D415"]
+
+[tool.ruff.lint.pep8-naming]
+extend-ignore-names = [
+  "L",                   # typing.Literal
+  "A",                   # typing.Annotated
+]
 
 [tool.src]
 include = ["**/*.py", "**/*.pyi", "**/*.ipynb"]
