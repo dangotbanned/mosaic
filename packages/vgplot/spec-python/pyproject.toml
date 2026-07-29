@@ -78,14 +78,14 @@ path    = "package.json"
 pattern = "\"version\": \"(?P<version>.+?)\""
 
 [tool.hatch.build]
-dev-mode-dirs = [".", "src", "scripts"]
+dev-mode-dirs = [".", "src", "scripts", "tools"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["mosaic_spec"]
 
 [tool.pyright]
-ignore           = ["../**/.venv/"]                       # Do not display diagnostics in external source code
-include          = ["src", "scripts", "*.py", "*.ipynb"]
+ignore           = ["../**/.venv/"]                                # Do not display diagnostics in external source code
+include          = ["src", "scripts", "tools", "*.py", "*.ipynb"]
 typeCheckingMode = "standard"
 
 [tool.ruff]
@@ -94,6 +94,7 @@ line-length = 100
 
 [tool.ruff.per-file-target-version]
 "scripts/*" = "py315"  # PEP 695 & PEP 728
+"tools/*"   = "py315"  # PEP 695 & PEP 728
 "*.ipynb"   = "py314"  # PEP 750
 
 [tool.ruff.format]
