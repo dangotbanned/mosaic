@@ -28,10 +28,13 @@
   - [ ] Use `_typing_compat.py` imports for codegen
 - [ ] Use `msgspec` for models in `schema_mod`
   - [x] Input json schema
-  - [ ] Replace non-msgspec pipeline
+  - [x] Replace non-msgspec pipeline
   - [ ] Output schema
+- [ ] Split up `scripts/` [^2]
+  - `tools/` w/ subpackages
 
 [^1]: Huge files kill language servers. Having to disable pylance because it is too slow now
+[^2]: There's more than scripts in there and it is a pain for `sys.path`
 
 ## `mosaic-spec` feedback
 

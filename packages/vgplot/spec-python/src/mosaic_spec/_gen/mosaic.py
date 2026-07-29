@@ -1218,10 +1218,10 @@ class PlotFrom(TypedDict, closed=True):
 
     filter_by: NotRequired[ParamRef]
     """A selection that filters the mark data."""
-    source: NotRequired[str | ParamRef]
-    """The name of the backing data table."""
     optimize: NotRequired[bool]
     """A flag (default `true`) to enable any mark-specific query optimizations. If `false`, optimizations are disabled to aid testing and debugging."""
+    source: str | ParamRef
+    """The name of the backing data table."""
 
 
 class PlotLegend(TypedDict, closed=True):
@@ -1481,7 +1481,7 @@ ReducerPercentile: TypeAlias = Literal[
 class Region(TypedDict, closed=True):
     """A rectangular region interactor."""
 
-    bind: NotRequired[ParamRef]
+    bind: ParamRef
     """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
     brush: NotRequired[BrushStyles]
     """CSS styles for the brush (SVG `rect`) element."""
@@ -1531,12 +1531,12 @@ class Search(TypedDict, closed=True):
     """The database column name to use within generated selection clause predicates. Defaults to the `column` property."""
     filter_by: NotRequired[ParamRef]
     """A selection to filter the database table indicated by the `from` property."""
-    source: NotRequired[str]
-    """The name of a database table to use as an autocomplete data source for this widget. Used in conjunction with the `column` property."""
     input: Literal["search"]
     """A text search input widget."""
     label: NotRequired[str]
     """A text label for this input."""
+    source: NotRequired[str]
+    """The name of a database table to use as an autocomplete data source for this widget. Used in conjunction with the `column` property."""
     type: NotRequired[Literal["contains", "prefix", "suffix", "regexp"]]
     """
     The type of text search query to perform. One of:
@@ -1591,8 +1591,6 @@ class Slider(TypedDict, closed=True):
     """The database column name to use within generated selection clause predicates. Defaults to the `column` property."""
     filter_by: NotRequired[ParamRef]
     """A selection to filter the database table indicated by the `from` property."""
-    source: NotRequired[str]
-    """The name of a database table to use as a data source for this widget. Used in conjunction with the `column` property. The minimum and maximum values of the column determine the slider range."""
     input: Literal["slider"]
     """A slider input widget."""
     label: NotRequired[str]
@@ -1603,6 +1601,8 @@ class Slider(TypedDict, closed=True):
     """The minimum slider value."""
     select: NotRequired[Literal["point", "interval"]]
     """The type of selection clause predicate to generate if the **as** option is a Selection. If `'point'` (the default), the selection predicate is an equality check for the slider value. If `'interval'`, the predicate checks an interval from the minimum to the current slider value."""
+    source: NotRequired[str]
+    """The name of a database table to use as a data source for this widget. Used in conjunction with the `column` property. The minimum and maximum values of the column determine the slider range."""
     step: NotRequired[float]
     """The slider step, the amount to increment between consecutive values."""
     value: NotRequired[float]
@@ -1745,8 +1745,6 @@ class Table(TypedDict, closed=True):
     """A list of column names to include in the table grid. If unspecified, all table columns are included."""
     filter_by: NotRequired[ParamRef]
     """A selection to filter the database table indicated by the `from` property."""
-    source: NotRequired[str | ParamRef]
-    """The name of a database table to use as a data source for this widget."""
     height: NotRequired[float]
     """The height of the table widget, in pixels."""
     input: Literal["table"]
@@ -1755,6 +1753,8 @@ class Table(TypedDict, closed=True):
     """The maximum width of the table widget, in pixels."""
     row_batch: NotRequired[float]
     """The number of rows load in a new batch upon table scroll."""
+    source: str | ParamRef
+    """The name of a database table to use as a data source for this widget."""
     width: NotRequired[float | Mapping[str, float]]
     """If a number, sets the total width of the table widget, in pixels. If an object, provides per-column pixel width values. Column names should be object keys, mapped to numeric width values."""
 
@@ -1790,7 +1790,7 @@ TipPointer: TypeAlias = Literal["x", "y", "xy"]
 class Toggle(TypedDict, closed=True):
     """A toggle interactor."""
 
-    bind: NotRequired[ParamRef]
+    bind: ParamRef
     """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
     channels: Sequence[str]
     """The encoding channels over which to select values. For a selected mark, selection clauses will cover the backing data fields for each channel."""
@@ -1803,7 +1803,7 @@ class Toggle(TypedDict, closed=True):
 class ToggleColor(TypedDict, closed=True):
     """A toggleColor interactor."""
 
-    bind: NotRequired[ParamRef]
+    bind: ParamRef
     """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
     peers: NotRequired[bool]
     """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
@@ -1814,7 +1814,7 @@ class ToggleColor(TypedDict, closed=True):
 class ToggleX(TypedDict, closed=True):
     """A toggleX interactor."""
 
-    bind: NotRequired[ParamRef]
+    bind: ParamRef
     """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
     peers: NotRequired[bool]
     """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
@@ -1825,7 +1825,7 @@ class ToggleX(TypedDict, closed=True):
 class ToggleY(TypedDict, closed=True):
     """A toggleY interactor."""
 
-    bind: NotRequired[ParamRef]
+    bind: ParamRef
     """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
     peers: NotRequired[bool]
     """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
@@ -2032,7 +2032,7 @@ IntervalTransform: TypeAlias = (
 class IntervalX(TypedDict, closed=True):
     """An intervalX interactor."""
 
-    bind: NotRequired[ParamRef]
+    bind: ParamRef
     """The output selection. A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi]."""
     brush: NotRequired[BrushStyles]
     """CSS styles for the brush (SVG `rect`) element."""
@@ -2049,7 +2049,7 @@ class IntervalX(TypedDict, closed=True):
 class IntervalXY(TypedDict, closed=True):
     """An intervalXY interactor."""
 
-    bind: NotRequired[ParamRef]
+    bind: ParamRef
     """The output selection. A clause of the form `(xfield BETWEEN x1 AND x2) AND (yfield BETWEEN y1 AND y2)` is added for the currently selected intervals."""
     brush: NotRequired[BrushStyles]
     """CSS styles for the brush (SVG `rect`) element."""
@@ -2068,7 +2068,7 @@ class IntervalXY(TypedDict, closed=True):
 class IntervalY(TypedDict, closed=True):
     """An intervalY interactor."""
 
-    bind: NotRequired[ParamRef]
+    bind: ParamRef
     """The output selection. A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi]."""
     brush: NotRequired[BrushStyles]
     """CSS styles for the brush (SVG `rect`) element."""
@@ -2091,8 +2091,6 @@ class Legend(TypedDict, closed=True):
     """The number of columns to use to layout a discrete legend."""
     field: NotRequired[str]
     """The data field over which to generate output selection clauses. If unspecified, a matching field is retrieved from existing plot marks."""
-    plot: NotRequired[str]
-    """The name of the plot this legend applies to. A plot must include a `name` attribute to be referenced."""
     height: NotRequired[float]
     """The height of a continuous legend, in pixels."""
     label: NotRequired[str]
@@ -2107,6 +2105,8 @@ class Legend(TypedDict, closed=True):
     """The right margin of the legend component, in pixels."""
     margin_top: NotRequired[float]
     """The top margin of the legend component, in pixels."""
+    plot: str
+    """The name of the plot this legend applies to. A plot must include a `name` attribute to be referenced."""
     tick_size: NotRequired[float]
     """The size of legend ticks in a continuous legend, in pixels."""
     width: NotRequired[float]
@@ -2150,8 +2150,6 @@ class Menu(TypedDict, closed=True):
     """The database column name to use within generated selection clause predicates. Defaults to the `column` property."""
     filter_by: NotRequired[ParamRef]
     """A selection to filter the database table indicated by the `from` property."""
-    source: NotRequired[str]
-    """The name of a database table to use as a data source for this widget. Used in conjunction with the `column` property."""
     input: Literal["menu"]
     """A menu input widget."""
     label: NotRequired[str]
@@ -2160,6 +2158,8 @@ class Menu(TypedDict, closed=True):
     """Required if the database column is an list, this property determines how to match the selected menu option against the list values."""
     options: NotRequired[Sequence[Any | Options]]
     """An array of menu options, as literal values or option objects. Option objects have a `value` property and an optional `label` property. If no label is provided, the string-coerced value is used."""
+    source: NotRequired[str]
+    """The name of a database table to use as a data source for this widget. Used in conjunction with the `column` property."""
     value: NotRequired[Any]
     """The initial selected menu value."""
 
@@ -2167,7 +2167,7 @@ class Menu(TypedDict, closed=True):
 class NearestX(TypedDict, closed=True):
     """A nearestX interactor."""
 
-    bind: NotRequired[ParamRef]
+    bind: ParamRef
     """The output selection. A clause of the form `field = value` is added for the currently nearest value."""
     channels: NotRequired[Sequence[str]]
     """The encoding channels whose domain values should be selected. For example, a setting of `['color']` selects the data value backing the color channel, whereas `['x', 'z']` selects both x and z channel domain values. If unspecified, the selected channels default to match the current pointer settings: a `nearestX` interactor selects the `['x']` channels, while a `nearest` interactor selects the `['x', 'y']` channels."""
@@ -2182,7 +2182,7 @@ class NearestX(TypedDict, closed=True):
 class NearestY(TypedDict, closed=True):
     """A nearestY interactor."""
 
-    bind: NotRequired[ParamRef]
+    bind: ParamRef
     """The output selection. A clause of the form `field = value` is added for the currently nearest value."""
     channels: NotRequired[Sequence[str]]
     """The encoding channels whose domain values should be selected. For example, a setting of `['color']` selects the data value backing the color channel, whereas `['x', 'z']` selects both x and z channel domain values. If unspecified, the selected channels default to match the current pointer settings: a `nearestX` interactor selects the `['x']` channels, while a `nearest` interactor selects the `['x', 'y']` channels."""
