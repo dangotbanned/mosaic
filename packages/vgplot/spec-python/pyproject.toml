@@ -94,9 +94,11 @@ executionEnvironments = [
 defineConstant        = { "PYRIGHT" = true }
 
 [tool.ruff]
-fix         = true
-line-length = 100
-extend      = "../../../pyproject.toml"
+fix            = true
+line-length    = 100
+extend         = "../../../pyproject.toml"
+extend-exclude = ["typeshed"]
+include        = ["src", "scripts", "tools", "*.py", "*.ipynb"]
 
 [tool.ruff.per-file-target-version]
 "scripts/*" = "py315"  # PEP 695 & PEP 728
