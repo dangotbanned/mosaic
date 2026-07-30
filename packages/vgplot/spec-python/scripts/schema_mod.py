@@ -54,6 +54,13 @@ def main(source: str | Path, target: str | Path) -> None:
     serde.write_json(target, schema)
     print(f"Generated python schema at: {fs.repo_relative_str(target)}")
 
+    # TODO @dangotbanned: Fix the order of this so there isn't a need to write to a file
+    # Next step is `datamodel-code-generator` -> using
+    component_members = schema.flatten_union("Component")
+    wip_path = fs.SPEC_PYTHON / "WIP-Component-names.json"
+    serde.write_json(wip_path, component_members)
+    print(f"Generated Component member names at: {fs.repo_relative_str(wip_path)}")
+
 
 if __name__ == "__main__":
     main(SCHEMA_IN, SCHEMA_OUT)
