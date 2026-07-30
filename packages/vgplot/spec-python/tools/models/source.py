@@ -8,6 +8,7 @@
   or to check a new schema hasn't introduced something unhandled
 """
 
+from collections import deque
 from collections.abc import Sequence
 from typing import Annotated as A, Literal as L, final
 
@@ -87,36 +88,27 @@ class InputSchema(base.Struct):
     def get(self, target: Resolved[Ref], /) -> Resolved[JsonSchema]:
         return self.definitions[target]
 
-    def flatten_union(
-        self, target: Resolved[Ref] | JsonSchema, /
-    ) -> dict[Resolved[Ref], Resolved[JsonSchema]]:
+    def flatten_union(self, target: Resolved[Ref] | JsonSchema, /) -> deque[Resolved[Ref]]:
         """`Component` flattening.
 
         ## Notes
-
         - Might be resuable elsewhere later
         - Only requires 2 levels
             - `Component` -> `(..., PlotMark, ...)`
             - `PlotMark`  -> `(...)`
-        - Think I only need the names?
-            - Then generate the new `TypedDict`s from imports?
+        - Then generate the new `TypedDict`s from imports using names
         """
         if isinstance(target, str):
             target = self.get(target)
-        match target:
-            case JsonSchema(any_of=(_first, *_rest) as union):
-                result = {}
-                for member in union:
-                    name = member.ref_name
-                    member_resolved = self.get(name)
-                    if not (nested := member_resolved.any_of):
-                        result[name] = member_resolved
-                    else:
-                        for nested_member in nested:
-                            name = nested_member.ref_name
-                            result[name] = self.get(name)
-                return result
-
-            case _:
-                msg = f"`target` is not a union, got:\n{target!r}"
-                raise TypeError(msg)
+        if not (union := target.any_of):
+            msg = f"`target` is not a union, got:\n{target!r}"
+            raise TypeError(msg)
+        member_names: deque[Resolved[Ref]] = deque()
+        for member in union:
+            name = member.ref_name
+            member_resolved = self.get(name)
+            if not (nested := member_resolved.any_of):
+                member_names.append(name)
+            else:
+                member_names.extend(nested_member.ref_name for nested_member in nested)
+        return member_names
