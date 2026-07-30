@@ -11,21 +11,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Final
 
-# TODO @dangotbanned: Unbreak path for `../*.ipynb`
-try:
-    import tools.models.source as models
-    from tools import serde
+from tools import serde
+from tools.models import source as m
 
-    import fs
-except ModuleNotFoundError:
-    import sys
-
-    sys.path.append(str(Path(__file__).parent.parent))
-    from tools import serde
-    from tools.models import source as models
-
-    from scripts import fs
-
+from scripts import fs
 
 GENERATED_MODULE_NAME = "mosaic"
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
@@ -39,10 +28,9 @@ These keys only appear in `"properties"` and `"required"`, the challenge is find
 """
 
 
-def _recursive_replace[T: (models.JsonSchema, models.ItemSchema)](schema: T) -> T:
+def _recursive_replace[T: (m.JsonSchema, m.ItemSchema)](schema: T) -> T:
     """Visit 4 fields at all levels of the schema, renaming matches for [`KEYS_REPLACE`][]."""
     replace = KEYS_REPLACE.get
-    m = models
     recurse = _recursive_replace
     if properties := schema.properties:
         schema.properties = {replace(k, k): (recurse(v)) for k, v in properties.items()}
@@ -61,7 +49,7 @@ def _recursive_replace[T: (models.JsonSchema, models.ItemSchema)](schema: T) -> 
 # TODO @dangotbanned: Use `Spec/Component`
 def main(source: str | Path, target: str | Path) -> None:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
-    schema = serde.read_json(source, models.InputSchema)
+    schema = serde.read_json(source, m.InputSchema)
     definitions = schema.definitions
     _spec_todo = definitions.pop("Spec")
     schema.definitions = {k: _recursive_replace(v) for k, v in definitions.items()}

@@ -31,10 +31,17 @@
   - [x] Replace non-msgspec pipeline
   - [ ] Output schema
 - [ ] Split up `scripts/` [^2]
-  - `tools/` w/ subpackages
+  - [ ] `tools/`
+    - [ ] `codemod/`
+    - [x] `codegen/`
+    - [x] `models/`
+    - [x] `serde.py`
+    - [ ] `fs.py`
+  - [ ] `scripts/`
+    - Everything that does one job, on demand
 
 [^1]: Huge files kill language servers. Having to disable pylance because it is too slow now
-[^2]: There's more than scripts in there and it is a pain for `sys.path`
+[^2]: There's more than scripts in there
 
 ## `mosaic-spec` feedback
 

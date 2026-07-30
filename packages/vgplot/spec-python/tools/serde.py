@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from functools import cache
+import functools
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal as L
 
@@ -39,11 +39,11 @@ def write_json(path: str | Path, obj: Any) -> None:
         fd.write(json_str)
 
 
-@cache
+@functools.cache
 def _decoder[T](tp: type[T], /) -> msgspec.json.Decoder[T]:
     return msgspec.json.Decoder(tp)
 
 
-@cache
+@functools.cache
 def _encoder(order: L["deterministic", "sorted"] | None = None, /) -> msgspec.json.Encoder:
     return msgspec.json.Encoder(order=order)
