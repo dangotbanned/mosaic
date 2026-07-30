@@ -16,23 +16,36 @@ __all__ = ("convert", "deserialize", "read_json", "serialize", "write_json")
 
 
 def serialize(obj: Any, /, *, order: L["deterministic", "sorted"] | None = None) -> bytes:
+    """Serialize an object as JSON."""
     return _encoder(order).encode(obj)
 
 
 def deserialize[T](buf: Buffer | str, tp: type[T], /) -> T:
+    """Deserialize an object from JSON into `T`"""
     return _decoder(tp).decode(buf)
 
 
 def convert[T](obj: msgspec.Struct | Mapping[str, Any], into: type[T], /) -> T:
+    """Convert a struct-like object through `msgspec`.
+
+    This is like a field filter with struct-level configuration on strict-ness.
+
+    ## Notes
+    There might be a way to configure [msgspec.convert] for this.
+
+    [msgspec.convert]: https://msgspec.dev/api#msgspec.convert
+    """
     return deserialize(serialize(obj), into)
 
 
 def read_json[T](path: str | Path, tp: type[T], /) -> T:
+    """Deserialize a JSON file into `T`."""
     with Path(path).open(encoding="utf8") as fd:
         return deserialize(fd.read(), tp)
 
 
 def write_json(path: str | Path, obj: Any) -> None:
+    """Serialize an object to a JSON file."""
     json_str = serialize(obj, order="sorted").decode()
     path = Path(path)
     path.touch()
