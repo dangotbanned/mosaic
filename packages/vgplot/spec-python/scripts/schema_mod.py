@@ -11,10 +11,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Final
 
-from tools import serde
+from tools import fs, serde
 from tools.models import source as m
-
-from scripts import fs
 
 GENERATED_MODULE_NAME = "mosaic"
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"

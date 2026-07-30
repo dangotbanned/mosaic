@@ -36,7 +36,7 @@
     - [x] `codegen/`
     - [x] `models/`
     - [x] `serde.py`
-    - [ ] `fs.py`
+    - [x] `fs.py`
   - [ ] `scripts/`
     - Everything that does one job, on demand
 

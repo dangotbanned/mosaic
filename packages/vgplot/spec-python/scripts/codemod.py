@@ -13,7 +13,7 @@ import ast
 import dataclasses
 from pathlib import Path
 
-from scripts import fs
+from tools import fs
 
 
 @dataclasses.dataclass(slots=True, frozen=True)
