@@ -63,7 +63,7 @@ class JsonSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
     Excludes `"$schema"` from all `Spec` members, while leaving a single version at the top-level.
     """
 
-    type: Primitive | Sequence[Primitive] = field(default_factory=list)
+    type: Primitive | Sequence[Primitive] = field(default_factory=list)  # pyright: ignore[reportIncompatibleVariableOverride]
     items: ItemSchema | Sequence[ItemSchema] | bool = True
     min_items: int = field(name="minItems", default=0)
     max_items: int | None = field(name="maxItems", default=None)

@@ -84,9 +84,14 @@ dev-mode-dirs = [".", "src", "scripts", "tools"]
 packages = ["mosaic_spec"]
 
 [tool.pyright]
-ignore           = ["../**/.venv/"]                                # Do not display diagnostics in external source code
-include          = ["src", "scripts", "tools", "*.py", "*.ipynb"]
-typeCheckingMode = "standard"
+extends               = "../../../pyproject.toml"
+include               = ["src", "scripts", "tools", "*.py", "*.ipynb"]
+executionEnvironments = [
+  { root = "src", pythonVersion = "3.10" },
+  { root = "tools", pythonVersion = "3.15" },
+  { root = "scripts", pythonVersion = "3.15" },
+]
+defineConstant        = { "PYRIGHT" = true }
 
 [tool.ruff]
 fix         = true
