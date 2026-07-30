@@ -18,23 +18,23 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from tools import fs
-from tools.codemod import common, dunder_all, fragments
+from tools.codemod import dunder_all, fragments
 
 if TYPE_CHECKING:
     from pathlib import Path
 
 
-def steal_child_dunder_all(source: Path, target: Path) -> None:
-    import_names = dunder_all.find(source).to_str()
+def main(source: Path, target: Path) -> None:
+    names_all = dunder_all.find(source).unparse_value()
     target_contents = (
         f"{fragments.FUTURE_ANNOTATIONS}\n"
-        f"{fragments.import_from(common.dotted_module_name(source), import_names)}\n"
-        f"__all__ = {tuple(import_names.split(', '))}\n"
+        f"{fragments.import_from(source, names_all.replace("'", ''))}\n"
+        f"__all__ = {names_all}\n"
     )
     target.write_text(target_contents, "utf8", newline="\n")
 
 
 if __name__ == "__main__":
     # TODO @dangotbanned: Check if there was a diff first?
-    steal_child_dunder_all(fs.MOSAIC_SPEC_GEN_INIT, fs.MOSAIC_SPEC_INIT)
+    main(fs.MOSAIC_SPEC_GEN_INIT, fs.MOSAIC_SPEC_INIT)
     print(f"Updated `__all__` at: {fs.repo_relative_str(fs.MOSAIC_SPEC_INIT)}")
