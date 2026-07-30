@@ -91,6 +91,7 @@ typeCheckingMode = "standard"
 [tool.ruff]
 fix         = true
 line-length = 100
+extend      = "../../../pyproject.toml"
 
 [tool.ruff.per-file-target-version]
 "scripts/*" = "py315"  # PEP 695 & PEP 728
@@ -104,45 +105,112 @@ line-ending               = "lf"
 docstring-code-format     = true
 
 [tool.ruff.lint]
-extend-select                            = ["ALL"]
-extend-safe-fixes                        = ["FA", "TC", "UP", "TID252", "EM", "TRY"]
+preview                                  = true
+explicit-preview-rules                   = true
+# NOTE: Using `tool.ruff.extend` isn't compatible with `["ALL"]`
+extend-select                            = [
+  "ERA",
+  "YTT",
+  "ANN",
+  "S",
+  "B",
+  "A",
+  "trailing-comma-on-bare-tuple",
+  "C4",
+  "DTZ",
+  "boolean-type-hint-positional-argument",
+  "EM",
+  "EXE",
+  "ISC",
+  "ICN",
+  "LOG",
+  "G",
+  "implicit-namespace-package",
+  "PIE",
+  "print",
+  "PYI",
+  "PT",
+  "RET",
+  "SIM",
+  "TID",
+  "TD",
+  "PTH",
+  "static-join-to-f-string",
+  "I",
+  "complex-structure",
+  "NPY",
+  "PD",
+  "N",
+  "PERF",
+  "E",
+  "W",
+  "DOC",
+  "D",
+  "multi-line-summary-first-line",
+  "F",
+  "PGH",
+  "PL",
+  "FURB",
+  "TRY",
+  "RUF",
+  # ignored in parent
+  "blind-except",
+  "boolean-default-value-positional-argument",
+  "exec-builtin",
+  "useless-expression",
+  "raw-string-in-exception",
+  "f-string-in-exception",
+  "useless-return",
+  "implicit-string-concatenation-in-collection-literal",
+  "invalid-all-object",
+  "subprocess-run-without-check",
+  "unused-noqa",
+  "unsorted-dunder-all",
+  "unsorted-imports",
+  "undocumented-warn",
+  "unused-function-argument",
+  "raise-vanilla-class",
+  "raise-vanilla-args",
+  "raise-within-try",
+  "hardcoded-sql-expression",
+  "log-exception-outside-except-handler",
+]
+extend-safe-fixes                        = ["FA", "TC", "UP", "relative-imports", "EM", "TRY"]
 future-annotations                       = true
 flake8-tidy-imports.ban-relative-imports = "all"
 typing-modules                           = ["mosaic_spec._typing_compat"]
 
 ignore = [
-  "A001",     # builtin-variable-shadowing
-  "A004",     # builtin-import-shadowing
-  "ARG002",   # unused-method-argument
-  "ANN401",   # any-type
-  "COM812",   # missing-trailing-comma
-  "D100",     # undocumented-public-module
-  "D101",     # undocumented-public-class
-  "D102",     # undocumented-public-method
-  "D103",     # undocumented-public-function
-  "D104",     # undocumented-public-package
-  "D105",     # undocumented-magic-method
-  "D107",     # undocumented-public-init
-  "D203",     # incorrect-blank-line-before-class
-  "D213",     # multi-line-summary-second-line
-  "D400",     # missing-trailing-period
-  "DTZ001",   # call-datetime-without-tzinfo
-  "E501",     # line-too-long
-  "FBT003",   # We enforce at definition site when it is a flag, not a value
-  "FIX",      # flake8-fixme
-  "PLC0415",  # `import` should be at the top-level of a file
-  "PLR0913",  # too-many-arguments
-  "PLR2004",  # magic-value-comparison
-  "PLW1641",  # Object does not implement `__hash__` method
-  "SLF001",   # private-member-access
-  "TD003",    # missing-todo-link
-  "TD004",    # missing-todo-colon
-  "N801",     # capwords naming
-  "N806",     # lowercase variable
-  "S608",     # sql injection
-  "PYI051",   # redundant-literal-union (opinionated)
-  "PYI021",   # docstrings can be allowed in stubs
-  "Q000",     # conflicts with formatter
+  "builtin-variable-shadowing",
+  "builtin-import-shadowing",
+  "unused-method-argument",
+  "any-type",
+  "missing-trailing-comma",
+  "prohibited-trailing-comma",
+  "undocumented-public-module",
+  "undocumented-public-class",
+  "undocumented-public-method",
+  "undocumented-public-function",
+  "undocumented-public-package",
+  "undocumented-magic-method",
+  "undocumented-public-init",
+  "incorrect-blank-line-before-class",
+  "multi-line-summary-second-line",
+  "missing-trailing-period",
+  "call-datetime-without-tzinfo",
+  "line-too-long",
+  "FIX",
+  "type-name-incorrect-variance",
+  "import-outside-top-level",
+  "too-many-arguments",
+  "magic-value-comparison",
+  "private-member-access",
+  "missing-todo-link",
+  "missing-todo-colon",
+  "invalid-class-name",                  # capwords naming
+  "non-lowercase-variable-in-function",
+  "redundant-literal-union",             # (opinionated)
+  "docstring-in-stub",                   # (opinionated)
 ]
 
 [tool.ruff.lint.isort]
@@ -151,16 +219,21 @@ required-imports        = ["from __future__ import annotations"]
 combine-as-imports      = true
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*"                   = ["D", "S101"]
-"**/*.pyi"                  = ["ERA001"]                    # false positive for commented out code
-"scripts/**.py"             = ["T201"]                      # print is ok in scripts
-"scripts/models.py"         = ["I002", "TC003"]             # `msgspec` does runtime introspection
-"tools/models/**/*.py"      = ["I002", "TC003"]             # `msgspec` does runtime introspection
+"tests/*"                   = ["D", "assert"]
+"scripts/**.py"             = ["print"]
+"tools/models/**/*.py"      = [
+  "missing-required-import",                   # `msgspec` does runtime introspection
+  "typing-only-standard-library-import"
+]
 # TODO @dangotbanned: Clean these up before they reach source code, either:
 # 1. [At the source](https://github.com/uwdata/mosaic/tree/main/packages/vgplot/spec)
 # 2. [During initial schema gen](https://github.com/vega/ts-json-schema-generator)
 # 3. [Before emitting schema mod](https://github.com/dangotbanned/mosaic/tree/36a37efabfdda195158712fecdedb6540ea028ac/packages/vgplot/spec-python/schema)
-"src/mosaic_spec/_gen/*.py" = ["RUF001", "RUF002", "D415"]
+"src/mosaic_spec/_gen/*.py" = [
+  "ambiguous-unicode-character-string",
+  "ambiguous-unicode-character-docstring",
+  "missing-terminal-punctuation"
+]
 
 [tool.ruff.lint.pep8-naming]
 extend-ignore-names = [
@@ -168,7 +241,7 @@ extend-ignore-names = [
   "A",                   # typing.Annotated
 ]
 
-[tool.src]
+[tool.ty.src]
 include = ["**/*.py", "**/*.pyi", "**/*.ipynb"]
 
 [tool.ty.environment]
