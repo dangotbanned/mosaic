@@ -13,10 +13,18 @@ from typing import Final
 
 # TODO @dangotbanned: Unbreak path for `../*.ipynb`
 try:
+    import tools.models.source as models
+    from tools import serde
+
     import fs
-    import models
 except ModuleNotFoundError:
-    from scripts import fs, models
+    import sys
+
+    sys.path.append(str(Path(__file__).parent.parent))
+    from tools import serde
+    from tools.models import source as models
+
+    from scripts import fs
 
 
 GENERATED_MODULE_NAME = "mosaic"
@@ -53,11 +61,11 @@ def _recursive_replace[T: (models.JsonSchema, models.ItemSchema)](schema: T) -> 
 # TODO @dangotbanned: Use `Spec/Component`
 def main(source: str | Path, target: str | Path) -> None:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
-    schema = models.read_json(source, models.InputSchema)
+    schema = serde.read_json(source, models.InputSchema)
     definitions = schema.definitions
     _spec_todo = definitions.pop("Spec")
     schema.definitions = {k: _recursive_replace(v) for k, v in definitions.items()}
-    models.write_json(target, schema)
+    serde.write_json(target, schema)
     print(f"Generated python schema at: {fs.repo_relative_str(target)}")
 
 

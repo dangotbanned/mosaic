@@ -155,6 +155,7 @@ combine-as-imports      = true
 "**/*.pyi"                  = ["ERA001"]                    # false positive for commented out code
 "scripts/**.py"             = ["T201"]                      # print is ok in scripts
 "scripts/models.py"         = ["I002", "TC003"]             # `msgspec` does runtime introspection
+"tools/models/**/*.py"      = ["I002", "TC003"]             # `msgspec` does runtime introspection
 # TODO @dangotbanned: Clean these up before they reach source code, either:
 # 1. [At the source](https://github.com/uwdata/mosaic/tree/main/packages/vgplot/spec)
 # 2. [During initial schema gen](https://github.com/vega/ts-json-schema-generator)

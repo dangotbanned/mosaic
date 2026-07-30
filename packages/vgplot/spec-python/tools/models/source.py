@@ -8,13 +8,12 @@
   or to check a new schema hasn't introduced something unhandled
 """
 
-from collections.abc import Buffer, Mapping, Sequence
-from functools import cache
-from pathlib import Path
-from typing import Annotated as A, Any, Literal as L, final
+from collections.abc import Sequence
+from typing import Annotated as A, Literal as L, final
 
-import msgspec
-from msgspec import UNSET, Struct, UnsetType, field
+from msgspec import field
+
+from tools.models import base
 
 type Primitive = L["array", "boolean", "integer", "null", "number", "object", "string"]
 type _JsonSchemaFwd = JsonSchema
@@ -24,10 +23,7 @@ type Resolved[T] = A[T, L["Resolved"]]
 type Definitions = dict[Resolved[Ref], Resolved[JsonSchema]]
 
 
-class _StructBase(Struct, omit_defaults=True, repr_omit_defaults=True): ...
-
-
-class _NonRecursiveFieldsBase(_StructBase, forbid_unknown_fields=True):
+class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
     """Excludes: `"items"`, `"properties"`, `"any_of"`."""
 
     ref: Ref = field(name="$ref", default="")
@@ -35,7 +31,7 @@ class _NonRecursiveFieldsBase(_StructBase, forbid_unknown_fields=True):
     title: str = ""
     format: str = ""
     type: Primitive | None = None
-    const: str | bool | UnsetType = UNSET
+    const: str | bool | None = None
     enum: Sequence[str | bool | None] = field(default_factory=list)
     additional_properties: NonRecursiveFields | bool = field(
         name="additionalProperties", default=True
@@ -70,7 +66,7 @@ class JsonSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
     type: Primitive | Sequence[Primitive] = field(default_factory=list)
     items: ItemSchema | Sequence[ItemSchema] | bool = True
     min_items: int = field(name="minItems", default=0)
-    max_items: int | UnsetType = field(name="maxItems", default=UNSET)
+    max_items: int | None = field(name="maxItems", default=None)
 
     @property
     def ref_name(self) -> Resolved[Ref]:
@@ -81,7 +77,7 @@ class JsonSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
 
 
 @final
-class InputSchema(_StructBase):
+class InputSchema(base.Struct):
     """Top level schema for `mosaic-schema.json`."""
 
     definitions: Definitions
@@ -124,39 +120,3 @@ class InputSchema(_StructBase):
             case _:
                 msg = f"`target` is not a union, got:\n{target!r}"
                 raise TypeError(msg)
-
-
-# TODO @dangotbanned: More below to another file
-@cache
-def _decoder[T](tp: type[T], /) -> msgspec.json.Decoder[T]:
-    return msgspec.json.Decoder(tp)
-
-
-@cache
-def _encoder(order: L["deterministic", "sorted"] | None = None, /) -> msgspec.json.Encoder:
-    return msgspec.json.Encoder(order=order)
-
-
-def serialize(obj: Any, /, *, order: L["deterministic", "sorted"] | None = None) -> bytes:
-    return _encoder(order).encode(obj)
-
-
-def deserialize[T](buf: Buffer | str, tp: type[T], /) -> T:
-    return _decoder(tp).decode(buf)
-
-
-def convert[T](obj: Struct | Mapping[str, Any], into: type[T], /) -> T:
-    return deserialize(serialize(obj), into)
-
-
-def read_json[T](path: str | Path, tp: type[T], /) -> T:
-    with Path(path).open(encoding="utf8") as fd:
-        return deserialize(fd.read(), tp)
-
-
-def write_json(path: str | Path, obj: Any) -> None:
-    json_str = serialize(obj, order="sorted").decode()
-    path = Path(path)
-    path.touch()
-    with path.open("w", encoding="utf8", newline="\n") as fd:
-        fd.write(json_str)
