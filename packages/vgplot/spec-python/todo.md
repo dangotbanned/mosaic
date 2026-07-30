@@ -31,8 +31,8 @@
   - [x] Replace non-msgspec pipeline
   - [ ] Output schema
 - [ ] Split up `scripts/` [^2]
-  - [ ] `tools/`
-    - [ ] `codemod/`
+  - [x] `tools/`
+    - [x] `codemod/`
     - [x] `codegen/`
     - [x] `models/`
     - [x] `serde.py`
