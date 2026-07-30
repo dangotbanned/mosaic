@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import functools
+from collections import deque
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal as L
 
 import msgspec
 
 if TYPE_CHECKING:
-    from collections.abc import Buffer, Mapping
+    from collections.abc import Buffer, Callable, Mapping
 
 __all__ = ("convert", "deserialize", "read_json", "serialize", "write_json")
 
@@ -41,9 +42,31 @@ def write_json(path: str | Path, obj: Any) -> None:
 
 @functools.cache
 def _decoder[T](tp: type[T], /) -> msgspec.json.Decoder[T]:
-    return msgspec.json.Decoder(tp)
+    return msgspec.json.Decoder(tp, dec_hook=_decoder_hook)
 
 
 @functools.cache
 def _encoder(order: L["deterministic", "sorted"] | None = None, /) -> msgspec.json.Encoder:
-    return msgspec.json.Encoder(order=order)
+    return msgspec.json.Encoder(order=order, enc_hook=_encoder_hook)
+
+
+@functools.singledispatch
+def _encoder_hook(obj: Any, /) -> Any:
+    tp = type(obj)
+    msg = f"Objects of type '{tp.__module__}.{tp.__name__}' cannot be serialized by msgspec, got: {obj!r}"
+    raise NotImplementedError(msg)
+
+
+@functools.singledispatch
+def _decoder_hook(tp: type[Any], obj: Any, /) -> Any:
+    tp = type(obj)
+    msg = f"Objects of type '{tp.__module__}.{tp.__name__}' cannot be deserialized by msgspec, got: {obj!r}"
+    raise NotImplementedError(msg)
+
+
+@_decoder_hook.register(deque)
+def _use_constructor[T, R](cb: Callable[[T], R], obj: T, /) -> R:
+    return cb(obj)
+
+
+_encoder_hook.register(deque, list)
