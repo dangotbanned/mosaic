@@ -15,7 +15,7 @@ PYRIGHT: Final = False
 """In pyroject.toml, this is `tool.pyright.defineConstant = { "PYRIGHT" = true }`"""
 
 if PYRIGHT:
-    # NOTE: `Final` is a workaround for https://github.com/microsoft/pyright/issues/10744
+    # NOTE: `Final` is a workaround for https://github.com/microsoft/pyright/issues/10744#issuecomment-5133597898
     # but this breaks `sentinel` for `ty`
     NoTotal: Final = sentinel("NoTotal")
     NoClosed: Final = sentinel("NoClosed")
