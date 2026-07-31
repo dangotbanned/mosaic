@@ -6,10 +6,15 @@
 
 from __future__ import annotations
 
-from typing import Any, Final, Literal as L, NewType
+import dataclasses
+import enum
+from typing import TYPE_CHECKING, Any, Final, Literal as L, NewType, assert_never
 
 # TODO @dangotbanned: Remove alias after `"pyright>1.1.411"` updates `typing_extensions` stubs
 from typing_extensions import Sentinel as sentinel  # ruff: ignore[camelcase-imported-as-lowercase]
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 PYRIGHT: Final = False
 """In pyroject.toml, this is `tool.pyright.defineConstant = { "PYRIGHT" = true }`"""
@@ -25,13 +30,13 @@ else:
     NoClosed = sentinel("NoClosed")
     NoExtraItems = sentinel("NoExtraItems")
 
-TypeExpr = NewType("TypeExpr", str)
+type TypeExpr = str
 """A string encoding a [type expression][1].
 
 [1]: https://typing.python.org/en/latest/spec/annotations.html#type-and-annotation-expressions
 """
 
-RuntimeTypeExpr = NewType("RuntimeTypeExpr", TypeExpr)
+RuntimeTypeExpr = NewType("RuntimeTypeExpr", str)
 """A [type expression][1] that must be valid outside of [Annotation scopes][2].
 
 [1]: https://typing.python.org/en/latest/spec/annotations.html#type-and-annotation-expressions
@@ -40,44 +45,106 @@ RuntimeTypeExpr = NewType("RuntimeTypeExpr", TypeExpr)
 
 type Incomplete = Any
 
-SPEC: Final = "Spec"
-"""Name of the `Spec` union and prefix for it's members"""
-
-SPEC_HEAD: Final = "SpecHead"
-"""Name of the base `TypedDict` for all `Spec` members.
-
-Mixing this into the bases with the `Component` member is a limited form of an intersection type.
-"""
+type Line = str
+"""An unindented line of code."""
 
 
-def t_typed_dict(
+class Qualifier(enum.Enum):
+    # there's `ReadOnly` too, but doesn't fit this use-case
+    DEFAULT = "{0}"
+    """Use when all are required"""
+
+    REQUIRED = "Required[{0}]"
+    """Use this when `total=False`/less than half are required"""
+
+    NOT_REQUIRED = "NotRequired[{0}]"
+    """Use this when `total` isn't provided/more than half are required"""
+
+
+INDENT: Final = 4 * " "
+
+
+def iter_lines(
     name: str,
-    fields: tuple[Incomplete, ...] = (),
+    fields: tuple[Field, ...] = (),
     *,
     bases: tuple[str, ...] = (),
     total: L[False] | NoTotal = NoTotal,
     closed: bool | NoClosed = NoClosed,
     extra_items: RuntimeTypeExpr | NoExtraItems = NoExtraItems,
-) -> str:
+) -> Iterator[str]:
     # NOTE: Will need to report what has been imported through the duration of writing a module
     bases = bases or ("TypedDict",)
     kwds: dict[str, str | bool] = (
         {} if extra_items is NoExtraItems else {"extra_items": extra_items}
     )
+
     if closed is not NoClosed:
         if kwds:
             msg = f"Cannot combine closed={closed!r} and extra_items"
             raise TypeError(msg)
         kwds["closed"] = closed
+
     if total is not NoTotal:
         kwds["total"] = total
-    kwds_str = ", ".join(f"{k}={v}" for k, v in kwds.items())
+        non_default = Qualifier.REQUIRED
+    else:
+        non_default = Qualifier.DEFAULT
+
     if fields:
-        # NOTE:  Will be needed for the general case, but not yet when only dealing with intersections
-        msg_0 = "TODO @dangotbanned: Add support for defining new fields"
-        raise NotImplementedError(msg_0)
-    return f"class {name}({', '.join(bases)}, {kwds_str}): ..."
+        if total is NoTotal:
+            n = len(fields)
+            n_required = sum(fld.required for fld in fields)
+            if not n_required or n_required <= (n / 2):
+                kwds["total"] = False
+                non_default = Qualifier.REQUIRED
+            elif n_required == n:
+                non_default = Qualifier.DEFAULT
+            else:
+                # NOTE: Might be lucky enough to not hit this
+                non_default = Qualifier.NOT_REQUIRED
+
+        kwds_str = ", ".join(f"{k}={v}" for k, v in kwds.items())
+        yield f"class {name}({', '.join(bases)}, {kwds_str}):"
+
+        # TODO @dangotbanned: Put the field types somewhere for import deps
+        for field in fields:
+            for line in field.iter_lines(non_default):
+                yield f"{INDENT}{line}"
+
+    else:
+        kwds_str = ", ".join(f"{k}={v}" for k, v in kwds.items())
+        yield f"class {name}({', '.join(bases)}, {kwds_str}): ..."
 
 
-def t_spec_member(component_name: str) -> str:
-    return t_typed_dict(f"{SPEC}{component_name}", bases=(SPEC_HEAD, component_name), closed=True)
+Q = Qualifier
+
+
+def t_doc(string: str) -> str:
+    start = end = "'''"
+    return f"{start}{string}{end}"
+
+
+@dataclasses.dataclass(slots=True)
+class Field:
+    name: str
+    tp: TypeExpr
+
+    doc: str = ""
+    _: dataclasses.KW_ONLY
+    required: bool = False
+
+    def iter_lines(self, base_q: Qualifier) -> Iterator[Line]:
+        # base_q is the one that needs to be shown, because the default is the opposite
+        self_q = Q.REQUIRED if self.required else Q.NOT_REQUIRED
+        match (self_q, base_q):
+            case (_, Q.DEFAULT) | (Q.NOT_REQUIRED, Q.REQUIRED) | (Q.REQUIRED, Q.NOT_REQUIRED):
+                ann = self.tp
+            case (q, _):
+                ann = q.value.format(self.tp)
+            case _:
+                assert_never((self_q, base_q))
+
+        yield f"{self.name}: {ann}"
+        if doc := self.doc:
+            yield t_doc(doc)

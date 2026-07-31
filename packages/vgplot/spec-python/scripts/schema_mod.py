@@ -8,11 +8,17 @@
 
 from __future__ import annotations
 
+from collections import deque
 from pathlib import Path
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from tools import fs, serde
+from tools.codegen import typed_dict
+from tools.codemod import fragments
 from tools.models import source as m
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 GENERATED_MODULE_NAME = "mosaic"
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
@@ -57,10 +63,71 @@ def main(source: str | Path, target: str | Path) -> None:
     # TODO @dangotbanned: Fix the order of this so there isn't a need to write to a file
     # Next step is `datamodel-code-generator` -> using
     component_members = schema.flatten_union("Component")
-    wip_path = fs.SPEC_PYTHON / "WIP-Component-names.json"
-    serde.write_json(wip_path, component_members)
-    print(f"Generated Component member names at: {fs.repo_relative_str(wip_path)}")
+
+    serde.write_json(WIP_NAMES, component_members)
+    print(f"Generated Component member names at: {fs.repo_relative_str(WIP_NAMES)}")
+
+
+WIP_NAMES = fs.SPEC_PYTHON / "WIP-Component-names.json"
+WIP_SPEC_MODULE = fs.MOSAIC_SPEC / "_spec.py"
+SPEC: Final = "Spec"
+"""Name of the `Spec` union and prefix for it's members"""
+
+SPEC_HEAD: Final = "SpecHead"
+"""Name of the base `TypedDict` for all `Spec` members.
+
+Mixing this into the bases with the `Component` member is a limited form of an intersection type.
+"""
+
+
+def generate_spec_module(component_members: Iterable[str], target: str | Path) -> None:
+    spec_fields = (
+        typed_dict.Field("config", "Config", "Configuration options."),
+        typed_dict.Field("data", "Data", "Dataset definitions."),
+        typed_dict.Field("meta", "Meta", "Specification metadata."),
+        typed_dict.Field("params", "Params", "Param and Selection definitions."),
+        typed_dict.Field(
+            "plot_defaults",
+            "PlotAttributes",
+            "A default set of attributes to apply to all plot components.",
+        ),
+    )
+
+    module = deque(typed_dict.iter_lines(SPEC_HEAD, spec_fields))
+    import_from = fragments.import_from
+    module.extendleft(
+        (
+            import_from(fs.MOSAIC_SPEC / "_typing_compat.py", ("TypedDict", "TypeAliasType")),
+            import_from(fs.MOSAIC_SPEC / "_gen" / "mosaic.py", (fld.tp for fld in spec_fields)),
+        )
+    )
+
+    import_names = deque[str]()
+    export_names = deque[str]()
+
+    for base_name in component_members:
+        import_names.append(base_name)
+        name = f"{SPEC}{base_name}"
+        module.extend(typed_dict.iter_lines(name, bases=(SPEC_HEAD, base_name), closed=True))
+        export_names.append(name)
+
+    module.append(f"{SPEC} = TypeAliasType({SPEC!r}, {'|'.join(export_names)})")
+    export_names.append(SPEC)
+    module.appendleft(import_from(fs.MOSAIC_SPEC_GEN_INIT, import_names))
+    module.appendleft(fragments.FUTURE_ANNOTATIONS)
+    module.append(f"__all__ = {tuple(export_names)}\n")
+
+    target = Path(target)
+    target.touch()
+    target.write_text("\n".join(module), "utf8", newline="\n")
+    print(f"Generated spec module at: {fs.repo_relative_str(target)}")
 
 
 if __name__ == "__main__":
     main(SCHEMA_IN, SCHEMA_OUT)
+    # TODO @dangotbanned: Fix the order!
+    # TODO @dangotbanned: Re-enable after resolving typing issues
+    REGEN_SPEC_MODULE = False
+    if REGEN_SPEC_MODULE:
+        comp_members = serde.read_json(WIP_NAMES, list[str])
+        generate_spec_module(comp_members, WIP_SPEC_MODULE)

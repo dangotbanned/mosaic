@@ -21,4 +21,4 @@ def module_name(path: Path, /) -> DottedName:
     relative = path.relative_to(fs.SRC)
     if relative.name == "__init__.py":
         relative = relative.parent
-    return DottedName(relative.as_posix().replace("/", "."))
+    return DottedName(relative.as_posix().replace("/", ".").removesuffix(".py"))
