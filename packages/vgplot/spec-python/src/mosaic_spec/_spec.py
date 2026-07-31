@@ -22,8 +22,14 @@ from mosaic_spec._gen import (
     DelaunayMesh,
     DenseLine,
     Density,
-    DensityX,
-    DensityY,
+    DensityX1,
+    DensityX2,
+    DensityX3,
+    DensityX4,
+    DensityY1,
+    DensityY2,
+    DensityY3,
+    DensityY4,
     Dot,
     DotX,
     DotY,
@@ -98,232 +104,247 @@ class SpecHead(TypedDict, total=False):
     """A default set of attributes to apply to all plot components."""
 
 
-# pyright: reportIncompatibleVariableOverride=false
-class SpecHConcat(SpecHead, HConcat, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecHConcat(SpecHead, HConcat, closed=True): ...
 
 
-class SpecVConcat(SpecHead, VConcat, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecVConcat(SpecHead, VConcat, closed=True): ...
 
 
-class SpecHSpace(SpecHead, HSpace, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecHSpace(SpecHead, HSpace, closed=True): ...
 
 
-class SpecVSpace(SpecHead, VSpace, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecVSpace(SpecHead, VSpace, closed=True): ...
 
 
-class SpecMenu(SpecHead, Menu, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecMenu(SpecHead, Menu, closed=True): ...
 
 
-class SpecSearch(SpecHead, Search, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecSearch(SpecHead, Search, closed=True): ...
 
 
-class SpecSlider(SpecHead, Slider, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecSlider(SpecHead, Slider, closed=True): ...
 
 
-class SpecTable(SpecHead, Table, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecTable(SpecHead, Table, closed=True): ...
 
 
-class SpecPlot(SpecHead, Plot, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecPlot(SpecHead, Plot, closed=True): ...
 
 
-class SpecArea(SpecHead, Area, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecArea(SpecHead, Area, closed=True): ...
 
 
-class SpecAreaX(SpecHead, AreaX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecAreaX(SpecHead, AreaX, closed=True): ...
 
 
-class SpecAreaY(SpecHead, AreaY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecAreaY(SpecHead, AreaY, closed=True): ...
 
 
-class SpecArrow(SpecHead, Arrow, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecArrow(SpecHead, Arrow, closed=True): ...
 
 
-class SpecAxisX(SpecHead, AxisX, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecAxisX(SpecHead, AxisX, closed=True): ...
 
 
-class SpecAxisY(SpecHead, AxisY, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecAxisY(SpecHead, AxisY, closed=True): ...
 
 
-class SpecAxisFx(SpecHead, AxisFx, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecAxisFx(SpecHead, AxisFx, closed=True): ...
 
 
-class SpecAxisFy(SpecHead, AxisFy, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecAxisFy(SpecHead, AxisFy, closed=True): ...
 
 
-class SpecGridX(SpecHead, GridX, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecGridX(SpecHead, GridX, closed=True): ...
 
 
-class SpecGridY(SpecHead, GridY, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecGridY(SpecHead, GridY, closed=True): ...
 
 
-class SpecGridFx(SpecHead, GridFx, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecGridFx(SpecHead, GridFx, closed=True): ...
 
 
-class SpecGridFy(SpecHead, GridFy, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecGridFy(SpecHead, GridFy, closed=True): ...
 
 
-class SpecBarX(SpecHead, BarX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecBarX(SpecHead, BarX, closed=True): ...
 
 
-class SpecBarY(SpecHead, BarY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecBarY(SpecHead, BarY, closed=True): ...
 
 
-class SpecCell(SpecHead, Cell, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecCell(SpecHead, Cell, closed=True): ...
 
 
-class SpecCellX(SpecHead, CellX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecCellX(SpecHead, CellX, closed=True): ...
 
 
-class SpecCellY(SpecHead, CellY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecCellY(SpecHead, CellY, closed=True): ...
 
 
-class SpecContour(SpecHead, Contour, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecContour(SpecHead, Contour, closed=True): ...
 
 
-class SpecDelaunayLink(SpecHead, DelaunayLink, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDelaunayLink(SpecHead, DelaunayLink, closed=True): ...
 
 
-class SpecDelaunayMesh(SpecHead, DelaunayMesh, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDelaunayMesh(SpecHead, DelaunayMesh, closed=True): ...
 
 
-class SpecHull(SpecHead, Hull, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecHull(SpecHead, Hull, closed=True): ...
 
 
-class SpecVoronoi(SpecHead, Voronoi, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecVoronoi(SpecHead, Voronoi, closed=True): ...
 
 
-class SpecVoronoiMesh(SpecHead, VoronoiMesh, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecVoronoiMesh(SpecHead, VoronoiMesh, closed=True): ...
 
 
-class SpecDenseLine(SpecHead, DenseLine, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDenseLine(SpecHead, DenseLine, closed=True): ...
 
 
-class SpecDensity(SpecHead, Density, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDensity(SpecHead, Density, closed=True): ...
 
 
-# TODO @dangotbanned: `Density{X,Y}` are unexpanded unions
-class SpecDensityX(SpecHead, DensityX, closed=True): ...  # ty: ignore[invalid-base] # pyright: ignore[reportCallIssue, reportGeneralTypeIssues]
+class SpecDensityX1(SpecHead, DensityX1, closed=True): ...
 
 
-# TODO @dangotbanned: `Density{X,Y}` are unexpanded unions
-class SpecDensityY(SpecHead, DensityY, closed=True): ...  # ty: ignore[invalid-base] # pyright: ignore[reportCallIssue, reportGeneralTypeIssues]
+class SpecDensityX2(SpecHead, DensityX2, closed=True): ...
 
 
-class SpecDot(SpecHead, Dot, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDensityX3(SpecHead, DensityX3, closed=True): ...
 
 
-class SpecDotX(SpecHead, DotX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDensityX4(SpecHead, DensityX4, closed=True): ...
 
 
-class SpecDotY(SpecHead, DotY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDensityY1(SpecHead, DensityY1, closed=True): ...
 
 
-class SpecCircle(SpecHead, Circle, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDensityY2(SpecHead, DensityY2, closed=True): ...
 
 
-class SpecHexagon(SpecHead, Hexagon, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDensityY3(SpecHead, DensityY3, closed=True): ...
 
 
-class SpecErrorBarX(SpecHead, ErrorBarX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDensityY4(SpecHead, DensityY4, closed=True): ...
 
 
-class SpecErrorBarY(SpecHead, ErrorBarY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDot(SpecHead, Dot, closed=True): ...
 
 
-class SpecFrame(SpecHead, Frame, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecDotX(SpecHead, DotX, closed=True): ...
 
 
-class SpecGeo(SpecHead, Geo, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecDotY(SpecHead, DotY, closed=True): ...
 
 
-class SpecGraticule(SpecHead, Graticule, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecCircle(SpecHead, Circle, closed=True): ...
 
 
-class SpecSphere(SpecHead, Sphere, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecHexagon(SpecHead, Hexagon, closed=True): ...
 
 
-class SpecHexbin(SpecHead, Hexbin, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecErrorBarX(SpecHead, ErrorBarX, closed=True): ...
 
 
-class SpecHexgrid(SpecHead, Hexgrid, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecErrorBarY(SpecHead, ErrorBarY, closed=True): ...
 
 
-class SpecImage(SpecHead, Image, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecFrame(SpecHead, Frame, closed=True): ...
 
 
-class SpecLine(SpecHead, Line, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecGeo(SpecHead, Geo, closed=True): ...
 
 
-class SpecLineX(SpecHead, LineX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecGraticule(SpecHead, Graticule, closed=True): ...
 
 
-class SpecLineY(SpecHead, LineY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecSphere(SpecHead, Sphere, closed=True): ...
 
 
-class SpecLink(SpecHead, Link, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecHexbin(SpecHead, Hexbin, closed=True): ...
 
 
-class SpecRaster(SpecHead, Raster, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecHexgrid(SpecHead, Hexgrid, closed=True): ...
 
 
-class SpecHeatmap(SpecHead, Heatmap, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecImage(SpecHead, Image, closed=True): ...
 
 
-class SpecRasterTile(SpecHead, RasterTile, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecLine(SpecHead, Line, closed=True): ...
 
 
-class SpecRect(SpecHead, Rect, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecLineX(SpecHead, LineX, closed=True): ...
 
 
-class SpecRectX(SpecHead, RectX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecLineY(SpecHead, LineY, closed=True): ...
 
 
-class SpecRectY(SpecHead, RectY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecLink(SpecHead, Link, closed=True): ...
 
 
-class SpecRegressionY(SpecHead, RegressionY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecRaster(SpecHead, Raster, closed=True): ...
 
 
-class SpecRuleX(SpecHead, RuleX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecHeatmap(SpecHead, Heatmap, closed=True): ...
 
 
-class SpecRuleY(SpecHead, RuleY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecRasterTile(SpecHead, RasterTile, closed=True): ...
 
 
-class SpecText(SpecHead, Text, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecRect(SpecHead, Rect, closed=True): ...
 
 
-class SpecTextX(SpecHead, TextX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecRectX(SpecHead, RectX, closed=True): ...
 
 
-class SpecTextY(SpecHead, TextY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecRectY(SpecHead, RectY, closed=True): ...
 
 
-class SpecTickX(SpecHead, TickX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecRegressionY(SpecHead, RegressionY, closed=True): ...
 
 
-class SpecTickY(SpecHead, TickY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecRuleX(SpecHead, RuleX, closed=True): ...
 
 
-class SpecVector(SpecHead, Vector, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecRuleY(SpecHead, RuleY, closed=True): ...
 
 
-class SpecVectorX(SpecHead, VectorX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecText(SpecHead, Text, closed=True): ...
 
 
-class SpecVectorY(SpecHead, VectorY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecTextX(SpecHead, TextX, closed=True): ...
 
 
-class SpecSpike(SpecHead, Spike, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecTextY(SpecHead, TextY, closed=True): ...
 
 
-class SpecWaffleX(SpecHead, WaffleX, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecTickX(SpecHead, TickX, closed=True): ...
 
 
-class SpecWaffleY(SpecHead, WaffleY, closed=True): ...  # ty: ignore[invalid-typed-dict-field, invalid-typed-dict-header]
+class SpecTickY(SpecHead, TickY, closed=True): ...
 
 
-class SpecLegend(SpecHead, Legend, closed=True): ...  # ty: ignore[invalid-typed-dict-header]
+class SpecVector(SpecHead, Vector, closed=True): ...
+
+
+class SpecVectorX(SpecHead, VectorX, closed=True): ...
+
+
+class SpecVectorY(SpecHead, VectorY, closed=True): ...
+
+
+class SpecSpike(SpecHead, Spike, closed=True): ...
+
+
+class SpecWaffleX(SpecHead, WaffleX, closed=True): ...
+
+
+class SpecWaffleY(SpecHead, WaffleY, closed=True): ...
+
+
+class SpecLegend(SpecHead, Legend, closed=True): ...
 
 
 Spec = TypeAliasType(
@@ -362,8 +383,14 @@ Spec = TypeAliasType(
     | SpecVoronoiMesh
     | SpecDenseLine
     | SpecDensity
-    | SpecDensityX
-    | SpecDensityY
+    | SpecDensityX1
+    | SpecDensityX2
+    | SpecDensityX3
+    | SpecDensityX4
+    | SpecDensityY1
+    | SpecDensityY2
+    | SpecDensityY3
+    | SpecDensityY4
     | SpecDot
     | SpecDotX
     | SpecDotY
@@ -425,8 +452,14 @@ __all__ = (
     "SpecDelaunayMesh",
     "SpecDenseLine",
     "SpecDensity",
-    "SpecDensityX",
-    "SpecDensityY",
+    "SpecDensityX1",
+    "SpecDensityX2",
+    "SpecDensityX3",
+    "SpecDensityX4",
+    "SpecDensityY1",
+    "SpecDensityY2",
+    "SpecDensityY3",
+    "SpecDensityY4",
     "SpecDot",
     "SpecDotX",
     "SpecDotY",

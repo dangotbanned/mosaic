@@ -171,7 +171,7 @@ class InputSchema(base.Struct):
             return DuplicateError.from_try_insert(name, schema, self.get(name))
         return self.insert(name, schema)
 
-    def name_union_members(self, target: DefName, /, fmt: LiteralString = "_{target}{idx}") -> None:
+    def name_union_members(self, target: DefName, /, fmt: LiteralString = "{target}{idx}") -> None:
         """Lift anonymous members of a union into top-level definitions."""
         union = self.get(target)
         doc = union.description

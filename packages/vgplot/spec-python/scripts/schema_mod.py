@@ -129,7 +129,7 @@ if __name__ == "__main__":
     main(SCHEMA_IN, SCHEMA_OUT)
     # TODO @dangotbanned: Fix the order!
     # TODO @dangotbanned: Re-enable after resolving typing issues
-    REGEN_SPEC_MODULE = False
+    REGEN_SPEC_MODULE = True
     if REGEN_SPEC_MODULE:
         comp_members = serde.read_json(WIP_NAMES, list[str])
         generate_spec_module(comp_members, WIP_SPEC_MODULE)
