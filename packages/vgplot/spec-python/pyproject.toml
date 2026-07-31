@@ -164,6 +164,12 @@ extend-select                            = [
   "FURB",
   "TRY",
   "RUF",
+  # explicit preview
+  "too-many-locals",
+  "too-many-boolean-expressions",
+  "too-many-nested-blocks",
+  "literal-membership",
+  "unspecified-encoding",
   # ignored in parent
   "blind-except",
   "boolean-default-value-positional-argument",
@@ -186,8 +192,18 @@ extend-select                            = [
   "hardcoded-sql-expression",
   "log-exception-outside-except-handler",
 ]
-extend-safe-fixes                        = ["FA", "TC", "UP", "relative-imports", "EM", "TRY"]
+extend-safe-fixes                        = [
+  "FA",
+  "TC",
+  "UP",
+  "relative-imports",
+  "EM",
+  "TRY",
+  "literal-membership",
+  "unspecified-encoding"
+]
 future-annotations                       = true
+flake8-builtins.ignorelist               = ["format", "input"]
 flake8-tidy-imports.ban-relative-imports = "all"
 typing-modules                           = ["mosaic_spec._typing_compat"]
 
