@@ -57,12 +57,14 @@ def main(source: str | Path, target: str | Path) -> None:
     definitions = schema.definitions
     _spec_todo = definitions.pop("Spec")
     schema.definitions = {k: _recursive_replace(v) for k, v in definitions.items()}
-    serde.write_json(target, schema)
-    print(f"Generated python schema at: {fs.repo_relative_str(target)}")
+    print("Finished renaming & Spec removal")
 
     # TODO @dangotbanned: Fix the order of this so there isn't a need to write to a file
     # Next step is `datamodel-code-generator` -> using
-    component_members = schema.flatten_union("Component")
+    component_members = schema.flatten_component_union_mut("Component")
+
+    serde.write_json(target, schema)
+    print(f"Generated python schema at: {fs.repo_relative_str(target)}")
 
     serde.write_json(WIP_NAMES, component_members)
     print(f"Generated Component member names at: {fs.repo_relative_str(WIP_NAMES)}")

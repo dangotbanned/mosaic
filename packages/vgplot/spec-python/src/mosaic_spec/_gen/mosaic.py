@@ -7208,6 +7208,2676 @@ class VoronoiMesh(TypedDict, closed=True):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
+class FieldDensityX1(TypedDict, closed=True):
+    """The densityX mark."""
+
+    aria_description: NotRequired[str | ParamRef]
+    """
+    The [aria-description][1]; a constant textual description.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
+    """
+    aria_hidden: NotRequired[str | ParamRef]
+    """
+    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
+    """
+    aria_label: NotRequired[ChannelValue]
+    """
+    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
+    """
+    bandwidth: NotRequired[float | ParamRef]
+    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
+    bins: NotRequired[float | ParamRef]
+    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
+    channels: NotRequired[Mapping[str, str]]
+    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
+    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
+    """
+    How to clip the mark; one of:
+
+    - *frame* or true - clip to the plot’s frame (inner area)
+    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
+    - null or false - do not clip
+
+    The *sphere* clip option requires a geographic projection.
+    """
+    curve: NotRequired[Curve | ParamRef]
+    """
+    The curve (interpolation) method for connecting adjacent points. One of:
+
+    - *basis* - a cubic basis spline (repeating the end points)
+    - *basis-open* - an open cubic basis spline
+    - *basis-closed* - a closed cubic basis spline
+    - *bump-x* - a Bézier curve with horizontal tangents
+    - *bump-y* - a Bézier curve with vertical tangents
+    - *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)
+    - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
+    - *cardinal-open* - an open cubic cardinal spline
+    - *cardinal-closed* - an closed cubic cardinal spline
+    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull–Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
+    - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
+    - *monotone-x* - a cubic spline that preserves monotonicity in *x*
+    - *monotone-y* - a cubic spline that preserves monotonicity in *y*
+    - *natural* - a natural cubic spline
+    - *step* - a piecewise constant function where *y* changes at the midpoint of *x*
+    - *step-after* - a piecewise constant function where *y* changes after *x*
+    - *step-before* - a piecewise constant function where *x* changes after *y*
+    """
+    data: PlotMarkData
+    """The data source for the mark."""
+    dx: NotRequired[float | ParamRef]
+    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    dy: NotRequired[float | ParamRef]
+    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
+    """
+    Whether to enable or disable faceting; one of:
+
+    - *auto* (default) - automatically determine if this mark should be faceted
+    - *include* (or true) - draw the subset of the mark’s data in the current facet
+    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *super* - draw this mark in a single frame that covers all facets
+    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+
+    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
+
+    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
+    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
+
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+    """
+    facet_anchor: NotRequired[
+        Literal[
+            "top",
+            "right",
+            "bottom",
+            "left",
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right",
+            "top-empty",
+            "right-empty",
+            "bottom-empty",
+            "left-empty",
+            "empty",
+        ]
+        | ParamRef
+        | None
+    ]
+    """
+    How to place the mark with respect to facets; one of:
+
+    - null (default for most marks) - display the mark in each non-empty facet
+    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
+    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
+    - *empty* - display the mark in empty facets only
+    """
+    fill: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+    """
+    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
+    """
+    filter: NotRequired[ChannelValue]
+    """
+    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    fx: NotRequired[ChannelValue]
+    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
+    fy: NotRequired[ChannelValue]
+    """
+    The vertical facet position channel, for mark-level faceting, bound to the
+    *fy* scale.
+    """
+    href: NotRequired[ChannelValue]
+    """
+    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
+    """
+    image_filter: NotRequired[str | ParamRef]
+    """
+    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+    """
+    margin: NotRequired[float | ParamRef]
+    """
+    Shorthand to set the same default for all four mark margins: **marginTop**,
+    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
+    """
+    margin_bottom: NotRequired[float | ParamRef]
+    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    margin_left: NotRequired[float | ParamRef]
+    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    margin_right: NotRequired[float | ParamRef]
+    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    margin_top: NotRequired[float | ParamRef]
+    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    mark: Literal["densityX"]
+    """
+    A densityX mark that visualizes smoothed point cloud densities along the
+    **x** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaX mark.
+
+    Set the *type* property to use a different base mark type.
+    """
+    mix_blend_mode: NotRequired[str | ParamRef]
+    """
+    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
+    """
+    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
+    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
+    offset: NotRequired[StackOffset | ParamRef | None]
+    """After stacking, an optional **offset** can be applied to translate and scale stacks, say to produce a streamgraph; defaults to null for a zero baseline (**y** = 0 for stackY, and **x** = 0 for stackX). If the *wiggle* offset is used, the default **order** changes to *inside-out*."""
+    opacity: NotRequired[ChannelValueSpec]
+    """
+    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
+    """
+    order: NotRequired[StackOrder | ParamRef | None]
+    """
+    The order in which stacks are layered; one of:
+
+    - null (default) for input order
+    - a named stack order method such as *inside-out* or *sum*
+    - a field name, for natural order of the corresponding values
+    - a function of data, for natural order of the corresponding values
+    - an array of explicit **z** values in the desired order
+
+    If the *wiggle* **offset** is used, as for a streamgraph, the default changes to *inside-out*.
+    """
+    paint_order: NotRequired[str | ParamRef]
+    """
+    The [paint-order][1]; a constant string specifying the order in which the
+    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
+    """
+    pointer_events: NotRequired[str | ParamRef]
+    """
+    The [pointer-events][1] property; a constant string such as *none*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
+    """
+    reverse: NotRequired[bool | ParamRef]
+    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    select: NotRequired[SelectFilter]
+    """
+    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    shape_rendering: NotRequired[str | ParamRef]
+    """
+    The [shape-rendering][1]; a constant string such as *crispEdges*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
+    """
+    sort: NotRequired[SortOrder | ChannelDomainSort]
+    """
+    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+
+    ```js sort: {y: "x"} ```
+
+    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
+
+    ```js sort: {y: {value: "-x"}} ```
+
+    When sorting the mark’s index, the **sort** option is instead one of:
+
+    - a channel value definition for sorting given values in ascending order
+    - a {value, order} object for sorting given values
+    - a {channel, order} object for sorting the named channel’s values
+    """
+    stack: NotRequired[bool | ParamRef]
+    """Flag indicating if densities should be stacked. Defaults to false."""
+    stroke: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+    """
+    stroke_dasharray: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+    """
+    stroke_dashoffset: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    """
+    stroke_linecap: NotRequired[str | ParamRef]
+    """
+    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+    """
+    stroke_linejoin: NotRequired[str | ParamRef]
+    """
+    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+    """
+    stroke_miterlimit: NotRequired[float | ParamRef]
+    """
+    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+    """
+    stroke_opacity: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
+    """
+    stroke_width: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-width][1]; a constant number in pixels, or a channel.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
+    """
+    target: NotRequired[str | ParamRef]
+    """
+    The [target][1]; a constant string specifying the target window (_e.g._,
+    *_blank*) for clickable links; used in conjunction with the **href** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
+    """
+    tension: NotRequired[float | ParamRef]
+    """
+    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+
+    [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
+    """
+    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
+    """Whether to generate a tooltip for this mark, and any tip options."""
+    title: NotRequired[ChannelValue]
+    """
+    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
+    """
+    type: Literal["areaX"]
+    """The basic mark type to use to render 1D density values. Defaults to an areaX mark; lineX, dotX, and textX marks are also supported."""
+    y: NotRequired[ChannelValueSpec]
+    """The vertical position channel, typically bound to the *y* scale; defaults to the zero-based index of the data [0, 1, 2, …]."""
+    z: NotRequired[ChannelValue]
+    """
+    An optional ordinal channel for grouping data into (possibly stacked) series to be drawn as separate areas; defaults to **fill** if a channel, or
+    **stroke** if a channel.
+    """
+
+
+class FieldDensityX2(TypedDict, closed=True):
+    """The densityX mark."""
+
+    aria_description: NotRequired[str | ParamRef]
+    """
+    The [aria-description][1]; a constant textual description.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
+    """
+    aria_hidden: NotRequired[str | ParamRef]
+    """
+    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
+    """
+    aria_label: NotRequired[ChannelValue]
+    """
+    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
+    """
+    bandwidth: NotRequired[float | ParamRef]
+    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
+    bins: NotRequired[float | ParamRef]
+    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
+    channels: NotRequired[Mapping[str, str]]
+    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
+    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
+    """
+    How to clip the mark; one of:
+
+    - *frame* or true - clip to the plot’s frame (inner area)
+    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
+    - null or false - do not clip
+
+    The *sphere* clip option requires a geographic projection.
+    """
+    curve: NotRequired[Curve | Literal["auto"] | ParamRef]
+    """
+    The curve (interpolation) method for connecting adjacent points. One of:
+
+    - *basis* - a cubic basis spline (repeating the end points)
+    - *basis-open* - an open cubic basis spline
+    - *basis-closed* - a closed cubic basis spline
+    - *bump-x* - a Bézier curve with horizontal tangents
+    - *bump-y* - a Bézier curve with vertical tangents
+    - *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)
+    - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
+    - *cardinal-open* - an open cubic cardinal spline
+    - *cardinal-closed* - an closed cubic cardinal spline
+    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull–Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
+    - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
+    - *monotone-x* - a cubic spline that preserves monotonicity in *x*
+    - *monotone-y* - a cubic spline that preserves monotonicity in *y*
+    - *natural* - a natural cubic spline
+    - *step* - a piecewise constant function where *y* changes at the midpoint of *x*
+    - *step-after* - a piecewise constant function where *y* changes after *x*
+    - *step-before* - a piecewise constant function where *x* changes after *y*
+    - *auto* (default) - like *linear*, but use the (possibly spherical) projection, if any
+
+    The *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics.
+    """
+    data: PlotMarkData
+    """The data source for the mark."""
+    dx: NotRequired[float | ParamRef]
+    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    dy: NotRequired[float | ParamRef]
+    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
+    """
+    Whether to enable or disable faceting; one of:
+
+    - *auto* (default) - automatically determine if this mark should be faceted
+    - *include* (or true) - draw the subset of the mark’s data in the current facet
+    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *super* - draw this mark in a single frame that covers all facets
+    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+
+    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
+
+    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
+    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
+
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+    """
+    facet_anchor: NotRequired[
+        Literal[
+            "top",
+            "right",
+            "bottom",
+            "left",
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right",
+            "top-empty",
+            "right-empty",
+            "bottom-empty",
+            "left-empty",
+            "empty",
+        ]
+        | ParamRef
+        | None
+    ]
+    """
+    How to place the mark with respect to facets; one of:
+
+    - null (default for most marks) - display the mark in each non-empty facet
+    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
+    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
+    - *empty* - display the mark in empty facets only
+    """
+    fill: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+    """
+    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
+    """
+    filter: NotRequired[ChannelValue]
+    """
+    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    fx: NotRequired[ChannelValue]
+    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
+    fy: NotRequired[ChannelValue]
+    """
+    The vertical facet position channel, for mark-level faceting, bound to the
+    *fy* scale.
+    """
+    href: NotRequired[ChannelValue]
+    """
+    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
+    """
+    image_filter: NotRequired[str | ParamRef]
+    """
+    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+    """
+    margin: NotRequired[float | ParamRef]
+    """
+    Shorthand to set the same default for all four mark margins: **marginTop**,
+    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
+    """
+    margin_bottom: NotRequired[float | ParamRef]
+    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    margin_left: NotRequired[float | ParamRef]
+    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    margin_right: NotRequired[float | ParamRef]
+    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    margin_top: NotRequired[float | ParamRef]
+    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    mark: Literal["densityX"]
+    """
+    A densityX mark that visualizes smoothed point cloud densities along the
+    **x** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaX mark.
+
+    Set the *type* property to use a different base mark type.
+    """
+    marker: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
+    """
+    Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+
+    - a marker name such as *arrow* or *circle*
+    - *none* (default) - no marker
+    * true - alias for *circle-fill*
+    * false or null - alias for *none*
+    """
+    marker_end: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
+    """
+    The marker for the ending point of a line segment; one of:
+
+    - a marker name such as *arrow* or *circle*
+    * *none* (default) - no marker
+    * true - alias for *circle-fill*
+    * false or null - alias for *none*
+    """
+    marker_mid: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
+    """
+    The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+
+    - a marker name such as *arrow* or *circle*
+    * *none* (default) - no marker
+    * true - alias for *circle-fill*
+    * false or null - alias for *none*
+    * a function - a custom marker function; see below
+    """
+    marker_start: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
+    """
+    The marker for the starting point of a line segment; one of:
+
+    - a marker name such as *arrow* or *circle*
+    * *none* (default) - no marker
+    * true - alias for *circle-fill*
+    * false or null - alias for *none*
+    """
+    mix_blend_mode: NotRequired[str | ParamRef]
+    """
+    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
+    """
+    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
+    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
+    opacity: NotRequired[ChannelValueSpec]
+    """
+    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
+    """
+    paint_order: NotRequired[str | ParamRef]
+    """
+    The [paint-order][1]; a constant string specifying the order in which the
+    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
+    """
+    pointer_events: NotRequired[str | ParamRef]
+    """
+    The [pointer-events][1] property; a constant string such as *none*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
+    """
+    reverse: NotRequired[bool | ParamRef]
+    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    select: NotRequired[SelectFilter]
+    """
+    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    shape_rendering: NotRequired[str | ParamRef]
+    """
+    The [shape-rendering][1]; a constant string such as *crispEdges*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
+    """
+    sort: NotRequired[SortOrder | ChannelDomainSort]
+    """
+    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+
+    ```js sort: {y: "x"} ```
+
+    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
+
+    ```js sort: {y: {value: "-x"}} ```
+
+    When sorting the mark’s index, the **sort** option is instead one of:
+
+    - a channel value definition for sorting given values in ascending order
+    - a {value, order} object for sorting given values
+    - a {channel, order} object for sorting the named channel’s values
+    """
+    stroke: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+    """
+    stroke_dasharray: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+    """
+    stroke_dashoffset: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    """
+    stroke_linecap: NotRequired[str | ParamRef]
+    """
+    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+    """
+    stroke_linejoin: NotRequired[str | ParamRef]
+    """
+    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+    """
+    stroke_miterlimit: NotRequired[float | ParamRef]
+    """
+    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+    """
+    stroke_opacity: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
+    """
+    stroke_width: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-width][1]; a constant number in pixels, or a channel.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
+    """
+    target: NotRequired[str | ParamRef]
+    """
+    The [target][1]; a constant string specifying the target window (_e.g._,
+    *_blank*) for clickable links; used in conjunction with the **href** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
+    """
+    tension: NotRequired[float | ParamRef]
+    """
+    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+
+    [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
+    """
+    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
+    """Whether to generate a tooltip for this mark, and any tip options."""
+    title: NotRequired[ChannelValue]
+    """
+    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
+    """
+    type: Literal["lineX"]
+    """The basic mark type to use to render 1D density values. Defaults to an areaX mark; lineX, dotX, and textX marks are also supported."""
+    y: NotRequired[ChannelValueSpec]
+    """The vertical position channel, typically bound to the *y* scale; defaults to the zero-based index of the data [0, 1, 2, …]."""
+    z: NotRequired[ChannelValue]
+    """
+    An optional ordinal channel for grouping data into (possibly stacked) series to be drawn as separate lines. If not specified, it defaults to
+    **fill** if a channel, or **stroke** if a channel.
+    """
+
+
+class FieldDensityX3(TypedDict, closed=True):
+    """The densityX mark."""
+
+    aria_description: NotRequired[str | ParamRef]
+    """
+    The [aria-description][1]; a constant textual description.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
+    """
+    aria_hidden: NotRequired[str | ParamRef]
+    """
+    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
+    """
+    aria_label: NotRequired[ChannelValue]
+    """
+    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
+    """
+    bandwidth: NotRequired[float | ParamRef]
+    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
+    bins: NotRequired[float | ParamRef]
+    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
+    channels: NotRequired[Mapping[str, str]]
+    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
+    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
+    """
+    How to clip the mark; one of:
+
+    - *frame* or true - clip to the plot’s frame (inner area)
+    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
+    - null or false - do not clip
+
+    The *sphere* clip option requires a geographic projection.
+    """
+    data: PlotMarkData
+    """The data source for the mark."""
+    dx: NotRequired[float | ParamRef]
+    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    dy: NotRequired[float | ParamRef]
+    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
+    """
+    Whether to enable or disable faceting; one of:
+
+    - *auto* (default) - automatically determine if this mark should be faceted
+    - *include* (or true) - draw the subset of the mark’s data in the current facet
+    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *super* - draw this mark in a single frame that covers all facets
+    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+
+    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
+
+    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
+    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
+
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+    """
+    facet_anchor: NotRequired[
+        Literal[
+            "top",
+            "right",
+            "bottom",
+            "left",
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right",
+            "top-empty",
+            "right-empty",
+            "bottom-empty",
+            "left-empty",
+            "empty",
+        ]
+        | ParamRef
+        | None
+    ]
+    """
+    How to place the mark with respect to facets; one of:
+
+    - null (default for most marks) - display the mark in each non-empty facet
+    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
+    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
+    - *empty* - display the mark in empty facets only
+    """
+    fill: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+    """
+    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
+    """
+    filter: NotRequired[ChannelValue]
+    """
+    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    frame_anchor: NotRequired[FrameAnchor | ParamRef]
+    """
+    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
+
+    ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
+    """
+    fx: NotRequired[ChannelValue]
+    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
+    fy: NotRequired[ChannelValue]
+    """
+    The vertical facet position channel, for mark-level faceting, bound to the
+    *fy* scale.
+    """
+    href: NotRequired[ChannelValue]
+    """
+    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
+    """
+    image_filter: NotRequired[str | ParamRef]
+    """
+    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+    """
+    margin: NotRequired[float | ParamRef]
+    """
+    Shorthand to set the same default for all four mark margins: **marginTop**,
+    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
+    """
+    margin_bottom: NotRequired[float | ParamRef]
+    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    margin_left: NotRequired[float | ParamRef]
+    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    margin_right: NotRequired[float | ParamRef]
+    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    margin_top: NotRequired[float | ParamRef]
+    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    mark: Literal["densityX"]
+    """
+    A densityX mark that visualizes smoothed point cloud densities along the
+    **x** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaX mark.
+
+    Set the *type* property to use a different base mark type.
+    """
+    mix_blend_mode: NotRequired[str | ParamRef]
+    """
+    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
+    """
+    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
+    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
+    opacity: NotRequired[ChannelValueSpec]
+    """
+    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
+    """
+    paint_order: NotRequired[str | ParamRef]
+    """
+    The [paint-order][1]; a constant string specifying the order in which the
+    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
+    """
+    pointer_events: NotRequired[str | ParamRef]
+    """
+    The [pointer-events][1] property; a constant string such as *none*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
+    """
+    r: NotRequired[ChannelValueSpec | float | ParamRef]
+    """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
+    reverse: NotRequired[bool | ParamRef]
+    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    rotate: NotRequired[ChannelValue | float | ParamRef]
+    """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
+    select: NotRequired[SelectFilter]
+    """
+    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    shape_rendering: NotRequired[str | ParamRef]
+    """
+    The [shape-rendering][1]; a constant string such as *crispEdges*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
+    """
+    sort: NotRequired[SortOrder | ChannelDomainSort]
+    """
+    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+
+    ```js sort: {y: "x"} ```
+
+    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
+
+    ```js sort: {y: {value: "-x"}} ```
+
+    When sorting the mark’s index, the **sort** option is instead one of:
+
+    - a channel value definition for sorting given values in ascending order
+    - a {value, order} object for sorting given values
+    - a {channel, order} object for sorting the named channel’s values
+    """
+    stroke: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+    """
+    stroke_dasharray: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+    """
+    stroke_dashoffset: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    """
+    stroke_linecap: NotRequired[str | ParamRef]
+    """
+    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+    """
+    stroke_linejoin: NotRequired[str | ParamRef]
+    """
+    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+    """
+    stroke_miterlimit: NotRequired[float | ParamRef]
+    """
+    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+    """
+    stroke_opacity: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
+    """
+    stroke_width: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-width][1]; a constant number in pixels, or a channel.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
+    """
+    symbol: NotRequired[ChannelValueSpec | SymbolType | ParamRef]
+    """
+    The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
+    **hexagon** mark.
+
+    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    """
+    target: NotRequired[str | ParamRef]
+    """
+    The [target][1]; a constant string specifying the target window (_e.g._,
+    *_blank*) for clickable links; used in conjunction with the **href** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
+    """
+    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
+    """Whether to generate a tooltip for this mark, and any tip options."""
+    title: NotRequired[ChannelValue]
+    """
+    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
+    """
+    type: Literal["dotX"]
+    """The basic mark type to use to render 1D density values. Defaults to an areaX mark; lineX, dotX, and textX marks are also supported."""
+    y: NotRequired[ChannelValueSpec]
+    """The vertical position channel specifying the dot’s center, typically bound to the *y* scale."""
+    z: NotRequired[ChannelValue]
+    """An optional ordinal channel for grouping data into series."""
+
+
+class FieldDensityX4(TypedDict, closed=True):
+    """The densityX mark."""
+
+    aria_description: NotRequired[str | ParamRef]
+    """
+    The [aria-description][1]; a constant textual description.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
+    """
+    aria_hidden: NotRequired[str | ParamRef]
+    """
+    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
+    """
+    aria_label: NotRequired[ChannelValue]
+    """
+    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
+    """
+    bandwidth: NotRequired[float | ParamRef]
+    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
+    bins: NotRequired[float | ParamRef]
+    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
+    channels: NotRequired[Mapping[str, str]]
+    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
+    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
+    """
+    How to clip the mark; one of:
+
+    - *frame* or true - clip to the plot’s frame (inner area)
+    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
+    - null or false - do not clip
+
+    The *sphere* clip option requires a geographic projection.
+    """
+    data: PlotMarkData
+    """The data source for the mark."""
+    dx: NotRequired[float | ParamRef]
+    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    dy: NotRequired[float | ParamRef]
+    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
+    """
+    Whether to enable or disable faceting; one of:
+
+    - *auto* (default) - automatically determine if this mark should be faceted
+    - *include* (or true) - draw the subset of the mark’s data in the current facet
+    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *super* - draw this mark in a single frame that covers all facets
+    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+
+    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
+
+    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
+    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
+
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+    """
+    facet_anchor: NotRequired[
+        Literal[
+            "top",
+            "right",
+            "bottom",
+            "left",
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right",
+            "top-empty",
+            "right-empty",
+            "bottom-empty",
+            "left-empty",
+            "empty",
+        ]
+        | ParamRef
+        | None
+    ]
+    """
+    How to place the mark with respect to facets; one of:
+
+    - null (default for most marks) - display the mark in each non-empty facet
+    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
+    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
+    - *empty* - display the mark in empty facets only
+    """
+    fill: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+    """
+    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
+    """
+    filter: NotRequired[ChannelValue]
+    """
+    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    font_family: NotRequired[str | ParamRef]
+    """
+    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
+    """
+    font_size: NotRequired[ChannelValue | ParamRef]
+    """
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
+    """
+    font_style: NotRequired[str | ParamRef]
+    """
+    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
+    """
+    font_variant: NotRequired[str | ParamRef]
+    """
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
+    """
+    font_weight: NotRequired[str | float | ParamRef]
+    """
+    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
+    """
+    frame_anchor: NotRequired[FrameAnchor | ParamRef]
+    """
+    The frame anchor specifies defaults for **x** and **y**, along with
+    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    *middle* of the frame.
+    """
+    fx: NotRequired[ChannelValue]
+    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
+    fy: NotRequired[ChannelValue]
+    """
+    The vertical facet position channel, for mark-level faceting, bound to the
+    *fy* scale.
+    """
+    href: NotRequired[ChannelValue]
+    """
+    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
+    """
+    image_filter: NotRequired[str | ParamRef]
+    """
+    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+    """
+    line_anchor: NotRequired[Literal["top", "middle", "bottom"] | ParamRef]
+    """
+    The line anchor controls how text is aligned (typically vertically) relative to its anchor point; it is one of *top*, *bottom*, or *middle*. If the frame anchor is *top*, *top-left*, or *top-right*, the default line anchor is *top*; if the frame anchor is *bottom*, *bottom-right*, or
+    *bottom-left*, the default is *bottom*; otherwise it is *middle*.
+    """
+    line_height: NotRequired[float | ParamRef]
+    """The line height in ems; defaults to 1. The line height affects the (typically vertical) separation between adjacent baselines of text, as well as the separation between the text and its anchor point."""
+    line_width: NotRequired[float | ParamRef]
+    """
+    The line width in ems (e.g., 10 for about 20 characters); defaults to infinity, disabling wrapping and clipping.
+
+    If **textOverflow** is null, lines will be wrapped at the specified length. If a line is split at a soft hyphen (\\xad), a hyphen (-) will be displayed at the end of the line. If **textOverflow** is not null, lines will be clipped according to the given strategy.
+    """
+    margin: NotRequired[float | ParamRef]
+    """
+    Shorthand to set the same default for all four mark margins: **marginTop**,
+    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
+    """
+    margin_bottom: NotRequired[float | ParamRef]
+    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    margin_left: NotRequired[float | ParamRef]
+    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    margin_right: NotRequired[float | ParamRef]
+    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    margin_top: NotRequired[float | ParamRef]
+    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    mark: Literal["densityX"]
+    """
+    A densityX mark that visualizes smoothed point cloud densities along the
+    **x** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaX mark.
+
+    Set the *type* property to use a different base mark type.
+    """
+    mix_blend_mode: NotRequired[str | ParamRef]
+    """
+    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
+    """
+    monospace: NotRequired[bool | ParamRef]
+    """If true, changes the default **fontFamily** to *monospace*, and uses simplified monospaced text metrics calculations."""
+    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
+    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
+    opacity: NotRequired[ChannelValueSpec]
+    """
+    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
+    """
+    paint_order: NotRequired[str | ParamRef]
+    """
+    The [paint-order][1]; a constant string specifying the order in which the
+    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
+    """
+    pointer_events: NotRequired[str | ParamRef]
+    """
+    The [pointer-events][1] property; a constant string such as *none*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
+    """
+    reverse: NotRequired[bool | ParamRef]
+    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    rotate: NotRequired[ChannelValue | ParamRef]
+    """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
+    select: NotRequired[SelectFilter]
+    """
+    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    shape_rendering: NotRequired[str | ParamRef]
+    """
+    The [shape-rendering][1]; a constant string such as *crispEdges*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
+    """
+    sort: NotRequired[SortOrder | ChannelDomainSort]
+    """
+    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+
+    ```js sort: {y: "x"} ```
+
+    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
+
+    ```js sort: {y: {value: "-x"}} ```
+
+    When sorting the mark’s index, the **sort** option is instead one of:
+
+    - a channel value definition for sorting given values in ascending order
+    - a {value, order} object for sorting given values
+    - a {channel, order} object for sorting the named channel’s values
+    """
+    stroke: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+    """
+    stroke_dasharray: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+    """
+    stroke_dashoffset: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    """
+    stroke_linecap: NotRequired[str | ParamRef]
+    """
+    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+    """
+    stroke_linejoin: NotRequired[str | ParamRef]
+    """
+    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+    """
+    stroke_miterlimit: NotRequired[float | ParamRef]
+    """
+    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+    """
+    stroke_opacity: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
+    """
+    stroke_width: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-width][1]; a constant number in pixels, or a channel.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
+    """
+    target: NotRequired[str | ParamRef]
+    """
+    The [target][1]; a constant string specifying the target window (_e.g._,
+    *_blank*) for clickable links; used in conjunction with the **href** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
+    """
+    text: NotRequired[ChannelValue]
+    """The text contents channel, possibly with line breaks (\\n, \\r\\n, or \\r). If not specified, defaults to the zero-based index [0, 1, 2, …]."""
+    text_anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
+    """
+    The [text anchor][1] controls how text is aligned (typically horizontally) relative to its anchor point; it is one of *start*, *end*, or *middle*. If the frame anchor is *left*, *top-left*, or *bottom-left*, the default text anchor is *start*; if the frame anchor is *right*, *top-right*, or
+    *bottom-right*, the default is *end*; otherwise it is *middle*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/text-anchor
+    """
+    text_overflow: NotRequired[
+        Literal[
+            "clip",
+            "ellipsis",
+            "clip-start",
+            "clip-end",
+            "ellipsis-start",
+            "ellipsis-middle",
+            "ellipsis-end",
+        ]
+        | ParamRef
+        | None
+    ]
+    """
+    How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+
+    - null (default) - preserve overflowing characters (and wrap if needed)
+    - *clip* or *clip-end* - remove characters from the end
+    - *clip-start* - remove characters from the start
+    - *ellipsis* or *ellipsis-end* - replace characters from the end with an ellipsis (…)
+    - *ellipsis-start* - replace characters from the start with an ellipsis (…)
+    - *ellipsis-middle* - replace characters from the middle with an ellipsis (…)
+
+    If no **title** was specified, if text requires truncation, a title containing the non-truncated text will be implicitly added.
+    """
+    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
+    """Whether to generate a tooltip for this mark, and any tip options."""
+    title: NotRequired[ChannelValue]
+    """
+    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
+    """
+    type: Literal["textX"]
+    """The basic mark type to use to render 1D density values. Defaults to an areaX mark; lineX, dotX, and textX marks are also supported."""
+    y: NotRequired[ChannelValueSpec]
+    """The vertical position channel specifying the text’s anchor point, typically bound to the *y* scale."""
+    z: NotRequired[ChannelValue]
+    """An optional ordinal channel for grouping data into series."""
+
+
+class FieldDensityY1(TypedDict, closed=True):
+    """The densityY mark."""
+
+    aria_description: NotRequired[str | ParamRef]
+    """
+    The [aria-description][1]; a constant textual description.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
+    """
+    aria_hidden: NotRequired[str | ParamRef]
+    """
+    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
+    """
+    aria_label: NotRequired[ChannelValue]
+    """
+    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
+    """
+    bandwidth: NotRequired[float | ParamRef]
+    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
+    bins: NotRequired[float | ParamRef]
+    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
+    channels: NotRequired[Mapping[str, str]]
+    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
+    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
+    """
+    How to clip the mark; one of:
+
+    - *frame* or true - clip to the plot’s frame (inner area)
+    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
+    - null or false - do not clip
+
+    The *sphere* clip option requires a geographic projection.
+    """
+    curve: NotRequired[Curve | ParamRef]
+    """
+    The curve (interpolation) method for connecting adjacent points. One of:
+
+    - *basis* - a cubic basis spline (repeating the end points)
+    - *basis-open* - an open cubic basis spline
+    - *basis-closed* - a closed cubic basis spline
+    - *bump-x* - a Bézier curve with horizontal tangents
+    - *bump-y* - a Bézier curve with vertical tangents
+    - *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)
+    - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
+    - *cardinal-open* - an open cubic cardinal spline
+    - *cardinal-closed* - an closed cubic cardinal spline
+    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull–Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
+    - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
+    - *monotone-x* - a cubic spline that preserves monotonicity in *x*
+    - *monotone-y* - a cubic spline that preserves monotonicity in *y*
+    - *natural* - a natural cubic spline
+    - *step* - a piecewise constant function where *y* changes at the midpoint of *x*
+    - *step-after* - a piecewise constant function where *y* changes after *x*
+    - *step-before* - a piecewise constant function where *x* changes after *y*
+    """
+    data: PlotMarkData
+    """The data source for the mark."""
+    dx: NotRequired[float | ParamRef]
+    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    dy: NotRequired[float | ParamRef]
+    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
+    """
+    Whether to enable or disable faceting; one of:
+
+    - *auto* (default) - automatically determine if this mark should be faceted
+    - *include* (or true) - draw the subset of the mark’s data in the current facet
+    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *super* - draw this mark in a single frame that covers all facets
+    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+
+    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
+
+    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
+    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
+
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+    """
+    facet_anchor: NotRequired[
+        Literal[
+            "top",
+            "right",
+            "bottom",
+            "left",
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right",
+            "top-empty",
+            "right-empty",
+            "bottom-empty",
+            "left-empty",
+            "empty",
+        ]
+        | ParamRef
+        | None
+    ]
+    """
+    How to place the mark with respect to facets; one of:
+
+    - null (default for most marks) - display the mark in each non-empty facet
+    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
+    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
+    - *empty* - display the mark in empty facets only
+    """
+    fill: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+    """
+    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
+    """
+    filter: NotRequired[ChannelValue]
+    """
+    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    fx: NotRequired[ChannelValue]
+    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
+    fy: NotRequired[ChannelValue]
+    """
+    The vertical facet position channel, for mark-level faceting, bound to the
+    *fy* scale.
+    """
+    href: NotRequired[ChannelValue]
+    """
+    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
+    """
+    image_filter: NotRequired[str | ParamRef]
+    """
+    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+    """
+    margin: NotRequired[float | ParamRef]
+    """
+    Shorthand to set the same default for all four mark margins: **marginTop**,
+    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
+    """
+    margin_bottom: NotRequired[float | ParamRef]
+    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    margin_left: NotRequired[float | ParamRef]
+    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    margin_right: NotRequired[float | ParamRef]
+    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    margin_top: NotRequired[float | ParamRef]
+    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    mark: Literal["densityY"]
+    """
+    A densityY mark that visualizes smoothed point cloud densities along the
+    **y** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaY mark.
+
+    Set the *type* property to use a different base mark type.
+    """
+    mix_blend_mode: NotRequired[str | ParamRef]
+    """
+    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
+    """
+    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
+    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
+    offset: NotRequired[StackOffset | ParamRef | None]
+    """After stacking, an optional **offset** can be applied to translate and scale stacks, say to produce a streamgraph; defaults to null for a zero baseline (**y** = 0 for stackY, and **x** = 0 for stackX). If the *wiggle* offset is used, the default **order** changes to *inside-out*."""
+    opacity: NotRequired[ChannelValueSpec]
+    """
+    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
+    """
+    order: NotRequired[StackOrder | ParamRef | None]
+    """
+    The order in which stacks are layered; one of:
+
+    - null (default) for input order
+    - a named stack order method such as *inside-out* or *sum*
+    - a field name, for natural order of the corresponding values
+    - a function of data, for natural order of the corresponding values
+    - an array of explicit **z** values in the desired order
+
+    If the *wiggle* **offset** is used, as for a streamgraph, the default changes to *inside-out*.
+    """
+    paint_order: NotRequired[str | ParamRef]
+    """
+    The [paint-order][1]; a constant string specifying the order in which the
+    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
+    """
+    pointer_events: NotRequired[str | ParamRef]
+    """
+    The [pointer-events][1] property; a constant string such as *none*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
+    """
+    reverse: NotRequired[bool | ParamRef]
+    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    select: NotRequired[SelectFilter]
+    """
+    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    shape_rendering: NotRequired[str | ParamRef]
+    """
+    The [shape-rendering][1]; a constant string such as *crispEdges*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
+    """
+    sort: NotRequired[SortOrder | ChannelDomainSort]
+    """
+    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+
+    ```js sort: {y: "x"} ```
+
+    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
+
+    ```js sort: {y: {value: "-x"}} ```
+
+    When sorting the mark’s index, the **sort** option is instead one of:
+
+    - a channel value definition for sorting given values in ascending order
+    - a {value, order} object for sorting given values
+    - a {channel, order} object for sorting the named channel’s values
+    """
+    stack: NotRequired[bool | ParamRef]
+    """Flag indicating if densities should be stacked. Defaults to false."""
+    stroke: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+    """
+    stroke_dasharray: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+    """
+    stroke_dashoffset: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    """
+    stroke_linecap: NotRequired[str | ParamRef]
+    """
+    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+    """
+    stroke_linejoin: NotRequired[str | ParamRef]
+    """
+    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+    """
+    stroke_miterlimit: NotRequired[float | ParamRef]
+    """
+    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+    """
+    stroke_opacity: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
+    """
+    stroke_width: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-width][1]; a constant number in pixels, or a channel.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
+    """
+    target: NotRequired[str | ParamRef]
+    """
+    The [target][1]; a constant string specifying the target window (_e.g._,
+    *_blank*) for clickable links; used in conjunction with the **href** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
+    """
+    tension: NotRequired[float | ParamRef]
+    """
+    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+
+    [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
+    """
+    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
+    """Whether to generate a tooltip for this mark, and any tip options."""
+    title: NotRequired[ChannelValue]
+    """
+    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
+    """
+    type: NotRequired[Literal["areaY"]]
+    """The basic mark type to use to render 1D density values. Defaults to an areaY mark; lineY, dot, and text marks are also supported."""
+    x: NotRequired[ChannelValueSpec]
+    """The horizontal position channel, typically bound to the *x* scale; defaults to the zero-based index of the data [0, 1, 2, …]."""
+    z: NotRequired[ChannelValue]
+    """
+    An optional ordinal channel for grouping data into (possibly stacked) series to be drawn as separate areas; defaults to **fill** if a channel, or
+    **stroke** if a channel.
+    """
+
+
+class FieldDensityY2(TypedDict, closed=True):
+    """The densityY mark."""
+
+    aria_description: NotRequired[str | ParamRef]
+    """
+    The [aria-description][1]; a constant textual description.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
+    """
+    aria_hidden: NotRequired[str | ParamRef]
+    """
+    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
+    """
+    aria_label: NotRequired[ChannelValue]
+    """
+    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
+    """
+    bandwidth: NotRequired[float | ParamRef]
+    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
+    bins: NotRequired[float | ParamRef]
+    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
+    channels: NotRequired[Mapping[str, str]]
+    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
+    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
+    """
+    How to clip the mark; one of:
+
+    - *frame* or true - clip to the plot’s frame (inner area)
+    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
+    - null or false - do not clip
+
+    The *sphere* clip option requires a geographic projection.
+    """
+    curve: NotRequired[Curve | Literal["auto"] | ParamRef]
+    """
+    The curve (interpolation) method for connecting adjacent points. One of:
+
+    - *basis* - a cubic basis spline (repeating the end points)
+    - *basis-open* - an open cubic basis spline
+    - *basis-closed* - a closed cubic basis spline
+    - *bump-x* - a Bézier curve with horizontal tangents
+    - *bump-y* - a Bézier curve with vertical tangents
+    - *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)
+    - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
+    - *cardinal-open* - an open cubic cardinal spline
+    - *cardinal-closed* - an closed cubic cardinal spline
+    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull–Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
+    - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
+    - *monotone-x* - a cubic spline that preserves monotonicity in *x*
+    - *monotone-y* - a cubic spline that preserves monotonicity in *y*
+    - *natural* - a natural cubic spline
+    - *step* - a piecewise constant function where *y* changes at the midpoint of *x*
+    - *step-after* - a piecewise constant function where *y* changes after *x*
+    - *step-before* - a piecewise constant function where *x* changes after *y*
+    - *auto* (default) - like *linear*, but use the (possibly spherical) projection, if any
+
+    The *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics.
+    """
+    data: PlotMarkData
+    """The data source for the mark."""
+    dx: NotRequired[float | ParamRef]
+    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    dy: NotRequired[float | ParamRef]
+    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
+    """
+    Whether to enable or disable faceting; one of:
+
+    - *auto* (default) - automatically determine if this mark should be faceted
+    - *include* (or true) - draw the subset of the mark’s data in the current facet
+    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *super* - draw this mark in a single frame that covers all facets
+    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+
+    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
+
+    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
+    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
+
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+    """
+    facet_anchor: NotRequired[
+        Literal[
+            "top",
+            "right",
+            "bottom",
+            "left",
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right",
+            "top-empty",
+            "right-empty",
+            "bottom-empty",
+            "left-empty",
+            "empty",
+        ]
+        | ParamRef
+        | None
+    ]
+    """
+    How to place the mark with respect to facets; one of:
+
+    - null (default for most marks) - display the mark in each non-empty facet
+    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
+    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
+    - *empty* - display the mark in empty facets only
+    """
+    fill: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+    """
+    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
+    """
+    filter: NotRequired[ChannelValue]
+    """
+    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    fx: NotRequired[ChannelValue]
+    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
+    fy: NotRequired[ChannelValue]
+    """
+    The vertical facet position channel, for mark-level faceting, bound to the
+    *fy* scale.
+    """
+    href: NotRequired[ChannelValue]
+    """
+    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
+    """
+    image_filter: NotRequired[str | ParamRef]
+    """
+    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+    """
+    margin: NotRequired[float | ParamRef]
+    """
+    Shorthand to set the same default for all four mark margins: **marginTop**,
+    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
+    """
+    margin_bottom: NotRequired[float | ParamRef]
+    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    margin_left: NotRequired[float | ParamRef]
+    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    margin_right: NotRequired[float | ParamRef]
+    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    margin_top: NotRequired[float | ParamRef]
+    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    mark: Literal["densityY"]
+    """
+    A densityY mark that visualizes smoothed point cloud densities along the
+    **y** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaY mark.
+
+    Set the *type* property to use a different base mark type.
+    """
+    marker: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
+    """
+    Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+
+    - a marker name such as *arrow* or *circle*
+    - *none* (default) - no marker
+    * true - alias for *circle-fill*
+    * false or null - alias for *none*
+    """
+    marker_end: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
+    """
+    The marker for the ending point of a line segment; one of:
+
+    - a marker name such as *arrow* or *circle*
+    * *none* (default) - no marker
+    * true - alias for *circle-fill*
+    * false or null - alias for *none*
+    """
+    marker_mid: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
+    """
+    The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+
+    - a marker name such as *arrow* or *circle*
+    * *none* (default) - no marker
+    * true - alias for *circle-fill*
+    * false or null - alias for *none*
+    * a function - a custom marker function; see below
+    """
+    marker_start: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
+    """
+    The marker for the starting point of a line segment; one of:
+
+    - a marker name such as *arrow* or *circle*
+    * *none* (default) - no marker
+    * true - alias for *circle-fill*
+    * false or null - alias for *none*
+    """
+    mix_blend_mode: NotRequired[str | ParamRef]
+    """
+    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
+    """
+    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
+    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
+    opacity: NotRequired[ChannelValueSpec]
+    """
+    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
+    """
+    paint_order: NotRequired[str | ParamRef]
+    """
+    The [paint-order][1]; a constant string specifying the order in which the
+    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
+    """
+    pointer_events: NotRequired[str | ParamRef]
+    """
+    The [pointer-events][1] property; a constant string such as *none*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
+    """
+    reverse: NotRequired[bool | ParamRef]
+    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    select: NotRequired[SelectFilter]
+    """
+    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    shape_rendering: NotRequired[str | ParamRef]
+    """
+    The [shape-rendering][1]; a constant string such as *crispEdges*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
+    """
+    sort: NotRequired[SortOrder | ChannelDomainSort]
+    """
+    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+
+    ```js sort: {y: "x"} ```
+
+    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
+
+    ```js sort: {y: {value: "-x"}} ```
+
+    When sorting the mark’s index, the **sort** option is instead one of:
+
+    - a channel value definition for sorting given values in ascending order
+    - a {value, order} object for sorting given values
+    - a {channel, order} object for sorting the named channel’s values
+    """
+    stroke: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+    """
+    stroke_dasharray: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+    """
+    stroke_dashoffset: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    """
+    stroke_linecap: NotRequired[str | ParamRef]
+    """
+    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+    """
+    stroke_linejoin: NotRequired[str | ParamRef]
+    """
+    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+    """
+    stroke_miterlimit: NotRequired[float | ParamRef]
+    """
+    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+    """
+    stroke_opacity: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
+    """
+    stroke_width: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-width][1]; a constant number in pixels, or a channel.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
+    """
+    target: NotRequired[str | ParamRef]
+    """
+    The [target][1]; a constant string specifying the target window (_e.g._,
+    *_blank*) for clickable links; used in conjunction with the **href** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
+    """
+    tension: NotRequired[float | ParamRef]
+    """
+    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+
+    [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
+    """
+    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
+    """Whether to generate a tooltip for this mark, and any tip options."""
+    title: NotRequired[ChannelValue]
+    """
+    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
+    """
+    type: Literal["lineY"]
+    """The basic mark type to use to render 1D density values. Defaults to an areaY mark; lineY, dot, and text marks are also supported."""
+    x: NotRequired[ChannelValueSpec]
+    """The horizontal position channel, typically bound to the *x* scale; defaults to the zero-based index of the data [0, 1, 2, …]."""
+    z: NotRequired[ChannelValue]
+    """
+    An optional ordinal channel for grouping data into (possibly stacked) series to be drawn as separate lines. If not specified, it defaults to
+    **fill** if a channel, or **stroke** if a channel.
+    """
+
+
+class FieldDensityY3(TypedDict, closed=True):
+    """The densityY mark."""
+
+    aria_description: NotRequired[str | ParamRef]
+    """
+    The [aria-description][1]; a constant textual description.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
+    """
+    aria_hidden: NotRequired[str | ParamRef]
+    """
+    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
+    """
+    aria_label: NotRequired[ChannelValue]
+    """
+    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
+    """
+    bandwidth: NotRequired[float | ParamRef]
+    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
+    bins: NotRequired[float | ParamRef]
+    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
+    channels: NotRequired[Mapping[str, str]]
+    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
+    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
+    """
+    How to clip the mark; one of:
+
+    - *frame* or true - clip to the plot’s frame (inner area)
+    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
+    - null or false - do not clip
+
+    The *sphere* clip option requires a geographic projection.
+    """
+    data: PlotMarkData
+    """The data source for the mark."""
+    dx: NotRequired[float | ParamRef]
+    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    dy: NotRequired[float | ParamRef]
+    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
+    """
+    Whether to enable or disable faceting; one of:
+
+    - *auto* (default) - automatically determine if this mark should be faceted
+    - *include* (or true) - draw the subset of the mark’s data in the current facet
+    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *super* - draw this mark in a single frame that covers all facets
+    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+
+    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
+
+    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
+    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
+
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+    """
+    facet_anchor: NotRequired[
+        Literal[
+            "top",
+            "right",
+            "bottom",
+            "left",
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right",
+            "top-empty",
+            "right-empty",
+            "bottom-empty",
+            "left-empty",
+            "empty",
+        ]
+        | ParamRef
+        | None
+    ]
+    """
+    How to place the mark with respect to facets; one of:
+
+    - null (default for most marks) - display the mark in each non-empty facet
+    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
+    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
+    - *empty* - display the mark in empty facets only
+    """
+    fill: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+    """
+    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
+    """
+    filter: NotRequired[ChannelValue]
+    """
+    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    frame_anchor: NotRequired[FrameAnchor | ParamRef]
+    """
+    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
+
+    ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
+    """
+    fx: NotRequired[ChannelValue]
+    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
+    fy: NotRequired[ChannelValue]
+    """
+    The vertical facet position channel, for mark-level faceting, bound to the
+    *fy* scale.
+    """
+    href: NotRequired[ChannelValue]
+    """
+    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
+    """
+    image_filter: NotRequired[str | ParamRef]
+    """
+    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+    """
+    margin: NotRequired[float | ParamRef]
+    """
+    Shorthand to set the same default for all four mark margins: **marginTop**,
+    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
+    """
+    margin_bottom: NotRequired[float | ParamRef]
+    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    margin_left: NotRequired[float | ParamRef]
+    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    margin_right: NotRequired[float | ParamRef]
+    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    margin_top: NotRequired[float | ParamRef]
+    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    mark: Literal["densityY"]
+    """
+    A densityY mark that visualizes smoothed point cloud densities along the
+    **y** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaY mark.
+
+    Set the *type* property to use a different base mark type.
+    """
+    mix_blend_mode: NotRequired[str | ParamRef]
+    """
+    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
+    """
+    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
+    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
+    opacity: NotRequired[ChannelValueSpec]
+    """
+    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
+    """
+    paint_order: NotRequired[str | ParamRef]
+    """
+    The [paint-order][1]; a constant string specifying the order in which the
+    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
+    """
+    pointer_events: NotRequired[str | ParamRef]
+    """
+    The [pointer-events][1] property; a constant string such as *none*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
+    """
+    r: NotRequired[ChannelValueSpec | float | ParamRef]
+    """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
+    reverse: NotRequired[bool | ParamRef]
+    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    rotate: NotRequired[ChannelValue | float | ParamRef]
+    """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
+    select: NotRequired[SelectFilter]
+    """
+    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    shape_rendering: NotRequired[str | ParamRef]
+    """
+    The [shape-rendering][1]; a constant string such as *crispEdges*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
+    """
+    sort: NotRequired[SortOrder | ChannelDomainSort]
+    """
+    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+
+    ```js sort: {y: "x"} ```
+
+    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
+
+    ```js sort: {y: {value: "-x"}} ```
+
+    When sorting the mark’s index, the **sort** option is instead one of:
+
+    - a channel value definition for sorting given values in ascending order
+    - a {value, order} object for sorting given values
+    - a {channel, order} object for sorting the named channel’s values
+    """
+    stroke: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+    """
+    stroke_dasharray: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+    """
+    stroke_dashoffset: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    """
+    stroke_linecap: NotRequired[str | ParamRef]
+    """
+    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+    """
+    stroke_linejoin: NotRequired[str | ParamRef]
+    """
+    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+    """
+    stroke_miterlimit: NotRequired[float | ParamRef]
+    """
+    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+    """
+    stroke_opacity: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
+    """
+    stroke_width: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-width][1]; a constant number in pixels, or a channel.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
+    """
+    symbol: NotRequired[ChannelValueSpec | SymbolType | ParamRef]
+    """
+    The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
+    **hexagon** mark.
+
+    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    """
+    target: NotRequired[str | ParamRef]
+    """
+    The [target][1]; a constant string specifying the target window (_e.g._,
+    *_blank*) for clickable links; used in conjunction with the **href** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
+    """
+    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
+    """Whether to generate a tooltip for this mark, and any tip options."""
+    title: NotRequired[ChannelValue]
+    """
+    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
+    """
+    type: Literal["dot", "dotY", "circle", "hexagon"]
+    """The basic mark type to use to render 1D density values. Defaults to an areaY mark; lineY, dot, and text marks are also supported."""
+    x: NotRequired[ChannelValueSpec]
+    """The horizontal position channel specifying the dot’s center, typically bound to the *x* scale."""
+    z: NotRequired[ChannelValue]
+    """An optional ordinal channel for grouping data into series."""
+
+
+class FieldDensityY4(TypedDict, closed=True):
+    """The densityY mark."""
+
+    aria_description: NotRequired[str | ParamRef]
+    """
+    The [aria-description][1]; a constant textual description.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
+    """
+    aria_hidden: NotRequired[str | ParamRef]
+    """
+    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
+    """
+    aria_label: NotRequired[ChannelValue]
+    """
+    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
+    """
+    bandwidth: NotRequired[float | ParamRef]
+    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
+    bins: NotRequired[float | ParamRef]
+    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
+    channels: NotRequired[Mapping[str, str]]
+    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
+    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
+    """
+    How to clip the mark; one of:
+
+    - *frame* or true - clip to the plot’s frame (inner area)
+    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
+    - null or false - do not clip
+
+    The *sphere* clip option requires a geographic projection.
+    """
+    data: PlotMarkData
+    """The data source for the mark."""
+    dx: NotRequired[float | ParamRef]
+    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    dy: NotRequired[float | ParamRef]
+    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
+    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
+    """
+    Whether to enable or disable faceting; one of:
+
+    - *auto* (default) - automatically determine if this mark should be faceted
+    - *include* (or true) - draw the subset of the mark’s data in the current facet
+    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *super* - draw this mark in a single frame that covers all facets
+    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+
+    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
+
+    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
+    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
+
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+    """
+    facet_anchor: NotRequired[
+        Literal[
+            "top",
+            "right",
+            "bottom",
+            "left",
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right",
+            "top-empty",
+            "right-empty",
+            "bottom-empty",
+            "left-empty",
+            "empty",
+        ]
+        | ParamRef
+        | None
+    ]
+    """
+    How to place the mark with respect to facets; one of:
+
+    - null (default for most marks) - display the mark in each non-empty facet
+    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
+    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
+    - *empty* - display the mark in empty facets only
+    """
+    fill: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
+    """
+    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
+    """
+    filter: NotRequired[ChannelValue]
+    """
+    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    font_family: NotRequired[str | ParamRef]
+    """
+    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
+    """
+    font_size: NotRequired[ChannelValue | ParamRef]
+    """
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
+    """
+    font_style: NotRequired[str | ParamRef]
+    """
+    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
+    """
+    font_variant: NotRequired[str | ParamRef]
+    """
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
+    """
+    font_weight: NotRequired[str | float | ParamRef]
+    """
+    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
+    """
+    frame_anchor: NotRequired[FrameAnchor | ParamRef]
+    """
+    The frame anchor specifies defaults for **x** and **y**, along with
+    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    *middle* of the frame.
+    """
+    fx: NotRequired[ChannelValue]
+    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
+    fy: NotRequired[ChannelValue]
+    """
+    The vertical facet position channel, for mark-level faceting, bound to the
+    *fy* scale.
+    """
+    href: NotRequired[ChannelValue]
+    """
+    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
+    """
+    image_filter: NotRequired[str | ParamRef]
+    """
+    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
+    """
+    line_anchor: NotRequired[Literal["top", "middle", "bottom"] | ParamRef]
+    """
+    The line anchor controls how text is aligned (typically vertically) relative to its anchor point; it is one of *top*, *bottom*, or *middle*. If the frame anchor is *top*, *top-left*, or *top-right*, the default line anchor is *top*; if the frame anchor is *bottom*, *bottom-right*, or
+    *bottom-left*, the default is *bottom*; otherwise it is *middle*.
+    """
+    line_height: NotRequired[float | ParamRef]
+    """The line height in ems; defaults to 1. The line height affects the (typically vertical) separation between adjacent baselines of text, as well as the separation between the text and its anchor point."""
+    line_width: NotRequired[float | ParamRef]
+    """
+    The line width in ems (e.g., 10 for about 20 characters); defaults to infinity, disabling wrapping and clipping.
+
+    If **textOverflow** is null, lines will be wrapped at the specified length. If a line is split at a soft hyphen (\\xad), a hyphen (-) will be displayed at the end of the line. If **textOverflow** is not null, lines will be clipped according to the given strategy.
+    """
+    margin: NotRequired[float | ParamRef]
+    """
+    Shorthand to set the same default for all four mark margins: **marginTop**,
+    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
+    """
+    margin_bottom: NotRequired[float | ParamRef]
+    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    margin_left: NotRequired[float | ParamRef]
+    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    margin_right: NotRequired[float | ParamRef]
+    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    margin_top: NotRequired[float | ParamRef]
+    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    mark: Literal["densityY"]
+    """
+    A densityY mark that visualizes smoothed point cloud densities along the
+    **y** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaY mark.
+
+    Set the *type* property to use a different base mark type.
+    """
+    mix_blend_mode: NotRequired[str | ParamRef]
+    """
+    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
+    """
+    monospace: NotRequired[bool | ParamRef]
+    """If true, changes the default **fontFamily** to *monospace*, and uses simplified monospaced text metrics calculations."""
+    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
+    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
+    opacity: NotRequired[ChannelValueSpec]
+    """
+    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
+    """
+    paint_order: NotRequired[str | ParamRef]
+    """
+    The [paint-order][1]; a constant string specifying the order in which the
+    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
+    """
+    pointer_events: NotRequired[str | ParamRef]
+    """
+    The [pointer-events][1] property; a constant string such as *none*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
+    """
+    reverse: NotRequired[bool | ParamRef]
+    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    rotate: NotRequired[ChannelValue | ParamRef]
+    """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
+    select: NotRequired[SelectFilter]
+    """
+    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
+
+    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
+    """
+    shape_rendering: NotRequired[str | ParamRef]
+    """
+    The [shape-rendering][1]; a constant string such as *crispEdges*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
+    """
+    sort: NotRequired[SortOrder | ChannelDomainSort]
+    """
+    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+
+    ```js sort: {y: "x"} ```
+
+    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
+
+    ```js sort: {y: {value: "-x"}} ```
+
+    When sorting the mark’s index, the **sort** option is instead one of:
+
+    - a channel value definition for sorting given values in ascending order
+    - a {value, order} object for sorting given values
+    - a {channel, order} object for sorting the named channel’s values
+    """
+    stroke: NotRequired[ChannelValueSpec | ParamRef]
+    """
+    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
+    """
+    stroke_dasharray: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+    """
+    stroke_dashoffset: NotRequired[str | float | ParamRef]
+    """
+    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    """
+    stroke_linecap: NotRequired[str | ParamRef]
+    """
+    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+    """
+    stroke_linejoin: NotRequired[str | ParamRef]
+    """
+    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+    """
+    stroke_miterlimit: NotRequired[float | ParamRef]
+    """
+    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+    """
+    stroke_opacity: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
+    """
+    stroke_width: NotRequired[ChannelValueSpec]
+    """
+    The [stroke-width][1]; a constant number in pixels, or a channel.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
+    """
+    target: NotRequired[str | ParamRef]
+    """
+    The [target][1]; a constant string specifying the target window (_e.g._,
+    *_blank*) for clickable links; used in conjunction with the **href** option.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
+    """
+    text: NotRequired[ChannelValue]
+    """The text contents channel, possibly with line breaks (\\n, \\r\\n, or \\r). If not specified, defaults to the zero-based index [0, 1, 2, …]."""
+    text_anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
+    """
+    The [text anchor][1] controls how text is aligned (typically horizontally) relative to its anchor point; it is one of *start*, *end*, or *middle*. If the frame anchor is *left*, *top-left*, or *bottom-left*, the default text anchor is *start*; if the frame anchor is *right*, *top-right*, or
+    *bottom-right*, the default is *end*; otherwise it is *middle*.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/text-anchor
+    """
+    text_overflow: NotRequired[
+        Literal[
+            "clip",
+            "ellipsis",
+            "clip-start",
+            "clip-end",
+            "ellipsis-start",
+            "ellipsis-middle",
+            "ellipsis-end",
+        ]
+        | ParamRef
+        | None
+    ]
+    """
+    How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+
+    - null (default) - preserve overflowing characters (and wrap if needed)
+    - *clip* or *clip-end* - remove characters from the end
+    - *clip-start* - remove characters from the start
+    - *ellipsis* or *ellipsis-end* - replace characters from the end with an ellipsis (…)
+    - *ellipsis-start* - replace characters from the start with an ellipsis (…)
+    - *ellipsis-middle* - replace characters from the middle with an ellipsis (…)
+
+    If no **title** was specified, if text requires truncation, a title containing the non-truncated text will be implicitly added.
+    """
+    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
+    """Whether to generate a tooltip for this mark, and any tip options."""
+    title: NotRequired[ChannelValue]
+    """
+    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
+    """
+    type: Literal["text", "textY"]
+    """The basic mark type to use to render 1D density values. Defaults to an areaY mark; lineY, dot, and text marks are also supported."""
+    x: NotRequired[ChannelValueSpec]
+    """The horizontal position channel specifying the text’s anchor point, typically bound to the *x* scale."""
+    z: NotRequired[ChannelValue]
+    """An optional ordinal channel for grouping data into series."""
+
+
 class Area(TypedDict, closed=True):
     """The area mark."""
 
@@ -13231,2681 +15901,11 @@ class Density(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class DensityXAreaX(TypedDict, closed=True):
-    """The densityX mark."""
-
-    aria_description: NotRequired[str | ParamRef]
-    """
-    The [aria-description][1]; a constant textual description.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
-    """
-    aria_hidden: NotRequired[str | ParamRef]
-    """
-    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
-    """
-    aria_label: NotRequired[ChannelValue]
-    """
-    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
-    """
-    bandwidth: NotRequired[float | ParamRef]
-    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
-    bins: NotRequired[float | ParamRef]
-    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    channels: NotRequired[Mapping[str, str]]
-    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
-    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
-    """
-    How to clip the mark; one of:
-
-    - *frame* or true - clip to the plot’s frame (inner area)
-    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
-    - null or false - do not clip
-
-    The *sphere* clip option requires a geographic projection.
-    """
-    curve: NotRequired[Curve | ParamRef]
-    """
-    The curve (interpolation) method for connecting adjacent points. One of:
-
-    - *basis* - a cubic basis spline (repeating the end points)
-    - *basis-open* - an open cubic basis spline
-    - *basis-closed* - a closed cubic basis spline
-    - *bump-x* - a Bézier curve with horizontal tangents
-    - *bump-y* - a Bézier curve with vertical tangents
-    - *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)
-    - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
-    - *cardinal-open* - an open cubic cardinal spline
-    - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
-    - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
-    - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
-    - *monotone-x* - a cubic spline that preserves monotonicity in *x*
-    - *monotone-y* - a cubic spline that preserves monotonicity in *y*
-    - *natural* - a natural cubic spline
-    - *step* - a piecewise constant function where *y* changes at the midpoint of *x*
-    - *step-after* - a piecewise constant function where *y* changes after *x*
-    - *step-before* - a piecewise constant function where *x* changes after *y*
-    """
-    data: PlotMarkData
-    """The data source for the mark."""
-    dx: NotRequired[float | ParamRef]
-    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    dy: NotRequired[float | ParamRef]
-    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
-    """
-    Whether to enable or disable faceting; one of:
-
-    - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
-    - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
-
-    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
-
-    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
-    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
-
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
-    """
-    facet_anchor: NotRequired[
-        Literal[
-            "top",
-            "right",
-            "bottom",
-            "left",
-            "top-left",
-            "top-right",
-            "bottom-left",
-            "bottom-right",
-            "top-empty",
-            "right-empty",
-            "bottom-empty",
-            "left-empty",
-            "empty",
-        ]
-        | ParamRef
-        | None
-    ]
-    """
-    How to place the mark with respect to facets; one of:
-
-    - null (default for most marks) - display the mark in each non-empty facet
-    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
-    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
-    - *empty* - display the mark in empty facets only
-    """
-    fill: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
-    """
-    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
-    """
-    filter: NotRequired[ChannelValue]
-    """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    fx: NotRequired[ChannelValue]
-    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
-    fy: NotRequired[ChannelValue]
-    """
-    The vertical facet position channel, for mark-level faceting, bound to the
-    *fy* scale.
-    """
-    href: NotRequired[ChannelValue]
-    """
-    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
-    """
-    image_filter: NotRequired[str | ParamRef]
-    """
-    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
-    """
-    margin: NotRequired[float | ParamRef]
-    """
-    Shorthand to set the same default for all four mark margins: **marginTop**,
-    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
-    """
-    margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
-    margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
-    margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
-    margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
-    mark: Literal["densityX"]
-    """
-    A densityX mark that visualizes smoothed point cloud densities along the
-    **x** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaX mark.
-
-    Set the *type* property to use a different base mark type.
-    """
-    mix_blend_mode: NotRequired[str | ParamRef]
-    """
-    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
-    """
-    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
-    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
-    offset: NotRequired[StackOffset | ParamRef | None]
-    """After stacking, an optional **offset** can be applied to translate and scale stacks, say to produce a streamgraph; defaults to null for a zero baseline (**y** = 0 for stackY, and **x** = 0 for stackX). If the *wiggle* offset is used, the default **order** changes to *inside-out*."""
-    opacity: NotRequired[ChannelValueSpec]
-    """
-    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
-    """
-    order: NotRequired[StackOrder | ParamRef | None]
-    """
-    The order in which stacks are layered; one of:
-
-    - null (default) for input order
-    - a named stack order method such as *inside-out* or *sum*
-    - a field name, for natural order of the corresponding values
-    - a function of data, for natural order of the corresponding values
-    - an array of explicit **z** values in the desired order
-
-    If the *wiggle* **offset** is used, as for a streamgraph, the default changes to *inside-out*.
-    """
-    paint_order: NotRequired[str | ParamRef]
-    """
-    The [paint-order][1]; a constant string specifying the order in which the
-    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
-    """
-    pointer_events: NotRequired[str | ParamRef]
-    """
-    The [pointer-events][1] property; a constant string such as *none*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
-    """
-    reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
-    select: NotRequired[SelectFilter]
-    """
-    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    shape_rendering: NotRequired[str | ParamRef]
-    """
-    The [shape-rendering][1]; a constant string such as *crispEdges*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
-    """
-    sort: NotRequired[SortOrder | ChannelDomainSort]
-    """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
-
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
-
-    ```js sort: {y: "x"} ```
-
-    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
-
-    ```js sort: {y: {value: "-x"}} ```
-
-    When sorting the mark’s index, the **sort** option is instead one of:
-
-    - a channel value definition for sorting given values in ascending order
-    - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
-    """
-    stack: NotRequired[bool | ParamRef]
-    """Flag indicating if densities should be stacked. Defaults to false."""
-    stroke: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
-    """
-    stroke_dasharray: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-    """
-    stroke_dashoffset: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
-    """
-    stroke_linecap: NotRequired[str | ParamRef]
-    """
-    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
-    """
-    stroke_linejoin: NotRequired[str | ParamRef]
-    """
-    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
-    """
-    stroke_miterlimit: NotRequired[float | ParamRef]
-    """
-    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
-    """
-    stroke_opacity: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
-    """
-    stroke_width: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-width][1]; a constant number in pixels, or a channel.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
-    """
-    target: NotRequired[str | ParamRef]
-    """
-    The [target][1]; a constant string specifying the target window (_e.g._,
-    *_blank*) for clickable links; used in conjunction with the **href** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
-    """
-    tension: NotRequired[float | ParamRef]
-    """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
-
-    [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
-    """
-    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
-    """Whether to generate a tooltip for this mark, and any tip options."""
-    title: NotRequired[ChannelValue]
-    """
-    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
-    """
-    type: Literal["areaX"]
-    """The basic mark type to use to render 1D density values. Defaults to an areaX mark; lineX, dotX, and textX marks are also supported."""
-    y: NotRequired[ChannelValueSpec]
-    """The vertical position channel, typically bound to the *y* scale; defaults to the zero-based index of the data [0, 1, 2, …]."""
-    z: NotRequired[ChannelValue]
-    """
-    An optional ordinal channel for grouping data into (possibly stacked) series to be drawn as separate areas; defaults to **fill** if a channel, or
-    **stroke** if a channel.
-    """
-
-
-class DensityXLineX(TypedDict, closed=True):
-    """The densityX mark."""
-
-    aria_description: NotRequired[str | ParamRef]
-    """
-    The [aria-description][1]; a constant textual description.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
-    """
-    aria_hidden: NotRequired[str | ParamRef]
-    """
-    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
-    """
-    aria_label: NotRequired[ChannelValue]
-    """
-    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
-    """
-    bandwidth: NotRequired[float | ParamRef]
-    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
-    bins: NotRequired[float | ParamRef]
-    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    channels: NotRequired[Mapping[str, str]]
-    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
-    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
-    """
-    How to clip the mark; one of:
-
-    - *frame* or true - clip to the plot’s frame (inner area)
-    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
-    - null or false - do not clip
-
-    The *sphere* clip option requires a geographic projection.
-    """
-    curve: NotRequired[Curve | Literal["auto"] | ParamRef]
-    """
-    The curve (interpolation) method for connecting adjacent points. One of:
-
-    - *basis* - a cubic basis spline (repeating the end points)
-    - *basis-open* - an open cubic basis spline
-    - *basis-closed* - a closed cubic basis spline
-    - *bump-x* - a Bézier curve with horizontal tangents
-    - *bump-y* - a Bézier curve with vertical tangents
-    - *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)
-    - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
-    - *cardinal-open* - an open cubic cardinal spline
-    - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
-    - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
-    - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
-    - *monotone-x* - a cubic spline that preserves monotonicity in *x*
-    - *monotone-y* - a cubic spline that preserves monotonicity in *y*
-    - *natural* - a natural cubic spline
-    - *step* - a piecewise constant function where *y* changes at the midpoint of *x*
-    - *step-after* - a piecewise constant function where *y* changes after *x*
-    - *step-before* - a piecewise constant function where *x* changes after *y*
-    - *auto* (default) - like *linear*, but use the (possibly spherical) projection, if any
-
-    The *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics.
-    """
-    data: PlotMarkData
-    """The data source for the mark."""
-    dx: NotRequired[float | ParamRef]
-    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    dy: NotRequired[float | ParamRef]
-    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
-    """
-    Whether to enable or disable faceting; one of:
-
-    - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
-    - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
-
-    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
-
-    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
-    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
-
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
-    """
-    facet_anchor: NotRequired[
-        Literal[
-            "top",
-            "right",
-            "bottom",
-            "left",
-            "top-left",
-            "top-right",
-            "bottom-left",
-            "bottom-right",
-            "top-empty",
-            "right-empty",
-            "bottom-empty",
-            "left-empty",
-            "empty",
-        ]
-        | ParamRef
-        | None
-    ]
-    """
-    How to place the mark with respect to facets; one of:
-
-    - null (default for most marks) - display the mark in each non-empty facet
-    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
-    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
-    - *empty* - display the mark in empty facets only
-    """
-    fill: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
-    """
-    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
-    """
-    filter: NotRequired[ChannelValue]
-    """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    fx: NotRequired[ChannelValue]
-    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
-    fy: NotRequired[ChannelValue]
-    """
-    The vertical facet position channel, for mark-level faceting, bound to the
-    *fy* scale.
-    """
-    href: NotRequired[ChannelValue]
-    """
-    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
-    """
-    image_filter: NotRequired[str | ParamRef]
-    """
-    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
-    """
-    margin: NotRequired[float | ParamRef]
-    """
-    Shorthand to set the same default for all four mark margins: **marginTop**,
-    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
-    """
-    margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
-    margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
-    margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
-    margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
-    mark: Literal["densityX"]
-    """
-    A densityX mark that visualizes smoothed point cloud densities along the
-    **x** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaX mark.
-
-    Set the *type* property to use a different base mark type.
-    """
-    marker: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
-    """
-    Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
-
-    - a marker name such as *arrow* or *circle*
-    - *none* (default) - no marker
-    * true - alias for *circle-fill*
-    * false or null - alias for *none*
-    """
-    marker_end: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
-    """
-    The marker for the ending point of a line segment; one of:
-
-    - a marker name such as *arrow* or *circle*
-    * *none* (default) - no marker
-    * true - alias for *circle-fill*
-    * false or null - alias for *none*
-    """
-    marker_mid: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
-    """
-    The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
-
-    - a marker name such as *arrow* or *circle*
-    * *none* (default) - no marker
-    * true - alias for *circle-fill*
-    * false or null - alias for *none*
-    * a function - a custom marker function; see below
-    """
-    marker_start: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
-    """
-    The marker for the starting point of a line segment; one of:
-
-    - a marker name such as *arrow* or *circle*
-    * *none* (default) - no marker
-    * true - alias for *circle-fill*
-    * false or null - alias for *none*
-    """
-    mix_blend_mode: NotRequired[str | ParamRef]
-    """
-    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
-    """
-    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
-    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
-    opacity: NotRequired[ChannelValueSpec]
-    """
-    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
-    """
-    paint_order: NotRequired[str | ParamRef]
-    """
-    The [paint-order][1]; a constant string specifying the order in which the
-    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
-    """
-    pointer_events: NotRequired[str | ParamRef]
-    """
-    The [pointer-events][1] property; a constant string such as *none*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
-    """
-    reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
-    select: NotRequired[SelectFilter]
-    """
-    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    shape_rendering: NotRequired[str | ParamRef]
-    """
-    The [shape-rendering][1]; a constant string such as *crispEdges*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
-    """
-    sort: NotRequired[SortOrder | ChannelDomainSort]
-    """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
-
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
-
-    ```js sort: {y: "x"} ```
-
-    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
-
-    ```js sort: {y: {value: "-x"}} ```
-
-    When sorting the mark’s index, the **sort** option is instead one of:
-
-    - a channel value definition for sorting given values in ascending order
-    - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
-    """
-    stroke: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
-    """
-    stroke_dasharray: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-    """
-    stroke_dashoffset: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
-    """
-    stroke_linecap: NotRequired[str | ParamRef]
-    """
-    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
-    """
-    stroke_linejoin: NotRequired[str | ParamRef]
-    """
-    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
-    """
-    stroke_miterlimit: NotRequired[float | ParamRef]
-    """
-    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
-    """
-    stroke_opacity: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
-    """
-    stroke_width: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-width][1]; a constant number in pixels, or a channel.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
-    """
-    target: NotRequired[str | ParamRef]
-    """
-    The [target][1]; a constant string specifying the target window (_e.g._,
-    *_blank*) for clickable links; used in conjunction with the **href** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
-    """
-    tension: NotRequired[float | ParamRef]
-    """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
-
-    [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
-    """
-    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
-    """Whether to generate a tooltip for this mark, and any tip options."""
-    title: NotRequired[ChannelValue]
-    """
-    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
-    """
-    type: Literal["lineX"]
-    """The basic mark type to use to render 1D density values. Defaults to an areaX mark; lineX, dotX, and textX marks are also supported."""
-    y: NotRequired[ChannelValueSpec]
-    """The vertical position channel, typically bound to the *y* scale; defaults to the zero-based index of the data [0, 1, 2, …]."""
-    z: NotRequired[ChannelValue]
-    """
-    An optional ordinal channel for grouping data into (possibly stacked) series to be drawn as separate lines. If not specified, it defaults to
-    **fill** if a channel, or **stroke** if a channel.
-    """
-
-
-class DensityXDotX(TypedDict, closed=True):
-    """The densityX mark."""
-
-    aria_description: NotRequired[str | ParamRef]
-    """
-    The [aria-description][1]; a constant textual description.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
-    """
-    aria_hidden: NotRequired[str | ParamRef]
-    """
-    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
-    """
-    aria_label: NotRequired[ChannelValue]
-    """
-    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
-    """
-    bandwidth: NotRequired[float | ParamRef]
-    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
-    bins: NotRequired[float | ParamRef]
-    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    channels: NotRequired[Mapping[str, str]]
-    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
-    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
-    """
-    How to clip the mark; one of:
-
-    - *frame* or true - clip to the plot’s frame (inner area)
-    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
-    - null or false - do not clip
-
-    The *sphere* clip option requires a geographic projection.
-    """
-    data: PlotMarkData
-    """The data source for the mark."""
-    dx: NotRequired[float | ParamRef]
-    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    dy: NotRequired[float | ParamRef]
-    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
-    """
-    Whether to enable or disable faceting; one of:
-
-    - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
-    - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
-
-    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
-
-    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
-    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
-
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
-    """
-    facet_anchor: NotRequired[
-        Literal[
-            "top",
-            "right",
-            "bottom",
-            "left",
-            "top-left",
-            "top-right",
-            "bottom-left",
-            "bottom-right",
-            "top-empty",
-            "right-empty",
-            "bottom-empty",
-            "left-empty",
-            "empty",
-        ]
-        | ParamRef
-        | None
-    ]
-    """
-    How to place the mark with respect to facets; one of:
-
-    - null (default for most marks) - display the mark in each non-empty facet
-    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
-    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
-    - *empty* - display the mark in empty facets only
-    """
-    fill: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
-    """
-    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
-    """
-    filter: NotRequired[ChannelValue]
-    """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    frame_anchor: NotRequired[FrameAnchor | ParamRef]
-    """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
-    *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
-
-    ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
-    """
-    fx: NotRequired[ChannelValue]
-    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
-    fy: NotRequired[ChannelValue]
-    """
-    The vertical facet position channel, for mark-level faceting, bound to the
-    *fy* scale.
-    """
-    href: NotRequired[ChannelValue]
-    """
-    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
-    """
-    image_filter: NotRequired[str | ParamRef]
-    """
-    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
-    """
-    margin: NotRequired[float | ParamRef]
-    """
-    Shorthand to set the same default for all four mark margins: **marginTop**,
-    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
-    """
-    margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
-    margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
-    margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
-    margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
-    mark: Literal["densityX"]
-    """
-    A densityX mark that visualizes smoothed point cloud densities along the
-    **x** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaX mark.
-
-    Set the *type* property to use a different base mark type.
-    """
-    mix_blend_mode: NotRequired[str | ParamRef]
-    """
-    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
-    """
-    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
-    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
-    opacity: NotRequired[ChannelValueSpec]
-    """
-    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
-    """
-    paint_order: NotRequired[str | ParamRef]
-    """
-    The [paint-order][1]; a constant string specifying the order in which the
-    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
-    """
-    pointer_events: NotRequired[str | ParamRef]
-    """
-    The [pointer-events][1] property; a constant string such as *none*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
-    """
-    r: NotRequired[ChannelValueSpec | float | ParamRef]
-    """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
-    reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
-    rotate: NotRequired[ChannelValue | float | ParamRef]
-    """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
-    select: NotRequired[SelectFilter]
-    """
-    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    shape_rendering: NotRequired[str | ParamRef]
-    """
-    The [shape-rendering][1]; a constant string such as *crispEdges*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
-    """
-    sort: NotRequired[SortOrder | ChannelDomainSort]
-    """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
-
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
-
-    ```js sort: {y: "x"} ```
-
-    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
-
-    ```js sort: {y: {value: "-x"}} ```
-
-    When sorting the mark’s index, the **sort** option is instead one of:
-
-    - a channel value definition for sorting given values in ascending order
-    - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
-    """
-    stroke: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
-    """
-    stroke_dasharray: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-    """
-    stroke_dashoffset: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
-    """
-    stroke_linecap: NotRequired[str | ParamRef]
-    """
-    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
-    """
-    stroke_linejoin: NotRequired[str | ParamRef]
-    """
-    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
-    """
-    stroke_miterlimit: NotRequired[float | ParamRef]
-    """
-    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
-    """
-    stroke_opacity: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
-    """
-    stroke_width: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-width][1]; a constant number in pixels, or a channel.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
-    """
-    symbol: NotRequired[ChannelValueSpec | SymbolType | ParamRef]
-    """
-    The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
-    **hexagon** mark.
-
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
-    """
-    target: NotRequired[str | ParamRef]
-    """
-    The [target][1]; a constant string specifying the target window (_e.g._,
-    *_blank*) for clickable links; used in conjunction with the **href** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
-    """
-    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
-    """Whether to generate a tooltip for this mark, and any tip options."""
-    title: NotRequired[ChannelValue]
-    """
-    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
-    """
-    type: Literal["dotX"]
-    """The basic mark type to use to render 1D density values. Defaults to an areaX mark; lineX, dotX, and textX marks are also supported."""
-    y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the dot’s center, typically bound to the *y* scale."""
-    z: NotRequired[ChannelValue]
-    """An optional ordinal channel for grouping data into series."""
-
-
-class DensityXTextX(TypedDict, closed=True):
-    """The densityX mark."""
-
-    aria_description: NotRequired[str | ParamRef]
-    """
-    The [aria-description][1]; a constant textual description.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
-    """
-    aria_hidden: NotRequired[str | ParamRef]
-    """
-    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
-    """
-    aria_label: NotRequired[ChannelValue]
-    """
-    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
-    """
-    bandwidth: NotRequired[float | ParamRef]
-    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
-    bins: NotRequired[float | ParamRef]
-    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    channels: NotRequired[Mapping[str, str]]
-    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
-    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
-    """
-    How to clip the mark; one of:
-
-    - *frame* or true - clip to the plot’s frame (inner area)
-    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
-    - null or false - do not clip
-
-    The *sphere* clip option requires a geographic projection.
-    """
-    data: PlotMarkData
-    """The data source for the mark."""
-    dx: NotRequired[float | ParamRef]
-    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    dy: NotRequired[float | ParamRef]
-    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
-    """
-    Whether to enable or disable faceting; one of:
-
-    - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
-    - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
-
-    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
-
-    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
-    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
-
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
-    """
-    facet_anchor: NotRequired[
-        Literal[
-            "top",
-            "right",
-            "bottom",
-            "left",
-            "top-left",
-            "top-right",
-            "bottom-left",
-            "bottom-right",
-            "top-empty",
-            "right-empty",
-            "bottom-empty",
-            "left-empty",
-            "empty",
-        ]
-        | ParamRef
-        | None
-    ]
-    """
-    How to place the mark with respect to facets; one of:
-
-    - null (default for most marks) - display the mark in each non-empty facet
-    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
-    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
-    - *empty* - display the mark in empty facets only
-    """
-    fill: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
-    """
-    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
-    """
-    filter: NotRequired[ChannelValue]
-    """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    font_family: NotRequired[str | ParamRef]
-    """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
-    """
-    font_size: NotRequired[ChannelValue | ParamRef]
-    """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
-    """
-    font_style: NotRequired[str | ParamRef]
-    """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
-    """
-    font_variant: NotRequired[str | ParamRef]
-    """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
-    """
-    font_weight: NotRequired[str | float | ParamRef]
-    """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
-    """
-    frame_anchor: NotRequired[FrameAnchor | ParamRef]
-    """
-    The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
-    *middle* of the frame.
-    """
-    fx: NotRequired[ChannelValue]
-    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
-    fy: NotRequired[ChannelValue]
-    """
-    The vertical facet position channel, for mark-level faceting, bound to the
-    *fy* scale.
-    """
-    href: NotRequired[ChannelValue]
-    """
-    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
-    """
-    image_filter: NotRequired[str | ParamRef]
-    """
-    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
-    """
-    line_anchor: NotRequired[Literal["top", "middle", "bottom"] | ParamRef]
-    """
-    The line anchor controls how text is aligned (typically vertically) relative to its anchor point; it is one of *top*, *bottom*, or *middle*. If the frame anchor is *top*, *top-left*, or *top-right*, the default line anchor is *top*; if the frame anchor is *bottom*, *bottom-right*, or
-    *bottom-left*, the default is *bottom*; otherwise it is *middle*.
-    """
-    line_height: NotRequired[float | ParamRef]
-    """The line height in ems; defaults to 1. The line height affects the (typically vertical) separation between adjacent baselines of text, as well as the separation between the text and its anchor point."""
-    line_width: NotRequired[float | ParamRef]
-    """
-    The line width in ems (e.g., 10 for about 20 characters); defaults to infinity, disabling wrapping and clipping.
-
-    If **textOverflow** is null, lines will be wrapped at the specified length. If a line is split at a soft hyphen (\\xad), a hyphen (-) will be displayed at the end of the line. If **textOverflow** is not null, lines will be clipped according to the given strategy.
-    """
-    margin: NotRequired[float | ParamRef]
-    """
-    Shorthand to set the same default for all four mark margins: **marginTop**,
-    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
-    """
-    margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
-    margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
-    margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
-    margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
-    mark: Literal["densityX"]
-    """
-    A densityX mark that visualizes smoothed point cloud densities along the
-    **x** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaX mark.
-
-    Set the *type* property to use a different base mark type.
-    """
-    mix_blend_mode: NotRequired[str | ParamRef]
-    """
-    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
-    """
-    monospace: NotRequired[bool | ParamRef]
-    """If true, changes the default **fontFamily** to *monospace*, and uses simplified monospaced text metrics calculations."""
-    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
-    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
-    opacity: NotRequired[ChannelValueSpec]
-    """
-    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
-    """
-    paint_order: NotRequired[str | ParamRef]
-    """
-    The [paint-order][1]; a constant string specifying the order in which the
-    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
-    """
-    pointer_events: NotRequired[str | ParamRef]
-    """
-    The [pointer-events][1] property; a constant string such as *none*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
-    """
-    reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
-    rotate: NotRequired[ChannelValue | ParamRef]
-    """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
-    select: NotRequired[SelectFilter]
-    """
-    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    shape_rendering: NotRequired[str | ParamRef]
-    """
-    The [shape-rendering][1]; a constant string such as *crispEdges*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
-    """
-    sort: NotRequired[SortOrder | ChannelDomainSort]
-    """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
-
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
-
-    ```js sort: {y: "x"} ```
-
-    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
-
-    ```js sort: {y: {value: "-x"}} ```
-
-    When sorting the mark’s index, the **sort** option is instead one of:
-
-    - a channel value definition for sorting given values in ascending order
-    - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
-    """
-    stroke: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
-    """
-    stroke_dasharray: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-    """
-    stroke_dashoffset: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
-    """
-    stroke_linecap: NotRequired[str | ParamRef]
-    """
-    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
-    """
-    stroke_linejoin: NotRequired[str | ParamRef]
-    """
-    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
-    """
-    stroke_miterlimit: NotRequired[float | ParamRef]
-    """
-    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
-    """
-    stroke_opacity: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
-    """
-    stroke_width: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-width][1]; a constant number in pixels, or a channel.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
-    """
-    target: NotRequired[str | ParamRef]
-    """
-    The [target][1]; a constant string specifying the target window (_e.g._,
-    *_blank*) for clickable links; used in conjunction with the **href** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
-    """
-    text: NotRequired[ChannelValue]
-    """The text contents channel, possibly with line breaks (\\n, \\r\\n, or \\r). If not specified, defaults to the zero-based index [0, 1, 2, …]."""
-    text_anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
-    """
-    The [text anchor][1] controls how text is aligned (typically horizontally) relative to its anchor point; it is one of *start*, *end*, or *middle*. If the frame anchor is *left*, *top-left*, or *bottom-left*, the default text anchor is *start*; if the frame anchor is *right*, *top-right*, or
-    *bottom-right*, the default is *end*; otherwise it is *middle*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/text-anchor
-    """
-    text_overflow: NotRequired[
-        Literal[
-            "clip",
-            "ellipsis",
-            "clip-start",
-            "clip-end",
-            "ellipsis-start",
-            "ellipsis-middle",
-            "ellipsis-end",
-        ]
-        | ParamRef
-        | None
-    ]
-    """
-    How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
-
-    - null (default) - preserve overflowing characters (and wrap if needed)
-    - *clip* or *clip-end* - remove characters from the end
-    - *clip-start* - remove characters from the start
-    - *ellipsis* or *ellipsis-end* - replace characters from the end with an ellipsis (…)
-    - *ellipsis-start* - replace characters from the start with an ellipsis (…)
-    - *ellipsis-middle* - replace characters from the middle with an ellipsis (…)
-
-    If no **title** was specified, if text requires truncation, a title containing the non-truncated text will be implicitly added.
-    """
-    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
-    """Whether to generate a tooltip for this mark, and any tip options."""
-    title: NotRequired[ChannelValue]
-    """
-    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
-    """
-    type: Literal["textX"]
-    """The basic mark type to use to render 1D density values. Defaults to an areaX mark; lineX, dotX, and textX marks are also supported."""
-    y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the text’s anchor point, typically bound to the *y* scale."""
-    z: NotRequired[ChannelValue]
-    """An optional ordinal channel for grouping data into series."""
-
-
-DensityX: TypeAlias = DensityXAreaX | DensityXLineX | DensityXDotX | DensityXTextX
+DensityX: TypeAlias = FieldDensityX1 | FieldDensityX2 | FieldDensityX3 | FieldDensityX4
 """The densityX mark."""
 
 
-class DensityY1(TypedDict, closed=True):
-    """The densityY mark."""
-
-    aria_description: NotRequired[str | ParamRef]
-    """
-    The [aria-description][1]; a constant textual description.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
-    """
-    aria_hidden: NotRequired[str | ParamRef]
-    """
-    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
-    """
-    aria_label: NotRequired[ChannelValue]
-    """
-    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
-    """
-    bandwidth: NotRequired[float | ParamRef]
-    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
-    bins: NotRequired[float | ParamRef]
-    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    channels: NotRequired[Mapping[str, str]]
-    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
-    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
-    """
-    How to clip the mark; one of:
-
-    - *frame* or true - clip to the plot’s frame (inner area)
-    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
-    - null or false - do not clip
-
-    The *sphere* clip option requires a geographic projection.
-    """
-    curve: NotRequired[Curve | ParamRef]
-    """
-    The curve (interpolation) method for connecting adjacent points. One of:
-
-    - *basis* - a cubic basis spline (repeating the end points)
-    - *basis-open* - an open cubic basis spline
-    - *basis-closed* - a closed cubic basis spline
-    - *bump-x* - a Bézier curve with horizontal tangents
-    - *bump-y* - a Bézier curve with vertical tangents
-    - *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)
-    - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
-    - *cardinal-open* - an open cubic cardinal spline
-    - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
-    - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
-    - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
-    - *monotone-x* - a cubic spline that preserves monotonicity in *x*
-    - *monotone-y* - a cubic spline that preserves monotonicity in *y*
-    - *natural* - a natural cubic spline
-    - *step* - a piecewise constant function where *y* changes at the midpoint of *x*
-    - *step-after* - a piecewise constant function where *y* changes after *x*
-    - *step-before* - a piecewise constant function where *x* changes after *y*
-    """
-    data: PlotMarkData
-    """The data source for the mark."""
-    dx: NotRequired[float | ParamRef]
-    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    dy: NotRequired[float | ParamRef]
-    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
-    """
-    Whether to enable or disable faceting; one of:
-
-    - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
-    - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
-
-    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
-
-    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
-    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
-
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
-    """
-    facet_anchor: NotRequired[
-        Literal[
-            "top",
-            "right",
-            "bottom",
-            "left",
-            "top-left",
-            "top-right",
-            "bottom-left",
-            "bottom-right",
-            "top-empty",
-            "right-empty",
-            "bottom-empty",
-            "left-empty",
-            "empty",
-        ]
-        | ParamRef
-        | None
-    ]
-    """
-    How to place the mark with respect to facets; one of:
-
-    - null (default for most marks) - display the mark in each non-empty facet
-    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
-    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
-    - *empty* - display the mark in empty facets only
-    """
-    fill: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
-    """
-    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
-    """
-    filter: NotRequired[ChannelValue]
-    """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    fx: NotRequired[ChannelValue]
-    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
-    fy: NotRequired[ChannelValue]
-    """
-    The vertical facet position channel, for mark-level faceting, bound to the
-    *fy* scale.
-    """
-    href: NotRequired[ChannelValue]
-    """
-    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
-    """
-    image_filter: NotRequired[str | ParamRef]
-    """
-    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
-    """
-    margin: NotRequired[float | ParamRef]
-    """
-    Shorthand to set the same default for all four mark margins: **marginTop**,
-    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
-    """
-    margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
-    margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
-    margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
-    margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
-    mark: Literal["densityY"]
-    """
-    A densityY mark that visualizes smoothed point cloud densities along the
-    **y** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaY mark.
-
-    Set the *type* property to use a different base mark type.
-    """
-    mix_blend_mode: NotRequired[str | ParamRef]
-    """
-    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
-    """
-    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
-    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
-    offset: NotRequired[StackOffset | ParamRef | None]
-    """After stacking, an optional **offset** can be applied to translate and scale stacks, say to produce a streamgraph; defaults to null for a zero baseline (**y** = 0 for stackY, and **x** = 0 for stackX). If the *wiggle* offset is used, the default **order** changes to *inside-out*."""
-    opacity: NotRequired[ChannelValueSpec]
-    """
-    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
-    """
-    order: NotRequired[StackOrder | ParamRef | None]
-    """
-    The order in which stacks are layered; one of:
-
-    - null (default) for input order
-    - a named stack order method such as *inside-out* or *sum*
-    - a field name, for natural order of the corresponding values
-    - a function of data, for natural order of the corresponding values
-    - an array of explicit **z** values in the desired order
-
-    If the *wiggle* **offset** is used, as for a streamgraph, the default changes to *inside-out*.
-    """
-    paint_order: NotRequired[str | ParamRef]
-    """
-    The [paint-order][1]; a constant string specifying the order in which the
-    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
-    """
-    pointer_events: NotRequired[str | ParamRef]
-    """
-    The [pointer-events][1] property; a constant string such as *none*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
-    """
-    reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
-    select: NotRequired[SelectFilter]
-    """
-    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    shape_rendering: NotRequired[str | ParamRef]
-    """
-    The [shape-rendering][1]; a constant string such as *crispEdges*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
-    """
-    sort: NotRequired[SortOrder | ChannelDomainSort]
-    """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
-
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
-
-    ```js sort: {y: "x"} ```
-
-    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
-
-    ```js sort: {y: {value: "-x"}} ```
-
-    When sorting the mark’s index, the **sort** option is instead one of:
-
-    - a channel value definition for sorting given values in ascending order
-    - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
-    """
-    stack: NotRequired[bool | ParamRef]
-    """Flag indicating if densities should be stacked. Defaults to false."""
-    stroke: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
-    """
-    stroke_dasharray: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-    """
-    stroke_dashoffset: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
-    """
-    stroke_linecap: NotRequired[str | ParamRef]
-    """
-    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
-    """
-    stroke_linejoin: NotRequired[str | ParamRef]
-    """
-    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
-    """
-    stroke_miterlimit: NotRequired[float | ParamRef]
-    """
-    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
-    """
-    stroke_opacity: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
-    """
-    stroke_width: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-width][1]; a constant number in pixels, or a channel.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
-    """
-    target: NotRequired[str | ParamRef]
-    """
-    The [target][1]; a constant string specifying the target window (_e.g._,
-    *_blank*) for clickable links; used in conjunction with the **href** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
-    """
-    tension: NotRequired[float | ParamRef]
-    """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
-
-    [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
-    """
-    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
-    """Whether to generate a tooltip for this mark, and any tip options."""
-    title: NotRequired[ChannelValue]
-    """
-    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
-    """
-    type: NotRequired[Literal["areaY"]]
-    """The basic mark type to use to render 1D density values. Defaults to an areaY mark; lineY, dot, and text marks are also supported."""
-    x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel, typically bound to the *x* scale; defaults to the zero-based index of the data [0, 1, 2, …]."""
-    z: NotRequired[ChannelValue]
-    """
-    An optional ordinal channel for grouping data into (possibly stacked) series to be drawn as separate areas; defaults to **fill** if a channel, or
-    **stroke** if a channel.
-    """
-
-
-class DensityY2(TypedDict, closed=True):
-    """The densityY mark."""
-
-    aria_description: NotRequired[str | ParamRef]
-    """
-    The [aria-description][1]; a constant textual description.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
-    """
-    aria_hidden: NotRequired[str | ParamRef]
-    """
-    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
-    """
-    aria_label: NotRequired[ChannelValue]
-    """
-    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
-    """
-    bandwidth: NotRequired[float | ParamRef]
-    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
-    bins: NotRequired[float | ParamRef]
-    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    channels: NotRequired[Mapping[str, str]]
-    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
-    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
-    """
-    How to clip the mark; one of:
-
-    - *frame* or true - clip to the plot’s frame (inner area)
-    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
-    - null or false - do not clip
-
-    The *sphere* clip option requires a geographic projection.
-    """
-    curve: NotRequired[Curve | Literal["auto"] | ParamRef]
-    """
-    The curve (interpolation) method for connecting adjacent points. One of:
-
-    - *basis* - a cubic basis spline (repeating the end points)
-    - *basis-open* - an open cubic basis spline
-    - *basis-closed* - a closed cubic basis spline
-    - *bump-x* - a Bézier curve with horizontal tangents
-    - *bump-y* - a Bézier curve with vertical tangents
-    - *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)
-    - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
-    - *cardinal-open* - an open cubic cardinal spline
-    - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
-    - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
-    - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
-    - *monotone-x* - a cubic spline that preserves monotonicity in *x*
-    - *monotone-y* - a cubic spline that preserves monotonicity in *y*
-    - *natural* - a natural cubic spline
-    - *step* - a piecewise constant function where *y* changes at the midpoint of *x*
-    - *step-after* - a piecewise constant function where *y* changes after *x*
-    - *step-before* - a piecewise constant function where *x* changes after *y*
-    - *auto* (default) - like *linear*, but use the (possibly spherical) projection, if any
-
-    The *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics.
-    """
-    data: PlotMarkData
-    """The data source for the mark."""
-    dx: NotRequired[float | ParamRef]
-    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    dy: NotRequired[float | ParamRef]
-    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
-    """
-    Whether to enable or disable faceting; one of:
-
-    - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
-    - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
-
-    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
-
-    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
-    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
-
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
-    """
-    facet_anchor: NotRequired[
-        Literal[
-            "top",
-            "right",
-            "bottom",
-            "left",
-            "top-left",
-            "top-right",
-            "bottom-left",
-            "bottom-right",
-            "top-empty",
-            "right-empty",
-            "bottom-empty",
-            "left-empty",
-            "empty",
-        ]
-        | ParamRef
-        | None
-    ]
-    """
-    How to place the mark with respect to facets; one of:
-
-    - null (default for most marks) - display the mark in each non-empty facet
-    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
-    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
-    - *empty* - display the mark in empty facets only
-    """
-    fill: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
-    """
-    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
-    """
-    filter: NotRequired[ChannelValue]
-    """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    fx: NotRequired[ChannelValue]
-    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
-    fy: NotRequired[ChannelValue]
-    """
-    The vertical facet position channel, for mark-level faceting, bound to the
-    *fy* scale.
-    """
-    href: NotRequired[ChannelValue]
-    """
-    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
-    """
-    image_filter: NotRequired[str | ParamRef]
-    """
-    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
-    """
-    margin: NotRequired[float | ParamRef]
-    """
-    Shorthand to set the same default for all four mark margins: **marginTop**,
-    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
-    """
-    margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
-    margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
-    margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
-    margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
-    mark: Literal["densityY"]
-    """
-    A densityY mark that visualizes smoothed point cloud densities along the
-    **y** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaY mark.
-
-    Set the *type* property to use a different base mark type.
-    """
-    marker: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
-    """
-    Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
-
-    - a marker name such as *arrow* or *circle*
-    - *none* (default) - no marker
-    * true - alias for *circle-fill*
-    * false or null - alias for *none*
-    """
-    marker_end: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
-    """
-    The marker for the ending point of a line segment; one of:
-
-    - a marker name such as *arrow* or *circle*
-    * *none* (default) - no marker
-    * true - alias for *circle-fill*
-    * false or null - alias for *none*
-    """
-    marker_mid: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
-    """
-    The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
-
-    - a marker name such as *arrow* or *circle*
-    * *none* (default) - no marker
-    * true - alias for *circle-fill*
-    * false or null - alias for *none*
-    * a function - a custom marker function; see below
-    """
-    marker_start: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
-    """
-    The marker for the starting point of a line segment; one of:
-
-    - a marker name such as *arrow* or *circle*
-    * *none* (default) - no marker
-    * true - alias for *circle-fill*
-    * false or null - alias for *none*
-    """
-    mix_blend_mode: NotRequired[str | ParamRef]
-    """
-    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
-    """
-    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
-    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
-    opacity: NotRequired[ChannelValueSpec]
-    """
-    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
-    """
-    paint_order: NotRequired[str | ParamRef]
-    """
-    The [paint-order][1]; a constant string specifying the order in which the
-    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
-    """
-    pointer_events: NotRequired[str | ParamRef]
-    """
-    The [pointer-events][1] property; a constant string such as *none*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
-    """
-    reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
-    select: NotRequired[SelectFilter]
-    """
-    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    shape_rendering: NotRequired[str | ParamRef]
-    """
-    The [shape-rendering][1]; a constant string such as *crispEdges*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
-    """
-    sort: NotRequired[SortOrder | ChannelDomainSort]
-    """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
-
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
-
-    ```js sort: {y: "x"} ```
-
-    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
-
-    ```js sort: {y: {value: "-x"}} ```
-
-    When sorting the mark’s index, the **sort** option is instead one of:
-
-    - a channel value definition for sorting given values in ascending order
-    - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
-    """
-    stroke: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
-    """
-    stroke_dasharray: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-    """
-    stroke_dashoffset: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
-    """
-    stroke_linecap: NotRequired[str | ParamRef]
-    """
-    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
-    """
-    stroke_linejoin: NotRequired[str | ParamRef]
-    """
-    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
-    """
-    stroke_miterlimit: NotRequired[float | ParamRef]
-    """
-    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
-    """
-    stroke_opacity: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
-    """
-    stroke_width: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-width][1]; a constant number in pixels, or a channel.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
-    """
-    target: NotRequired[str | ParamRef]
-    """
-    The [target][1]; a constant string specifying the target window (_e.g._,
-    *_blank*) for clickable links; used in conjunction with the **href** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
-    """
-    tension: NotRequired[float | ParamRef]
-    """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
-
-    [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
-    """
-    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
-    """Whether to generate a tooltip for this mark, and any tip options."""
-    title: NotRequired[ChannelValue]
-    """
-    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
-    """
-    type: Literal["lineY"]
-    """The basic mark type to use to render 1D density values. Defaults to an areaY mark; lineY, dot, and text marks are also supported."""
-    x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel, typically bound to the *x* scale; defaults to the zero-based index of the data [0, 1, 2, …]."""
-    z: NotRequired[ChannelValue]
-    """
-    An optional ordinal channel for grouping data into (possibly stacked) series to be drawn as separate lines. If not specified, it defaults to
-    **fill** if a channel, or **stroke** if a channel.
-    """
-
-
-class DensityY3(TypedDict, closed=True):
-    """The densityY mark."""
-
-    aria_description: NotRequired[str | ParamRef]
-    """
-    The [aria-description][1]; a constant textual description.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
-    """
-    aria_hidden: NotRequired[str | ParamRef]
-    """
-    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
-    """
-    aria_label: NotRequired[ChannelValue]
-    """
-    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
-    """
-    bandwidth: NotRequired[float | ParamRef]
-    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
-    bins: NotRequired[float | ParamRef]
-    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    channels: NotRequired[Mapping[str, str]]
-    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
-    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
-    """
-    How to clip the mark; one of:
-
-    - *frame* or true - clip to the plot’s frame (inner area)
-    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
-    - null or false - do not clip
-
-    The *sphere* clip option requires a geographic projection.
-    """
-    data: PlotMarkData
-    """The data source for the mark."""
-    dx: NotRequired[float | ParamRef]
-    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    dy: NotRequired[float | ParamRef]
-    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
-    """
-    Whether to enable or disable faceting; one of:
-
-    - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
-    - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
-
-    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
-
-    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
-    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
-
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
-    """
-    facet_anchor: NotRequired[
-        Literal[
-            "top",
-            "right",
-            "bottom",
-            "left",
-            "top-left",
-            "top-right",
-            "bottom-left",
-            "bottom-right",
-            "top-empty",
-            "right-empty",
-            "bottom-empty",
-            "left-empty",
-            "empty",
-        ]
-        | ParamRef
-        | None
-    ]
-    """
-    How to place the mark with respect to facets; one of:
-
-    - null (default for most marks) - display the mark in each non-empty facet
-    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
-    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
-    - *empty* - display the mark in empty facets only
-    """
-    fill: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
-    """
-    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
-    """
-    filter: NotRequired[ChannelValue]
-    """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    frame_anchor: NotRequired[FrameAnchor | ParamRef]
-    """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
-    *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
-
-    ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
-    """
-    fx: NotRequired[ChannelValue]
-    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
-    fy: NotRequired[ChannelValue]
-    """
-    The vertical facet position channel, for mark-level faceting, bound to the
-    *fy* scale.
-    """
-    href: NotRequired[ChannelValue]
-    """
-    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
-    """
-    image_filter: NotRequired[str | ParamRef]
-    """
-    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
-    """
-    margin: NotRequired[float | ParamRef]
-    """
-    Shorthand to set the same default for all four mark margins: **marginTop**,
-    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
-    """
-    margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
-    margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
-    margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
-    margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
-    mark: Literal["densityY"]
-    """
-    A densityY mark that visualizes smoothed point cloud densities along the
-    **y** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaY mark.
-
-    Set the *type* property to use a different base mark type.
-    """
-    mix_blend_mode: NotRequired[str | ParamRef]
-    """
-    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
-    """
-    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
-    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
-    opacity: NotRequired[ChannelValueSpec]
-    """
-    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
-    """
-    paint_order: NotRequired[str | ParamRef]
-    """
-    The [paint-order][1]; a constant string specifying the order in which the
-    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
-    """
-    pointer_events: NotRequired[str | ParamRef]
-    """
-    The [pointer-events][1] property; a constant string such as *none*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
-    """
-    r: NotRequired[ChannelValueSpec | float | ParamRef]
-    """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
-    reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
-    rotate: NotRequired[ChannelValue | float | ParamRef]
-    """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
-    select: NotRequired[SelectFilter]
-    """
-    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    shape_rendering: NotRequired[str | ParamRef]
-    """
-    The [shape-rendering][1]; a constant string such as *crispEdges*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
-    """
-    sort: NotRequired[SortOrder | ChannelDomainSort]
-    """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
-
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
-
-    ```js sort: {y: "x"} ```
-
-    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
-
-    ```js sort: {y: {value: "-x"}} ```
-
-    When sorting the mark’s index, the **sort** option is instead one of:
-
-    - a channel value definition for sorting given values in ascending order
-    - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
-    """
-    stroke: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
-    """
-    stroke_dasharray: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-    """
-    stroke_dashoffset: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
-    """
-    stroke_linecap: NotRequired[str | ParamRef]
-    """
-    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
-    """
-    stroke_linejoin: NotRequired[str | ParamRef]
-    """
-    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
-    """
-    stroke_miterlimit: NotRequired[float | ParamRef]
-    """
-    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
-    """
-    stroke_opacity: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
-    """
-    stroke_width: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-width][1]; a constant number in pixels, or a channel.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
-    """
-    symbol: NotRequired[ChannelValueSpec | SymbolType | ParamRef]
-    """
-    The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
-    **hexagon** mark.
-
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
-    """
-    target: NotRequired[str | ParamRef]
-    """
-    The [target][1]; a constant string specifying the target window (_e.g._,
-    *_blank*) for clickable links; used in conjunction with the **href** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
-    """
-    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
-    """Whether to generate a tooltip for this mark, and any tip options."""
-    title: NotRequired[ChannelValue]
-    """
-    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
-    """
-    type: Literal["dot", "dotY", "circle", "hexagon"]
-    """The basic mark type to use to render 1D density values. Defaults to an areaY mark; lineY, dot, and text marks are also supported."""
-    x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the dot’s center, typically bound to the *x* scale."""
-    z: NotRequired[ChannelValue]
-    """An optional ordinal channel for grouping data into series."""
-
-
-class DensityY4(TypedDict, closed=True):
-    """The densityY mark."""
-
-    aria_description: NotRequired[str | ParamRef]
-    """
-    The [aria-description][1]; a constant textual description.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description
-    """
-    aria_hidden: NotRequired[str | ParamRef]
-    """
-    The [aria-hidden][1] state; a constant indicating whether the element is exposed to an accessibility API.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden
-    """
-    aria_label: NotRequired[ChannelValue]
-    """
-    The [aria-label][1]; a channel specifying short textual labels representing the value in the accessibility tree.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
-    """
-    bandwidth: NotRequired[float | ParamRef]
-    """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
-    bins: NotRequired[float | ParamRef]
-    """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    channels: NotRequired[Mapping[str, str]]
-    """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
-    clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
-    """
-    How to clip the mark; one of:
-
-    - *frame* or true - clip to the plot’s frame (inner area)
-    - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
-    - null or false - do not clip
-
-    The *sphere* clip option requires a geographic projection.
-    """
-    data: PlotMarkData
-    """The data source for the mark."""
-    dx: NotRequired[float | ParamRef]
-    """The horizontal offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    dy: NotRequired[float | ParamRef]
-    """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
-    facet: NotRequired[Literal["auto", "include", "exclude", "super"] | bool | ParamRef | None]
-    """
-    Whether to enable or disable faceting; one of:
-
-    - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
-    - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
-
-    When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
-
-    When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
-    *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
-
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
-    """
-    facet_anchor: NotRequired[
-        Literal[
-            "top",
-            "right",
-            "bottom",
-            "left",
-            "top-left",
-            "top-right",
-            "bottom-left",
-            "bottom-right",
-            "top-empty",
-            "right-empty",
-            "bottom-empty",
-            "left-empty",
-            "empty",
-        ]
-        | ParamRef
-        | None
-    ]
-    """
-    How to place the mark with respect to facets; one of:
-
-    - null (default for most marks) - display the mark in each non-empty facet
-    - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
-    - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
-    - *empty* - display the mark in empty facets only
-    """
-    fill: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill
-    """
-    fill_opacity: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [fill-opacity][1]; a constant number between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-opacity
-    """
-    filter: NotRequired[ChannelValue]
-    """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    font_family: NotRequired[str | ParamRef]
-    """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
-    """
-    font_size: NotRequired[ChannelValue | ParamRef]
-    """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
-    """
-    font_style: NotRequired[str | ParamRef]
-    """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
-    """
-    font_variant: NotRequired[str | ParamRef]
-    """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
-    """
-    font_weight: NotRequired[str | float | ParamRef]
-    """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
-    """
-    frame_anchor: NotRequired[FrameAnchor | ParamRef]
-    """
-    The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
-    *middle* of the frame.
-    """
-    fx: NotRequired[ChannelValue]
-    """The horizontal facet position channel, for mark-level faceting, bound to the *fx* scale."""
-    fy: NotRequired[ChannelValue]
-    """
-    The vertical facet position channel, for mark-level faceting, bound to the
-    *fy* scale.
-    """
-    href: NotRequired[ChannelValue]
-    """
-    The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/href
-    """
-    image_filter: NotRequired[str | ParamRef]
-    """
-    A CSS [filter][1]; a constant string used to adjust the rendering of images, such as *blur(5px)*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
-    """
-    line_anchor: NotRequired[Literal["top", "middle", "bottom"] | ParamRef]
-    """
-    The line anchor controls how text is aligned (typically vertically) relative to its anchor point; it is one of *top*, *bottom*, or *middle*. If the frame anchor is *top*, *top-left*, or *top-right*, the default line anchor is *top*; if the frame anchor is *bottom*, *bottom-right*, or
-    *bottom-left*, the default is *bottom*; otherwise it is *middle*.
-    """
-    line_height: NotRequired[float | ParamRef]
-    """The line height in ems; defaults to 1. The line height affects the (typically vertical) separation between adjacent baselines of text, as well as the separation between the text and its anchor point."""
-    line_width: NotRequired[float | ParamRef]
-    """
-    The line width in ems (e.g., 10 for about 20 characters); defaults to infinity, disabling wrapping and clipping.
-
-    If **textOverflow** is null, lines will be wrapped at the specified length. If a line is split at a soft hyphen (\\xad), a hyphen (-) will be displayed at the end of the line. If **textOverflow** is not null, lines will be clipped according to the given strategy.
-    """
-    margin: NotRequired[float | ParamRef]
-    """
-    Shorthand to set the same default for all four mark margins: **marginTop**,
-    **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
-    """
-    margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
-    margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
-    margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
-    margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
-    mark: Literal["densityY"]
-    """
-    A densityY mark that visualizes smoothed point cloud densities along the
-    **y** dimension. The mark bins the data, counts the number of records that fall into each bin, smooths the resulting counts, and then plots the smoothed distribution, by default using an areaY mark.
-
-    Set the *type* property to use a different base mark type.
-    """
-    mix_blend_mode: NotRequired[str | ParamRef]
-    """
-    The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
-    """
-    monospace: NotRequired[bool | ParamRef]
-    """If true, changes the default **fontFamily** to *monospace*, and uses simplified monospaced text metrics calculations."""
-    normalize: NotRequired[Literal["max", "sum", "none"] | bool | ParamRef]
-    """Normalization method for density estimates. If `false` or `'none'` (the default), the density estimates are smoothed weighted counts. If `true` or `'sum'`, density estimates are divided by the sum of the total point mass. If `'max'`, estimates are divided by the maximum smoothed value."""
-    opacity: NotRequired[ChannelValueSpec]
-    """
-    The [opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally. For faster rendering, prefer the **strokeOpacity** or **fillOpacity** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
-    """
-    paint_order: NotRequired[str | ParamRef]
-    """
-    The [paint-order][1]; a constant string specifying the order in which the
-    **fill**, **stroke**, and any markers are drawn; defaults to *normal*, which draws the fill, then stroke, then markers; defaults to *stroke* for the text mark to create a “halo” around text to improve legibility.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
-    """
-    pointer_events: NotRequired[str | ParamRef]
-    """
-    The [pointer-events][1] property; a constant string such as *none*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
-    """
-    reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
-    rotate: NotRequired[ChannelValue | ParamRef]
-    """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
-    select: NotRequired[SelectFilter]
-    """
-    Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
-
-    Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
-    """
-    shape_rendering: NotRequired[str | ParamRef]
-    """
-    The [shape-rendering][1]; a constant string such as *crispEdges*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering
-    """
-    sort: NotRequired[SortOrder | ChannelDomainSort]
-    """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
-
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
-
-    ```js sort: {y: "x"} ```
-
-    For different sort options for different scales, replace the channel name with a *value* object and per-scale options:
-
-    ```js sort: {y: {value: "-x"}} ```
-
-    When sorting the mark’s index, the **sort** option is instead one of:
-
-    - a channel value definition for sorting given values in ascending order
-    - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
-    """
-    stroke: NotRequired[ChannelValueSpec | ParamRef]
-    """
-    The [stroke][1]; a constant CSS color string, or a channel typically bound to the *color* scale. If all channel values are valid CSS colors, by default the channel will not be bound to the *color* scale, interpreting the colors literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke
-    """
-    stroke_dasharray: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dasharray][1]; a constant number indicating the length in pixels of alternating dashes and gaps, or a constant string of numbers separated by spaces or commas (_e.g._, *10 2* for dashes of 10 pixels separated by gaps of 2 pixels), or *none* (the default) for no dashing
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-    """
-    stroke_dashoffset: NotRequired[str | float | ParamRef]
-    """
-    The [stroke-dashoffset][1]; a constant indicating the offset in pixels of the first dash along the stroke; defaults to zero.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
-    """
-    stroke_linecap: NotRequired[str | ParamRef]
-    """
-    The [stroke-linecap][1]; a constant specifying how to cap stroked paths, such as *butt*, *round*, or *square*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
-    """
-    stroke_linejoin: NotRequired[str | ParamRef]
-    """
-    The [stroke-linejoin][1]; a constant specifying how to join stroked paths, such as *bevel*, *miter*, *miter-clip*, or *round*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
-    """
-    stroke_miterlimit: NotRequired[float | ParamRef]
-    """
-    The [stroke-miterlimit][1]; a constant number specifying how to limit the length of *miter* joins on stroked paths.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
-    """
-    stroke_opacity: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-opacity][1]; a constant between 0 and 1, or a channel typically bound to the *opacity* scale. If all channel values are numbers in [0, 1], by default the channel will not be bound to the *opacity* scale, interpreting the opacities literally.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-opacity
-    """
-    stroke_width: NotRequired[ChannelValueSpec]
-    """
-    The [stroke-width][1]; a constant number in pixels, or a channel.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width
-    """
-    target: NotRequired[str | ParamRef]
-    """
-    The [target][1]; a constant string specifying the target window (_e.g._,
-    *_blank*) for clickable links; used in conjunction with the **href** option.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/target
-    """
-    text: NotRequired[ChannelValue]
-    """The text contents channel, possibly with line breaks (\\n, \\r\\n, or \\r). If not specified, defaults to the zero-based index [0, 1, 2, …]."""
-    text_anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
-    """
-    The [text anchor][1] controls how text is aligned (typically horizontally) relative to its anchor point; it is one of *start*, *end*, or *middle*. If the frame anchor is *left*, *top-left*, or *bottom-left*, the default text anchor is *start*; if the frame anchor is *right*, *top-right*, or
-    *bottom-right*, the default is *end*; otherwise it is *middle*.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/text-anchor
-    """
-    text_overflow: NotRequired[
-        Literal[
-            "clip",
-            "ellipsis",
-            "clip-start",
-            "clip-end",
-            "ellipsis-start",
-            "ellipsis-middle",
-            "ellipsis-end",
-        ]
-        | ParamRef
-        | None
-    ]
-    """
-    How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
-
-    - null (default) - preserve overflowing characters (and wrap if needed)
-    - *clip* or *clip-end* - remove characters from the end
-    - *clip-start* - remove characters from the start
-    - *ellipsis* or *ellipsis-end* - replace characters from the end with an ellipsis (…)
-    - *ellipsis-start* - replace characters from the start with an ellipsis (…)
-    - *ellipsis-middle* - replace characters from the middle with an ellipsis (…)
-
-    If no **title** was specified, if text requires truncation, a title containing the non-truncated text will be implicitly added.
-    """
-    tip: NotRequired[bool | TipPointer | Tip | ParamRef]
-    """Whether to generate a tooltip for this mark, and any tip options."""
-    title: NotRequired[ChannelValue]
-    """
-    The title; a channel specifying accessible, short textual descriptions as strings (possibly with newlines). If the tip option is specified, the title will be displayed with an interactive tooltip instead of using the SVG [title element][1].
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
-    """
-    type: Literal["text", "textY"]
-    """The basic mark type to use to render 1D density values. Defaults to an areaY mark; lineY, dot, and text marks are also supported."""
-    x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the text’s anchor point, typically bound to the *x* scale."""
-    z: NotRequired[ChannelValue]
-    """An optional ordinal channel for grouping data into series."""
-
-
-DensityY: TypeAlias = DensityY1 | DensityY2 | DensityY3 | DensityY4
+DensityY: TypeAlias = FieldDensityY1 | FieldDensityY2 | FieldDensityY3 | FieldDensityY4
 """The densityY mark."""
 
 

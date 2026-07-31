@@ -56,7 +56,7 @@ Sadly, this doesn't cover intersecting with a union.
 
 from collections import deque
 from collections.abc import Sequence
-from typing import Annotated as A, Literal as L, final
+from typing import Annotated as A, Any, Final, Literal as L, LiteralString, final
 
 from msgspec import field
 
@@ -68,6 +68,14 @@ type NonRecursiveFields = _NonRecursiveFieldsBase
 type Ref = str
 type Resolved[T] = A[T, L["Resolved"]]
 type Definitions = dict[Resolved[Ref], Resolved[JsonSchema]]
+
+type DefName = str
+"""The name that keys the schema in `{"definitions": {<here>: ...}}`"""
+
+_DOLLAR_DEFS: Final = "#/definitions/"
+
+
+type Incomplete = Any
 
 
 class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
@@ -84,6 +92,9 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
         name="additionalProperties", default=True
     )
     required: Sequence[str] = field(default_factory=list)
+
+    def is_ref(self) -> bool:
+        return bool(self.ref)
 
 
 class _RecursePropsUnionBase(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
@@ -124,45 +135,104 @@ class JsonSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
     max_items: int | None = field(name="maxItems", default=None)
 
     @property
-    def ref_name(self) -> Resolved[Ref]:
+    def def_name(self) -> DefName:
         if ref := self.ref:
-            return ref.removeprefix("#/definitions/")
+            return ref.removeprefix(_DOLLAR_DEFS)
         msg = f"Expected ref, got {self!r}"
         raise TypeError(msg)
+
+    @classmethod
+    def new_ref(cls, name: DefName, /) -> JsonSchema:
+        return cls(ref=f"{_DOLLAR_DEFS}{name}")
+
+    def is_union(self) -> bool:
+        return bool(self.any_of)
 
 
 @final
 class InputSchema(base.Struct):
     """Top level schema for `mosaic-schema.json`."""
 
-    definitions: Definitions
+    definitions: dict[DefName, Resolved[JsonSchema]]
     ref: Ref = field(name="$ref")
     schema: str = field(name="$schema")
 
-    def get(self, target: Resolved[Ref], /) -> Resolved[JsonSchema]:
+    def get(self, target: DefName, /) -> Resolved[JsonSchema]:
+        """Get a top-level definition from the schema."""
         return self.definitions[target]
 
-    def flatten_union(self, target: Resolved[Ref] | JsonSchema, /) -> deque[Resolved[Ref]]:
-        """`Component` flattening.
+    def insert(self, name: DefName, schema: Resolved[JsonSchema]) -> None:
+        """Add a new top-level definition to the schema."""
+        self.definitions[name] = schema
+
+    def try_insert(self, name: DefName, schema: Resolved[JsonSchema]) -> DuplicateError | None:
+        """Try to add a new definition, returning an error if the name is already in use."""
+        if name in self.definitions:
+            return DuplicateError.from_try_insert(name, schema, self.get(name))
+        return self.insert(name, schema)
+
+    def name_union_members(self, target: DefName, /, fmt: LiteralString = "_{target}{idx}") -> None:
+        """Lift anonymous members of a union into top-level definitions."""
+        union = self.get(target)
+        doc = union.description
+        member_refs = []
+        for idx, member in enumerate(union.any_of, 1):
+            member_name = fmt.format(target=target, idx=idx)
+            member_refs.append(member.new_ref(member_name))
+            if err := self.try_insert(member_name, member.__replace__(description=doc)):
+                raise err
+        self.insert(target, union.__replace__(any_of=member_refs))
+
+    # TODO @dangotbanned: Figure out a nicer API for this mess
+    # It does too many things
+    def flatten_component_union_mut(self, target: DefName | JsonSchema, /) -> deque[DefName]:
+        """*'Enhance'* the definition of `Component`.
+
+        See the module doc for a detailed look at this problem.
 
         ## Notes
-        - Might be resuable elsewhere later
-        - Only requires 2 levels
-            - `Component` -> `(..., PlotMark, ...)`
-            - `PlotMark`  -> `(...)`
-        - Then generate the new `TypedDict`s from imports using names
+        - Mutates `self.definitions`
+        - Returns names to use in intersection `TypedDict`s
         """
         if isinstance(target, str):
             target = self.get(target)
-        if not (union := target.any_of):
+
+        if not target.is_union():
             msg = f"`target` is not a union, got:\n{target!r}"
             raise TypeError(msg)
-        member_names: deque[Resolved[Ref]] = deque()
-        for member in union:
-            name = member.ref_name
+
+        # NOTE: Why is this not recursive?
+        # It might make sense to do that eventually, but
+        # - this shows how many levels of nesting there are.
+        # - will raise when expectations change
+        member_names: deque[DefName] = deque()
+        for member in target.any_of:
+            name = member.def_name
             member_resolved = self.get(name)
-            if not (nested := member_resolved.any_of):
+            if not member_resolved.is_union():
                 member_names.append(name)
             else:
-                member_names.extend(nested_member.ref_name for nested_member in nested)
+                for nested_member in member_resolved.any_of:
+                    nested_name = nested_member.def_name
+                    nested_member_resolved = self.get(nested_name)
+                    if not nested_member_resolved.is_union():
+                        member_names.append(nested_name)
+                    elif any(deep.is_ref() for deep in nested_member_resolved.any_of):
+                        msg_0 = f"TODO @dangotbanned: Expected only anonymous unions at this level, got members: {nested_member_resolved.any_of!r}"
+                        raise NotImplementedError(msg_0)
+                    else:
+                        self.name_union_members(nested_name)
+                        member_names.extend(deep.def_name for deep in self.get(nested_name).any_of)
         return member_names
+
+
+class DuplicateError(ValueError):
+    @staticmethod
+    def from_try_insert(name: DefName, new: JsonSchema, existing: JsonSchema) -> DuplicateError:
+        return DuplicateError(
+            f"A definition named {name!r} is already present in the schema.\n"
+            f"- To replace {name!r}, use {InputSchema.insert.__qualname__}() instead."
+            f"- Otherwise, rename `schema` to avoid a collision.\n\n"
+            f"Existing:\n{existing!r}\n\n"
+            f"New schema:\n{new!r}"
+        )
