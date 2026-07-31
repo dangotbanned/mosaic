@@ -4,26 +4,15 @@
 # - [ ] Condition for making a Base open, Child closed pair
 #   - base will be reused for Spec version
 #   - only export child
-# - [ ] Figure out how much of this is needed
+# - [x] Figure out how much of this is needed
 #}
 class {{ class_name }}({{ base_class }}):
 {%- if description %}
     {{ description }}
 {%- endif %}
-{%- if not fields and not description %}
-    pass
-{%- endif %}
 {%- for field in fields %}
     {{ field.name }}: {{ field.type_hint }}
     {%- if field.docstring %}
     {{ field.docstring }}
-{%- if field.use_inline_field_description and not loop.last %}
-
-{% endif %}
-    {%- elif field.inline_field_docstring %}
-    {{ field.inline_field_docstring }}
-{%- if not loop.last %}
-
-{% endif %}
     {%- endif %}
 {%- endfor -%}
