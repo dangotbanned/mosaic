@@ -14,7 +14,7 @@
 - [ ] Fix `Spec1` - `Spec81`
   - [x] Caused by a huge intersection type `Spec = SpecHead & Component`
   - [x] Remove `Spec` from `mosaic.json`
-  - [ ] Add a manual version of `Spec`
+  - [ ] Fix `closed=True` on base class
 - [ ] Open a [datamodel-code-generator issue] about preference for `total=False` instead of **5129x** `NotRequired`
   - When most are `NotRequired`, the important bit is which one's are `Required`
 - [x] Using `.py` for target output
@@ -26,18 +26,17 @@
 - [ ] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
   - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
   - [ ] Use `_typing_compat.py` imports for codegen
-- [ ] Use `msgspec` for models in `schema_mod`
+- [x] Use `msgspec` for models in `schema_mod`
   - [x] Input json schema
   - [x] Replace non-msgspec pipeline
-  - [ ] Output schema
-- [ ] Split up `scripts/` [^2]
+- [x] Split up `scripts/` [^2]
   - [x] `tools/`
     - [x] `codemod/`
     - [x] `codegen/`
     - [x] `models/`
     - [x] `serde.py`
     - [x] `fs.py`
-  - [ ] `scripts/`
+  - [x] `scripts/`
     - Everything that does one job, on demand
 
 [^1]: Huge files kill language servers. Having to disable pylance because it is too slow now
@@ -54,3 +53,5 @@ Things that should be easiest to fix upstream
   - Which file did the symbol come from?
   - Inheritance?
 - [ ] Follow some python-friendly rules when writing **docs** in TS
+  - [ ] Avoid confusables
+  - [ ] One line short description, ending with a period. Then go wild.

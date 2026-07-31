@@ -207,6 +207,10 @@ flake8-builtins.ignorelist               = ["format", "input"]
 flake8-tidy-imports.ban-relative-imports = "all"
 typing-modules                           = ["mosaic_spec._typing_compat"]
 
+allowed-confusables = [
+  "γ",                   # (GREEK SMALL LETTER GAMMA) https://en.wikipedia.org/wiki/Euler_angles
+]
+
 ignore = [
   "builtin-variable-shadowing",
   "builtin-import-shadowing",
@@ -246,21 +250,11 @@ required-imports        = ["from __future__ import annotations"]
 combine-as-imports      = true
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*"                   = ["D", "assert"]
-"scripts/**.py"             = ["print"]
-"tools/models/**/*.py"      = [
-  "missing-required-import",                   # `msgspec` does runtime introspection
-  "typing-only-standard-library-import"
-]
-# TODO @dangotbanned: Clean these up before they reach source code, either:
-# 1. [At the source](https://github.com/uwdata/mosaic/tree/main/packages/vgplot/spec)
-# 2. [During initial schema gen](https://github.com/vega/ts-json-schema-generator)
-# 3. [Before emitting schema mod](https://github.com/dangotbanned/mosaic/tree/36a37efabfdda195158712fecdedb6540ea028ac/packages/vgplot/spec-python/schema)
-"src/mosaic_spec/_gen/*.py" = [
-  "ambiguous-unicode-character-string",
-  "ambiguous-unicode-character-docstring",
-  "missing-terminal-punctuation"
-]
+"tests/*"              = ["D", "assert"]
+"scripts/**.py"        = ["print"]
+"tools/models/**/*.py" = ["missing-required-import", "typing-only-standard-library-import"]
+
+"src/mosaic_spec/_gen/*.py" = ["missing-terminal-punctuation"]
 
 [tool.ruff.lint.pep8-naming]
 extend-ignore-names = [

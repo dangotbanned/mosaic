@@ -772,7 +772,7 @@ For sequential data, one of:
 For cyclical data, one of:
 
 - *Rainbow* (default) - the less-angry rainbow color scheme
-- *Sinebow* - Bumgardner and Loyd’s “sinebow” scheme
+- *Sinebow* - Bumgardner and Loyd's “sinebow” scheme
 """
 
 
@@ -1051,7 +1051,7 @@ FrameAnchor: TypeAlias = Literal[
     "left",
 ]
 """
-How to anchor a mark relative to the plot’s frame; one of:
+How to anchor a mark relative to the plot's frame; one of:
 
 - *middle* - centered in the middle
 - in the middle of one of the edges: *top*, *right*, *bottom*, *left*
@@ -1065,7 +1065,7 @@ A spatial interpolation method; one of:
 
 - *none* - do not perform interpolation (the default), maps samples to single bins
 - *linear* - apply proportional linear interpolation across adjacent bins
-- *nearest* - assign each pixel to the closest sample’s value (Voronoi diagram)
+- *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
 - *barycentric* - apply barycentric interpolation over the Delaunay triangulation
 - *random-walk* - apply a random walk from each pixel, stopping when near a sample
 """
@@ -1617,7 +1617,7 @@ class SortOrder2(TypedDict, closed=True):
     - a function for comparing data, returning a signed number
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
 
     channel: NotRequired[
@@ -1666,7 +1666,7 @@ A built-in stack offset method; one of:
 - *center* - align the centers of all stacks
 - *wiggle* - translate stacks to minimize apparent movement
 
-If a given stack has zero total value, the *normalize* offset will not adjust the stack’s position. Both the *center* and *wiggle* offsets ensure that the lowest element across stacks starts at zero for better default axes. The
+If a given stack has zero total value, the *normalize* offset will not adjust the stack's position. Both the *center* and *wiggle* offsets ensure that the lowest element across stacks starts at zero for better default axes. The
 *wiggle* offset is recommended for streamgraphs in conjunction with the
 *inside-out* order. For more, see [Byron & Wattenberg][1].
 
@@ -1718,7 +1718,7 @@ The built-in symbol implementations. For fill, one of:
 - *triangle* - an up-pointing triangle
 - *wye* - a Y with arms of equal length
 
-For stroke (based on [Heman Robinson’s research][1]), one of:
+For stroke (based on [Heman Robinson's research][1]), one of:
 
 - *circle* - a circle
 - *plus* - a plus sign
@@ -2369,7 +2369,7 @@ How to reduce aggregated (binned or grouped) values; one of:
 - *max-index* - the zero-based index of the maximum value
 - *mean* - the mean value (average)
 - *median* - the median value
-- *variance* - the variance per [Welford’s algorithm][1]
+- *variance* - the variance per [Welford's algorithm][1]
 - *mode* - the value with the most occurrences
 - *pXX* - the percentile value, where XX is a number in [00,99]
 - *identity* - the array of values
@@ -2386,7 +2386,7 @@ A stack offset method; one of:
 - *center* - align the centers of all stacks
 - *wiggle* - translate stacks to minimize apparent movement
 
-If a given stack has zero total value, the *normalize* offset will not adjust the stack’s position. Both the *center* and *wiggle* offsets ensure that the lowest element across stacks starts at zero for better default axes. The
+If a given stack has zero total value, the *normalize* offset will not adjust the stack's position. Both the *center* and *wiggle* offsets ensure that the lowest element across stacks starts at zero for better default axes. The
 *wiggle* offset is recommended for streamgraphs in conjunction with the
 *inside-out* order. For more, see [Byron & Wattenberg][1].
 
@@ -2414,7 +2414,7 @@ VectorShape: TypeAlias = VectorShapeName
 
 
 class ChannelDomainValueSpec1(TypedDict, closed=True):
-    """How to derive a scale’s domain from a channel’s values."""
+    """How to derive a scale's domain from a channel's values."""
 
     limit: NotRequired[float | tuple[Lo, Lo]]
     """
@@ -2434,7 +2434,7 @@ class ChannelDomainValueSpec1(TypedDict, closed=True):
     How to produce a singular value (for subsequent sorting) from aggregated channel values; one of:
 
     - true (default) - alias for *max*
-    - false or null - disabled; don’t impute the scale domain
+    - false or null - disabled; don't impute the scale domain
     - a named reducer implementation such as *count* or *sum*
     - a function that takes an array of values and returns the reduced value
     - an object that implements the *reduceIndex* method
@@ -2445,7 +2445,7 @@ class ChannelDomainValueSpec1(TypedDict, closed=True):
 
 
 ChannelDomainValueSpec: TypeAlias = ChannelDomainValue | ChannelDomainValueSpec1
-"""How to derive a scale’s domain from a channel’s values."""
+"""How to derive a scale's domain from a channel's values."""
 
 
 ColumnTransform: TypeAlias = (
@@ -2690,7 +2690,7 @@ class PlotAttributes(TypedDict, closed=True):
     aspect_ratio: NotRequired[float | bool | ParamRef | None]
     """
     The desired aspect ratio of the *x* and *y* scales, affecting the default height. Given an aspect ratio of *dx* / *dy*, and assuming that the *x* and
-    *y* scales represent equivalent units (say, degrees Celsius or meters), computes a default height such that *dx* pixels along *x* represents the same variation as *dy* pixels along *y*. Note: when faceting, set the *fx* and *fy* scales’ **round** option to false for an exact aspect ratio.
+    *y* scales represent equivalent units (say, degrees Celsius or meters), computes a default height such that *dx* pixels along *x* represents the same variation as *dy* pixels along *y*. Note: when faceting, set the *fx* and *fy* scales' **round** option to false for an exact aspect ratio.
     """
     axis: NotRequired[Literal["top", "right", "bottom", "left", "both"] | bool | ParamRef | None]
     """
@@ -2710,7 +2710,7 @@ class PlotAttributes(TypedDict, closed=True):
     clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
     """The default clip for all marks."""
     color_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* and *diverging-log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* and *diverging-log* scales only."""
     color_clamp: NotRequired[bool | ParamRef]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -2720,11 +2720,11 @@ class PlotAttributes(TypedDict, closed=True):
     For continuous scales only.
     """
     color_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* and *diverging-symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* and *diverging-symlog* scales only."""
     color_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
+    """The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
     color_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* and *diverging-pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* and *diverging-pow* scales only."""
     color_interpolate: NotRequired[Interpolate | ParamRef]
     """How to interpolate color range values. For quantitative scales only. This attribute can be used to specify a color space for interpolating colors specified in the **colorRange**."""
     color_label: NotRequired[str | ParamRef | None]
@@ -2750,10 +2750,10 @@ class PlotAttributes(TypedDict, closed=True):
     *diverging-log* scales. By default, diverging scales are symmetric around the pivot; see the **symmetric** option.
     """
     color_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**. For other ordinal data, it is an array (or iterable) of output values in the same order as the **domain**."""
+    """The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**. For other ordinal data, it is an array (or iterable) of output values in the same order as the **domain**."""
     color_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**.
     """
     color_scale: NotRequired[ColorScaleType | ParamRef | None]
@@ -2822,12 +2822,12 @@ class PlotAttributes(TypedDict, closed=True):
     If *both*, an implicit axis will be rendered on both sides of the plot (*top* and *bottom* for *fx*). If null, the implicit axis is suppressed.
     """
     fx_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s inputs (abstract values). By default inferred from channel values. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
+    """The extent of the scale's inputs (abstract values). By default inferred from channel values. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
     fx_font_variant: NotRequired[str | ParamRef]
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
     fx_grid: NotRequired[bool | str | Interval | Sequence[Any] | ParamRef]
     """
-    Whether to show a grid aligned with the scale’s ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
+    Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
     For axes only.
     """
@@ -2848,7 +2848,7 @@ class PlotAttributes(TypedDict, closed=True):
     """
     fx_label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -2868,10 +2868,10 @@ class PlotAttributes(TypedDict, closed=True):
     fx_padding_outer: NotRequired[float | ParamRef]
     """For a *band* scale, how much of the range to reserve to inset first and last bands."""
     fx_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and the plot’s dimensions. For ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
+    """The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and the plot's dimensions. For ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
     fx_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**.
     """
     fx_round: NotRequired[bool | ParamRef]
@@ -2927,12 +2927,12 @@ class PlotAttributes(TypedDict, closed=True):
     If *both*, an implicit axis will be rendered on both sides of the plot (*left* and *right* for *fy*). If null, the implicit axis is suppressed.
     """
     fy_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s inputs (abstract values). By default inferred from channel values. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
+    """The extent of the scale's inputs (abstract values). By default inferred from channel values. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
     fy_font_variant: NotRequired[str | ParamRef]
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
     fy_grid: NotRequired[bool | str | Interval | Sequence[Any] | ParamRef]
     """
-    Whether to show a grid aligned with the scale’s ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
+    Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
     For axes only.
     """
@@ -2953,7 +2953,7 @@ class PlotAttributes(TypedDict, closed=True):
     """
     fy_label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -2973,10 +2973,10 @@ class PlotAttributes(TypedDict, closed=True):
     fy_padding_outer: NotRequired[float | ParamRef]
     """For a *band* scale, how much of the range to reserve to inset first and last bands."""
     fy_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and the plot’s dimensions. For ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
+    """The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and the plot's dimensions. For ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
     fy_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**.
     """
     fy_round: NotRequired[bool | ParamRef]
@@ -3012,19 +3012,19 @@ class PlotAttributes(TypedDict, closed=True):
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     grid: NotRequired[bool | str | ParamRef]
     """
-    Whether to show a grid aligned with the scale’s ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
+    Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
     For axes only.
     """
     height: NotRequired[float | ParamRef]
-    """The outer height of the plot in pixels, including margins. The default depends on the plot’s scales, and the plot’s width if an aspectRatio is specified. For example, if the *y* scale is linear and there is no *fy* scale, it might be 396."""
+    """The outer height of the plot in pixels, including margins. The default depends on the plot's scales, and the plot's width if an aspectRatio is specified. For example, if the *y* scale is linear and there is no *fy* scale, it might be 396."""
     inset: NotRequired[float | ParamRef]
     """
     Shorthand to set the same default for all four insets: **insetTop**,
     **insetRight**, **insetBottom**, and **insetLeft**. All insets typically default to zero, though not always (say when using bin transform). A positive inset reduces effective area, while a negative inset increases it.
     """
     length_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* scales only."""
     length_clamp: NotRequired[Any]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -3034,15 +3034,15 @@ class PlotAttributes(TypedDict, closed=True):
     For continuous scales only.
     """
     length_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
     length_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
+    The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
 
     Linear scales have a default domain of [0, 1]. Log scales have a default domain of [1, 10] and cannot include zero. Radius scales have a default domain from 0 to the median first quartile of associated channels. Length have a default domain from 0 to the median median of associated channels. Opacity scales have a default domain from 0 to the maximum value of associated channels.
     """
     length_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     length_nice: NotRequired[bool | float | Interval | ParamRef]
     """
     If true, or a tick count or interval, extend the domain to nice round values. Defaults to 1, 2 or 5 times a power of 10 for *linear* scales, and nice time intervals for *utc* and *time* scales. Pass an interval such as
@@ -3054,7 +3054,7 @@ class PlotAttributes(TypedDict, closed=True):
     """If true, shorthand for a transform suitable for percentages, mapping proportions in [0, 1] to [0, 100]."""
     length_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and for position scales, the plot’s dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
+    The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and for position scales, the plot's dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
 
     Length scales have a default range of [0, 12].
     """
@@ -3069,22 +3069,22 @@ class PlotAttributes(TypedDict, closed=True):
     margin: NotRequired[float | ParamRef]
     """
     Shorthand to set the same default for all four margins: **marginTop**,
-    **marginRight**, **marginBottom**, and **marginLeft**. Otherwise, the default margins depend on the maximum margins of the plot’s marks. While most marks default to zero margins (because they are drawn inside the chart area), Plot’s axis marks have non-zero default margins.
+    **marginRight**, **marginBottom**, and **marginLeft**. Otherwise, the default margins depend on the maximum margins of the plot's marks. While most marks default to zero margins (because they are drawn inside the chart area), Plot's axis marks have non-zero default margins.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The bottom margin; the distance in pixels between the bottom edges of the inner and outer plot area. Defaults to the maximum bottom margin of the plot’s marks."""
+    """The bottom margin; the distance in pixels between the bottom edges of the inner and outer plot area. Defaults to the maximum bottom margin of the plot's marks."""
     margin_left: NotRequired[float | ParamRef]
-    """The left margin; the distance in pixels between the left edges of the inner and outer plot area. Defaults to the maximum left margin of the plot’s marks."""
+    """The left margin; the distance in pixels between the left edges of the inner and outer plot area. Defaults to the maximum left margin of the plot's marks."""
     margin_right: NotRequired[float | ParamRef]
-    """The right margin; the distance in pixels between the right edges of the inner and outer plot area. Defaults to the maximum right margin of the plot’s marks."""
+    """The right margin; the distance in pixels between the right edges of the inner and outer plot area. Defaults to the maximum right margin of the plot's marks."""
     margin_top: NotRequired[float | ParamRef]
-    """The top margin; the distance in pixels between the top edges of the inner and outer plot area. Defaults to the maximum top margin of the plot’s marks."""
+    """The top margin; the distance in pixels between the top edges of the inner and outer plot area. Defaults to the maximum top margin of the plot's marks."""
     margins: NotRequired[Margins]
     """A shorthand object notation for setting multiple margin values. The object keys are margin names (top, right, etc)."""
     name: NotRequired[str]
     """A unique name for the plot. The name is used by standalone legend components to to lookup the plot and access scale mappings."""
     opacity_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* scales only."""
     opacity_clamp: NotRequired[bool | ParamRef]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -3094,15 +3094,15 @@ class PlotAttributes(TypedDict, closed=True):
     For continuous scales only.
     """
     opacity_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
     opacity_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
+    The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
 
     Opacity scales have a default domain from 0 to the maximum value of associated channels.
     """
     opacity_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     opacity_label: NotRequired[str | ParamRef | None]
     """
     A textual label to show on the axis or legend; if null, show no label. By default the scale label is inferred from channel definitions, possibly with an arrow (↑, →, ↓, or ←) to indicate the direction of increasing value.
@@ -3120,13 +3120,13 @@ class PlotAttributes(TypedDict, closed=True):
     """If true, shorthand for a transform suitable for percentages, mapping proportions in [0, 1] to [0, 100]."""
     opacity_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s outputs (visual values).
+    The extent of the scale's outputs (visual values).
 
     Opacity scales have a default range of [0, 1].
     """
     opacity_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**.
     """
     opacity_scale: NotRequired[ContinuousScaleType | ParamRef | None]
@@ -3154,19 +3154,19 @@ class PlotAttributes(TypedDict, closed=True):
     """
     projection_clip: NotRequired[bool | float | Literal["frame"] | ParamRef | None]
     """
-    The projection’s clipping method; one of:
+    The projection's clipping method; one of:
 
-    - *frame* or true (default) - clip to the plot’s frame (including margins but not insets)
+    - *frame* or true (default) - clip to the plot's frame (including margins but not insets)
     - a number - clip to a circle of the given radius in degrees centered around the origin
     - null or false - do not clip
 
-    Some projections (such as [*armadillo*][1] and [*berghaus*][2]) require spherical clipping: in that case set the marks’ **clip** option to
+    Some projections (such as [*armadillo*][1] and [*berghaus*][2]) require spherical clipping: in that case set the marks' **clip** option to
     *sphere*.
 
     [1]: https://observablehq.com/@d3/armadillo [2]: https://observablehq.com/@d3/berghaus-star
     """
     projection_domain: NotRequired[Mapping[str, Any] | ParamRef]
-    """A GeoJSON object to fit to the plot’s frame (minus insets); defaults to a Sphere for spherical projections (outline of the the whole globe)."""
+    """A GeoJSON object to fit to the plot's frame (minus insets); defaults to a Sphere for spherical projections (outline of the the whole globe)."""
     projection_inset: NotRequired[float | ParamRef]
     """Shorthand to set the same default for all four projection insets. All insets typically default to zero, though not always. A positive inset reduces effective area, while a negative inset increases it."""
     projection_inset_bottom: NotRequired[float | ParamRef]
@@ -3185,7 +3185,7 @@ class PlotAttributes(TypedDict, closed=True):
     """
     projection_precision: NotRequired[float | ParamRef]
     """
-    The projection’s [sampling threshold][1].
+    The projection's [sampling threshold][1].
 
     [1]: https://d3js.org/d3-geo/projection#projection_precision
     """
@@ -3198,10 +3198,10 @@ class PlotAttributes(TypedDict, closed=True):
     - a named built-in projection such as *albers-usa*
     - null, for no projection
 
-    Named projections are scaled and translated to fit the **domain** to the plot’s frame (minus insets).
+    Named projections are scaled and translated to fit the **domain** to the plot's frame (minus insets).
     """
     r_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* scales only."""
     r_clamp: NotRequired[Any]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -3211,15 +3211,15 @@ class PlotAttributes(TypedDict, closed=True):
     For continuous scales only.
     """
     r_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
     r_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
+    The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
 
     Radius scales have a default domain from 0 to the median first quartile of associated channels.
     """
     r_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     r_label: NotRequired[str | ParamRef | None]
     """A textual label to show on the axis or legend; if null, show no label. By default the scale label is inferred from channel definitions, possibly with an arrow (↑, →, ↓, or ←) to indicate the direction of increasing value."""
     r_nice: NotRequired[bool | float | Interval | ParamRef]
@@ -3233,7 +3233,7 @@ class PlotAttributes(TypedDict, closed=True):
     """If true, shorthand for a transform suitable for percentages, mapping proportions in [0, 1] to [0, 100]."""
     r_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and for position scales, the plot’s dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
+    The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and for position scales, the plot's dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
 
     Radius scales have a default range of [0, 3].
     """
@@ -3247,15 +3247,15 @@ class PlotAttributes(TypedDict, closed=True):
     """
     style: NotRequired[str | CSSStyles | ParamRef | None]
     """
-    Custom styles to override Plot’s defaults. Styles may be specified either as a string of inline styles (*e.g.*, `"color: red;"`, in the same fashion as assigning [*element*.style][1]) or an object of properties (*e.g.*, `{color: "red"}`, in the same fashion as assigning [*element*.style properties][2]). Note that unitless numbers ([quirky lengths][3]) such as `{padding: 20}` may not supported by some browsers; you should instead specify a string with units such as `{padding: "20px"}`. By default, the returned plot has a max-width of 100%, and the system-ui font. Plot’s marks and axes default to [currentColor][4], meaning that they will inherit the surrounding content’s color.
+    Custom styles to override Plot's defaults. Styles may be specified either as a string of inline styles (*e.g.*, `"color: red;"`, in the same fashion as assigning [*element*.style][1]) or an object of properties (*e.g.*, `{color: "red"}`, in the same fashion as assigning [*element*.style properties][2]). Note that unitless numbers ([quirky lengths][3]) such as `{padding: 20}` may not supported by some browsers; you should instead specify a string with units such as `{padding: "20px"}`. By default, the returned plot has a max-width of 100%, and the system-ui font. Plot's marks and axes default to [currentColor][4], meaning that they will inherit the surrounding content's color.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style [2]: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration [3]: https://www.w3.org/TR/css-values-4/#deprecated-quirky-length [4]: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#currentcolor_keyword
     """
     symbol_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s inputs (abstract values). By default inferred from channel values. As symbol scales are discrete, the domain is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
+    """The extent of the scale's inputs (abstract values). By default inferred from channel values. As symbol scales are discrete, the domain is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
     symbol_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and for position scales, the plot’s dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
+    The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and for position scales, the plot's dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
 
     Symbol scales have a default range of categorical symbols; the choice of symbols depends on whether the associated dot mark is filled or stroked.
     """
@@ -3289,7 +3289,7 @@ class PlotAttributes(TypedDict, closed=True):
     If *both*, an implicit axis will be rendered on both sides of the plot (*top* and *bottom* for *x*). If null, the implicit axis is suppressed.
     """
     x_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* scales only."""
     x_clamp: NotRequired[bool | ParamRef]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -3299,20 +3299,20 @@ class PlotAttributes(TypedDict, closed=True):
     For continuous scales only.
     """
     x_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
     x_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
+    The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
 
     Linear scales have a default domain of [0, 1]. Log scales have a default domain of [1, 10] and cannot include zero. Radius scales have a default domain from 0 to the median first quartile of associated channels. Length have a default domain from 0 to the median median of associated channels. Opacity scales have a default domain from 0 to the maximum value of associated channels.
     """
     x_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     x_font_variant: NotRequired[str | ParamRef]
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
     x_grid: NotRequired[bool | str | Interval | Sequence[Any] | ParamRef]
     """
-    Whether to show a grid aligned with the scale’s ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
+    Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
     For axes only.
     """
@@ -3333,7 +3333,7 @@ class PlotAttributes(TypedDict, closed=True):
     """
     x_label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -3364,10 +3364,10 @@ class PlotAttributes(TypedDict, closed=True):
     x_percent: NotRequired[bool | ParamRef]
     """If true, shorthand for a transform suitable for percentages, mapping proportions in [0, 1] to [0, 100]."""
     x_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and for position scales, the plot’s dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
+    """The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and for position scales, the plot's dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
     x_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**.
     """
     x_round: NotRequired[bool | ParamRef]
@@ -3380,7 +3380,7 @@ class PlotAttributes(TypedDict, closed=True):
     """
     The *x* scale type, affecting how the scale encodes abstract data, say by applying a mathematical transformation. If null, the scale is disabled.
 
-    For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales, *categorical* for color scales, and otherwise *ordinal*. However, the radius scale defaults to *sqrt*, and the length and opacity scales default to *linear*; these scales are intended for quantitative data. The plot’s marks may also impose a scale type; for example, the barY mark requires that *x* is a *band* scale.
+    For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales, *categorical* for color scales, and otherwise *ordinal*. However, the radius scale defaults to *sqrt*, and the length and opacity scales default to *linear*; these scales are intended for quantitative data. The plot's marks may also impose a scale type; for example, the barY mark requires that *x* is a *band* scale.
     """
     x_tick_format: NotRequired[str | ParamRef | None]
     """
@@ -3437,7 +3437,7 @@ class PlotAttributes(TypedDict, closed=True):
     If *both*, an implicit axis will be rendered on both sides of the plot (*left* and *right* for *y*). If null, the implicit axis is suppressed.
     """
     y_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* scales only."""
     y_clamp: NotRequired[bool | ParamRef]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -3447,20 +3447,20 @@ class PlotAttributes(TypedDict, closed=True):
     For continuous scales only.
     """
     y_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
     y_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
+    The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
 
     Linear scales have a default domain of [0, 1]. Log scales have a default domain of [1, 10] and cannot include zero.
     """
     y_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     y_font_variant: NotRequired[str | ParamRef]
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
     y_grid: NotRequired[bool | str | Interval | Sequence[Any] | ParamRef]
     """
-    Whether to show a grid aligned with the scale’s ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
+    Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
     For axes only.
     """
@@ -3481,7 +3481,7 @@ class PlotAttributes(TypedDict, closed=True):
     """
     y_label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -3513,12 +3513,12 @@ class PlotAttributes(TypedDict, closed=True):
     """If true, shorthand for a transform suitable for percentages, mapping proportions in [0, 1] to [0, 100]."""
     y_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and for position scales, the plot’s dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*,
+    The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and for position scales, the plot's dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*,
     *max*]; it can be [*max*, *min*] to reverse the scale.
     """
     y_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**. Note that by default, when the *y* scale is continuous, the *max* value points to the top of the screen, whereas ordinal values are ranked from top to bottom.
     """
     y_round: NotRequired[bool | ParamRef]
@@ -3531,7 +3531,7 @@ class PlotAttributes(TypedDict, closed=True):
     """
     The *y* scale type, affecting how the scale encodes abstract data, say by applying a mathematical transformation. If null, the scale is disabled.
 
-    For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales,  The plot’s marks may also impose a scale type; for example, the barY mark requires that *x* is a *band* scale.
+    For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales,  The plot's marks may also impose a scale type; for example, the barY mark requires that *x* is a *band* scale.
     """
     y_tick_format: NotRequired[str | ParamRef | None]
     """
@@ -3807,7 +3807,7 @@ class ChannelDomainSort(TypedDict, closed=True):
     How to produce a singular value (for subsequent sorting) from aggregated channel values; one of:
 
     - true (default) - alias for *max*
-    - false or null - disabled; don’t impute the scale domain
+    - false or null - disabled; don't impute the scale domain
     - a named reducer implementation such as *count* or *sum*
     - a function that takes an array of values and returns the reduced value
     - an object that implements the *reduceIndex* method
@@ -3960,7 +3960,7 @@ ChannelValue: TypeAlias = (
     Sequence[Any] | str | float | bool | Transform | SQLExpression | AggregateExpression | None
 )
 """
-A channel’s values may be expressed as:
+A channel's values may be expressed as:
 
 - a field name, to extract the corresponding value for each datum
 - an iterable of values, typically of the same length as the data
@@ -3971,14 +3971,14 @@ A channel’s values may be expressed as:
 
 
 class ChannelValueIntervalSpec1(TypedDict, closed=True):
-    """In some contexts, when specifying a mark channel’s value, you can provide a {value, interval} object to specify an associated interval."""
+    """In some contexts, when specifying a mark channel's value, you can provide a {value, interval} object to specify an associated interval."""
 
     interval: Interval
     value: ChannelValue
 
 
 class ChannelValueSpec1(TypedDict, closed=True):
-    """When specifying a mark channel’s value, you can provide a {value, scale} object to override the scale that would normally be associated with the channel."""
+    """When specifying a mark channel's value, you can provide a {value, scale} object to override the scale that would normally be associated with the channel."""
 
     label: NotRequired[str]
     scale: NotRequired[ScaleName | Literal["auto"] | bool | None]
@@ -3986,7 +3986,7 @@ class ChannelValueSpec1(TypedDict, closed=True):
 
 
 ChannelValueSpec: TypeAlias = ChannelValue | ChannelValueSpec1
-"""When specifying a mark channel’s value, you can provide a {value, scale} object to override the scale that would normally be associated with the channel."""
+"""When specifying a mark channel's value, you can provide a {value, scale} object to override the scale that would normally be associated with the channel."""
 
 
 class Tip(TypedDict):
@@ -3996,31 +3996,31 @@ class Tip(TypedDict):
     """The tip anchor specifies how to orient the tip box relative to its anchor position; it refers to the part of the tip box that is attached to the anchor point. For example, the *top-left* anchor places the top-left corner of tip box near the anchor position, hence placing the tip box below and to the right of the anchor position."""
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
@@ -4028,7 +4028,7 @@ class Tip(TypedDict):
     """How channel values are formatted for display. If a format is a string, it is interpreted as a (UTC) time format for temporal channels, and otherwise a number format."""
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame. For example, for tips distributed horizontally at the top of the frame:
 
     ```js Plot.tip(data, {x: "date", frameAnchor: "top"}) ```
@@ -4044,12 +4044,12 @@ class Tip(TypedDict):
     monospace: NotRequired[bool | ParamRef]
     """If true, changes the default **fontFamily** to *monospace*, and uses simplified monospaced text metrics calculations."""
     path_filter: NotRequired[str | ParamRef]
-    """The image filter for the tip’s box; defaults to a drop shadow."""
+    """The image filter for the tip's box; defaults to a drop shadow."""
     pointer: NotRequired[TipPointer]
     pointer_size: NotRequired[float | ParamRef]
-    """The size of the tip’s pointer in pixels; defaults to 12."""
+    """The size of the tip's pointer in pixels; defaults to 12."""
     preferred_anchor: NotRequired[FrameAnchor | ParamRef | None]
-    """If an explicit tip anchor is not specified, an anchor is chosen automatically such that the tip fits within the plot’s frame; if the preferred anchor fits, it is chosen."""
+    """If an explicit tip anchor is not specified, an anchor is chosen automatically such that the tip fits within the plot's frame; if the preferred anchor fits, it is chosen."""
     text_anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
     """
     The [text anchor][1] controls how text is aligned (typically horizontally) relative to its anchor point; it is one of *start*, *end*, or *middle*. If the frame anchor is *left*, *top-left*, or *bottom-left*, the default text anchor is *start*; if the frame anchor is *right*, *top-right*, or
@@ -4085,17 +4085,17 @@ class Tip(TypedDict):
     text_padding: NotRequired[float | ParamRef]
     """The padding around the text in pixels; defaults to 8."""
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the tip’s anchor, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the tip's anchor, typically bound to the *x* scale."""
     x1: NotRequired[ChannelValueSpec]
-    """The starting horizontal position channel specifying the tip’s anchor, typically bound to the *x* scale."""
+    """The starting horizontal position channel specifying the tip's anchor, typically bound to the *x* scale."""
     x2: NotRequired[ChannelValueSpec]
-    """The ending horizontal position channel specifying the tip’s anchor, typically bound to the *x* scale."""
+    """The ending horizontal position channel specifying the tip's anchor, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the tip’s anchor, typically bound to the *y* scale."""
+    """The vertical position channel specifying the tip's anchor, typically bound to the *y* scale."""
     y1: NotRequired[ChannelValueSpec]
-    """The starting vertical position channel specifying the tip’s anchor, typically bound to the *y* scale."""
+    """The starting vertical position channel specifying the tip's anchor, typically bound to the *y* scale."""
     y2: NotRequired[ChannelValueSpec]
-    """The ending vertical position channel specifying the tip’s anchor, typically bound to the *y* scale."""
+    """The ending vertical position channel specifying the tip's anchor, typically bound to the *y* scale."""
 
 
 class SortOrder1(TypedDict, closed=True):
@@ -4104,7 +4104,7 @@ class SortOrder1(TypedDict, closed=True):
     - a function for comparing data, returning a signed number
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
 
     order: NotRequired[Literal["ascending", "descending"]]
@@ -4118,7 +4118,7 @@ How to order values; one of:
 - a function for comparing data, returning a signed number
 - a channel value definition for sorting given values in ascending order
 - a {value, order} object for sorting given values
-- a {channel, order} object for sorting the named channel’s values
+- a {channel, order} object for sorting the named channel's values
 """
 
 
@@ -4149,7 +4149,7 @@ class Sphere(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -4164,17 +4164,17 @@ class Sphere(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -4219,7 +4219,7 @@ class Sphere(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -4248,15 +4248,15 @@ class Sphere(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["sphere"]
-    """A geo mark whose *data* is the outline of the sphere on the projection’s plane. (For use with a spherical **projection** only.)"""
+    """A geo mark whose *data* is the outline of the sphere on the projection's plane. (For use with a spherical **projection** only.)"""
     mix_blend_mode: NotRequired[str | ParamRef]
     """
     The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
@@ -4283,7 +4283,7 @@ class Sphere(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -4298,9 +4298,9 @@ class Sphere(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -4308,11 +4308,11 @@ class Sphere(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -4384,13 +4384,13 @@ class Spike(TypedDict, closed=True):
 
     anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
     """
-    The vector’s position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
+    The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
 
     - *start* - from [*x*, *y*] to [*x*, *y* - *l*]
     - *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]
     - *end* - from [*x*, *y* + *l*] to [*x*, *y*]
 
-    where [*x*, *y*] is the vector’s anchor point and *l* is the vector’s (possibly scaled) length in pixels.
+    where [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels.
     """
     aria_description: NotRequired[str | ParamRef]
     """
@@ -4416,7 +4416,7 @@ class Spike(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -4433,17 +4433,17 @@ class Spike(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -4488,13 +4488,13 @@ class Spike(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The vector’s frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
+    The vector's frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
     *top-right*, *bottom-right*, *bottom-left*), sides (*top*, *right*,
     *bottom*, *left*), or *middle* (default). Has no effect if both **x** and **y** are specified.
     """
@@ -4518,20 +4518,20 @@ class Spike(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
     """
     length: NotRequired[ChannelValueSpec]
-    """The vector’s length; either an optional channel bound to the *length* scale or a constant number in pixels. Defaults to 12 pixels."""
+    """The vector's length; either an optional channel bound to the *length* scale or a constant number in pixels. Defaults to 12 pixels."""
     margin: NotRequired[float | ParamRef]
     """
     Shorthand to set the same default for all four mark margins: **marginTop**,
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["spike"]
     """Like vector, but with default *options* suitable for drawing a spike map."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -4560,11 +4560,11 @@ class Spike(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     r: NotRequired[float | ParamRef]
-    """The vector shape’s radius, such as half the width of the *arrow*’s head or the *spike*’s base; a constant number in pixels. Defaults to 3.5 pixels."""
+    """The vector shape's radius, such as half the width of the *arrow*'s head or the *spike*'s base; a constant number in pixels. Defaults to 3.5 pixels."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue]
-    """The vector’s orientation (rotation angle); either a constant number in degrees clockwise, or an optional channel (with no associated scale). Defaults to 0 degrees with the vector pointing up."""
+    """The vector's orientation (rotation angle); either a constant number in degrees clockwise, or an optional channel (with no associated scale). Defaults to 0 degrees with the vector pointing up."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -4581,9 +4581,9 @@ class Spike(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -4591,11 +4591,11 @@ class Spike(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -4661,9 +4661,9 @@ class Spike(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position of the vector’s anchor point; an optional channel bound to the *x* scale. Default depends on the **frameAnchor**."""
+    """The horizontal position of the vector's anchor point; an optional channel bound to the *x* scale. Default depends on the **frameAnchor**."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position of the vector’s anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
+    """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
 class Text(TypedDict, closed=True):
@@ -4693,7 +4693,7 @@ class Text(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -4710,17 +4710,17 @@ class Text(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -4765,44 +4765,44 @@ class Text(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
     The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
     fx: NotRequired[ChannelValue]
@@ -4843,13 +4843,13 @@ class Text(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["text"]
     """
     A text mark. The **text** channel specifies the textual contents of the mark, which may be preformatted with line breaks (\\n, \\r\\n, or \\r), or wrapped or clipped using the **lineWidth** and **textOverflow** options.
@@ -4886,7 +4886,7 @@ class Text(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | ParamRef]
     """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
     select: NotRequired[SelectFilter]
@@ -4903,9 +4903,9 @@ class Text(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -4913,11 +4913,11 @@ class Text(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -5017,9 +5017,9 @@ class Text(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the text’s anchor point, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the text’s anchor point, typically bound to the *y* scale."""
+    """The vertical position channel specifying the text's anchor point, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -5051,7 +5051,7 @@ class TickX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -5068,17 +5068,17 @@ class TickX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -5123,7 +5123,7 @@ class TickX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -5161,16 +5161,16 @@ class TickX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["tickX"]
     """
-    A horizontally-positioned tickX mark (a vertical line, |). The **x** channel specifies the tick’s horizontal position and defaults to identity, assuming that *data* = [*x₀*, *x₁*, *x₂*, …]; the optional **y** ordinal channel specifies its vertical position.
+    A horizontally-positioned tickX mark (a vertical line, |). The **x** channel specifies the tick's horizontal position and defaults to identity, assuming that *data* = [*x₀*, *x₁*, *x₂*, …]; the optional **y** ordinal channel specifies its vertical position.
 
     If *y* represents quantitative or temporal values, use a ruleX mark instead.
     """
@@ -5237,7 +5237,7 @@ class TickX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -5252,9 +5252,9 @@ class TickX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -5262,11 +5262,11 @@ class TickX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -5368,7 +5368,7 @@ class TickY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -5385,17 +5385,17 @@ class TickY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -5440,7 +5440,7 @@ class TickY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -5478,13 +5478,13 @@ class TickY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["tickY"]
     """
     A vertically-positioned tickY mark (a horizontal line, —). The **y** channel specifies the tick's vertical position and defaults to identity, assuming that *data* = [*y₀*, *y₁*, *y₂*, …]; the optional **x** ordinal channel specifies its horizontal position.
@@ -5554,7 +5554,7 @@ class TickY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -5569,9 +5569,9 @@ class TickY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -5579,11 +5579,11 @@ class TickY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -5663,13 +5663,13 @@ class Vector(TypedDict, closed=True):
 
     anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
     """
-    The vector’s position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
+    The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
 
     - *start* - from [*x*, *y*] to [*x*, *y* - *l*]
     - *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]
     - *end* - from [*x*, *y* + *l*] to [*x*, *y*]
 
-    where [*x*, *y*] is the vector’s anchor point and *l* is the vector’s (possibly scaled) length in pixels.
+    where [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels.
     """
     aria_description: NotRequired[str | ParamRef]
     """
@@ -5695,7 +5695,7 @@ class Vector(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -5712,17 +5712,17 @@ class Vector(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -5767,13 +5767,13 @@ class Vector(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The vector’s frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
+    The vector's frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
     *top-right*, *bottom-right*, *bottom-left*), sides (*top*, *right*,
     *bottom*, *left*), or *middle* (default). Has no effect if both **x** and **y** are specified.
     """
@@ -5797,20 +5797,20 @@ class Vector(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
     """
     length: NotRequired[ChannelValueSpec]
-    """The vector’s length; either an optional channel bound to the *length* scale or a constant number in pixels. Defaults to 12 pixels."""
+    """The vector's length; either an optional channel bound to the *length* scale or a constant number in pixels. Defaults to 12 pixels."""
     margin: NotRequired[float | ParamRef]
     """
     Shorthand to set the same default for all four mark margins: **marginTop**,
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["vector"]
     """
     A vector mark.
@@ -5845,11 +5845,11 @@ class Vector(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     r: NotRequired[float | ParamRef]
-    """The vector shape’s radius, such as half the width of the *arrow*’s head or the *spike*’s base; a constant number in pixels. Defaults to 3.5 pixels."""
+    """The vector shape's radius, such as half the width of the *arrow*'s head or the *spike*'s base; a constant number in pixels. Defaults to 3.5 pixels."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue]
-    """The vector’s orientation (rotation angle); either a constant number in degrees clockwise, or an optional channel (with no associated scale). Defaults to 0 degrees with the vector pointing up."""
+    """The vector's orientation (rotation angle); either a constant number in degrees clockwise, or an optional channel (with no associated scale). Defaults to 0 degrees with the vector pointing up."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -5866,9 +5866,9 @@ class Vector(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -5876,11 +5876,11 @@ class Vector(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -5946,9 +5946,9 @@ class Vector(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position of the vector’s anchor point; an optional channel bound to the *x* scale. Default depends on the **frameAnchor**."""
+    """The horizontal position of the vector's anchor point; an optional channel bound to the *x* scale. Default depends on the **frameAnchor**."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position of the vector’s anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
+    """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
 class VectorX(TypedDict, closed=True):
@@ -5956,13 +5956,13 @@ class VectorX(TypedDict, closed=True):
 
     anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
     """
-    The vector’s position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
+    The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
 
     - *start* - from [*x*, *y*] to [*x*, *y* - *l*]
     - *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]
     - *end* - from [*x*, *y* + *l*] to [*x*, *y*]
 
-    where [*x*, *y*] is the vector’s anchor point and *l* is the vector’s (possibly scaled) length in pixels.
+    where [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels.
     """
     aria_description: NotRequired[str | ParamRef]
     """
@@ -5988,7 +5988,7 @@ class VectorX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -6005,17 +6005,17 @@ class VectorX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -6060,13 +6060,13 @@ class VectorX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The vector’s frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
+    The vector's frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
     *top-right*, *bottom-right*, *bottom-left*), sides (*top*, *right*,
     *bottom*, *left*), or *middle* (default). Has no effect if both **x** and **y** are specified.
     """
@@ -6090,20 +6090,20 @@ class VectorX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
     """
     length: NotRequired[ChannelValueSpec]
-    """The vector’s length; either an optional channel bound to the *length* scale or a constant number in pixels. Defaults to 12 pixels."""
+    """The vector's length; either an optional channel bound to the *length* scale or a constant number in pixels. Defaults to 12 pixels."""
     margin: NotRequired[float | ParamRef]
     """
     Shorthand to set the same default for all four mark margins: **marginTop**,
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["vectorX"]
     """
     Like vector, but **x** instead defaults to the identity function and **y** defaults to null, assuming that *data* is an array of numbers [*x₀*, *x₁*,
@@ -6135,11 +6135,11 @@ class VectorX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     r: NotRequired[float | ParamRef]
-    """The vector shape’s radius, such as half the width of the *arrow*’s head or the *spike*’s base; a constant number in pixels. Defaults to 3.5 pixels."""
+    """The vector shape's radius, such as half the width of the *arrow*'s head or the *spike*'s base; a constant number in pixels. Defaults to 3.5 pixels."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue]
-    """The vector’s orientation (rotation angle); either a constant number in degrees clockwise, or an optional channel (with no associated scale). Defaults to 0 degrees with the vector pointing up."""
+    """The vector's orientation (rotation angle); either a constant number in degrees clockwise, or an optional channel (with no associated scale). Defaults to 0 degrees with the vector pointing up."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -6156,9 +6156,9 @@ class VectorX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -6166,11 +6166,11 @@ class VectorX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -6236,9 +6236,9 @@ class VectorX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position of the vector’s anchor point; an optional channel bound to the *x* scale. Default depends on the **frameAnchor**."""
+    """The horizontal position of the vector's anchor point; an optional channel bound to the *x* scale. Default depends on the **frameAnchor**."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position of the vector’s anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
+    """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
 class VectorY(TypedDict, closed=True):
@@ -6246,13 +6246,13 @@ class VectorY(TypedDict, closed=True):
 
     anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
     """
-    The vector’s position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
+    The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
 
     - *start* - from [*x*, *y*] to [*x*, *y* - *l*]
     - *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]
     - *end* - from [*x*, *y* + *l*] to [*x*, *y*]
 
-    where [*x*, *y*] is the vector’s anchor point and *l* is the vector’s (possibly scaled) length in pixels.
+    where [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels.
     """
     aria_description: NotRequired[str | ParamRef]
     """
@@ -6278,7 +6278,7 @@ class VectorY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -6295,17 +6295,17 @@ class VectorY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -6350,13 +6350,13 @@ class VectorY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The vector’s frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
+    The vector's frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
     *top-right*, *bottom-right*, *bottom-left*), sides (*top*, *right*,
     *bottom*, *left*), or *middle* (default). Has no effect if both **x** and **y** are specified.
     """
@@ -6380,20 +6380,20 @@ class VectorY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/filter
     """
     length: NotRequired[ChannelValueSpec]
-    """The vector’s length; either an optional channel bound to the *length* scale or a constant number in pixels. Defaults to 12 pixels."""
+    """The vector's length; either an optional channel bound to the *length* scale or a constant number in pixels. Defaults to 12 pixels."""
     margin: NotRequired[float | ParamRef]
     """
     Shorthand to set the same default for all four mark margins: **marginTop**,
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["vectorY"]
     """
     Like vector, but **y** instead defaults to the identity function and **x** defaults to null, assuming that *data* is an array of numbers [*y₀*, *y₁*,
@@ -6425,11 +6425,11 @@ class VectorY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     r: NotRequired[float | ParamRef]
-    """The vector shape’s radius, such as half the width of the *arrow*’s head or the *spike*’s base; a constant number in pixels. Defaults to 3.5 pixels."""
+    """The vector shape's radius, such as half the width of the *arrow*'s head or the *spike*'s base; a constant number in pixels. Defaults to 3.5 pixels."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue]
-    """The vector’s orientation (rotation angle); either a constant number in degrees clockwise, or an optional channel (with no associated scale). Defaults to 0 degrees with the vector pointing up."""
+    """The vector's orientation (rotation angle); either a constant number in degrees clockwise, or an optional channel (with no associated scale). Defaults to 0 degrees with the vector pointing up."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -6446,9 +6446,9 @@ class VectorY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -6456,11 +6456,11 @@ class VectorY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -6526,9 +6526,9 @@ class VectorY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position of the vector’s anchor point; an optional channel bound to the *x* scale. Default depends on the **frameAnchor**."""
+    """The horizontal position of the vector's anchor point; an optional channel bound to the *x* scale. Default depends on the **frameAnchor**."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position of the vector’s anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
+    """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
 class Voronoi(TypedDict, closed=True):
@@ -6558,7 +6558,7 @@ class Voronoi(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -6577,9 +6577,9 @@ class Voronoi(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -6600,17 +6600,17 @@ class Voronoi(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -6655,7 +6655,7 @@ class Voronoi(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -6684,13 +6684,13 @@ class Voronoi(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["voronoi"]
     """
     A mark that draws polygons for each cell of the Voronoi tesselation of the points given by the **x** and **y** channels.
@@ -6760,7 +6760,7 @@ class Voronoi(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -6775,9 +6775,9 @@ class Voronoi(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -6785,11 +6785,11 @@ class Voronoi(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -6848,8 +6848,8 @@ class Voronoi(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -6896,7 +6896,7 @@ class VoronoiMesh(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -6915,9 +6915,9 @@ class VoronoiMesh(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -6938,17 +6938,17 @@ class VoronoiMesh(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -6993,7 +6993,7 @@ class VoronoiMesh(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -7022,13 +7022,13 @@ class VoronoiMesh(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["voronoiMesh"]
     """
     A mark that draws a mesh for the cell boundaries of the Voronoi tesselation of the points given by the **x** and **y** channels. The
@@ -7099,7 +7099,7 @@ class VoronoiMesh(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -7114,9 +7114,9 @@ class VoronoiMesh(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -7124,11 +7124,11 @@ class VoronoiMesh(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -7187,8 +7187,8 @@ class VoronoiMesh(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -7235,7 +7235,7 @@ class Area(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -7254,9 +7254,9 @@ class Area(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -7277,17 +7277,17 @@ class Area(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -7332,7 +7332,7 @@ class Area(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -7361,13 +7361,13 @@ class Area(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["area"]
     """An area mark. The area mark is rarely used directly; it is only needed when the baseline and topline have neither *x* nor *y* values in common. Use areaY for a horizontal orientation where the baseline and topline share *x* values, or areaX for a vertical orientation where the baseline and topline share *y* values."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -7410,7 +7410,7 @@ class Area(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -7425,9 +7425,9 @@ class Area(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -7435,11 +7435,11 @@ class Area(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -7498,8 +7498,8 @@ class Area(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -7512,13 +7512,13 @@ class Area(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x1: NotRequired[ChannelValueSpec]
-    """The required primary (starting, often left) horizontal position channel, representing the area’s baseline, typically bound to the *x* scale. For areaX, setting this option disables the implicit stackX transform."""
+    """The required primary (starting, often left) horizontal position channel, representing the area's baseline, typically bound to the *x* scale. For areaX, setting this option disables the implicit stackX transform."""
     x2: NotRequired[ChannelValueSpec]
-    """The optional secondary (ending, often right) horizontal position channel, representing the area’s topline, typically bound to the *x* scale; if not specified, **x1** is used. For areaX, setting this option disables the implicit stackX transform."""
+    """The optional secondary (ending, often right) horizontal position channel, representing the area's topline, typically bound to the *x* scale; if not specified, **x1** is used. For areaX, setting this option disables the implicit stackX transform."""
     y1: NotRequired[ChannelValueSpec]
-    """The required primary (starting, often bottom) vertical position channel, representing the area’s baseline, typically bound to the *y* scale. For areaY, setting this option disables the implicit stackY transform."""
+    """The required primary (starting, often bottom) vertical position channel, representing the area's baseline, typically bound to the *y* scale. For areaY, setting this option disables the implicit stackY transform."""
     y2: NotRequired[ChannelValueSpec]
-    """The optional secondary (ending, often top) vertical position channel, representing the area’s topline, typically bound to the *y* scale; if not specified, **y1** is used. For areaY, setting this option disables the implicit stackY transform."""
+    """The optional secondary (ending, often top) vertical position channel, representing the area's topline, typically bound to the *y* scale; if not specified, **y1** is used. For areaY, setting this option disables the implicit stackY transform."""
     z: NotRequired[ChannelValue]
     """
     An optional ordinal channel for grouping data into (possibly stacked) series to be drawn as separate areas; defaults to **fill** if a channel, or
@@ -7553,7 +7553,7 @@ class AreaX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -7572,9 +7572,9 @@ class AreaX(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -7595,17 +7595,17 @@ class AreaX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -7650,7 +7650,7 @@ class AreaX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -7679,13 +7679,13 @@ class AreaX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["areaX"]
     """
     A vertically-oriented area mark, where the baseline and topline share
@@ -7738,7 +7738,7 @@ class AreaX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -7753,9 +7753,9 @@ class AreaX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -7763,11 +7763,11 @@ class AreaX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -7826,8 +7826,8 @@ class AreaX(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -7846,9 +7846,9 @@ class AreaX(TypedDict, closed=True):
     If neither **x1** nor **x2** is specified, an implicit stackX transform is applied and **x** defaults to the identity function, assuming that *data* = [*x₀*, *x₁*, *x₂*, …]. Otherwise, if only one of **x1** or **x2** is specified, the other defaults to **x**, which defaults to zero.
     """
     x1: NotRequired[ChannelValueSpec]
-    """The required primary (starting, often left) horizontal position channel, representing the area’s baseline, typically bound to the *x* scale. For areaX, setting this option disables the implicit stackX transform."""
+    """The required primary (starting, often left) horizontal position channel, representing the area's baseline, typically bound to the *x* scale. For areaX, setting this option disables the implicit stackX transform."""
     x2: NotRequired[ChannelValueSpec]
-    """The optional secondary (ending, often right) horizontal position channel, representing the area’s topline, typically bound to the *x* scale; if not specified, **x1** is used. For areaX, setting this option disables the implicit stackX transform."""
+    """The optional secondary (ending, often right) horizontal position channel, representing the area's topline, typically bound to the *x* scale; if not specified, **x1** is used. For areaX, setting this option disables the implicit stackX transform."""
     y: NotRequired[ChannelValueSpec]
     """The vertical position channel, typically bound to the *y* scale; defaults to the zero-based index of the data [0, 1, 2, …]."""
     z: NotRequired[ChannelValue]
@@ -7885,7 +7885,7 @@ class AreaY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -7904,9 +7904,9 @@ class AreaY(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -7927,17 +7927,17 @@ class AreaY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -7982,7 +7982,7 @@ class AreaY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -8011,13 +8011,13 @@ class AreaY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["areaY"]
     """
     A horizontally-oriented area mark, where the baseline and topline share
@@ -8070,7 +8070,7 @@ class AreaY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -8085,9 +8085,9 @@ class AreaY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -8095,11 +8095,11 @@ class AreaY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -8158,8 +8158,8 @@ class AreaY(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -8180,9 +8180,9 @@ class AreaY(TypedDict, closed=True):
     If neither **y1** nor **y2** is specified, an implicit stackY transform is applied and **y** defaults to the identity function, assuming that *data* = [*y₀*, *y₁*, *y₂*, …]. Otherwise, if only one of **y1** or **y2** is specified, the other defaults to **y**, which defaults to zero.
     """
     y1: NotRequired[ChannelValueSpec]
-    """The required primary (starting, often bottom) vertical position channel, representing the area’s baseline, typically bound to the *y* scale. For areaY, setting this option disables the implicit stackY transform."""
+    """The required primary (starting, often bottom) vertical position channel, representing the area's baseline, typically bound to the *y* scale. For areaY, setting this option disables the implicit stackY transform."""
     y2: NotRequired[ChannelValueSpec]
-    """The optional secondary (ending, often top) vertical position channel, representing the area’s topline, typically bound to the *y* scale; if not specified, **y1** is used. For areaY, setting this option disables the implicit stackY transform."""
+    """The optional secondary (ending, often top) vertical position channel, representing the area's topline, typically bound to the *y* scale; if not specified, **y1** is used. For areaY, setting this option disables the implicit stackY transform."""
     z: NotRequired[ChannelValue]
     """
     An optional ordinal channel for grouping data into (possibly stacked) series to be drawn as separate areas; defaults to **fill** if a channel, or
@@ -8212,14 +8212,14 @@ class Arrow(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
     """
     bend: NotRequired[float | bool | ParamRef]
-    """The angle, a constant in degrees, between the straight line intersecting the arrow’s two control points and the outgoing tangent direction of the arrow from the start point. The angle must be within ±90°; a positive angle will produce a clockwise curve, while a negative angle will produce a counterclockwise curve; zero (the default) will produce a straight line. Use true for 22.5°."""
+    """The angle, a constant in degrees, between the straight line intersecting the arrow's two control points and the outgoing tangent direction of the arrow from the start point. The angle must be within ±90°; a positive angle will produce a clockwise curve, while a negative angle will produce a counterclockwise curve; zero (the default) will produce a straight line. Use true for 22.5°."""
     channels: NotRequired[Mapping[str, str]]
     """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
     clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -8236,17 +8236,17 @@ class Arrow(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -8291,7 +8291,7 @@ class Arrow(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -8305,7 +8305,7 @@ class Arrow(TypedDict, closed=True):
     head_angle: NotRequired[float | ParamRef]
     """How pointy the arrowhead is, in degrees; a constant typically between 0° and 180°, and defaults to 60°."""
     head_length: NotRequired[float | ParamRef]
-    """The size of the arrowhead relative to the **strokeWidth**; a constant. Assuming the default of stroke width 1.5px, this is the length of the arrowhead’s side in pixels."""
+    """The size of the arrowhead relative to the **strokeWidth**; a constant. Assuming the default of stroke width 1.5px, this is the length of the arrowhead's side in pixels."""
     href: NotRequired[ChannelValue]
     """
     The [href][1]; a channel specifying URLs for clickable links. May be used in conjunction with the **target** option to open links in another window.
@@ -8330,13 +8330,13 @@ class Arrow(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["arrow"]
     """An arrow mark, drawing (possibly swoopy) arrows connecting pairs of points."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -8365,7 +8365,7 @@ class Arrow(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -8380,9 +8380,9 @@ class Arrow(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -8390,11 +8390,11 @@ class Arrow(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -8518,7 +8518,7 @@ class AxisFx(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -8535,17 +8535,17 @@ class AxisFx(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -8590,44 +8590,44 @@ class AxisFx(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
     The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
     fx: NotRequired[ChannelValue]
@@ -8665,7 +8665,7 @@ class AxisFx(TypedDict, closed=True):
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
-    This option sets the internal transform to the given interval’s
+    This option sets the internal transform to the given interval's
     *interval*.floor function. In addition, the default **domain** will align with interval boundaries.
     """
     label: NotRequired[str | ParamRef | None]
@@ -8676,7 +8676,7 @@ class AxisFx(TypedDict, closed=True):
     """
     label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -8709,16 +8709,16 @@ class AxisFx(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["axisFx"]
     """
-    An axis mark to document the visual encoding of the horizontal facet position *fx* scale, comprised of (up to) three marks: a vector for ticks, a text for tick labels, and another text for an axis label. The data defaults to the *fx* scale’s domain; if desired, use one of the **ticks**,
+    An axis mark to document the visual encoding of the horizontal facet position *fx* scale, comprised of (up to) three marks: a vector for ticks, a text for tick labels, and another text for an axis label. The data defaults to the *fx* scale's domain; if desired, use one of the **ticks**,
     **tickSpacing**, or **interval** options.
 
     The **facetAnchor** and **frameAnchor** options defaults to **anchor**. The default margins likewise depend on **anchor** as follows; in order of
@@ -8792,7 +8792,7 @@ class AxisFx(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | ParamRef]
     """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
     select: NotRequired[SelectFilter]
@@ -8809,9 +8809,9 @@ class AxisFx(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -8819,11 +8819,11 @@ class AxisFx(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -8954,9 +8954,9 @@ class AxisFx(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the text’s anchor point, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the text’s anchor point, typically bound to the *y* scale."""
+    """The vertical position channel specifying the text's anchor point, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -9001,7 +9001,7 @@ class AxisFy(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -9018,17 +9018,17 @@ class AxisFy(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -9073,44 +9073,44 @@ class AxisFy(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
     The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
     fx: NotRequired[ChannelValue]
@@ -9148,7 +9148,7 @@ class AxisFy(TypedDict, closed=True):
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
-    This option sets the internal transform to the given interval’s
+    This option sets the internal transform to the given interval's
     *interval*.floor function. In addition, the default **domain** will align with interval boundaries.
     """
     label: NotRequired[str | ParamRef | None]
@@ -9159,7 +9159,7 @@ class AxisFy(TypedDict, closed=True):
     """
     label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -9192,16 +9192,16 @@ class AxisFy(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["axisFy"]
     """
-    An axis mark to document the visual encoding of the vertical facet position *fy* scale, comprised of (up to) three marks: a vector for ticks, a text for tick labels, and another text for an axis label. The data defaults to the *fy* scale’s domain; if desired, use one of the **ticks**,
+    An axis mark to document the visual encoding of the vertical facet position *fy* scale, comprised of (up to) three marks: a vector for ticks, a text for tick labels, and another text for an axis label. The data defaults to the *fy* scale's domain; if desired, use one of the **ticks**,
     **tickSpacing**, or **interval** options.
 
     The **facetAnchor** option defaults to *right-empty* if **anchor** is
@@ -9274,7 +9274,7 @@ class AxisFy(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | ParamRef]
     """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
     select: NotRequired[SelectFilter]
@@ -9291,9 +9291,9 @@ class AxisFy(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -9301,11 +9301,11 @@ class AxisFy(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -9436,9 +9436,9 @@ class AxisFy(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the text’s anchor point, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the text’s anchor point, typically bound to the *y* scale."""
+    """The vertical position channel specifying the text's anchor point, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -9483,7 +9483,7 @@ class AxisX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -9500,17 +9500,17 @@ class AxisX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -9555,44 +9555,44 @@ class AxisX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
     The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
     fx: NotRequired[ChannelValue]
@@ -9630,7 +9630,7 @@ class AxisX(TypedDict, closed=True):
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
-    This option sets the internal transform to the given interval’s
+    This option sets the internal transform to the given interval's
     *interval*.floor function. In addition, the default **domain** will align with interval boundaries.
     """
     label: NotRequired[str | ParamRef | None]
@@ -9641,7 +9641,7 @@ class AxisX(TypedDict, closed=True):
     """
     label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -9674,17 +9674,17 @@ class AxisX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["axisX"]
     """
     An axis mark to document the visual encoding of the horizontal position
-    *x* scale, comprised of (up to) three marks: a vector for ticks, a text for tick labels, and another text for an axis label. The data defaults to tick values sampled from the *x* scale’s domain; if desired, use one of the **ticks**, **tickSpacing**, or **interval** options.
+    *x* scale, comprised of (up to) three marks: a vector for ticks, a text for tick labels, and another text for an axis label. The data defaults to tick values sampled from the *x* scale's domain; if desired, use one of the **ticks**, **tickSpacing**, or **interval** options.
 
     The **facetAnchor** option defaults to *bottom-empty* if **anchor** is
     *bottom*, and *top-empty* if **anchor** is *top*. The default margins likewise depend on **anchor** as follows; in order of **marginTop**,
@@ -9758,7 +9758,7 @@ class AxisX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | ParamRef]
     """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
     select: NotRequired[SelectFilter]
@@ -9775,9 +9775,9 @@ class AxisX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -9785,11 +9785,11 @@ class AxisX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -9920,9 +9920,9 @@ class AxisX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the text’s anchor point, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the text’s anchor point, typically bound to the *y* scale."""
+    """The vertical position channel specifying the text's anchor point, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -9967,7 +9967,7 @@ class AxisY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -9984,17 +9984,17 @@ class AxisY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -10039,44 +10039,44 @@ class AxisY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
     The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
     fx: NotRequired[ChannelValue]
@@ -10114,7 +10114,7 @@ class AxisY(TypedDict, closed=True):
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
-    This option sets the internal transform to the given interval’s
+    This option sets the internal transform to the given interval's
     *interval*.floor function. In addition, the default **domain** will align with interval boundaries.
     """
     label: NotRequired[str | ParamRef | None]
@@ -10125,7 +10125,7 @@ class AxisY(TypedDict, closed=True):
     """
     label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -10158,16 +10158,16 @@ class AxisY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["axisY"]
     """
-    An axis mark to document the visual encoding of the vertical position *y* scale, comprised of (up to) three marks: a vector for ticks, a text for tick labels, and another text for an axis label. The data defaults to tick values sampled from the *y* scale’s domain; if desired, use one of the
+    An axis mark to document the visual encoding of the vertical position *y* scale, comprised of (up to) three marks: a vector for ticks, a text for tick labels, and another text for an axis label. The data defaults to tick values sampled from the *y* scale's domain; if desired, use one of the
     **ticks**, **tickSpacing**, or **interval** options.
 
     The **facetAnchor** option defaults to *right-empty* if **anchor** is
@@ -10240,7 +10240,7 @@ class AxisY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | ParamRef]
     """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
     select: NotRequired[SelectFilter]
@@ -10257,9 +10257,9 @@ class AxisY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -10267,11 +10267,11 @@ class AxisY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -10402,9 +10402,9 @@ class AxisY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the text’s anchor point, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the text’s anchor point, typically bound to the *y* scale."""
+    """The vertical position channel specifying the text's anchor point, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -10436,7 +10436,7 @@ class Cell(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -10453,17 +10453,17 @@ class Cell(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -10508,7 +10508,7 @@ class Cell(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -10550,13 +10550,13 @@ class Cell(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["cell"]
     """
     A rectangular cell mark. Along with **x** and/or **y**, a **fill** channel is typically specified to encode value as color.
@@ -10592,7 +10592,7 @@ class Cell(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rx: NotRequired[float | str | ParamRef]
     """
     The rounded corner [*x*-radius][1], either in pixels or as a percentage of the rect width. If **rx** is not specified, it defaults to **ry** if present, and otherwise draws square corners.
@@ -10619,9 +10619,9 @@ class Cell(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -10629,11 +10629,11 @@ class Cell(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -10739,7 +10739,7 @@ class CellX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -10756,17 +10756,17 @@ class CellX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -10811,7 +10811,7 @@ class CellX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -10853,13 +10853,13 @@ class CellX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["cellX"]
     """
     Like cell, but **x** defaults to the zero-based index [0, 1, 2, …], and if
@@ -10891,7 +10891,7 @@ class CellX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rx: NotRequired[float | str | ParamRef]
     """
     The rounded corner [*x*-radius][1], either in pixels or as a percentage of the rect width. If **rx** is not specified, it defaults to **ry** if present, and otherwise draws square corners.
@@ -10918,9 +10918,9 @@ class CellX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -10928,11 +10928,11 @@ class CellX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -11038,7 +11038,7 @@ class CellY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -11055,17 +11055,17 @@ class CellY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -11110,7 +11110,7 @@ class CellY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -11152,13 +11152,13 @@ class CellY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["cellY"]
     """
     Like cell, but **y** defaults to the zero-based index [0, 1, 2, …], and if
@@ -11190,7 +11190,7 @@ class CellY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rx: NotRequired[float | str | ParamRef]
     """
     The rounded corner [*x*-radius][1], either in pixels or as a percentage of the rect width. If **rx** is not specified, it defaults to **ry** if present, and otherwise draws square corners.
@@ -11217,9 +11217,9 @@ class CellY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -11227,11 +11227,11 @@ class CellY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -11311,7 +11311,7 @@ class CellY(TypedDict, closed=True):
 
 
 ChannelValueIntervalSpec: TypeAlias = ChannelValueSpec | ChannelValueIntervalSpec1
-"""In some contexts, when specifying a mark channel’s value, you can provide a {value, interval} object to specify an associated interval."""
+"""In some contexts, when specifying a mark channel's value, you can provide a {value, interval} object to specify an associated interval."""
 
 
 class Circle(TypedDict, closed=True):
@@ -11341,7 +11341,7 @@ class Circle(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -11358,17 +11358,17 @@ class Circle(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -11413,13 +11413,13 @@ class Circle(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
@@ -11449,13 +11449,13 @@ class Circle(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["circle"]
     """Like dot, except that the **symbol** option is set to *circle*."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -11486,7 +11486,7 @@ class Circle(TypedDict, closed=True):
     r: NotRequired[ChannelValueSpec | float | ParamRef]
     """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | float | ParamRef]
     """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
     select: NotRequired[SelectFilter]
@@ -11503,9 +11503,9 @@ class Circle(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -11513,11 +11513,11 @@ class Circle(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -11572,7 +11572,7 @@ class Circle(TypedDict, closed=True):
     The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
     **hexagon** mark.
 
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    If the **symbol** channel's values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
     """
     target: NotRequired[str | ParamRef]
     """
@@ -11590,9 +11590,9 @@ class Circle(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the dot’s center, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the dot's center, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the dot’s center, typically bound to the *y* scale."""
+    """The vertical position channel specifying the dot's center, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -11626,7 +11626,7 @@ class Contour(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -11643,17 +11643,17 @@ class Contour(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -11698,7 +11698,7 @@ class Contour(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -11729,7 +11729,7 @@ class Contour(TypedDict, closed=True):
 
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
-    - *nearest* - assign each pixel to the closest sample’s value (Voronoi diagram)
+    - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
     - *barycentric* - apply barycentric interpolation over the Delaunay triangulation
     - *random-walk* - apply a random walk from each pixel, stopping when near a sample
     """
@@ -11739,13 +11739,13 @@ class Contour(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["contour"]
     """A contour mark that draws isolines to delineate regions above and below a particular continuous value. It is often used to convey densities as a height field. The special column name "density" can be used to map density values to the fill or stroke options."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -11770,7 +11770,7 @@ class Contour(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
     """
     pixel_size: NotRequired[float | ParamRef]
-    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame’s dimensions; defaults to 1."""
+    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame's dimensions; defaults to 1."""
     pointer_events: NotRequired[str | ParamRef]
     """
     The [pointer-events][1] property; a constant string such as *none*.
@@ -11778,7 +11778,7 @@ class Contour(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -11793,9 +11793,9 @@ class Contour(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -11803,11 +11803,11 @@ class Contour(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -11914,7 +11914,7 @@ class DelaunayLink(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -11933,9 +11933,9 @@ class DelaunayLink(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -11956,17 +11956,17 @@ class DelaunayLink(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -12011,7 +12011,7 @@ class DelaunayLink(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -12040,13 +12040,13 @@ class DelaunayLink(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["delaunayLink"]
     """
     A mark that draws links for each edge of the Delaunay triangulation of points given by the **x** and **y** channels. Like the link mark, except that **x1**, **y1**, **x2**, and **y2** are derived automatically from **x** and **y**. When an aesthetic channel is specified (such as
@@ -12117,7 +12117,7 @@ class DelaunayLink(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -12132,9 +12132,9 @@ class DelaunayLink(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -12142,11 +12142,11 @@ class DelaunayLink(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -12205,8 +12205,8 @@ class DelaunayLink(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -12253,7 +12253,7 @@ class DelaunayMesh(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -12272,9 +12272,9 @@ class DelaunayMesh(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -12295,17 +12295,17 @@ class DelaunayMesh(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -12350,7 +12350,7 @@ class DelaunayMesh(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -12379,13 +12379,13 @@ class DelaunayMesh(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["delaunayMesh"]
     """
     A mark that draws a mesh of the Delaunay triangulation of the points given by the **x** and **y** channels. The **stroke** option defaults to _currentColor_, and the **strokeOpacity** defaults to 0.2; the **fill** option is not supported. When an aesthetic channel is specified (such as
@@ -12456,7 +12456,7 @@ class DelaunayMesh(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -12471,9 +12471,9 @@ class DelaunayMesh(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -12481,11 +12481,11 @@ class DelaunayMesh(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -12544,8 +12544,8 @@ class DelaunayMesh(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -12594,7 +12594,7 @@ class DenseLine(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -12611,17 +12611,17 @@ class DenseLine(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -12658,7 +12658,7 @@ class DenseLine(TypedDict, closed=True):
     """The opacity, typically bound to the *opacity* scale. Can be specified as a constant or a channel based on the input data. Use the special value `"density"` to map computed density values to opacity. Use an aggregate expression to instead visualize an aggregate value per raster bin."""
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -12695,7 +12695,7 @@ class DenseLine(TypedDict, closed=True):
 
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
-    - *nearest* - assign each pixel to the closest sample’s value (Voronoi diagram)
+    - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
     - *barycentric* - apply barycentric interpolation over the Delaunay triangulation
     - *random-walk* - apply a random walk from each pixel, stopping when near a sample
     """
@@ -12705,13 +12705,13 @@ class DenseLine(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["denseLine"]
     """A denseLine mark that plots line densities rather than point densities. The mark forms a binned raster grid and "draws" straight lines into it. To avoid over-weighting steep lines, by default each drawn series is normalized on a per-column basis to approximate arc length normalization. The values for each series are aggregated to form the line density, which is then drawn as an image similar to the raster mark."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -12738,7 +12738,7 @@ class DenseLine(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
     """
     pixel_size: NotRequired[float | ParamRef]
-    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame’s dimensions; defaults to 1."""
+    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame's dimensions; defaults to 1."""
     pointer_events: NotRequired[str | ParamRef]
     """
     The [pointer-events][1] property; a constant string such as *none*.
@@ -12746,7 +12746,7 @@ class DenseLine(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -12761,9 +12761,9 @@ class DenseLine(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -12771,11 +12771,11 @@ class DenseLine(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -12879,7 +12879,7 @@ class Density(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -12896,17 +12896,17 @@ class Density(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -12951,43 +12951,43 @@ class Density(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
@@ -13019,7 +13019,7 @@ class Density(TypedDict, closed=True):
 
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
-    - *nearest* - assign each pixel to the closest sample’s value (Voronoi diagram)
+    - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
     - *barycentric* - apply barycentric interpolation over the Delaunay triangulation
     - *random-walk* - apply a random walk from each pixel, stopping when near a sample
     """
@@ -13037,13 +13037,13 @@ class Density(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["density"]
     """
     A 2D density mark that shows smoothed point cloud densities along two dimensions. The mark bins the data, counts the number of records that fall into each bin, and smooths the resulting counts, then plots the smoothed distribution, by default using a circular dot mark. The density mark calculates density values that can be mapped to encoding channels such as fill or r using the special field name "density".
@@ -13074,7 +13074,7 @@ class Density(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
     """
     pixel_size: NotRequired[float | ParamRef]
-    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame’s dimensions; defaults to 1."""
+    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame's dimensions; defaults to 1."""
     pointer_events: NotRequired[str | ParamRef]
     """
     The [pointer-events][1] property; a constant string such as *none*.
@@ -13084,7 +13084,7 @@ class Density(TypedDict, closed=True):
     r: NotRequired[ChannelValueSpec | float | ParamRef]
     """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | float | ParamRef]
     """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
     select: NotRequired[SelectFilter]
@@ -13101,9 +13101,9 @@ class Density(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -13111,11 +13111,11 @@ class Density(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -13170,7 +13170,7 @@ class Density(TypedDict, closed=True):
     The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
     **hexagon** mark.
 
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    If the **symbol** channel's values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
     """
     target: NotRequired[str | ParamRef]
     """
@@ -13262,7 +13262,7 @@ class DensityX1(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -13281,9 +13281,9 @@ class DensityX1(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -13304,17 +13304,17 @@ class DensityX1(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -13359,7 +13359,7 @@ class DensityX1(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -13388,13 +13388,13 @@ class DensityX1(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["densityX"]
     """
     A densityX mark that visualizes smoothed point cloud densities along the
@@ -13444,7 +13444,7 @@ class DensityX1(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -13459,9 +13459,9 @@ class DensityX1(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -13469,11 +13469,11 @@ class DensityX1(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stack: NotRequired[bool | ParamRef]
     """Flag indicating if densities should be stacked. Defaults to false."""
@@ -13534,8 +13534,8 @@ class DensityX1(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -13589,7 +13589,7 @@ class DensityX2(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -13608,9 +13608,9 @@ class DensityX2(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -13634,17 +13634,17 @@ class DensityX2(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -13689,7 +13689,7 @@ class DensityX2(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -13718,13 +13718,13 @@ class DensityX2(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["densityX"]
     """
     A densityX mark that visualizes smoothed point cloud densities along the
@@ -13797,7 +13797,7 @@ class DensityX2(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -13812,9 +13812,9 @@ class DensityX2(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -13822,11 +13822,11 @@ class DensityX2(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -13885,8 +13885,8 @@ class DensityX2(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -13940,7 +13940,7 @@ class DensityX3(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -13957,17 +13957,17 @@ class DensityX3(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -14012,13 +14012,13 @@ class DensityX3(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
@@ -14048,13 +14048,13 @@ class DensityX3(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["densityX"]
     """
     A densityX mark that visualizes smoothed point cloud densities along the
@@ -14092,7 +14092,7 @@ class DensityX3(TypedDict, closed=True):
     r: NotRequired[ChannelValueSpec | float | ParamRef]
     """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | float | ParamRef]
     """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
     select: NotRequired[SelectFilter]
@@ -14109,9 +14109,9 @@ class DensityX3(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -14119,11 +14119,11 @@ class DensityX3(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -14178,7 +14178,7 @@ class DensityX3(TypedDict, closed=True):
     The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
     **hexagon** mark.
 
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    If the **symbol** channel's values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
     """
     target: NotRequired[str | ParamRef]
     """
@@ -14198,7 +14198,7 @@ class DensityX3(TypedDict, closed=True):
     type: Literal["dotX"]
     """The basic mark type to use to render 1D density values. Defaults to an areaX mark; lineX, dotX, and textX marks are also supported."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the dot’s center, typically bound to the *y* scale."""
+    """The vertical position channel specifying the dot's center, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -14234,7 +14234,7 @@ class DensityX4(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -14251,17 +14251,17 @@ class DensityX4(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -14306,44 +14306,44 @@ class DensityX4(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
     The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
     fx: NotRequired[ChannelValue]
@@ -14384,13 +14384,13 @@ class DensityX4(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["densityX"]
     """
     A densityX mark that visualizes smoothed point cloud densities along the
@@ -14428,7 +14428,7 @@ class DensityX4(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | ParamRef]
     """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
     select: NotRequired[SelectFilter]
@@ -14445,9 +14445,9 @@ class DensityX4(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -14455,11 +14455,11 @@ class DensityX4(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -14561,7 +14561,7 @@ class DensityX4(TypedDict, closed=True):
     type: Literal["textX"]
     """The basic mark type to use to render 1D density values. Defaults to an areaX mark; lineX, dotX, and textX marks are also supported."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the text’s anchor point, typically bound to the *y* scale."""
+    """The vertical position channel specifying the text's anchor point, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -14597,7 +14597,7 @@ class DensityY1(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -14616,9 +14616,9 @@ class DensityY1(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -14639,17 +14639,17 @@ class DensityY1(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -14694,7 +14694,7 @@ class DensityY1(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -14723,13 +14723,13 @@ class DensityY1(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["densityY"]
     """
     A densityY mark that visualizes smoothed point cloud densities along the
@@ -14779,7 +14779,7 @@ class DensityY1(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -14794,9 +14794,9 @@ class DensityY1(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -14804,11 +14804,11 @@ class DensityY1(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stack: NotRequired[bool | ParamRef]
     """Flag indicating if densities should be stacked. Defaults to false."""
@@ -14869,8 +14869,8 @@ class DensityY1(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -14924,7 +14924,7 @@ class DensityY2(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -14943,9 +14943,9 @@ class DensityY2(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -14969,17 +14969,17 @@ class DensityY2(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -15024,7 +15024,7 @@ class DensityY2(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -15053,13 +15053,13 @@ class DensityY2(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["densityY"]
     """
     A densityY mark that visualizes smoothed point cloud densities along the
@@ -15132,7 +15132,7 @@ class DensityY2(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -15147,9 +15147,9 @@ class DensityY2(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -15157,11 +15157,11 @@ class DensityY2(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -15220,8 +15220,8 @@ class DensityY2(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -15275,7 +15275,7 @@ class DensityY3(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -15292,17 +15292,17 @@ class DensityY3(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -15347,13 +15347,13 @@ class DensityY3(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
@@ -15383,13 +15383,13 @@ class DensityY3(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["densityY"]
     """
     A densityY mark that visualizes smoothed point cloud densities along the
@@ -15427,7 +15427,7 @@ class DensityY3(TypedDict, closed=True):
     r: NotRequired[ChannelValueSpec | float | ParamRef]
     """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | float | ParamRef]
     """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
     select: NotRequired[SelectFilter]
@@ -15444,9 +15444,9 @@ class DensityY3(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -15454,11 +15454,11 @@ class DensityY3(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -15513,7 +15513,7 @@ class DensityY3(TypedDict, closed=True):
     The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
     **hexagon** mark.
 
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    If the **symbol** channel's values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
     """
     target: NotRequired[str | ParamRef]
     """
@@ -15533,7 +15533,7 @@ class DensityY3(TypedDict, closed=True):
     type: Literal["dot", "dotY", "circle", "hexagon"]
     """The basic mark type to use to render 1D density values. Defaults to an areaY mark; lineY, dot, and text marks are also supported."""
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the dot’s center, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the dot's center, typically bound to the *x* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -15569,7 +15569,7 @@ class DensityY4(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -15586,17 +15586,17 @@ class DensityY4(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -15641,44 +15641,44 @@ class DensityY4(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
     The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
     fx: NotRequired[ChannelValue]
@@ -15719,13 +15719,13 @@ class DensityY4(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["densityY"]
     """
     A densityY mark that visualizes smoothed point cloud densities along the
@@ -15763,7 +15763,7 @@ class DensityY4(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | ParamRef]
     """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
     select: NotRequired[SelectFilter]
@@ -15780,9 +15780,9 @@ class DensityY4(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -15790,11 +15790,11 @@ class DensityY4(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -15896,7 +15896,7 @@ class DensityY4(TypedDict, closed=True):
     type: Literal["text", "textY"]
     """The basic mark type to use to render 1D density values. Defaults to an areaY mark; lineY, dot, and text marks are also supported."""
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the text’s anchor point, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -15928,7 +15928,7 @@ class Dot(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -15945,17 +15945,17 @@ class Dot(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -16000,13 +16000,13 @@ class Dot(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
@@ -16036,13 +16036,13 @@ class Dot(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["dot"]
     """
     A dot mark that draws circles, or other symbols, as in a scatterplot.
@@ -16081,7 +16081,7 @@ class Dot(TypedDict, closed=True):
     r: NotRequired[ChannelValueSpec | float | ParamRef]
     """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | float | ParamRef]
     """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
     select: NotRequired[SelectFilter]
@@ -16098,9 +16098,9 @@ class Dot(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -16108,11 +16108,11 @@ class Dot(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -16167,7 +16167,7 @@ class Dot(TypedDict, closed=True):
     The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
     **hexagon** mark.
 
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    If the **symbol** channel's values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
     """
     target: NotRequired[str | ParamRef]
     """
@@ -16185,9 +16185,9 @@ class Dot(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the dot’s center, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the dot's center, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the dot’s center, typically bound to the *y* scale."""
+    """The vertical position channel specifying the dot's center, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -16219,7 +16219,7 @@ class DotX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -16236,17 +16236,17 @@ class DotX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -16291,13 +16291,13 @@ class DotX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
@@ -16329,13 +16329,13 @@ class DotX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["dotX"]
     """
     Like dot, except that **x** defaults to the identity function, assuming that
@@ -16371,7 +16371,7 @@ class DotX(TypedDict, closed=True):
     r: NotRequired[ChannelValueSpec | float | ParamRef]
     """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | float | ParamRef]
     """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
     select: NotRequired[SelectFilter]
@@ -16388,9 +16388,9 @@ class DotX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -16398,11 +16398,11 @@ class DotX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -16457,7 +16457,7 @@ class DotX(TypedDict, closed=True):
     The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
     **hexagon** mark.
 
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    If the **symbol** channel's values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
     """
     target: NotRequired[str | ParamRef]
     """
@@ -16475,9 +16475,9 @@ class DotX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the dot’s center, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the dot's center, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueIntervalSpec]
-    """The vertical position of the dot’s center, typically bound to the *y* scale."""
+    """The vertical position of the dot's center, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -16509,7 +16509,7 @@ class DotY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -16526,17 +16526,17 @@ class DotY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -16581,13 +16581,13 @@ class DotY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
@@ -16619,13 +16619,13 @@ class DotY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["dotY"]
     """
     Like dot, except that **y** defaults to the identity function, assuming that
@@ -16661,7 +16661,7 @@ class DotY(TypedDict, closed=True):
     r: NotRequired[ChannelValueSpec | float | ParamRef]
     """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | float | ParamRef]
     """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
     select: NotRequired[SelectFilter]
@@ -16678,9 +16678,9 @@ class DotY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -16688,11 +16688,11 @@ class DotY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -16747,7 +16747,7 @@ class DotY(TypedDict, closed=True):
     The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
     **hexagon** mark.
 
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    If the **symbol** channel's values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
     """
     target: NotRequired[str | ParamRef]
     """
@@ -16765,9 +16765,9 @@ class DotY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueIntervalSpec]
-    """The horizontal position of the dot’s center, typically bound to the *x* scale."""
+    """The horizontal position of the dot's center, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the dot’s center, typically bound to the *y* scale."""
+    """The vertical position channel specifying the dot's center, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -16801,7 +16801,7 @@ class ErrorBarX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -16818,17 +16818,17 @@ class ErrorBarX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -16873,7 +16873,7 @@ class ErrorBarX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -16902,13 +16902,13 @@ class ErrorBarX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["errorbarX"]
     """
     A mark that draws error bars for a calculated parametric confidence interval for a dependent variable (*x*), potentially grouped by an independent variable (*y*).
@@ -16982,7 +16982,7 @@ class ErrorBarX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -16997,9 +16997,9 @@ class ErrorBarX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -17007,11 +17007,11 @@ class ErrorBarX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -17116,7 +17116,7 @@ class ErrorBarY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -17133,17 +17133,17 @@ class ErrorBarY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -17188,7 +17188,7 @@ class ErrorBarY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -17217,13 +17217,13 @@ class ErrorBarY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["errorbarY"]
     """
     A mark that draws error bars for a calculated parametric confidence interval for a dependent variable (*y*), potentially grouped by an independent variable (*x*).
@@ -17297,7 +17297,7 @@ class ErrorBarY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -17312,9 +17312,9 @@ class ErrorBarY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -17322,11 +17322,11 @@ class ErrorBarY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -17434,7 +17434,7 @@ class Frame(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -17449,17 +17449,17 @@ class Frame(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -17504,7 +17504,7 @@ class Frame(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -17546,15 +17546,15 @@ class Frame(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["frame"]
-    """Draws a rectangle around the plot’s frame, or if an **anchor** is given, a line on the given side. Useful for visual separation of facets, or in conjunction with axes and grids to fill the frame’s background."""
+    """Draws a rectangle around the plot's frame, or if an **anchor** is given, a line on the given side. Useful for visual separation of facets, or in conjunction with axes and grids to fill the frame's background."""
     mix_blend_mode: NotRequired[str | ParamRef]
     """
     The [mix-blend-mode][1]; a constant string specifying how to blend content such as *multiply*.
@@ -17581,7 +17581,7 @@ class Frame(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rx: NotRequired[float | str | ParamRef]
     """
     The rounded corner [*x*-radius][1], either in pixels or as a percentage of the rect width. If **rx** is not specified, it defaults to **ry** if present, and otherwise draws square corners.
@@ -17608,9 +17608,9 @@ class Frame(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -17618,11 +17618,11 @@ class Frame(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -17716,7 +17716,7 @@ class Geo(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -17733,17 +17733,17 @@ class Geo(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -17788,7 +17788,7 @@ class Geo(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -17819,20 +17819,20 @@ class Geo(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["geo"]
     """
-    A geo mark. The **geometry** channel, which defaults to the identity function assuming that *data* is a GeoJSON object or an iterable of GeoJSON objects, is projected to the plane using the plot’s top-level
+    A geo mark. The **geometry** channel, which defaults to the identity function assuming that *data* is a GeoJSON object or an iterable of GeoJSON objects, is projected to the plane using the plot's top-level
     **projection**.
 
-    If *data* is a GeoJSON feature collection, then the mark’s data is
-    *data*.features; if *data* is a GeoJSON geometry collection, then the mark’s data is *data*.geometries; if *data* is some other GeoJSON object, then the mark’s data is the single-element array [*data*].
+    If *data* is a GeoJSON feature collection, then the mark's data is
+    *data*.features; if *data* is a GeoJSON geometry collection, then the mark's data is *data*.geometries; if *data* is some other GeoJSON object, then the mark's data is the single-element array [*data*].
     """
     mix_blend_mode: NotRequired[str | ParamRef]
     """
@@ -17866,7 +17866,7 @@ class Geo(TypedDict, closed=True):
     If **r** is a channel, geometries will be sorted by descending radius by default, to limit occlusion; use the **sort** transform to control render order. Geometries with a nonpositive radius are not drawn.
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -17881,9 +17881,9 @@ class Geo(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -17891,11 +17891,11 @@ class Geo(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -17989,7 +17989,7 @@ class Graticule(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -18004,17 +18004,17 @@ class Graticule(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -18059,7 +18059,7 @@ class Graticule(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -18088,13 +18088,13 @@ class Graticule(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["graticule"]
     """A geo mark whose *data* is a 10° global graticule. (For use with a spherical **projection** only.)"""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -18123,7 +18123,7 @@ class Graticule(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -18138,9 +18138,9 @@ class Graticule(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -18148,11 +18148,11 @@ class Graticule(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -18259,7 +18259,7 @@ class GridFx(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -18276,17 +18276,17 @@ class GridFx(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -18331,7 +18331,7 @@ class GridFx(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -18370,7 +18370,7 @@ class GridFx(TypedDict, closed=True):
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
-    This option sets the internal transform to the given interval’s
+    This option sets the internal transform to the given interval's
     *interval*.floor function. In addition, the default **domain** will align with interval boundaries.
     """
     margin: NotRequired[float | ParamRef]
@@ -18379,15 +18379,15 @@ class GridFx(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["gridFx"]
-    """A horizontally-positioned ruleX mark (a vertical line, |) that renders a grid for the *fx* scale. The data defaults to the *fx* scale’s domain; if desired, use the **ticks** option."""
+    """A horizontally-positioned ruleX mark (a vertical line, |) that renders a grid for the *fx* scale. The data defaults to the *fx* scale's domain; if desired, use the **ticks** option."""
     marker: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
     """
     Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
@@ -18447,7 +18447,7 @@ class GridFx(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -18462,9 +18462,9 @@ class GridFx(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -18472,11 +18472,11 @@ class GridFx(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -18546,7 +18546,7 @@ class GridFx(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position of the tick; an optional channel bound to the *x* scale. If not specified, the rule will be horizontally centered in the plot’s frame."""
+    """The horizontal position of the tick; an optional channel bound to the *x* scale. If not specified, the rule will be horizontally centered in the plot's frame."""
     y: NotRequired[ChannelValueIntervalSpec]
     """Shorthand for specifying both the primary and secondary vertical position of the tick as the bounds of the containing interval; can only be used in conjunction with the **interval** option."""
     y1: NotRequired[ChannelValueSpec]
@@ -18603,7 +18603,7 @@ class GridFy(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -18620,17 +18620,17 @@ class GridFy(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -18675,7 +18675,7 @@ class GridFy(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -18714,7 +18714,7 @@ class GridFy(TypedDict, closed=True):
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
-    This option sets the internal transform to the given interval’s
+    This option sets the internal transform to the given interval's
     *interval*.floor function. In addition, the default **domain** will align with interval boundaries.
     """
     margin: NotRequired[float | ParamRef]
@@ -18723,15 +18723,15 @@ class GridFy(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["gridFy"]
-    """A vertically-positioned ruleY mark (a horizontal line, —) that renders a grid for the *fy* scale. The data defaults to the *fy* scale’s domain; if desired, use the **ticks** option."""
+    """A vertically-positioned ruleY mark (a horizontal line, —) that renders a grid for the *fy* scale. The data defaults to the *fy* scale's domain; if desired, use the **ticks** option."""
     marker: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
     """
     Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
@@ -18791,7 +18791,7 @@ class GridFy(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -18806,9 +18806,9 @@ class GridFy(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -18816,11 +18816,11 @@ class GridFy(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -18904,7 +18904,7 @@ class GridFy(TypedDict, closed=True):
     If *x* represents ordinal values, use a tickY mark instead.
     """
     y: NotRequired[ChannelValueSpec]
-    """The vertical position of the tick; an optional channel bound to the *y* scale. If not specified, the rule will be vertically centered in the plot’s frame."""
+    """The vertical position of the tick; an optional channel bound to the *y* scale. If not specified, the rule will be vertically centered in the plot's frame."""
 
 
 class GridX(TypedDict, closed=True):
@@ -18947,7 +18947,7 @@ class GridX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -18964,17 +18964,17 @@ class GridX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -19019,7 +19019,7 @@ class GridX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -19058,7 +19058,7 @@ class GridX(TypedDict, closed=True):
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
-    This option sets the internal transform to the given interval’s
+    This option sets the internal transform to the given interval's
     *interval*.floor function. In addition, the default **domain** will align with interval boundaries.
     """
     margin: NotRequired[float | ParamRef]
@@ -19067,17 +19067,17 @@ class GridX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["gridX"]
     """
     A horizontally-positioned ruleX mark (a vertical line, |) that renders a grid for the *x* scale. The data defaults to tick values sampled from the
-    *x* scale’s domain; if desired, use one of the **ticks**, **tickSpacing**, or **interval** options.
+    *x* scale's domain; if desired, use one of the **ticks**, **tickSpacing**, or **interval** options.
     """
     marker: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
     """
@@ -19138,7 +19138,7 @@ class GridX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -19153,9 +19153,9 @@ class GridX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -19163,11 +19163,11 @@ class GridX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -19237,7 +19237,7 @@ class GridX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position of the tick; an optional channel bound to the *x* scale. If not specified, the rule will be horizontally centered in the plot’s frame."""
+    """The horizontal position of the tick; an optional channel bound to the *x* scale. If not specified, the rule will be horizontally centered in the plot's frame."""
     y: NotRequired[ChannelValueIntervalSpec]
     """Shorthand for specifying both the primary and secondary vertical position of the tick as the bounds of the containing interval; can only be used in conjunction with the **interval** option."""
     y1: NotRequired[ChannelValueSpec]
@@ -19294,7 +19294,7 @@ class GridY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -19311,17 +19311,17 @@ class GridY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -19366,7 +19366,7 @@ class GridY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -19405,7 +19405,7 @@ class GridY(TypedDict, closed=True):
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
-    This option sets the internal transform to the given interval’s
+    This option sets the internal transform to the given interval's
     *interval*.floor function. In addition, the default **domain** will align with interval boundaries.
     """
     margin: NotRequired[float | ParamRef]
@@ -19414,17 +19414,17 @@ class GridY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["gridY"]
     """
     A vertically-positioned ruleY mark (a horizontal line, —) that renders a grid for the *y* scale. The data defaults to tick values sampled from the
-    *y* scale’s domain; if desired, use one of the **ticks**, **tickSpacing**, or **interval** options.
+    *y* scale's domain; if desired, use one of the **ticks**, **tickSpacing**, or **interval** options.
     """
     marker: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
     """
@@ -19485,7 +19485,7 @@ class GridY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -19500,9 +19500,9 @@ class GridY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -19510,11 +19510,11 @@ class GridY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -19598,7 +19598,7 @@ class GridY(TypedDict, closed=True):
     If *x* represents ordinal values, use a tickY mark instead.
     """
     y: NotRequired[ChannelValueSpec]
-    """The vertical position of the tick; an optional channel bound to the *y* scale. If not specified, the rule will be vertically centered in the plot’s frame."""
+    """The vertical position of the tick; an optional channel bound to the *y* scale. If not specified, the rule will be vertically centered in the plot's frame."""
 
 
 class Heatmap(TypedDict, closed=True):
@@ -19630,7 +19630,7 @@ class Heatmap(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -19647,17 +19647,17 @@ class Heatmap(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -19694,7 +19694,7 @@ class Heatmap(TypedDict, closed=True):
     """The opacity, typically bound to the *opacity* scale. Can be specified as a constant or a channel based on the input data. Use the special value `"density"` to map computed density values to opacity. Use an aggregate expression to instead visualize an aggregate value per raster bin."""
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -19731,7 +19731,7 @@ class Heatmap(TypedDict, closed=True):
 
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
-    - *nearest* - assign each pixel to the closest sample’s value (Voronoi diagram)
+    - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
     - *barycentric* - apply barycentric interpolation over the Delaunay triangulation
     - *random-walk* - apply a random walk from each pixel, stopping when near a sample
     """
@@ -19741,13 +19741,13 @@ class Heatmap(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["heatmap"]
     """
     Like raster, but with default options for accurate density estimation via smoothing. The *bandwidth* (20), *interpolate* ("linear"), and
@@ -19775,7 +19775,7 @@ class Heatmap(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
     """
     pixel_size: NotRequired[float | ParamRef]
-    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame’s dimensions; defaults to 1."""
+    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame's dimensions; defaults to 1."""
     pointer_events: NotRequired[str | ParamRef]
     """
     The [pointer-events][1] property; a constant string such as *none*.
@@ -19783,7 +19783,7 @@ class Heatmap(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -19798,9 +19798,9 @@ class Heatmap(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -19808,11 +19808,11 @@ class Heatmap(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -19912,7 +19912,7 @@ class Hexagon(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -19929,17 +19929,17 @@ class Hexagon(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -19984,13 +19984,13 @@ class Hexagon(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
@@ -20020,13 +20020,13 @@ class Hexagon(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["hexagon"]
     """Like dot, except that the **symbol** option is set to *hexagon*."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -20057,7 +20057,7 @@ class Hexagon(TypedDict, closed=True):
     r: NotRequired[ChannelValueSpec | float | ParamRef]
     """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | float | ParamRef]
     """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
     select: NotRequired[SelectFilter]
@@ -20074,9 +20074,9 @@ class Hexagon(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -20084,11 +20084,11 @@ class Hexagon(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -20143,7 +20143,7 @@ class Hexagon(TypedDict, closed=True):
     The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
     **hexagon** mark.
 
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    If the **symbol** channel's values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
     """
     target: NotRequired[str | ParamRef]
     """
@@ -20161,9 +20161,9 @@ class Hexagon(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the dot’s center, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the dot's center, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the dot’s center, typically bound to the *y* scale."""
+    """The vertical position channel specifying the dot's center, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -20197,7 +20197,7 @@ class Hexbin(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -20214,17 +20214,17 @@ class Hexbin(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -20269,43 +20269,43 @@ class Hexbin(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame. For example, for dots distributed horizontally at the top of the frame:
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
@@ -20343,13 +20343,13 @@ class Hexbin(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["hexbin"]
     """A hexbin mark that bins **x** and **y** data into a hexagonal grid and visualizes aggregate functions per bin (e.g., count for binned density). Aggregate functions can be used for fill, stroke, or r (radius) options."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -20382,7 +20382,7 @@ class Hexbin(TypedDict, closed=True):
     r: NotRequired[ChannelValueSpec | float | ParamRef]
     """The radius of dots; either a channel or constant. When a number, it is interpreted as a constant radius in pixels. Otherwise it is interpreted as a channel, typically bound to the *r* channel, which defaults to the *sqrt* type for proportional symbols. The radius defaults to 4.5 pixels when using the **symbol** channel, and otherwise 3 pixels. Dots with a nonpositive radius are not drawn."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | float | ParamRef]
     """The rotation angle of dots in degrees clockwise; either a channel or a constant. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel. Defaults to 0°, pointing up."""
     select: NotRequired[SelectFilter]
@@ -20399,9 +20399,9 @@ class Hexbin(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -20409,11 +20409,11 @@ class Hexbin(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -20468,7 +20468,7 @@ class Hexbin(TypedDict, closed=True):
     The categorical symbol; either a channel or a constant. A constant symbol can be specified by a valid symbol name such as *star*, or a symbol object (implementing the draw method); otherwise it is interpreted as a channel. Defaults to *circle* for the **dot** mark, and *hexagon* for the
     **hexagon** mark.
 
-    If the **symbol** channel’s values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
+    If the **symbol** channel's values are all symbols, symbol names, or nullish, the channel is unscaled (values are interpreted literally); otherwise, the channel is bound to the *symbol* scale.
     """
     target: NotRequired[str | ParamRef]
     """
@@ -20520,9 +20520,9 @@ class Hexbin(TypedDict, closed=True):
     type: NotRequired[Literal["dot", "circle", "hexagon", "text"] | ParamRef]
     """The basic mark type to use for hex-binned values. Defaults to a hexagon mark; dot and text marks are also supported."""
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the dot’s center, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the dot's center, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the dot’s center, typically bound to the *y* scale."""
+    """The vertical position channel specifying the dot's center, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """How to subdivide bins. If not specified, defaults to the *fill* channel, if any, or the *stroke* channel, if any. If null, bins will not be subdivided."""
 
@@ -20556,7 +20556,7 @@ class Hexgrid(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -20571,17 +20571,17 @@ class Hexgrid(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -20626,7 +20626,7 @@ class Hexgrid(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -20655,13 +20655,13 @@ class Hexgrid(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["hexgrid"]
     """
     The hexgrid decoration mark complements the hexbin mark, showing the outlines of all hexagons spanning the frame with a default **stroke** of
@@ -20695,7 +20695,7 @@ class Hexgrid(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -20710,9 +20710,9 @@ class Hexgrid(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -20720,11 +20720,11 @@ class Hexgrid(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -20818,7 +20818,7 @@ class Hull(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -20837,9 +20837,9 @@ class Hull(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -20860,17 +20860,17 @@ class Hull(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -20915,7 +20915,7 @@ class Hull(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -20944,13 +20944,13 @@ class Hull(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["hull"]
     """
     A mark that draws a convex hull around the points given by the **x** and
@@ -21022,7 +21022,7 @@ class Hull(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -21037,9 +21037,9 @@ class Hull(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -21047,11 +21047,11 @@ class Hull(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -21110,8 +21110,8 @@ class Hull(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -21156,7 +21156,7 @@ class Image(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -21179,17 +21179,17 @@ class Image(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -21234,13 +21234,13 @@ class Image(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
-    The frame anchor specifies defaults for **x** and **y** based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
+    The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
     *bottom-left*), or the *middle* of the frame.
     """
     fx: NotRequired[ChannelValue]
@@ -21276,13 +21276,13 @@ class Image(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["image"]
     """
     An image mark that draws images as in a scatterplot.
@@ -21323,7 +21323,7 @@ class Image(TypedDict, closed=True):
     r: NotRequired[ChannelValue | ParamRef]
     """The image clip radius, for circular images. If null (default), images are not clipped; when a number, it is interpreted as a constant in pixels; otherwise it is interpreted as a channel, typically bound to the *r* scale. Also defaults **height** and **width** to twice its value."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | ParamRef]
     """The rotation angle, in degrees clockwise. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
     select: NotRequired[SelectFilter]
@@ -21340,9 +21340,9 @@ class Image(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -21350,11 +21350,11 @@ class Image(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     src: NotRequired[ChannelValue | ParamRef]
     """The required image URL (or relative path). If a string that starts with a dot, slash, or URL protocol (*e.g.*, “https:”) it is assumed to be a constant; otherwise it is interpreted as a channel."""
@@ -21424,9 +21424,9 @@ class Image(TypedDict, closed=True):
     width: NotRequired[ChannelValue | ParamRef]
     """The image width in pixels. When a number, it is interpreted as a constant radius in pixels; otherwise it is interpreted as a channel. Also sets the default **height**; if neither are set, defaults to 16. Images with a nonpositive width are not drawn."""
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the image’s center; typically bound to the *x* scale."""
+    """The horizontal position channel specifying the image's center; typically bound to the *x* scale."""
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the image’s center; typically bound to the *y* scale."""
+    """The vertical position channel specifying the image's center; typically bound to the *y* scale."""
 
 
 class Line(TypedDict, closed=True):
@@ -21456,7 +21456,7 @@ class Line(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -21475,9 +21475,9 @@ class Line(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -21501,17 +21501,17 @@ class Line(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -21556,7 +21556,7 @@ class Line(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -21585,13 +21585,13 @@ class Line(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["line"]
     """
     A line mark that connects control points.
@@ -21666,7 +21666,7 @@ class Line(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -21681,9 +21681,9 @@ class Line(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -21691,11 +21691,11 @@ class Line(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -21754,8 +21754,8 @@ class Line(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -21805,7 +21805,7 @@ class LineX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -21824,9 +21824,9 @@ class LineX(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -21850,17 +21850,17 @@ class LineX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -21905,7 +21905,7 @@ class LineX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -21934,13 +21934,13 @@ class LineX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["lineX"]
     """Like line, except that **x** defaults to the identity function assuming that *data* = [*x₀*, *x₁*, *x₂*, …] and **y** defaults to the zero-based index [0, 1, 2, …]."""
     marker: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
@@ -22006,7 +22006,7 @@ class LineX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -22021,9 +22021,9 @@ class LineX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -22031,11 +22031,11 @@ class LineX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -22094,8 +22094,8 @@ class LineX(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -22145,7 +22145,7 @@ class LineY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -22164,9 +22164,9 @@ class LineY(TypedDict, closed=True):
     - *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)
     - *cardinal-open* - an open cubic cardinal spline
     - *cardinal-closed* - an closed cubic cardinal spline
-    - *catmull-rom* - a cubic Catmull–Rom spline (with one-sided differences at the ends)
-    - *catmull-rom-open* - an open cubic Catmull–Rom spline
-    - *catmull-rom-closed* - a closed cubic Catmull–Rom spline
+    - *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)
+    - *catmull-rom-open* - an open cubic Catmull-Rom spline
+    - *catmull-rom-closed* - a closed cubic Catmull-Rom spline
     - *linear* - a piecewise linear curve (*i.e.*, straight line segments)
     - *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)
     - *monotone-x* - a cubic spline that preserves monotonicity in *x*
@@ -22190,17 +22190,17 @@ class LineY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -22245,7 +22245,7 @@ class LineY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -22274,13 +22274,13 @@ class LineY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["lineY"]
     """Like line, except **y** defaults to the identity function and assumes that *data* = [*y₀*, *y₁*, *y₂*, …] and **x** defaults to the zero-based index [0, 1, 2, …]."""
     marker: NotRequired[MarkerName | Literal["none"] | bool | ParamRef | None]
@@ -22346,7 +22346,7 @@ class LineY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -22361,9 +22361,9 @@ class LineY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -22371,11 +22371,11 @@ class LineY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -22434,8 +22434,8 @@ class LineY(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -22485,7 +22485,7 @@ class Link(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -22512,17 +22512,17 @@ class Link(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -22567,7 +22567,7 @@ class Link(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -22596,13 +22596,13 @@ class Link(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["link"]
     """
     A link mark, drawing line segments (curves) connecting pairs of points.
@@ -22673,7 +22673,7 @@ class Link(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -22688,9 +22688,9 @@ class Link(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -22698,11 +22698,11 @@ class Link(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -22761,8 +22761,8 @@ class Link(TypedDict, closed=True):
     """
     tension: NotRequired[float | ParamRef]
     """
-    The tension option only has an effect on bundle, cardinal and Catmull–Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
-    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull–Rom splines, [alpha][3].
+    The tension option only has an effect on bundle, cardinal and Catmull-Rom splines (*bundle*, *cardinal*, *cardinal-open*, *cardinal-closed*,
+    *catmull-rom*, *catmull-rom-open*, and *catmull-rom-closed*). For bundle splines, it corresponds to [beta][1]; for cardinal splines, [tension][2]; for Catmull-Rom splines, [alpha][3].
 
     [1]: https://d3js.org/d3-shape/curve#curveBundle_beta [2]: https://d3js.org/d3-shape/curve#curveCardinal_tension [3]: https://d3js.org/d3-shape/curve#curveCatmullRom_alpha
     """
@@ -22817,7 +22817,7 @@ class Raster(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -22834,17 +22834,17 @@ class Raster(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -22881,7 +22881,7 @@ class Raster(TypedDict, closed=True):
     """The opacity, typically bound to the *opacity* scale. Can be specified as a constant or a channel based on the input data. Use the special value `"density"` to map computed density values to opacity. Use an aggregate expression to instead visualize an aggregate value per raster bin."""
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -22918,7 +22918,7 @@ class Raster(TypedDict, closed=True):
 
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
-    - *nearest* - assign each pixel to the closest sample’s value (Voronoi diagram)
+    - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
     - *barycentric* - apply barycentric interpolation over the Delaunay triangulation
     - *random-walk* - apply a random walk from each pixel, stopping when near a sample
     """
@@ -22928,13 +22928,13 @@ class Raster(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["raster"]
     """
     A raster mark which renders a raster image from spatial samples. It represents discrete samples in abstract coordinates **x** and **y**; the **fill** and **fillOpacity** channels specify further abstract values (_e.g._, height in a topographic map) to be spatially interpolated to produce an image.
@@ -22965,7 +22965,7 @@ class Raster(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
     """
     pixel_size: NotRequired[float | ParamRef]
-    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame’s dimensions; defaults to 1."""
+    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame's dimensions; defaults to 1."""
     pointer_events: NotRequired[str | ParamRef]
     """
     The [pointer-events][1] property; a constant string such as *none*.
@@ -22973,7 +22973,7 @@ class Raster(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -22988,9 +22988,9 @@ class Raster(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -22998,11 +22998,11 @@ class Raster(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -23104,7 +23104,7 @@ class RasterTile(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -23121,17 +23121,17 @@ class RasterTile(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -23168,7 +23168,7 @@ class RasterTile(TypedDict, closed=True):
     """The opacity, typically bound to the *opacity* scale. Can be specified as a constant or a channel based on the input data. Use the special value `"density"` to map computed density values to opacity. Use an aggregate expression to instead visualize an aggregate value per raster bin."""
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -23205,7 +23205,7 @@ class RasterTile(TypedDict, closed=True):
 
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
-    - *nearest* - assign each pixel to the closest sample’s value (Voronoi diagram)
+    - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
     - *barycentric* - apply barycentric interpolation over the Delaunay triangulation
     - *random-walk* - apply a random walk from each pixel, stopping when near a sample
     """
@@ -23215,13 +23215,13 @@ class RasterTile(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["rasterTile"]
     """An experimental raster mark which performs tiling and prefetching to support more scalable rasters upon panning the domain. Uses a tile size that matches with current width and height, and prefetches data from neighboring tile segments."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -23248,7 +23248,7 @@ class RasterTile(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/paint-order
     """
     pixel_size: NotRequired[float | ParamRef]
-    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame’s dimensions; defaults to 1."""
+    """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame's dimensions; defaults to 1."""
     pointer_events: NotRequired[str | ParamRef]
     """
     The [pointer-events][1] property; a constant string such as *none*.
@@ -23256,7 +23256,7 @@ class RasterTile(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -23271,9 +23271,9 @@ class RasterTile(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -23281,11 +23281,11 @@ class RasterTile(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -23385,7 +23385,7 @@ class Rect(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -23402,17 +23402,17 @@ class Rect(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -23457,7 +23457,7 @@ class Rect(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -23509,13 +23509,13 @@ class Rect(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["rect"]
     """
     A rect mark. The rectangle extends horizontally from **x1** to **x2**, and vertically from **y1** to **y2**. The position channels are often derived with a transform.
@@ -23567,7 +23567,7 @@ class Rect(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rx: NotRequired[float | str | ParamRef]
     """
     The rounded corner [*x*-radius][1], either in pixels or as a percentage of the rect width. If **rx** is not specified, it defaults to **ry** if present, and otherwise draws square corners.
@@ -23594,9 +23594,9 @@ class Rect(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -23604,11 +23604,11 @@ class Rect(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -23687,13 +23687,13 @@ class Rect(TypedDict, closed=True):
     """
     x1: NotRequired[ChannelValueSpec]
     """
-    The required primary (starting, often left) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark’s implicit stackX transform.
+    The required primary (starting, often left) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark's implicit stackX transform.
 
     If *x* represents ordinal values, use a bar or cell mark instead.
     """
     x2: NotRequired[ChannelValueSpec]
     """
-    The required secondary (ending, often right) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark’s implicit stackX transform.
+    The required secondary (ending, often right) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark's implicit stackX transform.
 
     If *x* represents ordinal values, use a bar or cell mark instead.
     """
@@ -23711,13 +23711,13 @@ class Rect(TypedDict, closed=True):
     """
     y1: NotRequired[ChannelValueSpec]
     """
-    The required primary (starting, often bottom) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark’s implicit stackY transform.
+    The required primary (starting, often bottom) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark's implicit stackY transform.
 
     If *y* represents ordinal values, use a bar or cell mark instead.
     """
     y2: NotRequired[ChannelValueSpec]
     """
-    The required secondary (ending, often top) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark’s implicit stackY transform.
+    The required secondary (ending, often top) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark's implicit stackY transform.
 
     If *y* represents ordinal values, use a bar or cell mark instead.
     """
@@ -23755,7 +23755,7 @@ class RectX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -23772,17 +23772,17 @@ class RectX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -23827,7 +23827,7 @@ class RectX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -23879,13 +23879,13 @@ class RectX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["rectX"]
     """Like rect, but if neither **x1** nor **x2** is specified, an implicit stackX transform is applied to **x**, and if **x** is not specified, it defaults to the identity function, assuming that *data* is an array of numbers [*x₀*, *x₁*, *x₂*, …]."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -23928,7 +23928,7 @@ class RectX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rx: NotRequired[float | str | ParamRef]
     """
     The rounded corner [*x*-radius][1], either in pixels or as a percentage of the rect width. If **rx** is not specified, it defaults to **ry** if present, and otherwise draws square corners.
@@ -23955,9 +23955,9 @@ class RectX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -23965,11 +23965,11 @@ class RectX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -24043,13 +24043,13 @@ class RectX(TypedDict, closed=True):
     """
     x1: NotRequired[ChannelValueSpec]
     """
-    The required primary (starting, often left) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark’s implicit stackX transform.
+    The required primary (starting, often left) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark's implicit stackX transform.
 
     If *x* represents ordinal values, use a bar or cell mark instead.
     """
     x2: NotRequired[ChannelValueSpec]
     """
-    The required secondary (ending, often right) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark’s implicit stackX transform.
+    The required secondary (ending, often right) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark's implicit stackX transform.
 
     If *x* represents ordinal values, use a bar or cell mark instead.
     """
@@ -24067,13 +24067,13 @@ class RectX(TypedDict, closed=True):
     """
     y1: NotRequired[ChannelValueSpec]
     """
-    The required primary (starting, often bottom) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark’s implicit stackY transform.
+    The required primary (starting, often bottom) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark's implicit stackY transform.
 
     If *y* represents ordinal values, use a bar or cell mark instead.
     """
     y2: NotRequired[ChannelValueSpec]
     """
-    The required secondary (ending, often top) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark’s implicit stackY transform.
+    The required secondary (ending, often top) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark's implicit stackY transform.
 
     If *y* represents ordinal values, use a bar or cell mark instead.
     """
@@ -24111,7 +24111,7 @@ class RectY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -24128,17 +24128,17 @@ class RectY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -24183,7 +24183,7 @@ class RectY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -24235,13 +24235,13 @@ class RectY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["rectY"]
     """Like rect, but if neither **y1** nor **y2** is specified, apply an implicit stackY transform is applied to **y**, and if **y** is not specified, it defaults to the identity function, assuming that *data* is an array of numbers [*y₀*, *y₁*, *y₂*, …]."""
     mix_blend_mode: NotRequired[str | ParamRef]
@@ -24284,7 +24284,7 @@ class RectY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rx: NotRequired[float | str | ParamRef]
     """
     The rounded corner [*x*-radius][1], either in pixels or as a percentage of the rect width. If **rx** is not specified, it defaults to **ry** if present, and otherwise draws square corners.
@@ -24311,9 +24311,9 @@ class RectY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -24321,11 +24321,11 @@ class RectY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -24404,13 +24404,13 @@ class RectY(TypedDict, closed=True):
     """
     x1: NotRequired[ChannelValueSpec]
     """
-    The required primary (starting, often left) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark’s implicit stackX transform.
+    The required primary (starting, often left) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark's implicit stackX transform.
 
     If *x* represents ordinal values, use a bar or cell mark instead.
     """
     x2: NotRequired[ChannelValueSpec]
     """
-    The required secondary (ending, often right) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark’s implicit stackX transform.
+    The required secondary (ending, often right) horizontal position channel, typically bound to the *x* scale. Setting this option disables the rectX mark's implicit stackX transform.
 
     If *x* represents ordinal values, use a bar or cell mark instead.
     """
@@ -24423,13 +24423,13 @@ class RectY(TypedDict, closed=True):
     """
     y1: NotRequired[ChannelValueSpec]
     """
-    The required primary (starting, often bottom) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark’s implicit stackY transform.
+    The required primary (starting, often bottom) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark's implicit stackY transform.
 
     If *y* represents ordinal values, use a bar or cell mark instead.
     """
     y2: NotRequired[ChannelValueSpec]
     """
-    The required secondary (ending, often top) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark’s implicit stackY transform.
+    The required secondary (ending, often top) vertical position channel, typically bound to the *y* scale. Setting this option disables the rectY mark's implicit stackY transform.
 
     If *y* represents ordinal values, use a bar or cell mark instead.
     """
@@ -24469,7 +24469,7 @@ class RegressionY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -24486,17 +24486,17 @@ class RegressionY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -24541,7 +24541,7 @@ class RegressionY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -24570,18 +24570,18 @@ class RegressionY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["regressionY"]
     """
     A mark that draws [linear regression][1] lines with confidence bands, representing the estimated relation of a dependent variable (*y*) on an independent variable (*x*).
 
-    The linear regression line is fit using the [least squares][2] approach. See Torben Jansen’s [“Linear regression with confidence bands”][3] and [this StatExchange question][4] for details on the confidence interval calculation.
+    The linear regression line is fit using the [least squares][2] approach. See Torben Jansen's [“Linear regression with confidence bands”][3] and [this StatExchange question][4] for details on the confidence interval calculation.
 
     Multiple regressions can be produced by specifying a **z**, **fill**, or
     **stroke** channel.
@@ -24616,7 +24616,7 @@ class RegressionY(TypedDict, closed=True):
     precision: NotRequired[float | ParamRef]
     """The distance in pixels between samples of the confidence band; defaults to 4."""
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -24631,9 +24631,9 @@ class RegressionY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -24641,11 +24641,11 @@ class RegressionY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -24748,7 +24748,7 @@ class RuleX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -24765,17 +24765,17 @@ class RuleX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -24820,7 +24820,7 @@ class RuleX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -24865,16 +24865,16 @@ class RuleX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["ruleX"]
     """
-    A horizontally-positioned ruleX mark (a vertical line, |). The **x** channel specifies the rule’s horizontal position and defaults to identity, assuming that *data* = [*x₀*, *x₁*, *x₂*, …]; the optional **y1** and
+    A horizontally-positioned ruleX mark (a vertical line, |). The **x** channel specifies the rule's horizontal position and defaults to identity, assuming that *data* = [*x₀*, *x₁*, *x₂*, …]; the optional **y1** and
     **y2** channels specify its vertical extent.
 
     The ruleX mark is often used to highlight specific *x* values. If *y* represents ordinal values, use a tickX mark instead.
@@ -24942,7 +24942,7 @@ class RuleX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -24957,9 +24957,9 @@ class RuleX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -24967,11 +24967,11 @@ class RuleX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -25037,7 +25037,7 @@ class RuleX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position of the tick; an optional channel bound to the *x* scale. If not specified, the rule will be horizontally centered in the plot’s frame."""
+    """The horizontal position of the tick; an optional channel bound to the *x* scale. If not specified, the rule will be horizontally centered in the plot's frame."""
     y: NotRequired[ChannelValueIntervalSpec]
     """Shorthand for specifying both the primary and secondary vertical position of the tick as the bounds of the containing interval; can only be used in conjunction with the **interval** option."""
     y1: NotRequired[ChannelValueSpec]
@@ -25081,7 +25081,7 @@ class RuleY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -25098,17 +25098,17 @@ class RuleY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -25153,7 +25153,7 @@ class RuleY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -25198,13 +25198,13 @@ class RuleY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["ruleY"]
     """
     A vertically-positioned ruleY mark (a horizontal line, —). The **y** channel specifies the rule's vertical position and defaults to identity, assuming that *data* = [*y₀*, *y₁*, *y₂*, …]; the optional **x1** and
@@ -25275,7 +25275,7 @@ class RuleY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     select: NotRequired[SelectFilter]
     """
     Applies a filter transform after data is loaded to highlight selected values only. For example, `first` and `last` select the first or last values of series only (using the *z* channel to separate series). Meanwhile, `nearestX` and `nearestY` select the point nearest to the pointer along the *x* or *y* channel dimension. Unlike Mosaic selections, a mark level *select* is internal to the mark only, and does not populate a param or selection value to be shared across clients.
@@ -25290,9 +25290,9 @@ class RuleY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -25300,11 +25300,11 @@ class RuleY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -25370,7 +25370,7 @@ class RuleY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position of the tick; an optional channel bound to the *x* scale. If not specified, the rule will be horizontally centered in the plot’s frame."""
+    """The horizontal position of the tick; an optional channel bound to the *x* scale. If not specified, the rule will be horizontally centered in the plot's frame."""
     y: NotRequired[ChannelValueIntervalSpec]
     """Shorthand for specifying both the primary and secondary vertical position of the tick as the bounds of the containing interval; can only be used in conjunction with the **interval** option."""
     y1: NotRequired[ChannelValueSpec]
@@ -25414,7 +25414,7 @@ class TextX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -25431,17 +25431,17 @@ class TextX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -25486,44 +25486,44 @@ class TextX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
     The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
     fx: NotRequired[ChannelValue]
@@ -25566,13 +25566,13 @@ class TextX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["textX"]
     """
     Like text, but **x** defaults to the identity function, assuming that
@@ -25607,7 +25607,7 @@ class TextX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | ParamRef]
     """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
     select: NotRequired[SelectFilter]
@@ -25624,9 +25624,9 @@ class TextX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -25634,11 +25634,11 @@ class TextX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -25738,10 +25738,10 @@ class TextX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
     """
     x: NotRequired[ChannelValueSpec]
-    """The horizontal position channel specifying the text’s anchor point, typically bound to the *x* scale."""
+    """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
     y: NotRequired[ChannelValueIntervalSpec]
     """
-    The vertical position of the text’s anchor point, typically bound to the
+    The vertical position of the text's anchor point, typically bound to the
     *y* scale.
     """
     z: NotRequired[ChannelValue]
@@ -25775,7 +25775,7 @@ class TextY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -25792,17 +25792,17 @@ class TextY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -25847,44 +25847,44 @@ class TextY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
     font_family: NotRequired[str | ParamRef]
     """
-    The [font-family][1]; a constant; defaults to the plot’s font family, which is typically [*system-ui*][2].
+    The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-family [2]: https://drafts.csswg.org/css-fonts-4/#valdef-font-family-system-ui
     """
     font_size: NotRequired[ChannelValue | ParamRef]
     """
-    The [font size][1] in pixels; either a constant or a channel; defaults to the plot’s font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
+    The [font size][1] in pixels; either a constant or a channel; defaults to the plot's font size, which is typically 10. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     """
     font_style: NotRequired[str | ParamRef]
     """
-    The [font style][1]; a constant; defaults to the plot’s font style, which is typically *normal*.
+    The [font style][1]; a constant; defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
     """
     font_variant: NotRequired[str | ParamRef]
     """
-    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot’s font style, which is typically *normal*.
+    The [font variant][1]; a constant; if the **text** channel contains numbers or dates, defaults to *tabular-nums* to facilitate comparing numbers; otherwise defaults to the plot's font style, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant
     """
     font_weight: NotRequired[str | float | ParamRef]
     """
-    The [font weight][1]; a constant; defaults to the plot’s font weight, which is typically *normal*.
+    The [font weight][1]; a constant; defaults to the plot's font weight, which is typically *normal*.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
     """
     frame_anchor: NotRequired[FrameAnchor | ParamRef]
     """
     The frame anchor specifies defaults for **x** and **y**, along with
-    **textAnchor** and **lineAnchor**, based on the plot’s frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
+    **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
     fx: NotRequired[ChannelValue]
@@ -25927,13 +25927,13 @@ class TextY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["textY"]
     """
     Like text, but **y** defaults to the identity function, assuming that
@@ -25968,7 +25968,7 @@ class TextY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rotate: NotRequired[ChannelValue | ParamRef]
     """The rotation angle in degrees clockwise; a constant or a channel; defaults to 0°. When a number, it is interpreted as a constant; otherwise it is interpreted as a channel."""
     select: NotRequired[SelectFilter]
@@ -25985,9 +25985,9 @@ class TextY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -25995,11 +25995,11 @@ class TextY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -26100,11 +26100,11 @@ class TextY(TypedDict, closed=True):
     """
     x: NotRequired[ChannelValueIntervalSpec]
     """
-    The horizontal position of the text’s anchor point, typically bound to the
+    The horizontal position of the text's anchor point, typically bound to the
     *x* scale.
     """
     y: NotRequired[ChannelValueSpec]
-    """The vertical position channel specifying the text’s anchor point, typically bound to the *y* scale."""
+    """The vertical position channel specifying the text's anchor point, typically bound to the *y* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
 
@@ -26136,7 +26136,7 @@ class WaffleX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -26153,17 +26153,17 @@ class WaffleX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -26208,7 +26208,7 @@ class WaffleX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -26261,13 +26261,13 @@ class WaffleX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["waffleX"]
     """
     A horizontal waffle mark. The required *x* values should be quantitative, and the optional *y* values should be ordinal.
@@ -26275,7 +26275,7 @@ class WaffleX(TypedDict, closed=True):
     If neither **x1** nor **x2** nor **interval** is specified, an implicit stackX transform is applied and **x** defaults to the identity function, assuming that *data* = [*x₀*, *x₁*, *x₂*, …]. Otherwise if an **interval** is specified, then **x1** and **x2** are derived from **x**, representing the lower and upper bound of the containing interval, respectively. Otherwise, if only one of **x1** or **x2** is specified, the other defaults to **x**, which defaults to zero.
 
     The optional **y** ordinal channel specifies the vertical position; it is typically bound to the *y* scale, which must be a *band* scale. If the
-    **y** channel is not specified, the bar will span the vertical extent of the plot’s frame. Because a waffle represents a discrete number of square cells, it may not use all of the available bandwidth.
+    **y** channel is not specified, the bar will span the vertical extent of the plot's frame. Because a waffle represents a discrete number of square cells, it may not use all of the available bandwidth.
     """
     mix_blend_mode: NotRequired[str | ParamRef]
     """
@@ -26319,7 +26319,7 @@ class WaffleX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     round: NotRequired[bool | ParamRef]
     """If true, round to integers to avoid partial cells."""
     rx: NotRequired[float | str | ParamRef]
@@ -26348,9 +26348,9 @@ class WaffleX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -26358,11 +26358,11 @@ class WaffleX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -26488,7 +26488,7 @@ class WaffleY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -26505,17 +26505,17 @@ class WaffleY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -26560,7 +26560,7 @@ class WaffleY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -26613,13 +26613,13 @@ class WaffleY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["waffleY"]
     """
     A vertical waffle mark. The required *y* values should be quantitative, and the optional *x* values should be ordinal.
@@ -26627,7 +26627,7 @@ class WaffleY(TypedDict, closed=True):
     If neither **y1** nor **y2** nor **interval** is specified, an implicit stackY transform is applied and **y** defaults to the identity function, assuming that *data* = [*y₀*, *y₁*, *y₂*, …]. Otherwise if an **interval** is specified, then **y1** and **y2** are derived from **y**, representing the lower and upper bound of the containing interval, respectively. Otherwise, if only one of **y1** or **y2** is specified, the other defaults to **y**, which defaults to zero.
 
     The optional **x** ordinal channel specifies the horizontal position; it is typically bound to the *x* scale, which must be a *band* scale. If the
-    **x** channel is not specified, the bar will span the horizontal extent of the plot’s frame. Because a waffle represents a discrete number of square cells, it may not use all of the available bandwidth.
+    **x** channel is not specified, the bar will span the horizontal extent of the plot's frame. Because a waffle represents a discrete number of square cells, it may not use all of the available bandwidth.
     """
     mix_blend_mode: NotRequired[str | ParamRef]
     """
@@ -26671,7 +26671,7 @@ class WaffleY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     round: NotRequired[bool | ParamRef]
     """If true, round to integers to avoid partial cells."""
     rx: NotRequired[float | str | ParamRef]
@@ -26700,9 +26700,9 @@ class WaffleY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -26710,11 +26710,11 @@ class WaffleY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -26840,7 +26840,7 @@ class BarX(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -26857,17 +26857,17 @@ class BarX(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -26912,7 +26912,7 @@ class BarX(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -26963,13 +26963,13 @@ class BarX(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["barX"]
     """
     A horizontal bar mark. The required *x* values should be quantitative or temporal, and the optional *y* values should be ordinal.
@@ -26977,7 +26977,7 @@ class BarX(TypedDict, closed=True):
     If neither **x1** nor **x2** nor **interval** is specified, an implicit stackX transform is applied and **x** defaults to the identity function, assuming that *data* = [*x₀*, *x₁*, *x₂*, …]. Otherwise if an **interval** is specified, then **x1** and **x2** are derived from **x**, representing the lower and upper bound of the containing interval, respectively. Otherwise, if only one of **x1** or **x2** is specified, the other defaults to **x**, which defaults to zero.
 
     The optional **y** ordinal channel specifies the vertical position; it is typically bound to the *y* scale, which must be a *band* scale. If the
-    **y** channel is not specified, the bar will span the vertical extent of the plot’s frame.
+    **y** channel is not specified, the bar will span the vertical extent of the plot's frame.
 
     If *y* is quantitative, use the rectX mark instead. If *x* is ordinal, use the cell mark instead.
     """
@@ -27021,7 +27021,7 @@ class BarX(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rx: NotRequired[float | str | ParamRef]
     """
     The rounded corner [*x*-radius][1], either in pixels or as a percentage of the rect width. If **rx** is not specified, it defaults to **ry** if present, and otherwise draws square corners.
@@ -27048,9 +27048,9 @@ class BarX(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -27058,11 +27058,11 @@ class BarX(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -27186,7 +27186,7 @@ class BarY(TypedDict, closed=True):
     """
     How to clip the mark; one of:
 
-    - *frame* or true - clip to the plot’s frame (inner area)
+    - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
 
@@ -27203,17 +27203,17 @@ class BarY(TypedDict, closed=True):
     Whether to enable or disable faceting; one of:
 
     - *auto* (default) - automatically determine if this mark should be faceted
-    - *include* (or true) - draw the subset of the mark’s data in the current facet
-    - *exclude* - draw the subset of the mark’s data *not* in the current facet
+    - *include* (or true) - draw the subset of the mark's data in the current facet
+    - *exclude* - draw the subset of the mark's data *not* in the current facet
     - *super* - draw this mark in a single frame that covers all facets
-    - null (or false) - repeat this mark’s data across all facets (*i.e.*, no faceting)
+    - null (or false) - repeat this mark's data across all facets (*i.e.*, no faceting)
 
     When a mark uses *super* faceting, it is not allowed to use position scales (*x*, *y*, *fx*, or *fy*); *super* faceting is intended for decorations, such as labels and legends.
 
     When top-level faceting is used, the default *auto* setting is equivalent to *include* when the mark data is strictly equal to the top-level facet data; otherwise it is equivalent to null. When the *include* or *exclude* facet mode is chosen, the mark data must be parallel to the top-level facet data: the data must have the same length and order. If the data are not parallel, then the wrong data may be shown in each facet. The default
     *auto* therefore requires strict equality (`===`) for safety, and using the facet data as mark data is recommended when using the *exclude* facet mode. (To construct parallel data safely, consider using [*array*.map][1] on the facet data.)
 
-    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark’s data *not* in the current facet.
+    When mark-level faceting is used, the default *auto* setting is equivalent to *include*: the mark will be faceted if either the **fx** or **fy** channel option (or both) is specified. The null or false option will disable faceting, while *exclude* draws the subset of the mark's data *not* in the current facet.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
     """
@@ -27258,7 +27258,7 @@ class BarY(TypedDict, closed=True):
     """
     filter: NotRequired[ChannelValue]
     """
-    Applies a transform to filter the mark’s index according to the given channel values; only truthy values are retained.
+    Applies a transform to filter the mark's index according to the given channel values; only truthy values are retained.
 
     Note that filtering only affects the rendered mark index, not the associated channel values, and has no effect on imputed scale domains.
     """
@@ -27309,13 +27309,13 @@ class BarY(TypedDict, closed=True):
     **marginRight**, **marginBottom**, and **marginLeft**; typically defaults to 0, except for axis marks.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The mark’s bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
+    """The mark's bottom margin; the minimum distance in pixels between the bottom edges of the inner and outer plot area."""
     margin_left: NotRequired[float | ParamRef]
-    """The mark’s left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
+    """The mark's left margin; the minimum distance in pixels between the left edges of the inner and outer plot area."""
     margin_right: NotRequired[float | ParamRef]
-    """The mark’s right margin; the minimum distance in pixels between the right edges of the mark’s inner and outer plot area."""
+    """The mark's right margin; the minimum distance in pixels between the right edges of the mark's inner and outer plot area."""
     margin_top: NotRequired[float | ParamRef]
-    """The mark’s top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
+    """The mark's top margin; the minimum distance in pixels between the top edges of the inner and outer plot area."""
     mark: Literal["barY"]
     """
     A vertical bar mark. The required *y* values should be quantitative or temporal, and the optional *x* values should be ordinal.
@@ -27323,7 +27323,7 @@ class BarY(TypedDict, closed=True):
     If neither **y1** nor **y2** nor **interval** is specified, an implicit stackY transform is applied and **y** defaults to the identity function, assuming that *data* = [*y₀*, *y₁*, *y₂*, …]. Otherwise if an **interval** is specified, then **y1** and **y2** are derived from **y**, representing the lower and upper bound of the containing interval, respectively. Otherwise, if only one of **y1** or **y2** is specified, the other defaults to **y**, which defaults to zero.
 
     The optional **x** ordinal channel specifies the horizontal position; it is typically bound to the *x* scale, which must be a *band* scale. If the
-    **x** channel is not specified, the bar will span the horizontal extent of the plot’s frame.
+    **x** channel is not specified, the bar will span the horizontal extent of the plot's frame.
 
     If *x* is quantitative, use the rectY mark instead. If *y* is ordinal, use the cell mark instead.
     """
@@ -27367,7 +27367,7 @@ class BarY(TypedDict, closed=True):
     [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events
     """
     reverse: NotRequired[bool | ParamRef]
-    """Applies a transform to reverse the order of the mark’s index, say for reverse input order."""
+    """Applies a transform to reverse the order of the mark's index, say for reverse input order."""
     rx: NotRequired[float | str | ParamRef]
     """
     The rounded corner [*x*-radius][1], either in pixels or as a percentage of the rect width. If **rx** is not specified, it defaults to **ry** if present, and otherwise draws square corners.
@@ -27394,9 +27394,9 @@ class BarY(TypedDict, closed=True):
     """
     sort: NotRequired[SortOrder | ChannelDomainSort]
     """
-    Either applies a transform to sort the mark’s index by the specified channel values, or imputes ordinal scale domains from this mark’s channels.
+    Either applies a transform to sort the mark's index by the specified channel values, or imputes ordinal scale domains from this mark's channels.
 
-    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale’s domain from the associated *x* channel values in ascending order:
+    When imputing ordinal scale domains from channel values, the **sort** option is an object whose keys are ordinal scale names such as *x* or *fx*, and whose values are channel names such as *y*, *y1*, or *y2*. For example, to impute the *y* scale's domain from the associated *x* channel values in ascending order:
 
     ```js sort: {y: "x"} ```
 
@@ -27404,11 +27404,11 @@ class BarY(TypedDict, closed=True):
 
     ```js sort: {y: {value: "-x"}} ```
 
-    When sorting the mark’s index, the **sort** option is instead one of:
+    When sorting the mark's index, the **sort** option is instead one of:
 
     - a channel value definition for sorting given values in ascending order
     - a {value, order} object for sorting given values
-    - a {channel, order} object for sorting the named channel’s values
+    - a {channel, order} object for sorting the named channel's values
     """
     stroke: NotRequired[ChannelValueSpec | ParamRef]
     """
@@ -27611,7 +27611,7 @@ class Plot(TypedDict, closed=True):
     aspect_ratio: NotRequired[float | bool | ParamRef | None]
     """
     The desired aspect ratio of the *x* and *y* scales, affecting the default height. Given an aspect ratio of *dx* / *dy*, and assuming that the *x* and
-    *y* scales represent equivalent units (say, degrees Celsius or meters), computes a default height such that *dx* pixels along *x* represents the same variation as *dy* pixels along *y*. Note: when faceting, set the *fx* and *fy* scales’ **round** option to false for an exact aspect ratio.
+    *y* scales represent equivalent units (say, degrees Celsius or meters), computes a default height such that *dx* pixels along *x* represents the same variation as *dy* pixels along *y*. Note: when faceting, set the *fx* and *fy* scales' **round** option to false for an exact aspect ratio.
     """
     axis: NotRequired[Literal["top", "right", "bottom", "left", "both"] | bool | ParamRef | None]
     """
@@ -27631,7 +27631,7 @@ class Plot(TypedDict, closed=True):
     clip: NotRequired[Literal["frame", "sphere"] | bool | ParamRef | None]
     """The default clip for all marks."""
     color_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* and *diverging-log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* and *diverging-log* scales only."""
     color_clamp: NotRequired[bool | ParamRef]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -27641,11 +27641,11 @@ class Plot(TypedDict, closed=True):
     For continuous scales only.
     """
     color_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* and *diverging-symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* and *diverging-symlog* scales only."""
     color_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
+    """The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
     color_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* and *diverging-pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* and *diverging-pow* scales only."""
     color_interpolate: NotRequired[Interpolate | ParamRef]
     """How to interpolate color range values. For quantitative scales only. This attribute can be used to specify a color space for interpolating colors specified in the **colorRange**."""
     color_label: NotRequired[str | ParamRef | None]
@@ -27671,10 +27671,10 @@ class Plot(TypedDict, closed=True):
     *diverging-log* scales. By default, diverging scales are symmetric around the pivot; see the **symmetric** option.
     """
     color_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**. For other ordinal data, it is an array (or iterable) of output values in the same order as the **domain**."""
+    """The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**. For other ordinal data, it is an array (or iterable) of output values in the same order as the **domain**."""
     color_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**.
     """
     color_scale: NotRequired[ColorScaleType | ParamRef | None]
@@ -27743,12 +27743,12 @@ class Plot(TypedDict, closed=True):
     If *both*, an implicit axis will be rendered on both sides of the plot (*top* and *bottom* for *fx*). If null, the implicit axis is suppressed.
     """
     fx_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s inputs (abstract values). By default inferred from channel values. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
+    """The extent of the scale's inputs (abstract values). By default inferred from channel values. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
     fx_font_variant: NotRequired[str | ParamRef]
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
     fx_grid: NotRequired[bool | str | Interval | Sequence[Any] | ParamRef]
     """
-    Whether to show a grid aligned with the scale’s ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
+    Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
     For axes only.
     """
@@ -27769,7 +27769,7 @@ class Plot(TypedDict, closed=True):
     """
     fx_label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -27789,10 +27789,10 @@ class Plot(TypedDict, closed=True):
     fx_padding_outer: NotRequired[float | ParamRef]
     """For a *band* scale, how much of the range to reserve to inset first and last bands."""
     fx_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and the plot’s dimensions. For ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
+    """The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and the plot's dimensions. For ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
     fx_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**.
     """
     fx_round: NotRequired[bool | ParamRef]
@@ -27848,12 +27848,12 @@ class Plot(TypedDict, closed=True):
     If *both*, an implicit axis will be rendered on both sides of the plot (*left* and *right* for *fy*). If null, the implicit axis is suppressed.
     """
     fy_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s inputs (abstract values). By default inferred from channel values. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
+    """The extent of the scale's inputs (abstract values). By default inferred from channel values. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
     fy_font_variant: NotRequired[str | ParamRef]
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
     fy_grid: NotRequired[bool | str | Interval | Sequence[Any] | ParamRef]
     """
-    Whether to show a grid aligned with the scale’s ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
+    Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
     For axes only.
     """
@@ -27874,7 +27874,7 @@ class Plot(TypedDict, closed=True):
     """
     fy_label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -27894,10 +27894,10 @@ class Plot(TypedDict, closed=True):
     fy_padding_outer: NotRequired[float | ParamRef]
     """For a *band* scale, how much of the range to reserve to inset first and last bands."""
     fy_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and the plot’s dimensions. For ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
+    """The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and the plot's dimensions. For ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
     fy_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**.
     """
     fy_round: NotRequired[bool | ParamRef]
@@ -27933,19 +27933,19 @@ class Plot(TypedDict, closed=True):
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     grid: NotRequired[bool | str | ParamRef]
     """
-    Whether to show a grid aligned with the scale’s ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
+    Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
     For axes only.
     """
     height: NotRequired[float | ParamRef]
-    """The outer height of the plot in pixels, including margins. The default depends on the plot’s scales, and the plot’s width if an aspectRatio is specified. For example, if the *y* scale is linear and there is no *fy* scale, it might be 396."""
+    """The outer height of the plot in pixels, including margins. The default depends on the plot's scales, and the plot's width if an aspectRatio is specified. For example, if the *y* scale is linear and there is no *fy* scale, it might be 396."""
     inset: NotRequired[float | ParamRef]
     """
     Shorthand to set the same default for all four insets: **insetTop**,
     **insetRight**, **insetBottom**, and **insetLeft**. All insets typically default to zero, though not always (say when using bin transform). A positive inset reduces effective area, while a negative inset increases it.
     """
     length_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* scales only."""
     length_clamp: NotRequired[Any]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -27955,15 +27955,15 @@ class Plot(TypedDict, closed=True):
     For continuous scales only.
     """
     length_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
     length_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
+    The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
 
     Linear scales have a default domain of [0, 1]. Log scales have a default domain of [1, 10] and cannot include zero. Radius scales have a default domain from 0 to the median first quartile of associated channels. Length have a default domain from 0 to the median median of associated channels. Opacity scales have a default domain from 0 to the maximum value of associated channels.
     """
     length_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     length_nice: NotRequired[bool | float | Interval | ParamRef]
     """
     If true, or a tick count or interval, extend the domain to nice round values. Defaults to 1, 2 or 5 times a power of 10 for *linear* scales, and nice time intervals for *utc* and *time* scales. Pass an interval such as
@@ -27975,7 +27975,7 @@ class Plot(TypedDict, closed=True):
     """If true, shorthand for a transform suitable for percentages, mapping proportions in [0, 1] to [0, 100]."""
     length_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and for position scales, the plot’s dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
+    The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and for position scales, the plot's dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
 
     Length scales have a default range of [0, 12].
     """
@@ -27990,22 +27990,22 @@ class Plot(TypedDict, closed=True):
     margin: NotRequired[float | ParamRef]
     """
     Shorthand to set the same default for all four margins: **marginTop**,
-    **marginRight**, **marginBottom**, and **marginLeft**. Otherwise, the default margins depend on the maximum margins of the plot’s marks. While most marks default to zero margins (because they are drawn inside the chart area), Plot’s axis marks have non-zero default margins.
+    **marginRight**, **marginBottom**, and **marginLeft**. Otherwise, the default margins depend on the maximum margins of the plot's marks. While most marks default to zero margins (because they are drawn inside the chart area), Plot's axis marks have non-zero default margins.
     """
     margin_bottom: NotRequired[float | ParamRef]
-    """The bottom margin; the distance in pixels between the bottom edges of the inner and outer plot area. Defaults to the maximum bottom margin of the plot’s marks."""
+    """The bottom margin; the distance in pixels between the bottom edges of the inner and outer plot area. Defaults to the maximum bottom margin of the plot's marks."""
     margin_left: NotRequired[float | ParamRef]
-    """The left margin; the distance in pixels between the left edges of the inner and outer plot area. Defaults to the maximum left margin of the plot’s marks."""
+    """The left margin; the distance in pixels between the left edges of the inner and outer plot area. Defaults to the maximum left margin of the plot's marks."""
     margin_right: NotRequired[float | ParamRef]
-    """The right margin; the distance in pixels between the right edges of the inner and outer plot area. Defaults to the maximum right margin of the plot’s marks."""
+    """The right margin; the distance in pixels between the right edges of the inner and outer plot area. Defaults to the maximum right margin of the plot's marks."""
     margin_top: NotRequired[float | ParamRef]
-    """The top margin; the distance in pixels between the top edges of the inner and outer plot area. Defaults to the maximum top margin of the plot’s marks."""
+    """The top margin; the distance in pixels between the top edges of the inner and outer plot area. Defaults to the maximum top margin of the plot's marks."""
     margins: NotRequired[Margins]
     """A shorthand object notation for setting multiple margin values. The object keys are margin names (top, right, etc)."""
     name: NotRequired[str]
     """A unique name for the plot. The name is used by standalone legend components to to lookup the plot and access scale mappings."""
     opacity_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* scales only."""
     opacity_clamp: NotRequired[bool | ParamRef]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -28015,15 +28015,15 @@ class Plot(TypedDict, closed=True):
     For continuous scales only.
     """
     opacity_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
     opacity_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
+    The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
 
     Opacity scales have a default domain from 0 to the maximum value of associated channels.
     """
     opacity_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     opacity_label: NotRequired[str | ParamRef | None]
     """
     A textual label to show on the axis or legend; if null, show no label. By default the scale label is inferred from channel definitions, possibly with an arrow (↑, →, ↓, or ←) to indicate the direction of increasing value.
@@ -28041,13 +28041,13 @@ class Plot(TypedDict, closed=True):
     """If true, shorthand for a transform suitable for percentages, mapping proportions in [0, 1] to [0, 100]."""
     opacity_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s outputs (visual values).
+    The extent of the scale's outputs (visual values).
 
     Opacity scales have a default range of [0, 1].
     """
     opacity_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**.
     """
     opacity_scale: NotRequired[ContinuousScaleType | ParamRef | None]
@@ -28077,19 +28077,19 @@ class Plot(TypedDict, closed=True):
     """An array of plot marks, interactors, or legends. Marks are graphical elements that make up plot layers. Unless otherwise configured, interactors will use the nearest previous mark as a basis for which data fields to select."""
     projection_clip: NotRequired[bool | float | Literal["frame"] | ParamRef | None]
     """
-    The projection’s clipping method; one of:
+    The projection's clipping method; one of:
 
-    - *frame* or true (default) - clip to the plot’s frame (including margins but not insets)
+    - *frame* or true (default) - clip to the plot's frame (including margins but not insets)
     - a number - clip to a circle of the given radius in degrees centered around the origin
     - null or false - do not clip
 
-    Some projections (such as [*armadillo*][1] and [*berghaus*][2]) require spherical clipping: in that case set the marks’ **clip** option to
+    Some projections (such as [*armadillo*][1] and [*berghaus*][2]) require spherical clipping: in that case set the marks' **clip** option to
     *sphere*.
 
     [1]: https://observablehq.com/@d3/armadillo [2]: https://observablehq.com/@d3/berghaus-star
     """
     projection_domain: NotRequired[Mapping[str, Any] | ParamRef]
-    """A GeoJSON object to fit to the plot’s frame (minus insets); defaults to a Sphere for spherical projections (outline of the the whole globe)."""
+    """A GeoJSON object to fit to the plot's frame (minus insets); defaults to a Sphere for spherical projections (outline of the the whole globe)."""
     projection_inset: NotRequired[float | ParamRef]
     """Shorthand to set the same default for all four projection insets. All insets typically default to zero, though not always. A positive inset reduces effective area, while a negative inset increases it."""
     projection_inset_bottom: NotRequired[float | ParamRef]
@@ -28108,7 +28108,7 @@ class Plot(TypedDict, closed=True):
     """
     projection_precision: NotRequired[float | ParamRef]
     """
-    The projection’s [sampling threshold][1].
+    The projection's [sampling threshold][1].
 
     [1]: https://d3js.org/d3-geo/projection#projection_precision
     """
@@ -28121,10 +28121,10 @@ class Plot(TypedDict, closed=True):
     - a named built-in projection such as *albers-usa*
     - null, for no projection
 
-    Named projections are scaled and translated to fit the **domain** to the plot’s frame (minus insets).
+    Named projections are scaled and translated to fit the **domain** to the plot's frame (minus insets).
     """
     r_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* scales only."""
     r_clamp: NotRequired[Any]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -28134,15 +28134,15 @@ class Plot(TypedDict, closed=True):
     For continuous scales only.
     """
     r_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
     r_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
+    The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
 
     Radius scales have a default domain from 0 to the median first quartile of associated channels.
     """
     r_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     r_label: NotRequired[str | ParamRef | None]
     """A textual label to show on the axis or legend; if null, show no label. By default the scale label is inferred from channel definitions, possibly with an arrow (↑, →, ↓, or ←) to indicate the direction of increasing value."""
     r_nice: NotRequired[bool | float | Interval | ParamRef]
@@ -28156,7 +28156,7 @@ class Plot(TypedDict, closed=True):
     """If true, shorthand for a transform suitable for percentages, mapping proportions in [0, 1] to [0, 100]."""
     r_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and for position scales, the plot’s dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
+    The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and for position scales, the plot's dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
 
     Radius scales have a default range of [0, 3].
     """
@@ -28170,15 +28170,15 @@ class Plot(TypedDict, closed=True):
     """
     style: NotRequired[str | CSSStyles | ParamRef | None]
     """
-    Custom styles to override Plot’s defaults. Styles may be specified either as a string of inline styles (*e.g.*, `"color: red;"`, in the same fashion as assigning [*element*.style][1]) or an object of properties (*e.g.*, `{color: "red"}`, in the same fashion as assigning [*element*.style properties][2]). Note that unitless numbers ([quirky lengths][3]) such as `{padding: 20}` may not supported by some browsers; you should instead specify a string with units such as `{padding: "20px"}`. By default, the returned plot has a max-width of 100%, and the system-ui font. Plot’s marks and axes default to [currentColor][4], meaning that they will inherit the surrounding content’s color.
+    Custom styles to override Plot's defaults. Styles may be specified either as a string of inline styles (*e.g.*, `"color: red;"`, in the same fashion as assigning [*element*.style][1]) or an object of properties (*e.g.*, `{color: "red"}`, in the same fashion as assigning [*element*.style properties][2]). Note that unitless numbers ([quirky lengths][3]) such as `{padding: 20}` may not supported by some browsers; you should instead specify a string with units such as `{padding: "20px"}`. By default, the returned plot has a max-width of 100%, and the system-ui font. Plot's marks and axes default to [currentColor][4], meaning that they will inherit the surrounding content's color.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style [2]: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration [3]: https://www.w3.org/TR/css-values-4/#deprecated-quirky-length [4]: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#currentcolor_keyword
     """
     symbol_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s inputs (abstract values). By default inferred from channel values. As symbol scales are discrete, the domain is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
+    """The extent of the scale's inputs (abstract values). By default inferred from channel values. As symbol scales are discrete, the domain is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
     symbol_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and for position scales, the plot’s dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
+    The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and for position scales, the plot's dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For other ordinal data, such as for a *color* scale, it is an array (or iterable) of output values in the same order as the **domain**.
 
     Symbol scales have a default range of categorical symbols; the choice of symbols depends on whether the associated dot mark is filled or stroked.
     """
@@ -28212,7 +28212,7 @@ class Plot(TypedDict, closed=True):
     If *both*, an implicit axis will be rendered on both sides of the plot (*top* and *bottom* for *x*). If null, the implicit axis is suppressed.
     """
     x_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* scales only."""
     x_clamp: NotRequired[bool | ParamRef]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -28222,20 +28222,20 @@ class Plot(TypedDict, closed=True):
     For continuous scales only.
     """
     x_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
     x_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
+    The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
 
     Linear scales have a default domain of [0, 1]. Log scales have a default domain of [1, 10] and cannot include zero. Radius scales have a default domain from 0 to the median first quartile of associated channels. Length have a default domain from 0 to the median median of associated channels. Opacity scales have a default domain from 0 to the maximum value of associated channels.
     """
     x_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     x_font_variant: NotRequired[str | ParamRef]
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
     x_grid: NotRequired[bool | str | Interval | Sequence[Any] | ParamRef]
     """
-    Whether to show a grid aligned with the scale’s ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
+    Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
     For axes only.
     """
@@ -28256,7 +28256,7 @@ class Plot(TypedDict, closed=True):
     """
     x_label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -28287,10 +28287,10 @@ class Plot(TypedDict, closed=True):
     x_percent: NotRequired[bool | ParamRef]
     """If true, shorthand for a transform suitable for percentages, mapping proportions in [0, 1] to [0, 100]."""
     x_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
-    """The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and for position scales, the plot’s dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
+    """The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and for position scales, the plot's dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale."""
     x_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**.
     """
     x_round: NotRequired[bool | ParamRef]
@@ -28303,7 +28303,7 @@ class Plot(TypedDict, closed=True):
     """
     The *x* scale type, affecting how the scale encodes abstract data, say by applying a mathematical transformation. If null, the scale is disabled.
 
-    For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales, *categorical* for color scales, and otherwise *ordinal*. However, the radius scale defaults to *sqrt*, and the length and opacity scales default to *linear*; these scales are intended for quantitative data. The plot’s marks may also impose a scale type; for example, the barY mark requires that *x* is a *band* scale.
+    For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales, *categorical* for color scales, and otherwise *ordinal*. However, the radius scale defaults to *sqrt*, and the length and opacity scales default to *linear*; these scales are intended for quantitative data. The plot's marks may also impose a scale type; for example, the barY mark requires that *x* is a *band* scale.
     """
     x_tick_format: NotRequired[str | ParamRef | None]
     """
@@ -28360,7 +28360,7 @@ class Plot(TypedDict, closed=True):
     If *both*, an implicit axis will be rendered on both sides of the plot (*left* and *right* for *y*). If null, the implicit axis is suppressed.
     """
     y_base: NotRequired[float | ParamRef]
-    """A log scale’s base; defaults to 10. Does not affect the scale’s encoding, but rather the default ticks. For *log* scales only."""
+    """A log scale's base; defaults to 10. Does not affect the scale's encoding, but rather the default ticks. For *log* scales only."""
     y_clamp: NotRequired[bool | ParamRef]
     """
     If true, values below the domain minimum are treated as the domain minimum, and values above the domain maximum are treated as the domain maximum.
@@ -28370,20 +28370,20 @@ class Plot(TypedDict, closed=True):
     For continuous scales only.
     """
     y_constant: NotRequired[float | ParamRef]
-    """A symlog scale’s constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
+    """A symlog scale's constant, expressing the magnitude of the linear region around the origin; defaults to 1. For *symlog* scales only."""
     y_domain: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
+    The extent of the scale's inputs (abstract values). By default inferred from channel values. For continuous data (numbers and dates), it is typically [*min*, *max*]; it can be [*max*, *min*] to reverse the scale. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order.
 
     Linear scales have a default domain of [0, 1]. Log scales have a default domain of [1, 10] and cannot include zero.
     """
     y_exponent: NotRequired[float | ParamRef]
-    """A power scale’s exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
+    """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     y_font_variant: NotRequired[str | ParamRef]
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
     y_grid: NotRequired[bool | str | Interval | Sequence[Any] | ParamRef]
     """
-    Whether to show a grid aligned with the scale’s ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
+    Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
     For axes only.
     """
@@ -28404,7 +28404,7 @@ class Plot(TypedDict, closed=True):
     """
     y_label_anchor: NotRequired[Literal["top", "right", "bottom", "left", "center"] | ParamRef]
     """
-    Where to place the axis **label** relative to the plot’s frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
+    Where to place the axis **label** relative to the plot's frame. For vertical position scales (*y* and *fy*), may be *top*, *bottom*, or
     *center*; for horizontal position scales (*x* and *fx*), may be *left*,
     *right*, or *center*. Defaults to *center* for ordinal scales (including
     *fx* and *fy*), and otherwise *top* for *y*, and *right* for *x*.
@@ -28436,12 +28436,12 @@ class Plot(TypedDict, closed=True):
     """If true, shorthand for a transform suitable for percentages, mapping proportions in [0, 1] to [0, 100]."""
     y_range: NotRequired[Sequence[Any] | Fixed | ParamRef]
     """
-    The extent of the scale’s outputs (visual values). By default inferred from the scale’s **type** and **domain**, and for position scales, the plot’s dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*,
+    The extent of the scale's outputs (visual values). By default inferred from the scale's **type** and **domain**, and for position scales, the plot's dimensions. For continuous data (numbers and dates), and for ordinal position scales (*point* and *band*), it is typically [*min*,
     *max*]; it can be [*max*, *min*] to reverse the scale.
     """
     y_reverse: NotRequired[bool | ParamRef]
     """
-    Whether to reverse the scale’s encoding; equivalent to reversing either the
+    Whether to reverse the scale's encoding; equivalent to reversing either the
     **domain** or **range**. Note that by default, when the *y* scale is continuous, the *max* value points to the top of the screen, whereas ordinal values are ranked from top to bottom.
     """
     y_round: NotRequired[bool | ParamRef]
@@ -28454,7 +28454,7 @@ class Plot(TypedDict, closed=True):
     """
     The *y* scale type, affecting how the scale encodes abstract data, say by applying a mathematical transformation. If null, the scale is disabled.
 
-    For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales,  The plot’s marks may also impose a scale type; for example, the barY mark requires that *x* is a *band* scale.
+    For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales,  The plot's marks may also impose a scale type; for example, the barY mark requires that *x* is a *band* scale.
     """
     y_tick_format: NotRequired[str | ParamRef | None]
     """

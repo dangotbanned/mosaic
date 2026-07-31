@@ -54,6 +54,7 @@ Sadly, this doesn't cover intersecting with a union.
 - Union each of those to define `Spec`
 """
 
+import functools
 from collections import deque
 from collections.abc import Sequence
 from typing import Annotated as A, Any, Final, Literal as L, LiteralString, final
@@ -95,6 +96,23 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
 
     def is_ref(self) -> bool:
         return bool(self.ref)
+
+    def __post_init__(self) -> None:
+        if doc := self.description:
+            self.description = _fix_ambiguous_unicode_characters(doc)
+
+
+@functools.lru_cache(1024)
+def _fix_ambiguous_unicode_characters(string: str, /) -> str:
+    """Duplicated from [altair].
+
+    These characters are all over `mosaic/packages/vgplot/spec/src/`, so it seems intentional.
+
+    [altair]: https://github.com/vega/altair/blob/fab318c6c54db07849ec90437efdf20ad431e3a5/tools/markup.py#L133-L134
+    """
+    string = string.replace("’", "'")  # ruff: ignore[ambiguous-unicode-character-string]
+    string = string.replace("–", "-")  # ruff: ignore[ambiguous-unicode-character-string]
+    return string  # ruff: ignore[unnecessary-assign]
 
 
 class _RecursePropsUnionBase(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
