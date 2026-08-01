@@ -93,6 +93,8 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
         name="additionalProperties", default=True
     )
     required: Sequence[str] = field(default_factory=list)
+    x_base_open: bool = field(name="x-base-open", default=False)
+    """An extension field marker, to request an extra base class during codegen."""
 
     def is_ref(self) -> bool:
         return bool(self.ref)
@@ -197,7 +199,9 @@ class InputSchema(base.Struct):
         for idx, member in enumerate(union.any_of, 1):
             member_name = fmt.format(target=target, idx=idx)
             member_refs.append(member.new_ref(member_name))
-            if err := self.try_insert(member_name, member.__replace__(description=doc)):
+            if err := self.try_insert(
+                member_name, member.__replace__(description=doc, x_base_open=True)
+            ):
                 raise err
         self.insert(target, union.__replace__(any_of=member_refs))
 

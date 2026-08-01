@@ -13244,7 +13244,7 @@ class Density(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class DensityX1(TypedDict, closed=True):
+class _DensityX1Open(TypedDict, total=False):
     """The densityX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -13571,7 +13571,10 @@ class DensityX1(TypedDict, closed=True):
     """
 
 
-class DensityX2(TypedDict, closed=True):
+class DensityX1(_DensityX1Open, closed=True): ...
+
+
+class _DensityX2Open(TypedDict, total=False):
     """The densityX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -13922,7 +13925,10 @@ class DensityX2(TypedDict, closed=True):
     """
 
 
-class DensityX3(TypedDict, closed=True):
+class DensityX2(_DensityX2Open, closed=True): ...
+
+
+class _DensityX3Open(TypedDict, total=False):
     """The densityX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -14216,7 +14222,10 @@ class DensityX3(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class DensityX4(TypedDict, closed=True):
+class DensityX3(_DensityX3Open, closed=True): ...
+
+
+class _DensityX4Open(TypedDict, total=False):
     """The densityX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -14579,7 +14588,10 @@ class DensityX4(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class DensityY1(TypedDict, closed=True):
+class DensityX4(_DensityX4Open, closed=True): ...
+
+
+class _DensityY1Open(TypedDict, total=False):
     """The densityY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -14906,7 +14918,10 @@ class DensityY1(TypedDict, closed=True):
     """
 
 
-class DensityY2(TypedDict, closed=True):
+class DensityY1(_DensityY1Open, closed=True): ...
+
+
+class _DensityY2Open(TypedDict, total=False):
     """The densityY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -15257,7 +15272,10 @@ class DensityY2(TypedDict, closed=True):
     """
 
 
-class DensityY3(TypedDict, closed=True):
+class DensityY2(_DensityY2Open, closed=True): ...
+
+
+class _DensityY3Open(TypedDict, total=False):
     """The densityY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -15551,7 +15569,10 @@ class DensityY3(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class DensityY4(TypedDict, closed=True):
+class DensityY3(_DensityY3Open, closed=True): ...
+
+
+class _DensityY4Open(TypedDict, total=False):
     """The densityY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -15912,6 +15933,9 @@ class DensityY4(TypedDict, closed=True):
     """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
+
+
+class DensityY4(_DensityY4Open, closed=True): ...
 
 
 class Dot(TypedDict, closed=True):
