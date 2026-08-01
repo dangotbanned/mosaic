@@ -1,50 +1,50 @@
 # Todo
 
-[datamodel-code-generator issue]: https://github.com/koxudaxi/datamodel-code-generator/issues/new?template=feature_request.md
+Here's a big list of things to do/known issues
 
-- [x] Experiment with docs config
-  - [x] **Fixed** `ParamRef` being "deduplicated" to `DataQuery`
-- [ ] Try to split up output into modules [^1]
-  - **14k** LOC without docs
-  - ~~**53k**~~ **28k** LOC with docs
-    - After removing `Spec`
+## General
+
+- [x] Generate `TypedDict`s from the schema
+- [x] Generate docstrings
 - [x] Generate an `__all__`
   - [x] `_gen`
   - [x] `mosaic_spec`
-- [ ] Fix `Spec1` - `Spec81`
-  - [x] Caused by a huge intersection type `Spec = SpecHead & Component`
+- [x] Use `.py` for target output instead of `.pyi`
+- [ ] Split up `mosaic.py` into multiple modules [^1]
+  - **30k** LOC with docs
+- [ ] Fix emitting 81 version of `Spec`
+  - [x] Caused by a huge intersection type `Spec = SpecHead & Component` (see [explanation](https://github.com/dangotbanned/mosaic/blob/b3793004b483dbdfff0c6e390f9cc24fcbf897a7/packages/vgplot/spec-python/tools/models/source.py#L1-L55))
   - [x] Remove `Spec` from `mosaic.json`
-  - [ ] Fix `closed=True` on base class
-- [ ] Open a [datamodel-code-generator issue] about preference for `total=False` instead of **5129x** `NotRequired`
-  - When most are `NotRequired`, the important bit is which one's are `Required`
-- [x] Using `.py` for target output
-  - Needed to use stubs when functional syntax prevented forward refs
-  - Will need to add `typing_extensions` dependency
-- [ ] Ordering of `TypeAlias`s
-  - Possibly move to another file, instead of sctattered between `TypedDict` defs
+    - Reduced `mosaic.py` **53k** -> **28k** LOC
+  - [ ] Fix `closed=True` on base class creating type errors
+- [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between `TypedDict` defs
 - [ ] Add some tests once the top-level namespace starts stabilizing
 - [ ] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
   - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
-  - [ ] Use `_typing_compat.py` imports for codegen
+  - [ ] Use `_typing_compat.py` imports for codegen ([blocked by](https://github.com/koxudaxi/datamodel-code-generator/issues/3681))
+
+[^1]: Huge files kill language servers. Having to disable pylance because it is too slow now
+
+## Refactor
+
 - [x] Use `msgspec` for models in `schema_mod`
   - [x] Input json schema
   - [x] Replace non-msgspec pipeline
-- [x] Split up `scripts/` [^2]
-  - [x] `tools/`
-    - [x] `codemod/`
-    - [x] `codegen/`
-    - [x] `models/`
-    - [x] `serde.py`
-    - [x] `fs.py`
-  - [x] `scripts/`
-    - Everything that does one job, on demand
+- [x] Split up `scripts/`
+  - [x] `tools/` (reusable)
+  - [x] `scripts/` (Everything that does one job, on demand)
 
-[^1]: Huge files kill language servers. Having to disable pylance because it is too slow now
-[^2]: There's more than scripts in there
+## `datamodel-code-generator` feature requests
+
+Things that should be easiest to fix upstream in `datamodel-code-generator`
+
+- [ ] [Support (`total=False`, `Required`) in `TypedDict` (#3680)](https://github.com/koxudaxi/datamodel-code-generator/issues/3680)
+- [ ] [Support overriding default imports (#3681)](https://github.com/koxudaxi/datamodel-code-generator/issues/3681)
+- [ ] [Support configuring `--use-type-alias` behavior (#3682)](https://github.com/koxudaxi/datamodel-code-generator/issues/3682)
 
 ## `mosaic-spec` feedback
 
-Things that should be easiest to fix upstream
+Things that should be easiest to fix upstream in Mosaic
 
 - [ ] Avoid anonymous literal/enums
 - [ ] Generally, try to provide names for complex, repeated types
