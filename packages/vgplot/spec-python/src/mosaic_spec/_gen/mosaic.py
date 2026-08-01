@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Any, Literal, TypeAlias, Union
+from typing import Any, Literal, Union
 
 from typing_extensions import NotRequired, TypedDict
+
+from mosaic_spec._typing_compat import TypeAliasType
 
 
 class AggregateExpression(TypedDict, closed=True):
@@ -18,9 +20,10 @@ class AggregateExpression(TypedDict, closed=True):
     """A label for this expression, for example to label a plot axis."""
 
 
-BinInterval: TypeAlias = Literal[
-    "date", "number", "millisecond", "second", "minute", "hour", "day", "month", "year"
-]
+BinInterval = TypeAliasType(
+    "BinInterval",
+    Literal["date", "number", "millisecond", "second", "minute", "hour", "day", "month", "year"],
+)
 """Binning interval names."""
 
 
@@ -552,70 +555,75 @@ class CSSStyles(TypedDict, extra_items=str):
     zoom: NotRequired[str]
 
 
-Lo: TypeAlias = float
+Lo = TypeAliasType("Lo", float)
 
 
-ChannelName: TypeAlias = Literal[
-    "ariaLabel",
-    "fill",
-    "fillOpacity",
-    "fontSize",
-    "fx",
-    "fy",
-    "geometry",
-    "height",
-    "href",
-    "length",
-    "opacity",
-    "path",
-    "r",
-    "rotate",
-    "src",
-    "stroke",
-    "strokeOpacity",
-    "strokeWidth",
-    "symbol",
-    "text",
-    "title",
-    "weight",
-    "width",
-    "x",
-    "x1",
-    "x2",
-    "y",
-    "y1",
-    "y2",
-    "z",
-]
+ChannelName = TypeAliasType(
+    "ChannelName",
+    Literal[
+        "ariaLabel",
+        "fill",
+        "fillOpacity",
+        "fontSize",
+        "fx",
+        "fy",
+        "geometry",
+        "height",
+        "href",
+        "length",
+        "opacity",
+        "path",
+        "r",
+        "rotate",
+        "src",
+        "stroke",
+        "strokeOpacity",
+        "strokeWidth",
+        "symbol",
+        "text",
+        "title",
+        "weight",
+        "width",
+        "x",
+        "x1",
+        "x2",
+        "y",
+        "y1",
+        "y2",
+        "z",
+    ],
+)
 """The set of known channel names."""
 
 
-ColorScaleType: TypeAlias = Literal[
-    "linear",
-    "pow",
-    "sqrt",
-    "log",
-    "symlog",
-    "utc",
-    "time",
-    "point",
-    "band",
-    "ordinal",
-    "sequential",
-    "cyclical",
-    "diverging",
-    "diverging-log",
-    "diverging-pow",
-    "diverging-sqrt",
-    "diverging-symlog",
-    "categorical",
-    "threshold",
-    "quantile",
-    "quantize",
-    "identity",
-]
-"""
-The supported scale types for *color* encodings.
+ColorScaleType = TypeAliasType(
+    "ColorScaleType",
+    Literal[
+        "linear",
+        "pow",
+        "sqrt",
+        "log",
+        "symlog",
+        "utc",
+        "time",
+        "point",
+        "band",
+        "ordinal",
+        "sequential",
+        "cyclical",
+        "diverging",
+        "diverging-log",
+        "diverging-pow",
+        "diverging-sqrt",
+        "diverging-symlog",
+        "categorical",
+        "threshold",
+        "quantile",
+        "quantize",
+        "identity",
+    ],
+)
+"""The supported scale types for *color* encodings.
 
 For quantitative data, one of:
 
@@ -650,11 +658,11 @@ For color, one of:
 
 Other scale types:
 
-- *identity* - do not transform values when encoding
-"""
+- *identity* - do not transform values when encoding"""
 
 
-ColorScheme: TypeAlias = (
+ColorScheme = TypeAliasType(
+    "ColorScheme",
     Literal[
         "Accent",
         "Category10",
@@ -708,10 +716,9 @@ ColorScheme: TypeAlias = (
         "Rainbow",
         "Sinebow",
     ]
-    | Mapping[str, Any]
+    | Mapping[str, Any],
 )
-"""
-The built-in color schemes. For categorical data, one of:
+"""The built-in color schemes. For categorical data, one of:
 
 - *Accent* - eight colors
 - *Category10* - ten colors
@@ -772,8 +779,7 @@ For sequential data, one of:
 For cyclical data, one of:
 
 - *Rainbow* (default) - the less-angry rainbow color scheme
-- *Sinebow* - Bumgardner and Loyd's “sinebow” scheme
-"""
+- *Sinebow* - Bumgardner and Loyd's “sinebow” scheme"""
 
 
 class Config(TypedDict):
@@ -782,11 +788,11 @@ class Config(TypedDict):
     extensions: NotRequired[str | Sequence[str]]
 
 
-ContinuousScaleType: TypeAlias = Literal[
-    "linear", "pow", "sqrt", "log", "symlog", "utc", "time", "identity"
-]
-"""
-The supported scale types for continuous encoding channels.
+ContinuousScaleType = TypeAliasType(
+    "ContinuousScaleType",
+    Literal["linear", "pow", "sqrt", "log", "symlog", "utc", "time", "identity"],
+)
+"""The supported scale types for continuous encoding channels.
 
 For quantitative data, one of:
 
@@ -803,36 +809,38 @@ For temporal data, one of:
 
 Other scale types:
 
-- *identity* - do not transform values when encoding
-"""
+- *identity* - do not transform values when encoding"""
 
 
-CurveName: TypeAlias = Literal[
-    "basis",
-    "basis-closed",
-    "basis-open",
-    "bundle",
-    "bump-x",
-    "bump-y",
-    "cardinal",
-    "cardinal-closed",
-    "cardinal-open",
-    "catmull-rom",
-    "catmull-rom-closed",
-    "catmull-rom-open",
-    "linear",
-    "linear-closed",
-    "monotone-x",
-    "monotone-y",
-    "natural",
-    "step",
-    "step-after",
-    "step-before",
-]
+CurveName = TypeAliasType(
+    "CurveName",
+    Literal[
+        "basis",
+        "basis-closed",
+        "basis-open",
+        "bundle",
+        "bump-x",
+        "bump-y",
+        "cardinal",
+        "cardinal-closed",
+        "cardinal-open",
+        "catmull-rom",
+        "catmull-rom-closed",
+        "catmull-rom-open",
+        "linear",
+        "linear-closed",
+        "monotone-x",
+        "monotone-y",
+        "natural",
+        "step",
+        "step-after",
+        "step-before",
+    ],
+)
 """The built-in curve implementations."""
 
 
-DataArray: TypeAlias = Sequence[Mapping[str, Any]]
+DataArray = TypeAliasType("DataArray", Sequence[Mapping[str, Any]])
 """An inline array of data objects to treat as JSON data."""
 
 
@@ -957,7 +965,7 @@ class DataParquet(TypedDict, closed=True):
     """A filter (WHERE clause) to apply upon load. Only rows that pass the filter are included."""
 
 
-DataQuery: TypeAlias = str
+DataQuery = TypeAliasType("DataQuery", str)
 """A SQL query defining a new temporary database table."""
 
 
@@ -1026,49 +1034,48 @@ class Days(TypedDict, closed=True):
     """A date/time interval in units of days."""
 
 
-DiscreteScaleType: TypeAlias = Literal["ordinal", "identity"]
-"""
-The supported scale types for discrete encoding channels. One of:
+DiscreteScaleType = TypeAliasType("DiscreteScaleType", Literal["ordinal", "identity"])
+"""The supported scale types for discrete encoding channels. One of:
 
 - *ordinal* - from discrete inputs to discrete outputs
-- *identity* - do not transform values when encoding
-"""
+- *identity* - do not transform values when encoding"""
 
 
-Fixed: TypeAlias = Literal["Fixed"]
+Fixed = TypeAliasType("Fixed", Literal["Fixed"])
 """A symbol indicating a fixed scale domain. A fixed domain is initially determined from data as usual, but subsequently "fixed" so that it does not change over subsequent interactive filtering, ensring stable comparisons."""
 
 
-FrameAnchor: TypeAlias = Literal[
-    "middle",
-    "top-left",
-    "top",
-    "top-right",
-    "right",
-    "bottom-right",
-    "bottom",
-    "bottom-left",
-    "left",
-]
-"""
-How to anchor a mark relative to the plot's frame; one of:
+FrameAnchor = TypeAliasType(
+    "FrameAnchor",
+    Literal[
+        "middle",
+        "top-left",
+        "top",
+        "top-right",
+        "right",
+        "bottom-right",
+        "bottom",
+        "bottom-left",
+        "left",
+    ],
+)
+"""How to anchor a mark relative to the plot's frame; one of:
 
 - *middle* - centered in the middle
 - in the middle of one of the edges: *top*, *right*, *bottom*, *left*
-- in one of the corners: *top-left*, *top-right*, *bottom-right*, *bottom-left*
-"""
+- in one of the corners: *top-left*, *top-right*, *bottom-right*, *bottom-left*"""
 
 
-GridInterpolate: TypeAlias = Literal["none", "linear", "nearest", "barycentric", "random-walk"]
-"""
-A spatial interpolation method; one of:
+GridInterpolate = TypeAliasType(
+    "GridInterpolate", Literal["none", "linear", "nearest", "barycentric", "random-walk"]
+)
+"""A spatial interpolation method; one of:
 
 - *none* - do not perform interpolation (the default), maps samples to single bins
 - *linear* - apply proportional linear interpolation across adjacent bins
 - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
 - *barycentric* - apply barycentric interpolation over the Delaunay triangulation
-- *random-walk* - apply a random walk from each pixel, stopping when near a sample
-"""
+- *random-walk* - apply a random walk from each pixel, stopping when near a sample"""
 
 
 class HSpace(TypedDict, closed=True):
@@ -1085,34 +1092,36 @@ class Hours(TypedDict, closed=True):
     """A date/time interval in units of hours."""
 
 
-Interpolate: TypeAlias = Literal["number", "rgb", "hsl", "hcl", "lab"]
-"""
-How to interpolate range (output) values for continuous scales; one of:
+Interpolate = TypeAliasType("Interpolate", Literal["number", "rgb", "hsl", "hcl", "lab"])
+r"""How to interpolate range (output) values for continuous scales; one of:
 
 - *number* - linear numeric interpolation
 - *rgb* - red, green, blue (sRGB)
 - *hsl* - hue, saturation, lightness (HSL; cylindrical sRGB)
 - *hcl* - hue, chroma, perceptual lightness (CIELCh_ab; cylindrical CIELAB)
-- *lab* - perceptual lightness and opponent colors (L\\*a\\*b\\*, CIELAB)
-"""
+- *lab* - perceptual lightness and opponent colors (L\*a\*b\*, CIELAB)"""
 
 
-LabelArrow: TypeAlias = Literal["auto", "up", "right", "down", "left", "none", True, False] | None
+LabelArrow = TypeAliasType(
+    "LabelArrow", Literal["auto", "up", "right", "down", "left", "none", True, False] | None
+)
 
 
-MarkerName: TypeAlias = Literal[
-    "arrow",
-    "arrow-reverse",
-    "dot",
-    "circle",
-    "circle-fill",
-    "circle-stroke",
-    "tick",
-    "tick-x",
-    "tick-y",
-]
-"""
-The built-in marker implementations; one of:
+MarkerName = TypeAliasType(
+    "MarkerName",
+    Literal[
+        "arrow",
+        "arrow-reverse",
+        "dot",
+        "circle",
+        "circle-fill",
+        "circle-stroke",
+        "tick",
+        "tick-x",
+        "tick-y",
+    ],
+)
+"""The built-in marker implementations; one of:
 
 - *arrow* - an arrowhead with *auto* orientation
 - *arrow-reverse* - an arrowhead with *auto-start-reverse* orientation
@@ -1122,8 +1131,7 @@ The built-in marker implementations; one of:
 - *circle* - alias for *circle-fill*
 - *tick* - a small opposing line
 - *tick-x* - a small horizontal line
-- *tick-y* - a small vertical line
-"""
+- *tick-y* - a small vertical line"""
 
 
 class Options(TypedDict, closed=True):
@@ -1186,14 +1194,14 @@ class ParamDate(TypedDict, closed=True):
     """
 
 
-ParamLiteral: TypeAlias = str | float | bool | None
+ParamLiteral = TypeAliasType("ParamLiteral", str | float | bool | None)
 """Literal Param values."""
 
 
-ParamRef: TypeAlias = str
+ParamRef = TypeAliasType("ParamRef", str)
 
 
-ParamValue: TypeAlias = ParamLiteral | Sequence[ParamLiteral | ParamRef]
+ParamValue = TypeAliasType("ParamValue", ParamLiteral | Sequence[ParamLiteral | ParamRef])
 """Valid Param values."""
 
 
@@ -1206,10 +1214,10 @@ class Margins(TypedDict, closed=True):
     top: NotRequired[float | ParamRef]
 
 
-Y1: TypeAlias = float | ParamRef
+Y1 = TypeAliasType("Y1", float | ParamRef)
 
 
-PlotDataInline: TypeAlias = Sequence[Any]
+PlotDataInline = TypeAliasType("PlotDataInline", Sequence[Any])
 """An array of inline data values to visualize. As this data does not come from a database, it can not be filtered by interactive selections."""
 
 
@@ -1253,27 +1261,29 @@ class PlotLegend(TypedDict, closed=True):
     """The width of a continuous legend, in pixels."""
 
 
-PlotMarkData: TypeAlias = PlotDataInline | PlotFrom
+PlotMarkData = TypeAliasType("PlotMarkData", PlotDataInline | PlotFrom)
 """Input data for a marks"""
 
 
-PositionScaleType: TypeAlias = Literal[
-    "linear",
-    "pow",
-    "sqrt",
-    "log",
-    "symlog",
-    "utc",
-    "time",
-    "point",
-    "band",
-    "threshold",
-    "quantile",
-    "quantize",
-    "identity",
-]
-"""
-The supported scale types for *x* and *y* position encodings.
+PositionScaleType = TypeAliasType(
+    "PositionScaleType",
+    Literal[
+        "linear",
+        "pow",
+        "sqrt",
+        "log",
+        "symlog",
+        "utc",
+        "time",
+        "point",
+        "band",
+        "threshold",
+        "quantile",
+        "quantize",
+        "identity",
+    ],
+)
+"""The supported scale types for *x* and *y* position encodings.
 
 For quantitative data, one of:
 
@@ -1295,30 +1305,31 @@ For ordinal data, one of:
 
 Other scale types:
 
-- *identity* - do not transform values when encoding
-"""
+- *identity* - do not transform values when encoding"""
 
 
-ProjectionName: TypeAlias = Literal[
-    "albers-usa",
-    "albers",
-    "azimuthal-equal-area",
-    "azimuthal-equidistant",
-    "conic-conformal",
-    "conic-equal-area",
-    "conic-equidistant",
-    "equal-earth",
-    "equirectangular",
-    "gnomonic",
-    "identity",
-    "reflect-y",
-    "mercator",
-    "orthographic",
-    "stereographic",
-    "transverse-mercator",
-]
-"""
-The built-in projection implementations; one of:
+ProjectionName = TypeAliasType(
+    "ProjectionName",
+    Literal[
+        "albers-usa",
+        "albers",
+        "azimuthal-equal-area",
+        "azimuthal-equidistant",
+        "conic-conformal",
+        "conic-equal-area",
+        "conic-equidistant",
+        "equal-earth",
+        "equirectangular",
+        "gnomonic",
+        "identity",
+        "reflect-y",
+        "mercator",
+        "orthographic",
+        "stereographic",
+        "transverse-mercator",
+    ],
+)
+"""The built-in projection implementations; one of:
 
 - *albers-usa* - a U.S.-centric composite projection with insets for Alaska and Hawaii
 - *albers* - a U.S.-centric *conic-equal-area* projection
@@ -1335,8 +1346,7 @@ The built-in projection implementations; one of:
 - *mercator* - the spherical Mercator projection
 - *orthographic* - the orthographic projection
 - *stereographic* - the stereographic projection
-- *transverse-mercator* - the transverse spherical Mercator projection
-"""
+- *transverse-mercator* - the transverse spherical Mercator projection"""
 
 
 class Format(TypedDict, closed=True):
@@ -1374,108 +1384,111 @@ class Format(TypedDict, closed=True):
     z: NotRequired[bool | str | ParamRef]
 
 
-ReducerPercentile: TypeAlias = Literal[
-    "p00",
-    "p01",
-    "p02",
-    "p03",
-    "p04",
-    "p05",
-    "p06",
-    "p07",
-    "p08",
-    "p09",
-    "p10",
-    "p11",
-    "p12",
-    "p13",
-    "p14",
-    "p15",
-    "p16",
-    "p17",
-    "p18",
-    "p19",
-    "p20",
-    "p21",
-    "p22",
-    "p23",
-    "p24",
-    "p25",
-    "p26",
-    "p27",
-    "p28",
-    "p29",
-    "p30",
-    "p31",
-    "p32",
-    "p33",
-    "p34",
-    "p35",
-    "p36",
-    "p37",
-    "p38",
-    "p39",
-    "p40",
-    "p41",
-    "p42",
-    "p43",
-    "p44",
-    "p45",
-    "p46",
-    "p47",
-    "p48",
-    "p49",
-    "p50",
-    "p51",
-    "p52",
-    "p53",
-    "p54",
-    "p55",
-    "p56",
-    "p57",
-    "p58",
-    "p59",
-    "p60",
-    "p61",
-    "p62",
-    "p63",
-    "p64",
-    "p65",
-    "p66",
-    "p67",
-    "p68",
-    "p69",
-    "p70",
-    "p71",
-    "p72",
-    "p73",
-    "p74",
-    "p75",
-    "p76",
-    "p77",
-    "p78",
-    "p79",
-    "p80",
-    "p81",
-    "p82",
-    "p83",
-    "p84",
-    "p85",
-    "p86",
-    "p87",
-    "p88",
-    "p89",
-    "p90",
-    "p91",
-    "p92",
-    "p93",
-    "p94",
-    "p95",
-    "p96",
-    "p97",
-    "p98",
-    "p99",
-]
+ReducerPercentile = TypeAliasType(
+    "ReducerPercentile",
+    Literal[
+        "p00",
+        "p01",
+        "p02",
+        "p03",
+        "p04",
+        "p05",
+        "p06",
+        "p07",
+        "p08",
+        "p09",
+        "p10",
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "p15",
+        "p16",
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21",
+        "p22",
+        "p23",
+        "p24",
+        "p25",
+        "p26",
+        "p27",
+        "p28",
+        "p29",
+        "p30",
+        "p31",
+        "p32",
+        "p33",
+        "p34",
+        "p35",
+        "p36",
+        "p37",
+        "p38",
+        "p39",
+        "p40",
+        "p41",
+        "p42",
+        "p43",
+        "p44",
+        "p45",
+        "p46",
+        "p47",
+        "p48",
+        "p49",
+        "p50",
+        "p51",
+        "p52",
+        "p53",
+        "p54",
+        "p55",
+        "p56",
+        "p57",
+        "p58",
+        "p59",
+        "p60",
+        "p61",
+        "p62",
+        "p63",
+        "p64",
+        "p65",
+        "p66",
+        "p67",
+        "p68",
+        "p69",
+        "p70",
+        "p71",
+        "p72",
+        "p73",
+        "p74",
+        "p75",
+        "p76",
+        "p77",
+        "p78",
+        "p79",
+        "p80",
+        "p81",
+        "p82",
+        "p83",
+        "p84",
+        "p85",
+        "p86",
+        "p87",
+        "p88",
+        "p89",
+        "p90",
+        "p91",
+        "p92",
+        "p93",
+        "p94",
+        "p95",
+        "p96",
+        "p97",
+        "p98",
+        "p99",
+    ],
+)
 
 
 class Region(TypedDict, closed=True):
@@ -1502,9 +1515,10 @@ class SQLExpression(TypedDict, closed=True):
     """A SQL expression string to derive a new column value. Embedded Param references, such as `$param + 1`, are supported. For expressions with aggregate functions, use *agg* instead."""
 
 
-ScaleName: TypeAlias = Literal["x", "y", "fx", "fy", "r", "color", "opacity", "symbol", "length"]
-"""
-The built-in scale names; one of:
+ScaleName = TypeAliasType(
+    "ScaleName", Literal["x", "y", "fx", "fy", "r", "color", "opacity", "symbol", "length"]
+)
+"""The built-in scale names; one of:
 
 - *x* - horizontal position
 - *y* - vertical position
@@ -1516,8 +1530,7 @@ The built-in scale names; one of:
 - *symbol* - categorical symbol (for dots)
 - *length* - length (for vectors)
 
-Position scales may have associated axes. Color, opacity, and symbol scales may have an associated legend.
-"""
+Position scales may have associated axes. Color, opacity, and symbol scales may have an associated legend."""
 
 
 class Search(TypedDict, closed=True):
@@ -1554,9 +1567,10 @@ class Seconds(TypedDict, closed=True):
     """A date/time interval in units of seconds."""
 
 
-SelectFilter: TypeAlias = Literal[
-    "first", "last", "maxX", "maxY", "minX", "minY", "nearest", "nearestX", "nearestY"
-]
+SelectFilter = TypeAliasType(
+    "SelectFilter",
+    Literal["first", "last", "maxX", "maxY", "minX", "minY", "nearest", "nearestX", "nearestY"],
+)
 """Selection filters to apply internally to mark data."""
 
 
@@ -1658,9 +1672,8 @@ class SortOrder2(TypedDict, closed=True):
     order: NotRequired[Literal["ascending", "descending"]]
 
 
-StackOffsetName: TypeAlias = Literal["center", "normalize", "wiggle"]
-"""
-A built-in stack offset method; one of:
+StackOffsetName = TypeAliasType("StackOffsetName", Literal["center", "normalize", "wiggle"])
+"""A built-in stack offset method; one of:
 
 - *normalize* - rescale each stack to fill [0, 1]
 - *center* - align the centers of all stacks
@@ -1670,13 +1683,13 @@ If a given stack has zero total value, the *normalize* offset will not adjust th
 *wiggle* offset is recommended for streamgraphs in conjunction with the
 *inside-out* order. For more, see [Byron & Wattenberg][1].
 
-[1]: https://leebyron.com/streamgraph/
-"""
+[1]: https://leebyron.com/streamgraph/"""
 
 
-StackOrderName: TypeAlias = Literal["value", "x", "y", "z", "sum", "appearance", "inside-out"]
-"""
-The built-in stack order methods; one of:
+StackOrderName = TypeAliasType(
+    "StackOrderName", Literal["value", "x", "y", "z", "sum", "appearance", "inside-out"]
+)
+"""The built-in stack order methods; one of:
 
 - *x* - alias of *value*; for stackX only
 - *y* - alias of *value*; for stackY only
@@ -1687,28 +1700,29 @@ The built-in stack order methods; one of:
 
 The *inside-out* order is recommended for streamgraphs in conjunction with the *wiggle* offset. For more, see [Byron & Wattenberg][1].
 
-[1]: https://leebyron.com/streamgraph/
-"""
+[1]: https://leebyron.com/streamgraph/"""
 
 
-SymbolType: TypeAlias = Literal[
-    "asterisk",
-    "circle",
-    "cross",
-    "diamond",
-    "diamond2",
-    "hexagon",
-    "plus",
-    "square",
-    "square2",
-    "star",
-    "times",
-    "triangle",
-    "triangle2",
-    "wye",
-]
-"""
-The built-in symbol implementations. For fill, one of:
+SymbolType = TypeAliasType(
+    "SymbolType",
+    Literal[
+        "asterisk",
+        "circle",
+        "cross",
+        "diamond",
+        "diamond2",
+        "hexagon",
+        "plus",
+        "square",
+        "square2",
+        "star",
+        "times",
+        "triangle",
+        "triangle2",
+        "wye",
+    ],
+)
+"""The built-in symbol implementations. For fill, one of:
 
 - *circle* - a circle
 - *cross* - a Greek cross with arms of equal length
@@ -1730,8 +1744,7 @@ For stroke (based on [Heman Robinson's research][1]), one of:
 
 The *hexagon* symbol is also supported.
 
-[1]: https://www.tandfonline.com/doi/abs/10.1080/10618600.2019.1637746
-"""
+[1]: https://www.tandfonline.com/doi/abs/10.1080/10618600.2019.1637746"""
 
 
 class Table(TypedDict, closed=True):
@@ -1759,31 +1772,32 @@ class Table(TypedDict, closed=True):
     """If a number, sets the total width of the table widget, in pixels. If an object, provides per-column pixel width values. Column names should be object keys, mapped to numeric width values."""
 
 
-TimeIntervalName: TypeAlias = Literal[
-    "second",
-    "minute",
-    "hour",
-    "day",
-    "week",
-    "month",
-    "quarter",
-    "half",
-    "year",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-]
-"""
-The built-in time intervals; UTC or local time, depending on context. The
-*week* interval is an alias for *sunday*. The *quarter* interval is every three months, and the *half* interval is every six months, aligned at the start of the year.
-"""
+TimeIntervalName = TypeAliasType(
+    "TimeIntervalName",
+    Literal[
+        "second",
+        "minute",
+        "hour",
+        "day",
+        "week",
+        "month",
+        "quarter",
+        "half",
+        "year",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+    ],
+)
+"""The built-in time intervals; UTC or local time, depending on context. The
+*week* interval is an alias for *sunday*. The *quarter* interval is every three months, and the *half* interval is every six months, aligned at the start of the year."""
 
 
-TipPointer: TypeAlias = Literal["x", "y", "xy"]
+TipPointer = TypeAliasType("TipPointer", Literal["x", "y", "xy"])
 """The pointer mode for the tip; corresponds to pointerX, pointerY, and pointer."""
 
 
@@ -1833,7 +1847,7 @@ class ToggleY(TypedDict, closed=True):
     """Select individual values in the `y` scale domain. Clicking or touching a mark toggles its selection status."""
 
 
-TransformField: TypeAlias = str | ParamRef
+TransformField = TypeAliasType("TransformField", str | ParamRef)
 """A field argument to a data transform."""
 
 
@@ -1844,13 +1858,11 @@ class VSpace(TypedDict, closed=True):
     """Vertical space to place between components. Number values indicate screen pixels. String values may use CSS units (em, pt, px, etc)."""
 
 
-VectorShapeName: TypeAlias = Literal["arrow", "spike"]
-"""
-The built-in vector shape implementations; one of:
+VectorShapeName = TypeAliasType("VectorShapeName", Literal["arrow", "spike"])
+"""The built-in vector shape implementations; one of:
 
 - *arrow* - a straight line with an open arrowhead at the end (↑)
-- *spike* - an isosceles triangle with a flat base (▲)
-"""
+- *spike* - an isosceles triangle with a flat base (▲)"""
 
 
 class Years(TypedDict, closed=True):
@@ -1900,7 +1912,8 @@ class CentroidY(TypedDict, closed=True):
     """Compute the centroid y-coordinate of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
 
 
-ChannelDomainValue: TypeAlias = (
+ChannelDomainValue = TypeAliasType(
+    "ChannelDomainValue",
     Literal[
         "data",
         "width",
@@ -1938,18 +1951,16 @@ ChannelDomainValue: TypeAlias = (
         "-data",
     ]
     | ChannelName
-    | None
+    | None,
 )
-"""
-The available inputs for imputing scale domains. In addition to a named channel, an input may be specified as:
+"""The available inputs for imputing scale domains. In addition to a named channel, an input may be specified as:
 
 - *data* - impute from mark data
 - *width* - impute from |*x2* - *x1*|
 - *height* - impute from |*y2* - *y1*|
 - null - impute from input order
 
-If the *x* channel is not defined, the *x2* channel will be used instead if available, and similarly for *y* and *y2*; this is useful for marks that implicitly stack. The *data* input is typically used in conjunction with a custom **reduce** function, as when the built-in single-channel reducers are insufficient.
-"""
+If the *x* channel is not defined, the *x2* channel will be used instead if available, and similarly for *y* and *y2*; this is useful for marks that implicitly stack. The *data* input is typically used in conjunction with a custom **reduce** function, as when the built-in single-channel reducers are insufficient."""
 
 
 class Column(TypedDict, closed=True):
@@ -1959,11 +1970,12 @@ class Column(TypedDict, closed=True):
     """Interpret a string or param-value as a column reference."""
 
 
-Curve: TypeAlias = CurveName
+Curve = TypeAliasType("Curve", CurveName)
 """How to interpolate between control points."""
 
 
-DataDefinition: TypeAlias = (
+DataDefinition = TypeAliasType(
+    "DataDefinition",
     DataQuery
     | DataArray
     | DataFile
@@ -1972,7 +1984,7 @@ DataDefinition: TypeAlias = (
     | DataCSV
     | DataSpatial
     | DataJSON
-    | DataJSONObjects
+    | DataJSONObjects,
 )
 
 
@@ -2023,8 +2035,9 @@ class Highlight(TypedDict, closed=True):
     """The stroke opacity of deemphasized marks. By default the stroke opacity is unchanged."""
 
 
-IntervalTransform: TypeAlias = (
-    Years | Months | Days | Hours | Minutes | Seconds | Milliseconds | Microseconds
+IntervalTransform = TypeAliasType(
+    "IntervalTransform",
+    Years | Months | Days | Hours | Minutes | Seconds | Milliseconds | Microseconds,
 )
 """Date/time interval."""
 
@@ -2113,7 +2126,8 @@ class Legend(TypedDict, closed=True):
     """The width of a continuous legend, in pixels."""
 
 
-LiteralTimeInterval: TypeAlias = (
+LiteralTimeInterval = TypeAliasType(
+    "LiteralTimeInterval",
     Literal[
         "3 months",
         "10 years",
@@ -2135,7 +2149,7 @@ LiteralTimeInterval: TypeAlias = (
         "sundays",
     ]
     | TimeIntervalName
-    | str
+    | str,
 )
 
 
@@ -2300,15 +2314,16 @@ class Param(TypedDict, closed=True):
     """The initial parameter value."""
 
 
-ParamDefinition: TypeAlias = ParamValue | Param | ParamDate | Selection
+ParamDefinition = TypeAliasType("ParamDefinition", ParamValue | Param | ParamDate | Selection)
 """A Param or Selection definition."""
 
 
-Params: TypeAlias = Mapping[str, ParamDefinition]
+Params = TypeAliasType("Params", Mapping[str, ParamDefinition])
 """Top-level Param and Selection definitions."""
 
 
-PlotInteractor: TypeAlias = (
+PlotInteractor = TypeAliasType(
+    "PlotInteractor",
     Highlight
     | IntervalX
     | IntervalY
@@ -2325,12 +2340,13 @@ PlotInteractor: TypeAlias = (
     | Toggle
     | ToggleX
     | ToggleY
-    | ToggleColor
+    | ToggleColor,
 )
 """A plot interactor entry."""
 
 
-Reducer: TypeAlias = (
+Reducer = TypeAliasType(
+    "Reducer",
     Literal[
         "first",
         "last",
@@ -2350,10 +2366,9 @@ Reducer: TypeAlias = (
         "variance",
         "mode",
     ]
-    | ReducerPercentile
+    | ReducerPercentile,
 )
-"""
-How to reduce aggregated (binned or grouped) values; one of:
+"""How to reduce aggregated (binned or grouped) values; one of:
 
 - *first* - the first value, in input order
 - *last* - the last value, in input order
@@ -2374,13 +2389,11 @@ How to reduce aggregated (binned or grouped) values; one of:
 - *pXX* - the percentile value, where XX is a number in [00,99]
 - *identity* - the array of values
 
-[1]: https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
-"""
+[1]: https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm"""
 
 
-StackOffset: TypeAlias = StackOffsetName
-"""
-A stack offset method; one of:
+StackOffset = TypeAliasType("StackOffset", StackOffsetName)
+"""A stack offset method; one of:
 
 - *normalize* - rescale each stack to fill [0, 1]
 - *center* - align the centers of all stacks
@@ -2390,26 +2403,24 @@ If a given stack has zero total value, the *normalize* offset will not adjust th
 *wiggle* offset is recommended for streamgraphs in conjunction with the
 *inside-out* order. For more, see [Byron & Wattenberg][1].
 
-[1]: https://leebyron.com/streamgraph/
-"""
+[1]: https://leebyron.com/streamgraph/"""
 
 
-StackOrder: TypeAlias = (
+StackOrder = TypeAliasType(
+    "StackOrder",
     Literal["-value", "-x", "-y", "-z", "-sum", "-appearance", "-inside-out"]
     | StackOrderName
     | str
-    | Sequence[Any]
+    | Sequence[Any],
 )
-"""
-How to order layers prior to stacking; one of:
+"""How to order layers prior to stacking; one of:
 
 - a named stack order method such as *inside-out* or *sum*
 - a field name, for natural order of the corresponding values
-- an array of explicit **z** values in the desired order
-"""
+- an array of explicit **z** values in the desired order"""
 
 
-VectorShape: TypeAlias = VectorShapeName
+VectorShape = TypeAliasType("VectorShape", VectorShapeName)
 """How to draw a vector: either a named shape or a custom implementation."""
 
 
@@ -2444,30 +2455,31 @@ class ChannelDomainValueSpec1(TypedDict, closed=True):
     value: ChannelDomainValue
 
 
-ChannelDomainValueSpec: TypeAlias = ChannelDomainValue | ChannelDomainValueSpec1
+ChannelDomainValueSpec = TypeAliasType(
+    "ChannelDomainValueSpec", ChannelDomainValue | ChannelDomainValueSpec1
+)
 """How to derive a scale's domain from a channel's values."""
 
 
-ColumnTransform: TypeAlias = (
-    Bin | Column | DateMonth | DateMonthDay | DateDay | Centroid | CentroidX | CentroidY | GeoJSON
+ColumnTransform = TypeAliasType(
+    "ColumnTransform",
+    Bin | Column | DateMonth | DateMonthDay | DateDay | Centroid | CentroidX | CentroidY | GeoJSON,
 )
 """A data transform that maps one column value to another."""
 
 
-Data: TypeAlias = Mapping[str, DataDefinition]
+Data = TypeAliasType("Data", Mapping[str, DataDefinition])
 """Top-level dataset definitions."""
 
 
-FrameValue: TypeAlias = float | IntervalTransform | None
+FrameValue = TypeAliasType("FrameValue", float | IntervalTransform | None)
 
 
-Interval: TypeAlias = LiteralTimeInterval
-"""
-How to partition a continuous range into discrete intervals; one of:
+Interval = TypeAliasType("Interval", LiteralTimeInterval)
+"""How to partition a continuous range into discrete intervals; one of:
 
 - a named time interval such as *day* (for date intervals)
-- a number (for number intervals), defining intervals at integer multiples of *n*
-"""
+- a number (for number intervals), defining intervals at integer multiples of *n*"""
 
 
 class Lag(TypedDict, closed=True):
@@ -3914,7 +3926,8 @@ class FirstValue(TypedDict, closed=True):
     rows: NotRequired[Sequence[FrameValue] | ParamRef]
 
 
-WindowTransform: TypeAlias = (
+WindowTransform = TypeAliasType(
+    "WindowTransform",
     RowNumber
     | Rank
     | DenseRank
@@ -3925,12 +3938,13 @@ WindowTransform: TypeAlias = (
     | Lead
     | FirstValue
     | LastValue
-    | NthValue
+    | NthValue,
 )
 """A window transform that operates over a sorted domain."""
 
 
-AggregateTransform: TypeAlias = (
+AggregateTransform = TypeAliasType(
+    "AggregateTransform",
     Argmax
     | Argmin
     | Avg
@@ -3947,27 +3961,26 @@ AggregateTransform: TypeAlias = (
     | StddevPop
     | Sum
     | Variance
-    | VarPop
+    | VarPop,
 )
 """An aggregate transform that combines multiple values."""
 
 
-Transform: TypeAlias = ColumnTransform | AggregateTransform | WindowTransform
+Transform = TypeAliasType("Transform", ColumnTransform | AggregateTransform | WindowTransform)
 """A data transform."""
 
 
-ChannelValue: TypeAlias = (
-    Sequence[Any] | str | float | bool | Transform | SQLExpression | AggregateExpression | None
+ChannelValue = TypeAliasType(
+    "ChannelValue",
+    Sequence[Any] | str | float | bool | Transform | SQLExpression | AggregateExpression | None,
 )
-"""
-A channel's values may be expressed as:
+"""A channel's values may be expressed as:
 
 - a field name, to extract the corresponding value for each datum
 - an iterable of values, typically of the same length as the data
 - a channel transform or SQL expression
 - a constant number or boolean
-- null to represent no value
-"""
+- null to represent no value"""
 
 
 class ChannelValueIntervalSpec1(TypedDict, closed=True):
@@ -3985,7 +3998,7 @@ class ChannelValueSpec1(TypedDict, closed=True):
     value: ChannelValue
 
 
-ChannelValueSpec: TypeAlias = ChannelValue | ChannelValueSpec1
+ChannelValueSpec = TypeAliasType("ChannelValueSpec", ChannelValue | ChannelValueSpec1)
 """When specifying a mark channel's value, you can provide a {value, scale} object to override the scale that would normally be associated with the channel."""
 
 
@@ -4111,15 +4124,13 @@ class SortOrder1(TypedDict, closed=True):
     value: NotRequired[ChannelValue]
 
 
-SortOrder: TypeAlias = ChannelValue | SortOrder1 | SortOrder2
-"""
-How to order values; one of:
+SortOrder = TypeAliasType("SortOrder", ChannelValue | SortOrder1 | SortOrder2)
+"""How to order values; one of:
 
 - a function for comparing data, returning a signed number
 - a channel value definition for sorting given values in ascending order
 - a {value, order} object for sorting given values
-- a {channel, order} object for sorting the named channel's values
-"""
+- a {channel, order} object for sorting the named channel's values"""
 
 
 class Sphere(TypedDict, closed=True):
@@ -11310,7 +11321,9 @@ class CellY(TypedDict, closed=True):
     """
 
 
-ChannelValueIntervalSpec: TypeAlias = ChannelValueSpec | ChannelValueIntervalSpec1
+ChannelValueIntervalSpec = TypeAliasType(
+    "ChannelValueIntervalSpec", ChannelValueSpec | ChannelValueIntervalSpec1
+)
 """In some contexts, when specifying a mark channel's value, you can provide a {value, interval} object to specify an associated interval."""
 
 
@@ -27505,15 +27518,16 @@ class BarY(TypedDict, closed=True):
     """
 
 
-DensityX: TypeAlias = DensityX1 | DensityX2 | DensityX3 | DensityX4
+DensityX = TypeAliasType("DensityX", DensityX1 | DensityX2 | DensityX3 | DensityX4)
 """The densityX mark."""
 
 
-DensityY: TypeAlias = DensityY1 | DensityY2 | DensityY3 | DensityY4
+DensityY = TypeAliasType("DensityY", DensityY1 | DensityY2 | DensityY3 | DensityY4)
 """The densityY mark."""
 
 
-PlotMark: TypeAlias = (
+PlotMark = TypeAliasType(
+    "PlotMark",
     Area
     | AreaX
     | AreaY
@@ -27578,7 +27592,7 @@ PlotMark: TypeAlias = (
     | VectorY
     | Spike
     | WaffleX
-    | WaffleY
+    | WaffleY,
 )
 """A plot mark entry."""
 
@@ -28489,9 +28503,12 @@ class Plot(TypedDict, closed=True):
     """
 
 
-Component: TypeAlias = Union[
-    "HConcat", "VConcat", HSpace, VSpace, Menu, Search, Slider, Table, Plot, PlotMark, Legend
-]
+Component = TypeAliasType(
+    "Component",
+    Union[
+        "HConcat", "VConcat", HSpace, VSpace, Menu, Search, Slider, Table, Plot, PlotMark, Legend
+    ],
+)
 """A specification component such as a plot, input widget, or layout."""
 
 
