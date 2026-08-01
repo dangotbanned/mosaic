@@ -1,0 +1,7 @@
+{%- if is_functional_syntax %}
+{% include 'TypedDictFunction.jinja2' %}
+{%- elif extensions is defined and extensions.get('x-base-open') %}
+{% include 'TypedDictBaseOpen.jinja2' %}
+{%- else %}
+{% include 'TypedDictClass.jinja2' %}
+{%- endif %}

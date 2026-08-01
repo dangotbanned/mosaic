@@ -1,18 +1,15 @@
-{# https://github.com/koxudaxi/datamodel-code-generator/blob/b92de874e6f0c1070afa4b27267ec294a16c27d9/src/datamodel_code_generator/model/template/TypedDictClass.jinja2
-
-# TODO @dangotbanned: A lot!
-# - [ ] Condition for making a Base open, Child closed pair
-#   - base will be reused for Spec version
-#   - only export child
-# - [x] Figure out how much of this is needed
-#}
+{# https://github.com/koxudaxi/datamodel-code-generator/blob/b92de874e6f0c1070afa4b27267ec294a16c27d9/src/datamodel_code_generator/model/template/TypedDictClass.jinja2 #}
+{%- block class_statement -%}
 class {{ class_name }}({{ base_class }}):
+{%- endblock class_statement -%}
+{%- block class_body -%}
 {%- if description %}
-    {{ description }}
+    {{ description | format_docstring}}
 {%- endif %}
 {%- for field in fields %}
     {{ field.name }}: {{ field.type_hint }}
     {%- if field.docstring %}
-    {{ field.docstring }}
+    {{ field.docstring | format_docstring(4, use_single_line_docstring=True)}} {# NOTE: This is needed because https://github.com/koxudaxi/datamodel-code-generator/blob/96b4fe7768d98cd8a38eb0d942f52c1bb5d8975e/src/datamodel_code_generator/model/base.py#L1808-L1816 #}
     {%- endif %}
 {%- endfor -%}
+{%- endblock class_body -%}

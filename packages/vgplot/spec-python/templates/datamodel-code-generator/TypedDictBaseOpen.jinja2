@@ -1,0 +1,18 @@
+
+{% extends "TypedDictClass.jinja2" %}
+# I'm a real comment!
+{# 
+TODO @dangotbanned: Get that comment into the source
+
+TODO @dangotbanned: Create 2x `TypedDict`, using these bits
+{# 1 #}
+{%- block class_statement -%}
+class _{{ class_name }}Open(TypedDict, total=False):
+{%- endblock class_statement -%}
+{%- block class_body -%}
+{{ super() }}
+{%- endblock class_body -%}
+
+{# 2 #}
+class {{ class_name }}( {{ class_name }}Open {{ base_class.removeprefix("TypedDict") }} ): ...
+#}
