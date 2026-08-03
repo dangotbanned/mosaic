@@ -16,7 +16,7 @@ from tools import fs, serde
 from tools.codegen import typed_dict
 from tools.codegen.docstrings import doc
 from tools.codemod import fragments
-from tools.models import source as m
+from tools.models import mosaic as m
 
 GENERATED_MODULE_NAME = "mosaic"
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
