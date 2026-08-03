@@ -85,7 +85,7 @@ packages = ["mosaic_spec"]
 
 [tool.pyright]
 extends               = "../../../pyproject.toml"
-include               = ["src", "scripts", "tools", "*.py", "*.ipynb"]
+include               = ["src", "scripts", "tools", "*.py", "*.ipynb", "tests"]
 executionEnvironments = [
   { root = "src", pythonVersion = "3.10" },
   { root = "tools", pythonVersion = "3.15" },
