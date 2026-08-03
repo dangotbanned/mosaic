@@ -73,7 +73,7 @@ type Definitions = dict[Resolved[Ref], Resolved[JsonSchema]]
 type DefName = str
 """The name that keys the schema in `{"definitions": {<here>: ...}}`"""
 
-_DOLLAR_DEFS: Final = "#/definitions/"
+_POUND_DEFS: Final = "#/definitions/"
 
 
 type Incomplete = Any
@@ -157,13 +157,13 @@ class JsonSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
     @property
     def def_name(self) -> DefName:
         if ref := self.ref:
-            return ref.removeprefix(_DOLLAR_DEFS)
+            return ref.removeprefix(_POUND_DEFS)
         msg = f"Expected ref, got {self!r}"
         raise TypeError(msg)
 
     @classmethod
     def new_ref(cls, name: DefName, /) -> JsonSchema:
-        return cls(ref=f"{_DOLLAR_DEFS}{name}")
+        return cls(ref=f"{_POUND_DEFS}{name}")
 
     def is_union(self) -> bool:
         return bool(self.any_of)
@@ -173,8 +173,19 @@ class JsonSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
 class InputSchema(base.Struct):
     """Top level schema for `mosaic-schema.json`."""
 
+    # NOTE: @dangotbanned: would be `"$defs"`
     definitions: dict[DefName, Resolved[JsonSchema]]
+
+    # TODO @dangotbanned: Since `Spec` is removed, this is now invalid: `"#/definitions/Spec"`
+    # Is it just being ignored?
     ref: Ref = field(name="$ref")
+
+    # TODO @dangotbanned: I want to migrate to 2020-12 (2 jumps from draft-07)
+    # - docs are easier to read
+    # - has examples of multi-file schemas
+    # - $id is used frequently
+    # - items -> prefixItems
+    #   - for this use case, that's not a big deal
     schema: str = field(name="$schema")
 
     def get(self, target: DefName, /) -> Resolved[JsonSchema]:
