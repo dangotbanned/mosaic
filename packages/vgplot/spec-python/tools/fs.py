@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 _HERE = Path(__file__)
 
@@ -60,3 +63,12 @@ def read_pyproject() -> dict[str, Any]:
     import tomllib
 
     return tomllib.loads(PYPROJECT_TOML.read_text("utf8"))
+
+
+def write_lines(target: str | Path, lines: Iterable[str], /, message: str | None = None) -> None:
+    """Join `lines` and write them to `target`."""
+    target = Path(target)
+    target.touch()
+    target.write_text("\n".join(lines), "utf8", newline="\n")
+    if message:
+        print(f"{message} at: {repo_relative_str(MOSAIC_SPEC_INIT)}")  # ruff: ignore[print]

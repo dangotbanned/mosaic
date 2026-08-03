@@ -118,11 +118,7 @@ def generate_spec_module(
     module.appendleft(import_from(GENERATED_MODULE, import_names))
     module.appendleft(fragments.FUTURE_ANNOTATIONS)
     module.append(f"\n__all__ = {tuple(export_names)}\n")
-
-    target = Path(target)
-    target.touch()
-    target.write_text("\n".join(module), "utf8", newline="\n")
-    print(f"Generated spec module at: {fs.repo_relative_str(target)}")
+    fs.write_lines(target, module, "Generated spec module")
 
 
 if __name__ == "__main__":
