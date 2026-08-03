@@ -55,7 +55,6 @@ Sadly, this doesn't cover intersecting with a union.
 """
 
 import functools
-from collections import deque
 from collections.abc import Sequence
 from typing import Annotated as A, Any, Final, Literal as L, LiteralString, final
 
@@ -93,8 +92,15 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
         name="additionalProperties", default=True
     )
     required: Sequence[str] = field(default_factory=list)
-    x_base_open: bool = field(name="x-base-open", default=False)
-    """An extension field marker, to request an extra base class during codegen."""
+
+    x_base_open: str = field(name="x-base-open", default="")
+    """The name of an extra base TypedDict to generate via [TypedDictBaseOpen.jinja2].
+
+    [TypedDictBaseOpen.jinja2]: ../../templates/datamodel-code-generator/TypedDictBaseOpen.jinja2
+
+    ## See Also
+    [`x-` prefix annotations](https://json-schema.org/blog/posts/custom-annotations-will-continue#too-long-read-anyway)
+    """
 
     def is_ref(self) -> bool:
         return bool(self.ref)
@@ -196,13 +202,17 @@ class InputSchema(base.Struct):
         """Add a new top-level definition to the schema."""
         self.definitions[name] = schema
 
-    def try_insert(self, name: DefName, schema: Resolved[JsonSchema]) -> DuplicateError | None:
-        """Try to add a new definition, returning an error if the name is already in use."""
-        if name in self.definitions:
-            return DuplicateError.from_try_insert(name, schema, self.get(name))
-        return self.insert(name, schema)
+    def _insert_base_open(
+        self, name: DefName, schema: Resolved[JsonSchema], /, fmt: LiteralString = "_{name}Open"
+    ) -> None:
+        """Mark `name` to generate an extra TypedDict that is [open](https://typing.python.org/en/latest/spec/typeddict.html#openness).
 
-    def name_union_members(self, target: DefName, /, fmt: LiteralString = "{target}{idx}") -> None:
+        The extra version becomes a shared base class for `name` and `Spec{name}`.
+        Each of those are then able to be [closed](https://typing.python.org/en/latest/spec/glossary.html#term-closed).
+        """
+        self.insert(name, schema.__replace__(x_base_open=fmt.format(name=name)))
+
+    def _name_union_members(self, target: DefName, /, fmt: LiteralString = "{target}{idx}") -> None:
         """Lift anonymous members of a union into top-level definitions."""
         union = self.get(target)
         doc = union.description
@@ -210,62 +220,40 @@ class InputSchema(base.Struct):
         for idx, member in enumerate(union.any_of, 1):
             member_name = fmt.format(target=target, idx=idx)
             member_refs.append(member.new_ref(member_name))
-            if err := self.try_insert(
-                member_name, member.__replace__(description=doc, x_base_open=True)
-            ):
-                raise err
+            self._insert_base_open(member_name, member.__replace__(description=doc))
         self.insert(target, union.__replace__(any_of=member_refs))
 
     # TODO @dangotbanned: Figure out a nicer API for this mess
     # It does too many things
-    def flatten_component_union_mut(self, target: DefName | JsonSchema, /) -> deque[DefName]:
+    def flatten_component_union(self) -> None:
         """*'Enhance'* the definition of `Component`.
 
         See the module doc for a detailed look at this problem.
-
-        ## Notes
-        - Mutates `self.definitions`
-        - Returns names to use in intersection `TypedDict`s
         """
-        if isinstance(target, str):
-            target = self.get(target)
-
+        target = self.get("Component")
         if not target.is_union():
-            msg = f"`target` is not a union, got:\n{target!r}"
+            msg = f"Component is not a union, got:\n{target!r}"
             raise TypeError(msg)
 
         # NOTE: Why is this not recursive?
         # It might make sense to do that eventually, but
         # - this shows how many levels of nesting there are.
         # - will raise when expectations change
-        member_names: deque[DefName] = deque()
-        for member in target.any_of:
-            name = member.def_name
-            member_resolved = self.get(name)
-            if not member_resolved.is_union():
-                member_names.append(name)
+        for u_member_0 in target.any_of:
+            name = u_member_0.def_name
+            member_0 = self.get(name)
+            if not member_0.is_union():
+                self._insert_base_open(name, member_0)
             else:
-                for nested_member in member_resolved.any_of:
-                    nested_name = nested_member.def_name
-                    nested_member_resolved = self.get(nested_name)
-                    if not nested_member_resolved.is_union():
-                        member_names.append(nested_name)
-                    elif any(deep.is_ref() for deep in nested_member_resolved.any_of):
-                        msg_0 = f"TODO @dangotbanned: Expected only anonymous unions at this level, got members: {nested_member_resolved.any_of!r}"
+                for u_member_1 in member_0.any_of:
+                    member_1_name = u_member_1.def_name
+                    member_1 = self.get(member_1_name)
+                    if not member_1.is_union():
+                        self._insert_base_open(member_1_name, member_1)
+
+                    elif any(member_2.is_ref() for member_2 in member_1.any_of):
+                        msg_0 = f"TODO @dangotbanned: Expected only anonymous unions at this level, got members: {member_1.any_of!r}"
                         raise NotImplementedError(msg_0)
+
                     else:
-                        self.name_union_members(nested_name)
-                        member_names.extend(deep.def_name for deep in self.get(nested_name).any_of)
-        return member_names
-
-
-class DuplicateError(ValueError):
-    @staticmethod
-    def from_try_insert(name: DefName, new: JsonSchema, existing: JsonSchema) -> DuplicateError:
-        return DuplicateError(
-            f"A definition named {name!r} is already present in the schema.\n"
-            f"- To replace {name!r}, use {InputSchema.insert.__qualname__}() instead."
-            f"- Otherwise, rename `schema` to avoid a collision.\n\n"
-            f"Existing:\n{existing!r}\n\n"
-            f"New schema:\n{new!r}"
-        )
+                        self._name_union_members(member_1_name)

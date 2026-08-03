@@ -1,94 +1,94 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-from mosaic_spec._gen import (
-    Area,
-    AreaX,
-    AreaY,
-    Arrow,
-    AxisFx,
-    AxisFy,
-    AxisX,
-    AxisY,
-    BarX,
-    BarY,
-    Cell,
-    CellX,
-    CellY,
-    Circle,
-    Contour,
-    DelaunayLink,
-    DelaunayMesh,
-    DenseLine,
-    Density,
-    DensityX1,
-    DensityX2,
-    DensityX3,
-    DensityX4,
-    DensityY1,
-    DensityY2,
-    DensityY3,
-    DensityY4,
-    Dot,
-    DotX,
-    DotY,
-    ErrorBarX,
-    ErrorBarY,
-    Frame,
-    Geo,
-    Graticule,
-    GridFx,
-    GridFy,
-    GridX,
-    GridY,
-    HConcat,
-    Heatmap,
-    Hexagon,
-    Hexbin,
-    Hexgrid,
-    HSpace,
-    Hull,
-    Image,
-    Legend,
-    Line,
-    LineX,
-    LineY,
-    Link,
-    Menu,
-    Plot,
-    Raster,
-    RasterTile,
-    Rect,
-    RectX,
-    RectY,
-    RegressionY,
-    RuleX,
-    RuleY,
-    Search,
-    Slider,
-    Sphere,
-    Spike,
-    Table,
-    Text,
-    TextX,
-    TextY,
-    TickX,
-    TickY,
-    VConcat,
-    Vector,
-    VectorX,
-    VectorY,
-    Voronoi,
-    VoronoiMesh,
-    VSpace,
-    WaffleX,
-    WaffleY,
+from mosaic_spec._gen.mosaic import (
+    Config,
+    Data,
+    Meta,
+    Params,
+    PlotAttributes,
+    _AreaOpen,
+    _AreaXOpen,
+    _AreaYOpen,
+    _ArrowOpen,
+    _AxisFxOpen,
+    _AxisFyOpen,
+    _AxisXOpen,
+    _AxisYOpen,
+    _BarXOpen,
+    _BarYOpen,
+    _CellOpen,
+    _CellXOpen,
+    _CellYOpen,
+    _CircleOpen,
+    _ContourOpen,
+    _DelaunayLinkOpen,
+    _DelaunayMeshOpen,
+    _DenseLineOpen,
+    _DensityOpen,
+    _DensityX1Open,
+    _DensityX2Open,
+    _DensityX3Open,
+    _DensityX4Open,
+    _DensityY1Open,
+    _DensityY2Open,
+    _DensityY3Open,
+    _DensityY4Open,
+    _DotOpen,
+    _DotXOpen,
+    _DotYOpen,
+    _ErrorBarXOpen,
+    _ErrorBarYOpen,
+    _FrameOpen,
+    _GeoOpen,
+    _GraticuleOpen,
+    _GridFxOpen,
+    _GridFyOpen,
+    _GridXOpen,
+    _GridYOpen,
+    _HConcatOpen,
+    _HeatmapOpen,
+    _HexagonOpen,
+    _HexbinOpen,
+    _HexgridOpen,
+    _HSpaceOpen,
+    _HullOpen,
+    _ImageOpen,
+    _LegendOpen,
+    _LineOpen,
+    _LineXOpen,
+    _LineYOpen,
+    _LinkOpen,
+    _MenuOpen,
+    _PlotOpen,
+    _RasterOpen,
+    _RasterTileOpen,
+    _RectOpen,
+    _RectXOpen,
+    _RectYOpen,
+    _RegressionYOpen,
+    _RuleXOpen,
+    _RuleYOpen,
+    _SearchOpen,
+    _SliderOpen,
+    _SphereOpen,
+    _SpikeOpen,
+    _TableOpen,
+    _TextOpen,
+    _TextXOpen,
+    _TextYOpen,
+    _TickXOpen,
+    _TickYOpen,
+    _VConcatOpen,
+    _VectorOpen,
+    _VectorXOpen,
+    _VectorYOpen,
+    _VoronoiMeshOpen,
+    _VoronoiOpen,
+    _VSpaceOpen,
+    _WaffleXOpen,
+    _WaffleYOpen,
 )
 from mosaic_spec._typing_compat import TypeAliasType, TypedDict
-
-if TYPE_CHECKING:
-    from mosaic_spec._gen.mosaic import Config, Data, Meta, Params, PlotAttributes
 
 
 class SpecHead(TypedDict, total=False):
@@ -104,313 +104,298 @@ class SpecHead(TypedDict, total=False):
     """A default set of attributes to apply to all plot components."""
 
 
-class SpecHConcat(SpecHead, HConcat, closed=True): ...
+class SpecArea(SpecHead, _AreaOpen, closed=True): ...
 
 
-class SpecVConcat(SpecHead, VConcat, closed=True): ...
+class SpecAreaX(SpecHead, _AreaXOpen, closed=True): ...
 
 
-class SpecHSpace(SpecHead, HSpace, closed=True): ...
+class SpecAreaY(SpecHead, _AreaYOpen, closed=True): ...
 
 
-class SpecVSpace(SpecHead, VSpace, closed=True): ...
+class SpecArrow(SpecHead, _ArrowOpen, closed=True): ...
 
 
-class SpecMenu(SpecHead, Menu, closed=True): ...
+class SpecAxisFx(SpecHead, _AxisFxOpen, closed=True): ...
 
 
-class SpecSearch(SpecHead, Search, closed=True): ...
+class SpecAxisFy(SpecHead, _AxisFyOpen, closed=True): ...
 
 
-class SpecSlider(SpecHead, Slider, closed=True): ...
+class SpecAxisX(SpecHead, _AxisXOpen, closed=True): ...
 
 
-class SpecTable(SpecHead, Table, closed=True): ...
+class SpecAxisY(SpecHead, _AxisYOpen, closed=True): ...
 
 
-class SpecPlot(SpecHead, Plot, closed=True): ...
+class SpecBarX(SpecHead, _BarXOpen, closed=True): ...
 
 
-class SpecArea(SpecHead, Area, closed=True): ...
+class SpecBarY(SpecHead, _BarYOpen, closed=True): ...
 
 
-class SpecAreaX(SpecHead, AreaX, closed=True): ...
+class SpecCell(SpecHead, _CellOpen, closed=True): ...
 
 
-class SpecAreaY(SpecHead, AreaY, closed=True): ...
+class SpecCellX(SpecHead, _CellXOpen, closed=True): ...
 
 
-class SpecArrow(SpecHead, Arrow, closed=True): ...
+class SpecCellY(SpecHead, _CellYOpen, closed=True): ...
 
 
-class SpecAxisX(SpecHead, AxisX, closed=True): ...
+class SpecCircle(SpecHead, _CircleOpen, closed=True): ...
 
 
-class SpecAxisY(SpecHead, AxisY, closed=True): ...
+class SpecContour(SpecHead, _ContourOpen, closed=True): ...
 
 
-class SpecAxisFx(SpecHead, AxisFx, closed=True): ...
+class SpecDelaunayLink(SpecHead, _DelaunayLinkOpen, closed=True): ...
 
 
-class SpecAxisFy(SpecHead, AxisFy, closed=True): ...
+class SpecDelaunayMesh(SpecHead, _DelaunayMeshOpen, closed=True): ...
 
 
-class SpecGridX(SpecHead, GridX, closed=True): ...
+class SpecDenseLine(SpecHead, _DenseLineOpen, closed=True): ...
 
 
-class SpecGridY(SpecHead, GridY, closed=True): ...
+class SpecDensity(SpecHead, _DensityOpen, closed=True): ...
 
 
-class SpecGridFx(SpecHead, GridFx, closed=True): ...
+class SpecDot(SpecHead, _DotOpen, closed=True): ...
 
 
-class SpecGridFy(SpecHead, GridFy, closed=True): ...
+class SpecDotX(SpecHead, _DotXOpen, closed=True): ...
 
 
-class SpecBarX(SpecHead, BarX, closed=True): ...
+class SpecDotY(SpecHead, _DotYOpen, closed=True): ...
 
 
-class SpecBarY(SpecHead, BarY, closed=True): ...
+class SpecErrorBarX(SpecHead, _ErrorBarXOpen, closed=True): ...
 
 
-class SpecCell(SpecHead, Cell, closed=True): ...
+class SpecErrorBarY(SpecHead, _ErrorBarYOpen, closed=True): ...
 
 
-class SpecCellX(SpecHead, CellX, closed=True): ...
+class SpecFrame(SpecHead, _FrameOpen, closed=True): ...
 
 
-class SpecCellY(SpecHead, CellY, closed=True): ...
+class SpecGeo(SpecHead, _GeoOpen, closed=True): ...
 
 
-class SpecContour(SpecHead, Contour, closed=True): ...
+class SpecGraticule(SpecHead, _GraticuleOpen, closed=True): ...
 
 
-class SpecDelaunayLink(SpecHead, DelaunayLink, closed=True): ...
+class SpecGridFx(SpecHead, _GridFxOpen, closed=True): ...
 
 
-class SpecDelaunayMesh(SpecHead, DelaunayMesh, closed=True): ...
+class SpecGridFy(SpecHead, _GridFyOpen, closed=True): ...
 
 
-class SpecHull(SpecHead, Hull, closed=True): ...
+class SpecGridX(SpecHead, _GridXOpen, closed=True): ...
 
 
-class SpecVoronoi(SpecHead, Voronoi, closed=True): ...
+class SpecGridY(SpecHead, _GridYOpen, closed=True): ...
 
 
-class SpecVoronoiMesh(SpecHead, VoronoiMesh, closed=True): ...
+class SpecHConcat(SpecHead, _HConcatOpen, closed=True): ...
 
 
-class SpecDenseLine(SpecHead, DenseLine, closed=True): ...
+class SpecHSpace(SpecHead, _HSpaceOpen, closed=True): ...
 
 
-class SpecDensity(SpecHead, Density, closed=True): ...
+class SpecHeatmap(SpecHead, _HeatmapOpen, closed=True): ...
 
 
-class SpecDensityX1(SpecHead, DensityX1, closed=True): ...
+class SpecHexagon(SpecHead, _HexagonOpen, closed=True): ...
 
 
-class SpecDensityX2(SpecHead, DensityX2, closed=True): ...
+class SpecHexbin(SpecHead, _HexbinOpen, closed=True): ...
 
 
-class SpecDensityX3(SpecHead, DensityX3, closed=True): ...
+class SpecHexgrid(SpecHead, _HexgridOpen, closed=True): ...
 
 
-class SpecDensityX4(SpecHead, DensityX4, closed=True): ...
+class SpecHull(SpecHead, _HullOpen, closed=True): ...
 
 
-class SpecDensityY1(SpecHead, DensityY1, closed=True): ...
+class SpecImage(SpecHead, _ImageOpen, closed=True): ...
 
 
-class SpecDensityY2(SpecHead, DensityY2, closed=True): ...
+class SpecLegend(SpecHead, _LegendOpen, closed=True): ...
 
 
-class SpecDensityY3(SpecHead, DensityY3, closed=True): ...
+class SpecLine(SpecHead, _LineOpen, closed=True): ...
 
 
-class SpecDensityY4(SpecHead, DensityY4, closed=True): ...
+class SpecLineX(SpecHead, _LineXOpen, closed=True): ...
 
 
-class SpecDot(SpecHead, Dot, closed=True): ...
+class SpecLineY(SpecHead, _LineYOpen, closed=True): ...
 
 
-class SpecDotX(SpecHead, DotX, closed=True): ...
+class SpecLink(SpecHead, _LinkOpen, closed=True): ...
 
 
-class SpecDotY(SpecHead, DotY, closed=True): ...
+class SpecMenu(SpecHead, _MenuOpen, closed=True): ...
 
 
-class SpecCircle(SpecHead, Circle, closed=True): ...
+class SpecPlot(SpecHead, _PlotOpen, closed=True): ...
 
 
-class SpecHexagon(SpecHead, Hexagon, closed=True): ...
+class SpecRaster(SpecHead, _RasterOpen, closed=True): ...
 
 
-class SpecErrorBarX(SpecHead, ErrorBarX, closed=True): ...
+class SpecRasterTile(SpecHead, _RasterTileOpen, closed=True): ...
 
 
-class SpecErrorBarY(SpecHead, ErrorBarY, closed=True): ...
+class SpecRect(SpecHead, _RectOpen, closed=True): ...
 
 
-class SpecFrame(SpecHead, Frame, closed=True): ...
+class SpecRectX(SpecHead, _RectXOpen, closed=True): ...
 
 
-class SpecGeo(SpecHead, Geo, closed=True): ...
+class SpecRectY(SpecHead, _RectYOpen, closed=True): ...
 
 
-class SpecGraticule(SpecHead, Graticule, closed=True): ...
+class SpecRegressionY(SpecHead, _RegressionYOpen, closed=True): ...
 
 
-class SpecSphere(SpecHead, Sphere, closed=True): ...
+class SpecRuleX(SpecHead, _RuleXOpen, closed=True): ...
 
 
-class SpecHexbin(SpecHead, Hexbin, closed=True): ...
+class SpecRuleY(SpecHead, _RuleYOpen, closed=True): ...
 
 
-class SpecHexgrid(SpecHead, Hexgrid, closed=True): ...
+class SpecSearch(SpecHead, _SearchOpen, closed=True): ...
 
 
-class SpecImage(SpecHead, Image, closed=True): ...
+class SpecSlider(SpecHead, _SliderOpen, closed=True): ...
 
 
-class SpecLine(SpecHead, Line, closed=True): ...
+class SpecSphere(SpecHead, _SphereOpen, closed=True): ...
 
 
-class SpecLineX(SpecHead, LineX, closed=True): ...
+class SpecSpike(SpecHead, _SpikeOpen, closed=True): ...
 
 
-class SpecLineY(SpecHead, LineY, closed=True): ...
+class SpecTable(SpecHead, _TableOpen, closed=True): ...
 
 
-class SpecLink(SpecHead, Link, closed=True): ...
+class SpecText(SpecHead, _TextOpen, closed=True): ...
 
 
-class SpecRaster(SpecHead, Raster, closed=True): ...
+class SpecTextX(SpecHead, _TextXOpen, closed=True): ...
 
 
-class SpecHeatmap(SpecHead, Heatmap, closed=True): ...
+class SpecTextY(SpecHead, _TextYOpen, closed=True): ...
 
 
-class SpecRasterTile(SpecHead, RasterTile, closed=True): ...
+class SpecTickX(SpecHead, _TickXOpen, closed=True): ...
 
 
-class SpecRect(SpecHead, Rect, closed=True): ...
+class SpecTickY(SpecHead, _TickYOpen, closed=True): ...
 
 
-class SpecRectX(SpecHead, RectX, closed=True): ...
+class SpecVConcat(SpecHead, _VConcatOpen, closed=True): ...
 
 
-class SpecRectY(SpecHead, RectY, closed=True): ...
+class SpecVSpace(SpecHead, _VSpaceOpen, closed=True): ...
 
 
-class SpecRegressionY(SpecHead, RegressionY, closed=True): ...
+class SpecVector(SpecHead, _VectorOpen, closed=True): ...
 
 
-class SpecRuleX(SpecHead, RuleX, closed=True): ...
+class SpecVectorX(SpecHead, _VectorXOpen, closed=True): ...
 
 
-class SpecRuleY(SpecHead, RuleY, closed=True): ...
+class SpecVectorY(SpecHead, _VectorYOpen, closed=True): ...
 
 
-class SpecText(SpecHead, Text, closed=True): ...
+class SpecVoronoi(SpecHead, _VoronoiOpen, closed=True): ...
 
 
-class SpecTextX(SpecHead, TextX, closed=True): ...
+class SpecVoronoiMesh(SpecHead, _VoronoiMeshOpen, closed=True): ...
 
 
-class SpecTextY(SpecHead, TextY, closed=True): ...
+class SpecWaffleX(SpecHead, _WaffleXOpen, closed=True): ...
 
 
-class SpecTickX(SpecHead, TickX, closed=True): ...
+class SpecWaffleY(SpecHead, _WaffleYOpen, closed=True): ...
 
 
-class SpecTickY(SpecHead, TickY, closed=True): ...
+class SpecDensityX1(SpecHead, _DensityX1Open, closed=True): ...
 
 
-class SpecVector(SpecHead, Vector, closed=True): ...
+class SpecDensityX2(SpecHead, _DensityX2Open, closed=True): ...
 
 
-class SpecVectorX(SpecHead, VectorX, closed=True): ...
+class SpecDensityX3(SpecHead, _DensityX3Open, closed=True): ...
 
 
-class SpecVectorY(SpecHead, VectorY, closed=True): ...
+class SpecDensityX4(SpecHead, _DensityX4Open, closed=True): ...
 
 
-class SpecSpike(SpecHead, Spike, closed=True): ...
+class SpecDensityY1(SpecHead, _DensityY1Open, closed=True): ...
 
 
-class SpecWaffleX(SpecHead, WaffleX, closed=True): ...
+class SpecDensityY2(SpecHead, _DensityY2Open, closed=True): ...
 
 
-class SpecWaffleY(SpecHead, WaffleY, closed=True): ...
+class SpecDensityY3(SpecHead, _DensityY3Open, closed=True): ...
 
 
-class SpecLegend(SpecHead, Legend, closed=True): ...
+class SpecDensityY4(SpecHead, _DensityY4Open, closed=True): ...
 
 
 Spec = TypeAliasType(
     "Spec",
-    SpecHConcat
-    | SpecVConcat
-    | SpecHSpace
-    | SpecVSpace
-    | SpecMenu
-    | SpecSearch
-    | SpecSlider
-    | SpecTable
-    | SpecPlot
-    | SpecArea
+    SpecArea
     | SpecAreaX
     | SpecAreaY
     | SpecArrow
-    | SpecAxisX
-    | SpecAxisY
     | SpecAxisFx
     | SpecAxisFy
-    | SpecGridX
-    | SpecGridY
-    | SpecGridFx
-    | SpecGridFy
+    | SpecAxisX
+    | SpecAxisY
     | SpecBarX
     | SpecBarY
     | SpecCell
     | SpecCellX
     | SpecCellY
+    | SpecCircle
     | SpecContour
     | SpecDelaunayLink
     | SpecDelaunayMesh
-    | SpecHull
-    | SpecVoronoi
-    | SpecVoronoiMesh
     | SpecDenseLine
     | SpecDensity
-    | SpecDensityX1
-    | SpecDensityX2
-    | SpecDensityX3
-    | SpecDensityX4
-    | SpecDensityY1
-    | SpecDensityY2
-    | SpecDensityY3
-    | SpecDensityY4
     | SpecDot
     | SpecDotX
     | SpecDotY
-    | SpecCircle
-    | SpecHexagon
     | SpecErrorBarX
     | SpecErrorBarY
     | SpecFrame
     | SpecGeo
     | SpecGraticule
-    | SpecSphere
+    | SpecGridFx
+    | SpecGridFy
+    | SpecGridX
+    | SpecGridY
+    | SpecHConcat
+    | SpecHSpace
+    | SpecHeatmap
+    | SpecHexagon
     | SpecHexbin
     | SpecHexgrid
+    | SpecHull
     | SpecImage
+    | SpecLegend
     | SpecLine
     | SpecLineX
     | SpecLineY
     | SpecLink
+    | SpecMenu
+    | SpecPlot
     | SpecRaster
-    | SpecHeatmap
     | SpecRasterTile
     | SpecRect
     | SpecRectX
@@ -418,18 +403,33 @@ Spec = TypeAliasType(
     | SpecRegressionY
     | SpecRuleX
     | SpecRuleY
+    | SpecSearch
+    | SpecSlider
+    | SpecSphere
+    | SpecSpike
+    | SpecTable
     | SpecText
     | SpecTextX
     | SpecTextY
     | SpecTickX
     | SpecTickY
+    | SpecVConcat
+    | SpecVSpace
     | SpecVector
     | SpecVectorX
     | SpecVectorY
-    | SpecSpike
+    | SpecVoronoi
+    | SpecVoronoiMesh
     | SpecWaffleX
     | SpecWaffleY
-    | SpecLegend,
+    | SpecDensityX1
+    | SpecDensityX2
+    | SpecDensityX3
+    | SpecDensityX4
+    | SpecDensityY1
+    | SpecDensityY2
+    | SpecDensityY3
+    | SpecDensityY4,
 )
 __all__ = (
     "Spec",

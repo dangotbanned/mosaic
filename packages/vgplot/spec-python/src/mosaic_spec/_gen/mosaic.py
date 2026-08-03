@@ -1078,11 +1078,14 @@ GridInterpolate = TypeAliasType(
 - *random-walk* - apply a random walk from each pixel, stopping when near a sample"""
 
 
-class HSpace(TypedDict, closed=True):
+class _HSpaceOpen(TypedDict, total=False):
     """An hspace component."""
 
     hspace: float | str
     """Horizontal space to place between components. Number values indicate screen pixels. String values may use CSS units (em, pt, px, etc)."""
+
+
+class HSpace(_HSpaceOpen, closed=True): ...
 
 
 class Hours(TypedDict, closed=True):
@@ -1533,7 +1536,7 @@ ScaleName = TypeAliasType(
 Position scales may have associated axes. Color, opacity, and symbol scales may have an associated legend."""
 
 
-class Search(TypedDict, closed=True):
+class _SearchOpen(TypedDict, total=False):
     """A search input component."""
 
     bind: NotRequired[ParamRef]
@@ -1558,6 +1561,9 @@ class Search(TypedDict, closed=True):
     - `"suffix"`: the query string must appear at the end of the text
     - `"regexp"`: the query string is a regular expression the text must match
     """
+
+
+class Search(_SearchOpen, closed=True): ...
 
 
 class Seconds(TypedDict, closed=True):
@@ -1594,7 +1600,7 @@ class Selection(TypedDict, closed=True):
     """
 
 
-class Slider(TypedDict, closed=True):
+class _SliderOpen(TypedDict, total=False):
     """A slider input component."""
 
     bind: NotRequired[ParamRef]
@@ -1623,6 +1629,9 @@ class Slider(TypedDict, closed=True):
     """The initial slider value."""
     width: NotRequired[float]
     """The width of the slider in screen pixels."""
+
+
+class Slider(_SliderOpen, closed=True): ...
 
 
 class SortOrder2(TypedDict, closed=True):
@@ -1747,7 +1756,7 @@ The *hexagon* symbol is also supported.
 [1]: https://www.tandfonline.com/doi/abs/10.1080/10618600.2019.1637746"""
 
 
-class Table(TypedDict, closed=True):
+class _TableOpen(TypedDict, total=False):
     """A table grid view component."""
 
     align: NotRequired[Mapping[str, Literal["left", "right", "center", "justify"]]]
@@ -1770,6 +1779,9 @@ class Table(TypedDict, closed=True):
     """The name of a database table to use as a data source for this widget."""
     width: NotRequired[float | Mapping[str, float]]
     """If a number, sets the total width of the table widget, in pixels. If an object, provides per-column pixel width values. Column names should be object keys, mapped to numeric width values."""
+
+
+class Table(_TableOpen, closed=True): ...
 
 
 TimeIntervalName = TypeAliasType(
@@ -1851,11 +1863,14 @@ TransformField = TypeAliasType("TransformField", str | ParamRef)
 """A field argument to a data transform."""
 
 
-class VSpace(TypedDict, closed=True):
+class _VSpaceOpen(TypedDict, total=False):
     """A vspace component."""
 
     vspace: float | str
     """Vertical space to place between components. Number values indicate screen pixels. String values may use CSS units (em, pt, px, etc)."""
+
+
+class VSpace(_VSpaceOpen, closed=True): ...
 
 
 VectorShapeName = TypeAliasType("VectorShapeName", Literal["arrow", "spike"])
@@ -2095,7 +2110,7 @@ class IntervalY(TypedDict, closed=True):
     """Select a continuous 1D interval selection over the `y` scale domain."""
 
 
-class Legend(TypedDict, closed=True):
+class _LegendOpen(TypedDict, total=False):
     """A legend defined as a top-level spec component."""
 
     bind: NotRequired[ParamRef]
@@ -2126,6 +2141,9 @@ class Legend(TypedDict, closed=True):
     """The width of a continuous legend, in pixels."""
 
 
+class Legend(_LegendOpen, closed=True): ...
+
+
 LiteralTimeInterval = TypeAliasType(
     "LiteralTimeInterval",
     Literal[
@@ -2153,7 +2171,7 @@ LiteralTimeInterval = TypeAliasType(
 )
 
 
-class Menu(TypedDict, closed=True):
+class _MenuOpen(TypedDict, total=False):
     """A menu input component."""
 
     bind: NotRequired[ParamRef]
@@ -2176,6 +2194,9 @@ class Menu(TypedDict, closed=True):
     """The name of a database table to use as a data source for this widget. Used in conjunction with the `column` property."""
     value: NotRequired[Any]
     """The initial selected menu value."""
+
+
+class Menu(_MenuOpen, closed=True): ...
 
 
 class NearestX(TypedDict, closed=True):
@@ -4133,7 +4154,7 @@ SortOrder = TypeAliasType("SortOrder", ChannelValue | SortOrder1 | SortOrder2)
 - a {channel, order} object for sorting the named channel's values"""
 
 
-class Sphere(TypedDict, closed=True):
+class _SphereOpen(TypedDict, total=False):
     """The sphere mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -4390,7 +4411,10 @@ class Sphere(TypedDict, closed=True):
     """
 
 
-class Spike(TypedDict, closed=True):
+class Sphere(_SphereOpen, closed=True): ...
+
+
+class _SpikeOpen(TypedDict, total=False):
     """The spike mark."""
 
     anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
@@ -4677,7 +4701,10 @@ class Spike(TypedDict, closed=True):
     """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
-class Text(TypedDict, closed=True):
+class Spike(_SpikeOpen, closed=True): ...
+
+
+class _TextOpen(TypedDict, total=False):
     """The text mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -5035,7 +5062,10 @@ class Text(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class TickX(TypedDict, closed=True):
+class Text(_TextOpen, closed=True): ...
+
+
+class _TickXOpen(TypedDict, total=False):
     """The tickX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -5352,7 +5382,10 @@ class TickX(TypedDict, closed=True):
     """
 
 
-class TickY(TypedDict, closed=True):
+class TickX(_TickXOpen, closed=True): ...
+
+
+class _TickYOpen(TypedDict, total=False):
     """The tickY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -5669,7 +5702,10 @@ class TickY(TypedDict, closed=True):
     """The required vertical position of the tick; a channel typically bound to the *y* scale."""
 
 
-class Vector(TypedDict, closed=True):
+class TickY(_TickYOpen, closed=True): ...
+
+
+class _VectorOpen(TypedDict, total=False):
     """The vector mark."""
 
     anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
@@ -5962,7 +5998,10 @@ class Vector(TypedDict, closed=True):
     """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
-class VectorX(TypedDict, closed=True):
+class Vector(_VectorOpen, closed=True): ...
+
+
+class _VectorXOpen(TypedDict, total=False):
     """The vectorX mark."""
 
     anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
@@ -6252,7 +6291,10 @@ class VectorX(TypedDict, closed=True):
     """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
-class VectorY(TypedDict, closed=True):
+class VectorX(_VectorXOpen, closed=True): ...
+
+
+class _VectorYOpen(TypedDict, total=False):
     """The vectorY mark."""
 
     anchor: NotRequired[Literal["start", "middle", "end"] | ParamRef]
@@ -6542,7 +6584,10 @@ class VectorY(TypedDict, closed=True):
     """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
-class Voronoi(TypedDict, closed=True):
+class VectorY(_VectorYOpen, closed=True): ...
+
+
+class _VoronoiOpen(TypedDict, total=False):
     """The voronoi mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -6880,7 +6925,10 @@ class Voronoi(TypedDict, closed=True):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
-class VoronoiMesh(TypedDict, closed=True):
+class Voronoi(_VoronoiOpen, closed=True): ...
+
+
+class _VoronoiMeshOpen(TypedDict, total=False):
     """The voronoiMesh mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -7219,7 +7267,10 @@ class VoronoiMesh(TypedDict, closed=True):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
-class Area(TypedDict, closed=True):
+class VoronoiMesh(_VoronoiMeshOpen, closed=True): ...
+
+
+class _AreaOpen(TypedDict, total=False):
     """The area mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -7537,7 +7588,10 @@ class Area(TypedDict, closed=True):
     """
 
 
-class AreaX(TypedDict, closed=True):
+class Area(_AreaOpen, closed=True): ...
+
+
+class _AreaXOpen(TypedDict, total=False):
     """The areaX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -7869,7 +7923,10 @@ class AreaX(TypedDict, closed=True):
     """
 
 
-class AreaY(TypedDict, closed=True):
+class AreaX(_AreaXOpen, closed=True): ...
+
+
+class _AreaYOpen(TypedDict, total=False):
     """The areaY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -8201,7 +8258,10 @@ class AreaY(TypedDict, closed=True):
     """
 
 
-class Arrow(TypedDict, closed=True):
+class AreaY(_AreaYOpen, closed=True): ...
+
+
+class _ArrowOpen(TypedDict, total=False):
     """The arrow mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -8489,7 +8549,10 @@ class Arrow(TypedDict, closed=True):
     """The ending vertical position; typically bound to the *y* scale; also sets a default for **y1**."""
 
 
-class AxisFx(TypedDict, closed=True):
+class Arrow(_ArrowOpen, closed=True): ...
+
+
+class _AxisFxOpen(TypedDict, total=False):
     """The axisFx mark."""
 
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | ParamRef]
@@ -8972,7 +9035,10 @@ class AxisFx(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class AxisFy(TypedDict, closed=True):
+class AxisFx(_AxisFxOpen, closed=True): ...
+
+
+class _AxisFyOpen(TypedDict, total=False):
     """The axisFy mark."""
 
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | ParamRef]
@@ -9454,7 +9520,10 @@ class AxisFy(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class AxisX(TypedDict, closed=True):
+class AxisFy(_AxisFyOpen, closed=True): ...
+
+
+class _AxisXOpen(TypedDict, total=False):
     """The axisX mark."""
 
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | ParamRef]
@@ -9938,7 +10007,10 @@ class AxisX(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class AxisY(TypedDict, closed=True):
+class AxisX(_AxisXOpen, closed=True): ...
+
+
+class _AxisYOpen(TypedDict, total=False):
     """The axisY mark."""
 
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | ParamRef]
@@ -10420,7 +10492,10 @@ class AxisY(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class Cell(TypedDict, closed=True):
+class AxisY(_AxisYOpen, closed=True): ...
+
+
+class _CellOpen(TypedDict, total=False):
     """The cell mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -10723,7 +10798,10 @@ class Cell(TypedDict, closed=True):
     """
 
 
-class CellX(TypedDict, closed=True):
+class Cell(_CellOpen, closed=True): ...
+
+
+class _CellXOpen(TypedDict, total=False):
     """The cellX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -11022,7 +11100,10 @@ class CellX(TypedDict, closed=True):
     """
 
 
-class CellY(TypedDict, closed=True):
+class CellX(_CellXOpen, closed=True): ...
+
+
+class _CellYOpen(TypedDict, total=False):
     """The cellY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -11321,13 +11402,16 @@ class CellY(TypedDict, closed=True):
     """
 
 
+class CellY(_CellYOpen, closed=True): ...
+
+
 ChannelValueIntervalSpec = TypeAliasType(
     "ChannelValueIntervalSpec", ChannelValueSpec | ChannelValueIntervalSpec1
 )
 """In some contexts, when specifying a mark channel's value, you can provide a {value, interval} object to specify an associated interval."""
 
 
-class Circle(TypedDict, closed=True):
+class _CircleOpen(TypedDict, total=False):
     """The circle mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -11610,7 +11694,10 @@ class Circle(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class Contour(TypedDict, closed=True):
+class Circle(_CircleOpen, closed=True): ...
+
+
+class _ContourOpen(TypedDict, total=False):
     """The contour mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -11900,7 +11987,10 @@ class Contour(TypedDict, closed=True):
     """The vertical position channel, typically bound to the *y* scale. Domain values are binned into a grid with *height* vertical bins."""
 
 
-class DelaunayLink(TypedDict, closed=True):
+class Contour(_ContourOpen, closed=True): ...
+
+
+class _DelaunayLinkOpen(TypedDict, total=False):
     """The delaunayLink mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -12239,7 +12329,10 @@ class DelaunayLink(TypedDict, closed=True):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
-class DelaunayMesh(TypedDict, closed=True):
+class DelaunayLink(_DelaunayLinkOpen, closed=True): ...
+
+
+class _DelaunayMeshOpen(TypedDict, total=False):
     """The delaunayMesh mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -12578,7 +12671,10 @@ class DelaunayMesh(TypedDict, closed=True):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
-class DenseLine(TypedDict, closed=True):
+class DelaunayMesh(_DelaunayMeshOpen, closed=True): ...
+
+
+class _DenseLineOpen(TypedDict, total=False):
     """The denseLine mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -12863,7 +12959,10 @@ class DenseLine(TypedDict, closed=True):
     """A ordinal channel for grouping data into series to be drawn as separate lines."""
 
 
-class Density(TypedDict, closed=True):
+class DenseLine(_DenseLineOpen, closed=True): ...
+
+
+class _DensityOpen(TypedDict, total=False):
     """The density mark for 2D densities."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -13242,6 +13341,9 @@ class Density(TypedDict, closed=True):
     """The vertical position channel, typically bound to the *y* scale. Domain values are binned into a grid with *height* vertical bins."""
     z: NotRequired[ChannelValue]
     """An optional ordinal channel for grouping data into series."""
+
+
+class Density(_DensityOpen, closed=True): ...
 
 
 class _DensityX1Open(TypedDict, total=False):
@@ -15938,7 +16040,7 @@ class _DensityY4Open(TypedDict, total=False):
 class DensityY4(_DensityY4Open, closed=True): ...
 
 
-class Dot(TypedDict, closed=True):
+class _DotOpen(TypedDict, total=False):
     """The dot mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -16229,7 +16331,10 @@ class Dot(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class DotX(TypedDict, closed=True):
+class Dot(_DotOpen, closed=True): ...
+
+
+class _DotXOpen(TypedDict, total=False):
     """The dotX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -16519,7 +16624,10 @@ class DotX(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class DotY(TypedDict, closed=True):
+class DotX(_DotXOpen, closed=True): ...
+
+
+class _DotYOpen(TypedDict, total=False):
     """The dotY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -16809,7 +16917,10 @@ class DotY(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class ErrorBarX(TypedDict, closed=True):
+class DotY(_DotYOpen, closed=True): ...
+
+
+class _ErrorBarXOpen(TypedDict, total=False):
     """The errorbarX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -17124,7 +17235,10 @@ class ErrorBarX(TypedDict, closed=True):
     """An optional ordinal channel for grouping data, producing an independent error bar for each group. If not specified, it defaults to **stroke** if a channel."""
 
 
-class ErrorBarY(TypedDict, closed=True):
+class ErrorBarX(_ErrorBarXOpen, closed=True): ...
+
+
+class _ErrorBarYOpen(TypedDict, total=False):
     """The errorbarY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -17439,7 +17553,10 @@ class ErrorBarY(TypedDict, closed=True):
     """An optional ordinal channel for grouping data, producing an independent error bar for each group. If not specified, it defaults to **stroke** if a channel."""
 
 
-class Frame(TypedDict, closed=True):
+class ErrorBarY(_ErrorBarYOpen, closed=True): ...
+
+
+class _FrameOpen(TypedDict, total=False):
     """The frame mark."""
 
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | ParamRef | None]
@@ -17726,7 +17843,10 @@ class Frame(TypedDict, closed=True):
     """
 
 
-class Geo(TypedDict, closed=True):
+class Frame(_FrameOpen, closed=True): ...
+
+
+class _GeoOpen(TypedDict, total=False):
     """The geo mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -17999,7 +18119,10 @@ class Geo(TypedDict, closed=True):
     """
 
 
-class Graticule(TypedDict, closed=True):
+class Geo(_GeoOpen, closed=True): ...
+
+
+class _GraticuleOpen(TypedDict, total=False):
     """The graticule mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -18256,7 +18379,10 @@ class Graticule(TypedDict, closed=True):
     """
 
 
-class GridFx(TypedDict, closed=True):
+class Graticule(_GraticuleOpen, closed=True): ...
+
+
+class _GridFxOpen(TypedDict, total=False):
     """The gridFx mark."""
 
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | ParamRef]
@@ -18600,7 +18726,10 @@ class GridFx(TypedDict, closed=True):
     """
 
 
-class GridFy(TypedDict, closed=True):
+class GridFx(_GridFxOpen, closed=True): ...
+
+
+class _GridFyOpen(TypedDict, total=False):
     """The gridFy mark."""
 
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | ParamRef]
@@ -18944,7 +19073,10 @@ class GridFy(TypedDict, closed=True):
     """The vertical position of the tick; an optional channel bound to the *y* scale. If not specified, the rule will be vertically centered in the plot's frame."""
 
 
-class GridX(TypedDict, closed=True):
+class GridFy(_GridFyOpen, closed=True): ...
+
+
+class _GridXOpen(TypedDict, total=False):
     """The gridX mark."""
 
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | ParamRef]
@@ -19291,7 +19423,10 @@ class GridX(TypedDict, closed=True):
     """
 
 
-class GridY(TypedDict, closed=True):
+class GridX(_GridXOpen, closed=True): ...
+
+
+class _GridYOpen(TypedDict, total=False):
     """The gridY mark."""
 
     anchor: NotRequired[Literal["top", "right", "bottom", "left"] | ParamRef]
@@ -19638,7 +19773,10 @@ class GridY(TypedDict, closed=True):
     """The vertical position of the tick; an optional channel bound to the *y* scale. If not specified, the rule will be vertically centered in the plot's frame."""
 
 
-class Heatmap(TypedDict, closed=True):
+class GridY(_GridYOpen, closed=True): ...
+
+
+class _HeatmapOpen(TypedDict, total=False):
     """The heatmap mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -19922,7 +20060,10 @@ class Heatmap(TypedDict, closed=True):
     """The vertical position channel, typically bound to the *y* scale. Domain values are binned into a grid with *height* vertical bins."""
 
 
-class Hexagon(TypedDict, closed=True):
+class Heatmap(_HeatmapOpen, closed=True): ...
+
+
+class _HexagonOpen(TypedDict, total=False):
     """The hexagon mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -20205,7 +20346,10 @@ class Hexagon(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class Hexbin(TypedDict, closed=True):
+class Hexagon(_HexagonOpen, closed=True): ...
+
+
+class _HexbinOpen(TypedDict, total=False):
     """The hexbin mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -20564,7 +20708,10 @@ class Hexbin(TypedDict, closed=True):
     """How to subdivide bins. If not specified, defaults to the *fill* channel, if any, or the *stroke* channel, if any. If null, bins will not be subdivided."""
 
 
-class Hexgrid(TypedDict, closed=True):
+class Hexbin(_HexbinOpen, closed=True): ...
+
+
+class _HexgridOpen(TypedDict, total=False):
     """The hexgrid mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -20828,7 +20975,10 @@ class Hexgrid(TypedDict, closed=True):
     """
 
 
-class Hull(TypedDict, closed=True):
+class Hexgrid(_HexgridOpen, closed=True): ...
+
+
+class _HullOpen(TypedDict, total=False):
     """The hull mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -21168,7 +21318,10 @@ class Hull(TypedDict, closed=True):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
-class Image(TypedDict, closed=True):
+class Hull(_HullOpen, closed=True): ...
+
+
+class _ImageOpen(TypedDict, total=False):
     aria_description: NotRequired[str | ParamRef]
     """
     The [aria-description][1]; a constant textual description.
@@ -21466,7 +21619,10 @@ class Image(TypedDict, closed=True):
     """The vertical position channel specifying the image's center; typically bound to the *y* scale."""
 
 
-class Line(TypedDict, closed=True):
+class Image(_ImageOpen, closed=True): ...
+
+
+class _LineOpen(TypedDict, total=False):
     """The line mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -21815,7 +21971,10 @@ class Line(TypedDict, closed=True):
     """
 
 
-class LineX(TypedDict, closed=True):
+class Line(_LineOpen, closed=True): ...
+
+
+class _LineXOpen(TypedDict, total=False):
     """The lineX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -22155,7 +22314,10 @@ class LineX(TypedDict, closed=True):
     """
 
 
-class LineY(TypedDict, closed=True):
+class LineX(_LineXOpen, closed=True): ...
+
+
+class _LineYOpen(TypedDict, total=False):
     """The lineY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -22495,7 +22657,10 @@ class LineY(TypedDict, closed=True):
     """
 
 
-class Link(TypedDict, closed=True):
+class LineY(_LineYOpen, closed=True): ...
+
+
+class _LinkOpen(TypedDict, total=False):
     """The link mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -22825,7 +22990,10 @@ class Link(TypedDict, closed=True):
     """The ending vertical position; typically bound to the *y* scale; also sets a default for **y1**."""
 
 
-class Raster(TypedDict, closed=True):
+class Link(_LinkOpen, closed=True): ...
+
+
+class _RasterOpen(TypedDict, total=False):
     """The raster mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -23112,7 +23280,10 @@ class Raster(TypedDict, closed=True):
     """The vertical position channel, typically bound to the *y* scale. Domain values are binned into a grid with *height* vertical bins."""
 
 
-class RasterTile(TypedDict, closed=True):
+class Raster(_RasterOpen, closed=True): ...
+
+
+class _RasterTileOpen(TypedDict, total=False):
     """The rasterTile mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -23395,7 +23566,10 @@ class RasterTile(TypedDict, closed=True):
     """The vertical position channel, typically bound to the *y* scale. Domain values are binned into a grid with *height* vertical bins."""
 
 
-class Rect(TypedDict, closed=True):
+class RasterTile(_RasterTileOpen, closed=True): ...
+
+
+class _RectOpen(TypedDict, total=False):
     """The rect mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -23765,7 +23939,10 @@ class Rect(TypedDict, closed=True):
     """
 
 
-class RectX(TypedDict, closed=True):
+class Rect(_RectOpen, closed=True): ...
+
+
+class _RectXOpen(TypedDict, total=False):
     """The rectX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -24121,7 +24298,10 @@ class RectX(TypedDict, closed=True):
     """
 
 
-class RectY(TypedDict, closed=True):
+class RectX(_RectXOpen, closed=True): ...
+
+
+class _RectYOpen(TypedDict, total=False):
     """The rectY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -24477,7 +24657,10 @@ class RectY(TypedDict, closed=True):
     """
 
 
-class RegressionY(TypedDict, closed=True):
+class RectY(_RectYOpen, closed=True): ...
+
+
+class _RegressionYOpen(TypedDict, total=False):
     """The regressionY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -24758,7 +24941,10 @@ class RegressionY(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into (possibly stacked) series, producing an independent regression for each group. If not specified, it defaults to **fill** if a channel, or **stroke** if a channel."""
 
 
-class RuleX(TypedDict, closed=True):
+class RegressionY(_RegressionYOpen, closed=True): ...
+
+
+class _RuleXOpen(TypedDict, total=False):
     """The ruleX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -25091,7 +25277,10 @@ class RuleX(TypedDict, closed=True):
     """
 
 
-class RuleY(TypedDict, closed=True):
+class RuleX(_RuleXOpen, closed=True): ...
+
+
+class _RuleYOpen(TypedDict, total=False):
     """The ruleY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -25424,7 +25613,10 @@ class RuleY(TypedDict, closed=True):
     """
 
 
-class TextX(TypedDict, closed=True):
+class RuleY(_RuleYOpen, closed=True): ...
+
+
+class _TextXOpen(TypedDict, total=False):
     """The textX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -25785,7 +25977,10 @@ class TextX(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class TextY(TypedDict, closed=True):
+class TextX(_TextXOpen, closed=True): ...
+
+
+class _TextYOpen(TypedDict, total=False):
     """The textY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -26146,7 +26341,10 @@ class TextY(TypedDict, closed=True):
     """An optional ordinal channel for grouping data into series."""
 
 
-class WaffleX(TypedDict, closed=True):
+class TextY(_TextYOpen, closed=True): ...
+
+
+class _WaffleXOpen(TypedDict, total=False):
     """The waffleX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -26498,7 +26696,10 @@ class WaffleX(TypedDict, closed=True):
     """
 
 
-class WaffleY(TypedDict, closed=True):
+class WaffleX(_WaffleXOpen, closed=True): ...
+
+
+class _WaffleYOpen(TypedDict, total=False):
     """The waffleY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -26850,7 +27051,10 @@ class WaffleY(TypedDict, closed=True):
     """
 
 
-class BarX(TypedDict, closed=True):
+class WaffleY(_WaffleYOpen, closed=True): ...
+
+
+class _BarXOpen(TypedDict, total=False):
     """The barX mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -27196,7 +27400,10 @@ class BarX(TypedDict, closed=True):
     """
 
 
-class BarY(TypedDict, closed=True):
+class BarX(_BarXOpen, closed=True): ...
+
+
+class _BarYOpen(TypedDict, total=False):
     """The barY mark."""
 
     aria_description: NotRequired[str | ParamRef]
@@ -27542,6 +27749,9 @@ class BarY(TypedDict, closed=True):
     """
 
 
+class BarY(_BarYOpen, closed=True): ...
+
+
 DensityX = TypeAliasType("DensityX", DensityX1 | DensityX2 | DensityX3 | DensityX4)
 """The densityX mark."""
 
@@ -27621,7 +27831,7 @@ PlotMark = TypeAliasType(
 """A plot mark entry."""
 
 
-class Plot(TypedDict, closed=True):
+class _PlotOpen(TypedDict, total=False):
     """A plot component."""
 
     align: NotRequired[float | ParamRef]
@@ -28527,6 +28737,9 @@ class Plot(TypedDict, closed=True):
     """
 
 
+class Plot(_PlotOpen, closed=True): ...
+
+
 Component = TypeAliasType(
     "Component",
     Union[
@@ -28536,15 +28749,21 @@ Component = TypeAliasType(
 """A specification component such as a plot, input widget, or layout."""
 
 
-class HConcat(TypedDict, closed=True):
+class _HConcatOpen(TypedDict, total=False):
     """An hconcat component."""
 
     hconcat: Sequence[Component]
     """Horizontally concatenate components in a row layout."""
 
 
-class VConcat(TypedDict, closed=True):
+class HConcat(_HConcatOpen, closed=True): ...
+
+
+class _VConcatOpen(TypedDict, total=False):
     """A vconcat component."""
 
     vconcat: Sequence[Component]
     """Vertically concatenate components in a column layout."""
+
+
+class VConcat(_VConcatOpen, closed=True): ...
