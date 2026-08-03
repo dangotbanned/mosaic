@@ -22,6 +22,8 @@ SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
 SCHEMA_OUT = fs.SPEC_PYTHON / "schema" / f"{GENERATED_MODULE_NAME}.json"
 
 SPEC_INTERSECTION_MODULE = fs.MOSAIC_SPEC / "_spec.py"
+GENERATED_MODULE = fs.MOSAIC_SPEC / "_gen" / f"{GENERATED_MODULE_NAME}.py"
+TYPING_COMPAT = fs.MOSAIC_SPEC / "_typing_compat.py"
 
 KEYS_REPLACE: Final = {"as": "bind", "from": "source", "for": "plot"}
 """Keys that collide with [`keyword.kwlist`][], but the values are required.
@@ -37,6 +39,7 @@ SPEC_HEAD: Final = "SpecHead"
 
 Mixing this into the bases with the `Component` member is a limited form of an intersection type.
 """
+SPEC_HEAD_NO_DATA = f"_{SPEC_HEAD}"
 
 
 def _recursive_replace[T: (m.JsonSchema, m.ItemSchema)](schema: T) -> T:
@@ -57,7 +60,6 @@ def _recursive_replace[T: (m.JsonSchema, m.ItemSchema)](schema: T) -> T:
     return schema
 
 
-# TODO @dangotbanned: Fix typing issues in `mosaic_spec/_spec.py`
 def generate_python_schema(source: str | Path, target: str | Path) -> None:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
     schema = serde.read_json(source, m.InputSchema)
@@ -70,14 +72,14 @@ def generate_python_schema(source: str | Path, target: str | Path) -> None:
     serde.write_json(target, schema)
     print(f"Generated python schema at: {fs.repo_relative_str(target)}")
 
+    # NOTE: Cheating a little bit here, because these symbols haven't been defined by `datamodel-code-generator` yet
     components = {name: s for name, s in schema.definitions.items() if s.x_base_open}
     generate_spec_module(components, SPEC_INTERSECTION_MODULE)
 
 
 def generate_spec_module(components: dict[str, m.JsonSchema], target: str | Path) -> None:
-    spec_fields = (
+    fields_excluding_data = (
         typed_dict.Field("config", "Config", "Configuration options."),
-        typed_dict.Field("data", "Data", "Dataset definitions."),
         typed_dict.Field("meta", "Meta", "Specification metadata."),
         typed_dict.Field("params", "Params", "Param and Selection definitions."),
         typed_dict.Field(
@@ -86,14 +88,14 @@ def generate_spec_module(components: dict[str, m.JsonSchema], target: str | Path
             "A default set of attributes to apply to all plot components.",
         ),
     )
-    gen_mosaic = fs.MOSAIC_SPEC / "_gen" / "mosaic.py"
-
-    module = deque(typed_dict.iter_lines(SPEC_HEAD, spec_fields))
+    field_data = typed_dict.Field("data", "Data", "Dataset definitions.")
+    module = deque(typed_dict.iter_lines(SPEC_HEAD_NO_DATA, fields_excluding_data))
+    module.extend(typed_dict.iter_lines(SPEC_HEAD, (field_data,), bases=(SPEC_HEAD_NO_DATA,)))
     import_from = fragments.import_from
     module.extendleft(
         (
-            import_from(fs.MOSAIC_SPEC / "_typing_compat.py", ("TypedDict", "TypeAliasType")),
-            import_from(gen_mosaic, (fld.tp for fld in spec_fields)),
+            import_from(TYPING_COMPAT, ("TypedDict", "TypeAliasType")),
+            import_from(GENERATED_MODULE, (fld.tp for fld in (*fields_excluding_data, field_data))),
         )
     )
 
@@ -104,12 +106,13 @@ def generate_spec_module(components: dict[str, m.JsonSchema], target: str | Path
         base_open_name = component.x_base_open
         import_names.append(base_open_name)
         name = f"{SPEC}{original_name}"
-        module.extend(typed_dict.iter_lines(name, bases=(SPEC_HEAD, base_open_name), closed=True))
+        base_spec = SPEC_HEAD_NO_DATA if "data" in component.properties else SPEC_HEAD
+        module.extend(typed_dict.iter_lines(name, bases=(base_spec, base_open_name), closed=True))
         export_names.append(name)
 
     module.append(f"{SPEC} = TypeAliasType({SPEC!r}, {'|'.join(export_names)})")
     export_names.append(SPEC)
-    module.appendleft(import_from(gen_mosaic, import_names))
+    module.appendleft(import_from(GENERATED_MODULE, import_names))
     module.appendleft(fragments.FUTURE_ANNOTATIONS)
     module.append(f"__all__ = {tuple(export_names)}\n")
 

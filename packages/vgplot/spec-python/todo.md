@@ -12,12 +12,12 @@ Here's a big list of things to do/known issues
 - [x] Use `.py` for target output instead of `.pyi`
 - [ ] Split up `mosaic.py` into multiple modules [^1]
   - **30k** LOC with docs
-- [ ] Fix emitting 81 version of `Spec`
+- [x] Fix emitting 81 version of `Spec`
   - [x] Caused by a huge intersection type `Spec = SpecHead & Component` (see [explanation](https://github.com/dangotbanned/mosaic/blob/b3793004b483dbdfff0c6e390f9cc24fcbf897a7/packages/vgplot/spec-python/tools/models/source.py#L1-L55))
   - [x] Remove `Spec` from `mosaic.json`
     - Reduced `mosaic.py` **53k** -> **28k** LOC
   - [x] Fix `closed=True` on base class (~100 type errors)
-  - [ ] Fix `data: PlotMarkData` Required/NotRequired conflict (~59 type errors)
+  - [x] Fix `data: PlotMarkData` Required/NotRequired conflict (~59 type errors)
 - [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between `TypedDict` defs
 - [ ] Add some tests once the top-level namespace starts stabilizing
 - [ ] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
@@ -54,5 +54,5 @@ Things that should be easiest to fix upstream in Mosaic
   - Which file did the symbol come from?
   - Inheritance?
 - [ ] Follow some python-friendly rules when writing **docs** in TS
-  - [ ] Avoid confusables
+  - [ ] Avoid confusables (c57e964e6016320bde07227a96cc2b4c047b33a8)
   - [ ] One line short description, ending with a period. Then go wild.
