@@ -61,21 +61,16 @@ def _recursive_replace[T: (m.JsonSchema, m.ItemSchema)](schema: T) -> T:
     return schema
 
 
-def generate_python_schema(source: str | Path, target: str | Path) -> None:
+def generate_python_schema(source: str | Path, target: str | Path) -> tuple[m.InputSchema, str]:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
     schema = serde.read_json(source, m.InputSchema)
     definitions = schema.definitions
     spec_def = definitions.pop("Spec")
     schema.definitions = {k: _recursive_replace(v) for k, v in definitions.items()}
-    print("Finished renaming & Spec removal")
-
     schema.flatten_component_union()
     serde.write_json(target, schema)
     print(f"Generated python schema at: {fs.repo_relative_str(target)}")
-
-    # NOTE: Cheating a little bit here, because these symbols haven't been defined by `datamodel-code-generator` yet
-    components = {name: s for name, s in schema.definitions.items() if s.x_base_open}
-    generate_spec_module(components, spec_def.description, SPEC_INTERSECTION_MODULE)
+    return schema, spec_def.description
 
 
 def generate_spec_module(
@@ -118,8 +113,17 @@ def generate_spec_module(
     module.appendleft(import_from(GENERATED_MODULE, import_names))
     module.appendleft(fragments.FUTURE_ANNOTATIONS)
     module.append(f"\n__all__ = {tuple(export_names)}\n")
-    fs.write_lines(target, module, "Generated spec module")
+    fs.write_lines(target, module, "Generated module")
+
+
+def main() -> None:
+    # mosaic -> msgspec -> json -> datamodel-codegen -> back here for more
+    schema, spec_doc = generate_python_schema(SCHEMA_IN, SCHEMA_OUT)
+    components = {name: s for name, s in schema.definitions.items() if s.x_base_open}
+    fs.run("uv", "run", "datamodel-codegen", "--profile=spec")
+    print(f"Generated module at: {fs.repo_relative_str(GENERATED_MODULE)}")
+    generate_spec_module(components, spec_doc, SPEC_INTERSECTION_MODULE)
 
 
 if __name__ == "__main__":
-    generate_python_schema(SCHEMA_IN, SCHEMA_OUT)
+    main()

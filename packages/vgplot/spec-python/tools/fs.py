@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+# ruff: file-ignore[print,subprocess-without-shell-equals-true]
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, LiteralString
 
 if TYPE_CHECKING:
+    import subprocess as sp
     from collections.abc import Iterable
+
 
 _HERE = Path(__file__)
 
@@ -71,4 +74,15 @@ def write_lines(target: str | Path, lines: Iterable[str], /, message: str | None
     target.touch()
     target.write_text("\n".join(lines), "utf8", newline="\n")
     if message:
-        print(f"{message} at: {repo_relative_str(MOSAIC_SPEC_INIT)}")  # ruff: ignore[print]
+        print(f"{message} at: {repo_relative_str(target)}")
+
+
+def run(*args: LiteralString, cwd: Path | None = SPEC_PYTHON) -> sp.CompletedProcess[str]:
+    """Run a command in a [subprocess], capturing and decoding output.
+
+    [subprocess]: https://docs.python.org/3/library/subprocess.html#subprocess.run
+    """
+    import subprocess as sp
+
+    print(f"$ {' '.join(args)}")
+    return sp.run(args, check=True, capture_output=True, encoding="utf-8", cwd=cwd)
