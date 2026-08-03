@@ -60,6 +60,8 @@ infer-union-variant-names = true
 [tool.datamodel-codegen.profiles.spec]
 input                   = "schema/"
 output                  = "src/mosaic_spec/_gen/"
+emit-model-metadata     = ".spec-dump-model/datamodel-code-generator-map.json"
+strict-refs             = true
 custom-file-header-mode = "replace"
 custom-file-header      = "# NOTE: DO NOT EDIT.\n# Regenerate with: pnpm generate"
 custom-template-dir     = "templates/datamodel-code-generator"
