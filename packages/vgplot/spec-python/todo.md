@@ -10,8 +10,6 @@ Here's a big list of things to do/known issues
   - [x] `_gen`
   - [x] `mosaic_spec`
 - [x] Use `.py` for target output instead of `.pyi`
-- [ ] Split up `mosaic.py` into multiple modules [^1]
-  - **30k** LOC with docs
 - [x] Fix emitting 81 version of `Spec`
   - [x] Caused by a huge intersection type `Spec = SpecHead & Component` (see [explanation](https://github.com/dangotbanned/mosaic/blob/b3793004b483dbdfff0c6e390f9cc24fcbf897a7/packages/vgplot/spec-python/tools/models/source.py#L1-L55))
   - [x] Remove `Spec` from `mosaic.json`
@@ -24,7 +22,31 @@ Here's a big list of things to do/known issues
   - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
   - [ ] Use `_typing_compat.py` imports for codegen ([blocked by](https://github.com/koxudaxi/datamodel-code-generator/issues/3681))
 
-[^1]: Huge files kill language servers. Having to disable pylance because it is too slow now
+## Splitting one big file
+
+`mosaic.py` is too large (~**30k** LOC with docs) and this kills the performance of language servers.  
+
+Pylance is non-functional as it isn't able to do the kind of incremental magic that `ty` can within a single file.
+To mitigate this, here are some potential modules/subpackages to lighten the load:
+
+- [ ] interactors (package)
+- [ ] marks (package xl)
+- [ ] data
+- [ ] input (rename to "inputs")
+- [ ] interval
+- [ ] params
+- [ ] plot (may need to split further)
+- [ ] spec
+  - [ ] Use the original class names and don't re-export to top-level, e.g.
+    - `import mosaic_spec as ms; ms.spec.Plot(...)`
+- [ ] transforms
+- [ ] typing (aliases)
+  - [ ] A large gain will come from naming duplicated inline types, e.g.
+    - 60x of `str | float | bool | ParamRef`
+    - 28x of `Literal["CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"]`
+    - **Many** `OneOrSeq[T]` cases ([altair/vegalite/v6/schema/_typing.py#L100-L114])
+
+[altair/vegalite/v6/schema/_typing.py#L100-L114]: https://github.com/vega/altair/blob/c217ba4b03386fe303b70c75551e96d4e2bc6f30/altair/vegalite/v6/schema/_typing.py#L100-L114
 
 ## Refactor
 
