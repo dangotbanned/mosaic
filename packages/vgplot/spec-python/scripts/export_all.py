@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 def main(*sources: Path, target: Path) -> None:
     bare_export_tuples = []
-    contents = deque((fragments.FUTURE_ANNOTATIONS,))
+    contents: deque[str] = deque((fragments.FUTURE_ANNOTATIONS,))
     for source in sources:
         names_all = dunder_all.find(source).unparse_value()
         contents.append(fragments.import_from(source, names_all.replace("'", "")))
