@@ -13,12 +13,18 @@ dev    = [
   "msgspec[toml]>=0.21.1",
   "ruff",
   { include-group = "gen" },
-  { include-group = "typing" },
+  { include-group = "tests" },
+  { include-group = "typing" }
 ]
 gen    = ["datamodel-code-generator"]
 repl   = [
   "ipykernel>=7.3.0",
   "rich>=15.0.0",
+]
+tests  = [
+  "pytest>=9.1.1",
+  "pytest-env>=1.7.0",
+  "pytest-xdist>=3.8.0",
 ]
 typing = ["pyright", "ty>=0.0.63"]
 
