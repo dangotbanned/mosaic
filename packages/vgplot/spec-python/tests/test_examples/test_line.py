@@ -6,9 +6,8 @@ if TYPE_CHECKING:
     import mosaic_spec as ms
 
 
-# TODO @dangotbanned: Export from `_spec`!
 def test_line() -> None:
-    _spec: ms.Spec = {  # ty: ignore[unresolved-attribute]
+    _spec: ms.Spec = {
         "data": {
             "aapl": {"type": "parquet", "file": "data/stocks.parquet", "where": "Symbol = 'AAPL'"}
         },

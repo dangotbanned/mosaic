@@ -52,6 +52,10 @@ MOSAIC_SPEC_INIT = MOSAIC_SPEC / "__init__.py"
 MOSAIC_SPEC_GEN_INIT = MOSAIC_SPEC / "_gen" / "__init__.py"
 """`mosaic/packages/vgplot/spec-python/src/mosaic_spec/_gen/__init__.py`"""
 
+
+MOSAIC_SPEC_INTERSECTION = MOSAIC_SPEC / "_spec.py"
+"""`mosaic/packages/vgplot/spec-python/src/mosaic_spec/_spec.py`"""
+
 PYPROJECT_TOML = SPEC_PYTHON / "pyproject.toml"
 """`mosaic/packages/vgplot/spec-python/pyproject.toml`"""
 

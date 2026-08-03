@@ -22,7 +22,6 @@ GENERATED_MODULE_NAME = "mosaic"
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
 SCHEMA_OUT = fs.SPEC_PYTHON / "schema" / f"{GENERATED_MODULE_NAME}.json"
 
-SPEC_INTERSECTION_MODULE = fs.MOSAIC_SPEC / "_spec.py"
 GENERATED_MODULE = fs.MOSAIC_SPEC / "_gen" / f"{GENERATED_MODULE_NAME}.py"
 TYPING_COMPAT = fs.MOSAIC_SPEC / "_typing_compat.py"
 
@@ -122,7 +121,7 @@ def main() -> None:
     components = {name: s for name, s in schema.definitions.items() if s.x_base_open}
     fs.run("uv", "run", "datamodel-codegen", "--profile=spec")
     print(f"Generated module at: {fs.repo_relative_str(GENERATED_MODULE)}")
-    generate_spec_module(components, spec_doc, SPEC_INTERSECTION_MODULE)
+    generate_spec_module(components, spec_doc, fs.MOSAIC_SPEC_INTERSECTION)
 
 
 if __name__ == "__main__":
