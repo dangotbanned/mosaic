@@ -46,11 +46,19 @@ def read_json[T](path: str | Path, tp: type[T], /) -> T:
 
 def write_json(path: str | Path, obj: Any) -> None:
     """Serialize an object to a JSON file."""
-    json_str = serialize(obj, order="sorted").decode()
+    _write_bytes_as_str(path, serialize(obj, order="sorted"))
+
+
+def write_toml(path: str | Path, obj: Any) -> None:
+    """Serialize an object to a TOML file."""
+    _write_bytes_as_str(path, msgspec.toml.encode(obj, order="sorted"))
+
+
+def _write_bytes_as_str(path: str | Path, b_string: bytes, /) -> None:
     path = Path(path)
     path.touch()
     with path.open("w", encoding="utf8", newline="\n") as fd:
-        fd.write(json_str)
+        fd.write(b_string.decode())
 
 
 @functools.cache
