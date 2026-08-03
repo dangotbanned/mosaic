@@ -56,26 +56,24 @@ Sadly, this doesn't cover intersecting with a union.
 
 import functools
 from collections.abc import Sequence
-from typing import Annotated as A, Any, Final, Literal as L, LiteralString, final
+from typing import Annotated as A, Final, Literal as L, LiteralString, final
 
 from msgspec import field
 
 from tools.models import base
+
+type DefName = str
+"""The name that keys the schema in `{"definitions": {<here>: ...}}`"""
 
 type Primitive = L["array", "boolean", "integer", "null", "number", "object", "string"]
 type _JsonSchemaFwd = JsonSchema
 type NonRecursiveFields = _NonRecursiveFieldsBase
 type Ref = str
 type Resolved[T] = A[T, L["Resolved"]]
-type Definitions = dict[Resolved[Ref], Resolved[JsonSchema]]
+type Definitions = dict[DefName, Resolved[JsonSchema]]
 
-type DefName = str
-"""The name that keys the schema in `{"definitions": {<here>: ...}}`"""
 
 _POUND_DEFS: Final = "#/definitions/"
-
-
-type Incomplete = Any
 
 
 class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
@@ -108,19 +106,6 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
     def __post_init__(self) -> None:
         if doc := self.description:
             self.description = _fix_ambiguous_unicode_characters(doc)
-
-
-@functools.lru_cache(1024)
-def _fix_ambiguous_unicode_characters(string: str, /) -> str:
-    """Duplicated from [altair].
-
-    These characters are all over `mosaic/packages/vgplot/spec/src/`, so it seems intentional.
-
-    [altair]: https://github.com/vega/altair/blob/fab318c6c54db07849ec90437efdf20ad431e3a5/tools/markup.py#L133-L134
-    """
-    string = string.replace("’", "'")  # ruff: ignore[ambiguous-unicode-character-string]
-    string = string.replace("–", "-")  # ruff: ignore[ambiguous-unicode-character-string]
-    return string  # ruff: ignore[unnecessary-assign]
 
 
 class _RecursePropsUnionBase(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
@@ -257,3 +242,16 @@ class InputSchema(base.Struct):
 
                     else:
                         self._name_union_members(member_1_name)
+
+
+@functools.lru_cache(1024)
+def _fix_ambiguous_unicode_characters(string: str, /) -> str:
+    """Duplicated from [altair].
+
+    These characters are all over `mosaic/packages/vgplot/spec/src/`, so it seems intentional.
+
+    [altair]: https://github.com/vega/altair/blob/fab318c6c54db07849ec90437efdf20ad431e3a5/tools/markup.py#L133-L134
+    """
+    string = string.replace("’", "'")  # ruff: ignore[ambiguous-unicode-character-string]
+    string = string.replace("–", "-")  # ruff: ignore[ambiguous-unicode-character-string]
+    return string  # ruff: ignore[unnecessary-assign]
