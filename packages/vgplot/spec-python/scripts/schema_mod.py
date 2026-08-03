@@ -50,8 +50,8 @@ def _recursive_replace[T: (m.JsonSchema, m.ItemSchema)](schema: T) -> T:
     return schema
 
 
-# TODO @dangotbanned: Use `Spec/Component`
-def main(source: str | Path, target: str | Path) -> None:
+# TODO @dangotbanned: Fix typing issues in `mosaic_spec/_spec.py`
+def generate_python_schema(source: str | Path, target: str | Path) -> None:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
     schema = serde.read_json(source, m.InputSchema)
     definitions = schema.definitions
@@ -60,7 +60,6 @@ def main(source: str | Path, target: str | Path) -> None:
     print("Finished renaming & Spec removal")
 
     # TODO @dangotbanned: Fix the order of this so there isn't a need to write to a file
-    # Next step is `datamodel-code-generator` -> using
     component_members = schema.flatten_component_union_mut("Component")
 
     serde.write_json(target, schema)
@@ -126,10 +125,7 @@ def generate_spec_module(component_members: Iterable[str], target: str | Path) -
 
 
 if __name__ == "__main__":
-    main(SCHEMA_IN, SCHEMA_OUT)
+    generate_python_schema(SCHEMA_IN, SCHEMA_OUT)
     # TODO @dangotbanned: Fix the order!
-    # TODO @dangotbanned: Re-enable after resolving typing issues
-    REGEN_SPEC_MODULE = True
-    if REGEN_SPEC_MODULE:
-        comp_members = serde.read_json(WIP_NAMES, list[str])
-        generate_spec_module(comp_members, WIP_SPEC_MODULE)
+    comp_members = serde.read_json(WIP_NAMES, list[str])
+    generate_spec_module(comp_members, WIP_SPEC_MODULE)
