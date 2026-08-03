@@ -24,11 +24,22 @@ GENERATED_MODULE_NAME = "mosaic"
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
 SCHEMA_OUT = fs.SPEC_PYTHON / "schema" / f"{GENERATED_MODULE_NAME}.json"
 
+WIP_COMPONENT_MEMBER_NAMES = fs.SPEC_PYTHON / "WIP-Component-member-names.json"
+SPEC_INTERSECTION_MODULE = fs.MOSAIC_SPEC / "_spec.py"
 
 KEYS_REPLACE: Final = {"as": "bind", "from": "source", "for": "plot"}
 """Keys that collide with [`keyword.kwlist`][], but the values are required.
 
 These keys only appear in `"properties"` and `"required"`, the challenge is finding those guys.
+"""
+
+SPEC: Final = "Spec"
+"""Name of the `Spec` union and prefix for it's members"""
+
+SPEC_HEAD: Final = "SpecHead"
+"""Name of the base `TypedDict` for all `Spec` members.
+
+Mixing this into the bases with the `Component` member is a limited form of an intersection type.
 """
 
 
@@ -65,20 +76,10 @@ def generate_python_schema(source: str | Path, target: str | Path) -> None:
     serde.write_json(target, schema)
     print(f"Generated python schema at: {fs.repo_relative_str(target)}")
 
-    serde.write_json(WIP_NAMES, component_members)
-    print(f"Generated Component member names at: {fs.repo_relative_str(WIP_NAMES)}")
-
-
-WIP_NAMES = fs.SPEC_PYTHON / "WIP-Component-names.json"
-WIP_SPEC_MODULE = fs.MOSAIC_SPEC / "_spec.py"
-SPEC: Final = "Spec"
-"""Name of the `Spec` union and prefix for it's members"""
-
-SPEC_HEAD: Final = "SpecHead"
-"""Name of the base `TypedDict` for all `Spec` members.
-
-Mixing this into the bases with the `Component` member is a limited form of an intersection type.
-"""
+    serde.write_json(WIP_COMPONENT_MEMBER_NAMES, component_members)
+    print(
+        f"Generated Component member names at: {fs.repo_relative_str(WIP_COMPONENT_MEMBER_NAMES)}"
+    )
 
 
 def generate_spec_module(component_members: Iterable[str], target: str | Path) -> None:
@@ -127,5 +128,5 @@ def generate_spec_module(component_members: Iterable[str], target: str | Path) -
 if __name__ == "__main__":
     generate_python_schema(SCHEMA_IN, SCHEMA_OUT)
     # TODO @dangotbanned: Fix the order!
-    comp_members = serde.read_json(WIP_NAMES, list[str])
-    generate_spec_module(comp_members, WIP_SPEC_MODULE)
+    comp_members = serde.read_json(WIP_COMPONENT_MEMBER_NAMES, list[str])
+    generate_spec_module(comp_members, SPEC_INTERSECTION_MODULE)
