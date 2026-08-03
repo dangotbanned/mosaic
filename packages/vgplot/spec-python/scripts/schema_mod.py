@@ -14,6 +14,7 @@ from typing import Final
 
 from tools import fs, serde
 from tools.codegen import typed_dict
+from tools.codegen.docstrings import doc
 from tools.codemod import fragments
 from tools.models import source as m
 
@@ -64,7 +65,7 @@ def generate_python_schema(source: str | Path, target: str | Path) -> None:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
     schema = serde.read_json(source, m.InputSchema)
     definitions = schema.definitions
-    _spec_todo = definitions.pop("Spec")
+    spec_def = definitions.pop("Spec")
     schema.definitions = {k: _recursive_replace(v) for k, v in definitions.items()}
     print("Finished renaming & Spec removal")
 
@@ -74,10 +75,12 @@ def generate_python_schema(source: str | Path, target: str | Path) -> None:
 
     # NOTE: Cheating a little bit here, because these symbols haven't been defined by `datamodel-code-generator` yet
     components = {name: s for name, s in schema.definitions.items() if s.x_base_open}
-    generate_spec_module(components, SPEC_INTERSECTION_MODULE)
+    generate_spec_module(components, spec_def.description, SPEC_INTERSECTION_MODULE)
 
 
-def generate_spec_module(components: dict[str, m.JsonSchema], target: str | Path) -> None:
+def generate_spec_module(
+    components: dict[str, m.JsonSchema], spec_doc: str, target: str | Path
+) -> None:
     fields_excluding_data = (
         typed_dict.Field("config", "Config", "Configuration options."),
         typed_dict.Field("meta", "Meta", "Specification metadata."),
@@ -110,11 +113,11 @@ def generate_spec_module(components: dict[str, m.JsonSchema], target: str | Path
         module.extend(typed_dict.iter_lines(name, bases=(base_spec, base_open_name), closed=True))
         export_names.append(name)
 
-    module.append(f"{SPEC} = TypeAliasType({SPEC!r}, {'|'.join(export_names)})")
+    module.extend((f"{SPEC} = TypeAliasType({SPEC!r}, {'|'.join(export_names)})", doc(spec_doc)))
     export_names.append(SPEC)
     module.appendleft(import_from(GENERATED_MODULE, import_names))
     module.appendleft(fragments.FUTURE_ANNOTATIONS)
-    module.append(f"__all__ = {tuple(export_names)}\n")
+    module.append(f"\n__all__ = {tuple(export_names)}\n")
 
     target = Path(target)
     target.touch()

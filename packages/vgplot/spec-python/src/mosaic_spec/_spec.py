@@ -434,6 +434,8 @@ Spec = TypeAliasType(
     | SpecDensityY3
     | SpecDensityY4,
 )
+"""A declarative Mosaic specification."""
+
 __all__ = (
     "Spec",
     "SpecArea",

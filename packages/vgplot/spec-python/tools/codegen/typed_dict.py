@@ -8,10 +8,12 @@ from __future__ import annotations
 
 import dataclasses
 import enum
-from typing import TYPE_CHECKING, Any, Final, Literal as L, NewType, assert_never
+from typing import TYPE_CHECKING, Final, Literal as L, NewType, assert_never
 
 # TODO @dangotbanned: Remove alias after `"pyright>1.1.411"` updates `typing_extensions` stubs
 from typing_extensions import Sentinel as sentinel  # ruff: ignore[camelcase-imported-as-lowercase]
+
+from tools.codegen.docstrings import doc
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -42,8 +44,6 @@ RuntimeTypeExpr = NewType("RuntimeTypeExpr", str)
 [1]: https://typing.python.org/en/latest/spec/annotations.html#type-and-annotation-expressions
 [2]: https://docs.python.org/3/reference/executionmodel.html#annotation-scopes
 """
-
-type Incomplete = Any
 
 type Line = str
 """An unindented line of code."""
@@ -120,17 +120,12 @@ def iter_lines(
 Q = Qualifier
 
 
-def t_doc(string: str) -> str:
-    start = end = "'''"
-    return f"{start}{string}{end}"
-
-
 @dataclasses.dataclass(slots=True)
 class Field:
     name: str
     tp: TypeExpr
 
-    doc: str = ""
+    description: str = ""
     _: dataclasses.KW_ONLY
     required: bool = False
 
@@ -146,5 +141,5 @@ class Field:
                 assert_never((self_q, base_q))
 
         yield f"{self.name}: {ann}"
-        if doc := self.doc:
-            yield t_doc(doc)
+        if desc := self.description:
+            yield doc(desc)
