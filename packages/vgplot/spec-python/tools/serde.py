@@ -1,4 +1,12 @@
-"""Convenience wrapper around [`msgspec.json`][]."""
+"""Convenience wrapper around [`msgspec.json`][].
+
+## Extensions
+### Full support
+- [`collections.deque`][]
+
+### Limited support
+- [`pathlib.Path`][] (must be related to `spec-python/src`)
+"""
 
 from __future__ import annotations
 
@@ -8,6 +16,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal as L
 
 import msgspec
+
+from tools import fs
+from tools._dispatch import type_dispatch
 
 if TYPE_CHECKING:
     from collections.abc import Buffer, Callable, Mapping
@@ -71,18 +82,26 @@ def _encoder(order: L["deterministic", "sorted"] | None = None, /) -> msgspec.js
     return msgspec.json.Encoder(order=order, enc_hook=_encoder_hook)
 
 
-@functools.singledispatch
-def _encoder_hook(obj: Any, /) -> Any:
+def _serialize_error(obj: Any) -> NotImplementedError:
     tp = type(obj)
     msg = f"Objects of type '{tp.__module__}.{tp.__name__}' cannot be serialized by msgspec, got: {obj!r}"
-    raise NotImplementedError(msg)
+    return NotImplementedError(msg)
+
+
+def _deserialize_error(tp: type[Any], obj: Any, /) -> NotImplementedError:
+    tp = type(obj)
+    msg = f"Objects of type '{tp.__module__}.{tp.__name__}' cannot be deserialized by msgspec, got: {obj!r}"
+    return NotImplementedError(msg)
 
 
 @functools.singledispatch
+def _encoder_hook(obj: Any, /) -> Any:
+    raise _serialize_error(obj)
+
+
+@type_dispatch
 def _decoder_hook(tp: type[Any], obj: Any, /) -> Any:
-    tp = type(obj)
-    msg = f"Objects of type '{tp.__module__}.{tp.__name__}' cannot be deserialized by msgspec, got: {obj!r}"
-    raise NotImplementedError(msg)
+    raise _deserialize_error(tp, obj)
 
 
 @_decoder_hook.register(deque)
@@ -91,3 +110,19 @@ def _use_constructor[T, R](cb: Callable[[T], R], obj: T, /) -> R:
 
 
 _encoder_hook.register(deque, list)
+
+
+@_decoder_hook.register(Path)
+def _deserialize_src_path(tp: type[Path], obj: object, /) -> Path:
+    if isinstance(obj, str) and (absolute_path := fs.SRC / obj).exists():
+        return absolute_path
+    raise _deserialize_error(tp, obj)
+
+
+@_encoder_hook.register(Path)
+def _serialize_src_path(obj: Path, /) -> str:
+    try:
+        relative_path = obj.relative_to(fs.SRC)
+    except ValueError:
+        raise _serialize_error(obj) from None
+    return relative_path.as_posix()
