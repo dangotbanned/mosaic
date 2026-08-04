@@ -21,7 +21,7 @@ def serialize(obj: Any, /, *, order: L["deterministic", "sorted"] | None = None)
 
 
 def deserialize[T](buf: Buffer | str, tp: type[T], /) -> T:
-    """Deserialize an object from JSON into `T`"""
+    """Deserialize an object from JSON into `T`."""
     return _decoder(tp).decode(buf)
 
 

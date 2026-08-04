@@ -155,7 +155,6 @@ extend-select                            = [
   "W",
   "DOC",
   "D",
-  "multi-line-summary-first-line",
   "F",
   "PGH",
   "PL",
@@ -168,6 +167,7 @@ extend-select                            = [
   "too-many-nested-blocks",
   "literal-membership",
   "unspecified-encoding",
+  "docstring-extraneous-parameter",
   # ignored in parent
   "blind-except",
   "boolean-default-value-positional-argument",
@@ -189,6 +189,11 @@ extend-select                            = [
   "raise-within-try",
   "hardcoded-sql-expression",
   "log-exception-outside-except-handler",
+  # numpy/google docstring overrides
+  "non-imperative-mood",
+  "docstring-starts-with-this",
+  "undocumented-param",
+  "multi-line-summary-first-line",
 ]
 extend-safe-fixes                        = [
   "FA",
@@ -204,6 +209,8 @@ future-annotations                       = true
 flake8-builtins.ignorelist               = ["format", "input"]
 flake8-tidy-imports.ban-relative-imports = "all"
 typing-modules                           = ["mosaic_spec._typing_compat"]
+pydoclint.ignore-one-line-docstrings     = true
+pydocstyle.convention                    = "google"
 
 allowed-confusables = [
   "γ",                   # (GREEK SMALL LETTER GAMMA) https://en.wikipedia.org/wiki/Euler_angles
@@ -223,9 +230,8 @@ ignore = [
   "undocumented-public-package",
   "undocumented-magic-method",
   "undocumented-public-init",
-  "incorrect-blank-line-before-class",
   "multi-line-summary-second-line",
-  "missing-trailing-period",
+  "missing-blank-line-after-last-section",
   "call-datetime-without-tzinfo",
   "line-too-long",
   "FIX",
@@ -236,10 +242,10 @@ ignore = [
   "private-member-access",
   "missing-todo-link",
   "missing-todo-colon",
-  "invalid-class-name",                  # capwords naming
+  "invalid-class-name",                     # capwords naming
   "non-lowercase-variable-in-function",
-  "redundant-literal-union",             # (opinionated)
-  "docstring-in-stub",                   # (opinionated)
+  "redundant-literal-union",                # (opinionated)
+  "docstring-in-stub",                      # (opinionated)
 ]
 
 [tool.ruff.lint.isort]
