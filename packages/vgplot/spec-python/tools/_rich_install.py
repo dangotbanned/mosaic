@@ -7,6 +7,8 @@ This is a noop without `uv <command> --group repl`.
 
 from __future__ import annotations
 
+# pyright: reportMissingImports=false
+
 _STYLES = {
     "repr.call": "rgb(78,201,176)",
     "repr.attrib_name": "rgb(156,220,254)",

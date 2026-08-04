@@ -263,6 +263,12 @@ extend-ignore-names = [
 [tool.ty.src]
 include = ["**/*.py", "**/*.pyi", "**/*.ipynb"]
 
+[[tool.ty.overrides]]
+# Needs to be configured in local workspace for VSCode too
+# https://github.com/astral-sh/ty/issues/2410
+include                 = ["tools/_rich_install.py"]
+rules.unresolved-import = "ignore"
+
 [tool.ty.environment]
 python-version = "3.15"
 
