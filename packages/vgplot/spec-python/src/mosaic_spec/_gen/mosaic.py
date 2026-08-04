@@ -621,8 +621,7 @@ ColorScaleType = TypeAliasType(
         "identity",
     ],
 )
-"""
-The supported scale types for *color* encodings.
+"""The supported scale types for *color* encodings.
 
 For quantitative data, one of:
 
@@ -657,8 +656,7 @@ For color, one of:
 
 Other scale types:
 
-- *identity* - do not transform values when encoding
-"""
+- *identity* - do not transform values when encoding"""
 
 
 ColorScheme = TypeAliasType(
@@ -718,8 +716,7 @@ ColorScheme = TypeAliasType(
     ]
     | Mapping[str, Any],
 )
-"""
-The built-in color schemes. For categorical data, one of:
+"""The built-in color schemes. For categorical data, one of:
 
 - *Accent* - eight colors
 - *Category10* - ten colors
@@ -780,8 +777,7 @@ For sequential data, one of:
 For cyclical data, one of:
 
 - *Rainbow* (default) - the less-angry rainbow color scheme
-- *Sinebow* - Bumgardner and Loyd's “sinebow” scheme
-"""
+- *Sinebow* - Bumgardner and Loyd's “sinebow” scheme"""
 
 
 class Config(TypedDict):
@@ -794,8 +790,7 @@ ContinuousScaleType = TypeAliasType(
     "ContinuousScaleType",
     Literal["linear", "pow", "sqrt", "log", "symlog", "utc", "time", "identity"],
 )
-"""
-The supported scale types for continuous encoding channels.
+"""The supported scale types for continuous encoding channels.
 
 For quantitative data, one of:
 
@@ -812,8 +807,7 @@ For temporal data, one of:
 
 Other scale types:
 
-- *identity* - do not transform values when encoding
-"""
+- *identity* - do not transform values when encoding"""
 
 
 CurveName = TypeAliasType(
@@ -1039,12 +1033,10 @@ class Days(TypedDict, closed=True):
 
 
 DiscreteScaleType = TypeAliasType("DiscreteScaleType", Literal["ordinal", "identity"])
-"""
-The supported scale types for discrete encoding channels. One of:
+"""The supported scale types for discrete encoding channels. One of:
 
 - *ordinal* - from discrete inputs to discrete outputs
-- *identity* - do not transform values when encoding
-"""
+- *identity* - do not transform values when encoding"""
 
 
 Fixed = TypeAliasType("Fixed", Literal["Fixed"])
@@ -1065,27 +1057,23 @@ FrameAnchor = TypeAliasType(
         "left",
     ],
 )
-"""
-How to anchor a mark relative to the plot's frame; one of:
+"""How to anchor a mark relative to the plot's frame; one of:
 
 - *middle* - centered in the middle
 - in the middle of one of the edges: *top*, *right*, *bottom*, *left*
-- in one of the corners: *top-left*, *top-right*, *bottom-right*, *bottom-left*
-"""
+- in one of the corners: *top-left*, *top-right*, *bottom-right*, *bottom-left*"""
 
 
 GridInterpolate = TypeAliasType(
     "GridInterpolate", Literal["none", "linear", "nearest", "barycentric", "random-walk"]
 )
-"""
-A spatial interpolation method; one of:
+"""A spatial interpolation method; one of:
 
 - *none* - do not perform interpolation (the default), maps samples to single bins
 - *linear* - apply proportional linear interpolation across adjacent bins
 - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
 - *barycentric* - apply barycentric interpolation over the Delaunay triangulation
-- *random-walk* - apply a random walk from each pixel, stopping when near a sample
-"""
+- *random-walk* - apply a random walk from each pixel, stopping when near a sample"""
 
 
 class _HSpaceOpen(TypedDict, total=False):
@@ -1106,15 +1094,13 @@ class Hours(TypedDict, closed=True):
 
 
 Interpolate = TypeAliasType("Interpolate", Literal["number", "rgb", "hsl", "hcl", "lab"])
-"""
-How to interpolate range (output) values for continuous scales; one of:
+r"""How to interpolate range (output) values for continuous scales; one of:
 
 - *number* - linear numeric interpolation
 - *rgb* - red, green, blue (sRGB)
 - *hsl* - hue, saturation, lightness (HSL; cylindrical sRGB)
 - *hcl* - hue, chroma, perceptual lightness (CIELCh_ab; cylindrical CIELAB)
-- *lab* - perceptual lightness and opponent colors (L\\*a\\*b\\*, CIELAB)
-"""
+- *lab* - perceptual lightness and opponent colors (L\*a\*b\*, CIELAB)"""
 
 
 LabelArrow = TypeAliasType(
@@ -1136,8 +1122,7 @@ MarkerName = TypeAliasType(
         "tick-y",
     ],
 )
-"""
-The built-in marker implementations; one of:
+"""The built-in marker implementations; one of:
 
 - *arrow* - an arrowhead with *auto* orientation
 - *arrow-reverse* - an arrowhead with *auto-start-reverse* orientation
@@ -1147,8 +1132,7 @@ The built-in marker implementations; one of:
 - *circle* - alias for *circle-fill*
 - *tick* - a small opposing line
 - *tick-x* - a small horizontal line
-- *tick-y* - a small vertical line
-"""
+- *tick-y* - a small vertical line"""
 
 
 class Options(TypedDict, closed=True):
@@ -1300,8 +1284,7 @@ PositionScaleType = TypeAliasType(
         "identity",
     ],
 )
-"""
-The supported scale types for *x* and *y* position encodings.
+"""The supported scale types for *x* and *y* position encodings.
 
 For quantitative data, one of:
 
@@ -1323,8 +1306,7 @@ For ordinal data, one of:
 
 Other scale types:
 
-- *identity* - do not transform values when encoding
-"""
+- *identity* - do not transform values when encoding"""
 
 
 ProjectionName = TypeAliasType(
@@ -1348,8 +1330,7 @@ ProjectionName = TypeAliasType(
         "transverse-mercator",
     ],
 )
-"""
-The built-in projection implementations; one of:
+"""The built-in projection implementations; one of:
 
 - *albers-usa* - a U.S.-centric composite projection with insets for Alaska and Hawaii
 - *albers* - a U.S.-centric *conic-equal-area* projection
@@ -1366,8 +1347,7 @@ The built-in projection implementations; one of:
 - *mercator* - the spherical Mercator projection
 - *orthographic* - the orthographic projection
 - *stereographic* - the stereographic projection
-- *transverse-mercator* - the transverse spherical Mercator projection
-"""
+- *transverse-mercator* - the transverse spherical Mercator projection"""
 
 
 class Format(TypedDict, closed=True):
@@ -1539,8 +1519,7 @@ class SQLExpression(TypedDict, closed=True):
 ScaleName = TypeAliasType(
     "ScaleName", Literal["x", "y", "fx", "fy", "r", "color", "opacity", "symbol", "length"]
 )
-"""
-The built-in scale names; one of:
+"""The built-in scale names; one of:
 
 - *x* - horizontal position
 - *y* - vertical position
@@ -1552,8 +1531,7 @@ The built-in scale names; one of:
 - *symbol* - categorical symbol (for dots)
 - *length* - length (for vectors)
 
-Position scales may have associated axes. Color, opacity, and symbol scales may have an associated legend.
-"""
+Position scales may have associated axes. Color, opacity, and symbol scales may have an associated legend."""
 
 
 class _SearchOpen(TypedDict, total=False):
@@ -1702,8 +1680,7 @@ class SortOrder2(TypedDict, closed=True):
 
 
 StackOffsetName = TypeAliasType("StackOffsetName", Literal["center", "normalize", "wiggle"])
-"""
-A built-in stack offset method; one of:
+"""A built-in stack offset method; one of:
 
 - *normalize* - rescale each stack to fill [0, 1]
 - *center* - align the centers of all stacks
@@ -1713,15 +1690,13 @@ If a given stack has zero total value, the *normalize* offset will not adjust th
 *wiggle* offset is recommended for streamgraphs in conjunction with the
 *inside-out* order. For more, see [Byron & Wattenberg][1].
 
-[1]: https://leebyron.com/streamgraph/
-"""
+[1]: https://leebyron.com/streamgraph/"""
 
 
 StackOrderName = TypeAliasType(
     "StackOrderName", Literal["value", "x", "y", "z", "sum", "appearance", "inside-out"]
 )
-"""
-The built-in stack order methods; one of:
+"""The built-in stack order methods; one of:
 
 - *x* - alias of *value*; for stackX only
 - *y* - alias of *value*; for stackY only
@@ -1732,8 +1707,7 @@ The built-in stack order methods; one of:
 
 The *inside-out* order is recommended for streamgraphs in conjunction with the *wiggle* offset. For more, see [Byron & Wattenberg][1].
 
-[1]: https://leebyron.com/streamgraph/
-"""
+[1]: https://leebyron.com/streamgraph/"""
 
 
 SymbolType = TypeAliasType(
@@ -1755,8 +1729,7 @@ SymbolType = TypeAliasType(
         "wye",
     ],
 )
-"""
-The built-in symbol implementations. For fill, one of:
+"""The built-in symbol implementations. For fill, one of:
 
 - *circle* - a circle
 - *cross* - a Greek cross with arms of equal length
@@ -1778,8 +1751,7 @@ For stroke (based on [Heman Robinson's research][1]), one of:
 
 The *hexagon* symbol is also supported.
 
-[1]: https://www.tandfonline.com/doi/abs/10.1080/10618600.2019.1637746
-"""
+[1]: https://www.tandfonline.com/doi/abs/10.1080/10618600.2019.1637746"""
 
 
 class _TableOpen(TypedDict, total=False):
@@ -1831,10 +1803,8 @@ TimeIntervalName = TypeAliasType(
         "sunday",
     ],
 )
-"""
-The built-in time intervals; UTC or local time, depending on context. The
-*week* interval is an alias for *sunday*. The *quarter* interval is every three months, and the *half* interval is every six months, aligned at the start of the year.
-"""
+"""The built-in time intervals; UTC or local time, depending on context. The
+*week* interval is an alias for *sunday*. The *quarter* interval is every three months, and the *half* interval is every six months, aligned at the start of the year."""
 
 
 TipPointer = TypeAliasType("TipPointer", Literal["x", "y", "xy"])
@@ -1902,12 +1872,10 @@ class VSpace(_VSpaceOpen, closed=True): ...
 
 
 VectorShapeName = TypeAliasType("VectorShapeName", Literal["arrow", "spike"])
-"""
-The built-in vector shape implementations; one of:
+"""The built-in vector shape implementations; one of:
 
 - *arrow* - a straight line with an open arrowhead at the end (↑)
-- *spike* - an isosceles triangle with a flat base (▲)
-"""
+- *spike* - an isosceles triangle with a flat base (▲)"""
 
 
 class Years(TypedDict, closed=True):
@@ -1998,16 +1966,14 @@ ChannelDomainValue = TypeAliasType(
     | ChannelName
     | None,
 )
-"""
-The available inputs for imputing scale domains. In addition to a named channel, an input may be specified as:
+"""The available inputs for imputing scale domains. In addition to a named channel, an input may be specified as:
 
 - *data* - impute from mark data
 - *width* - impute from |*x2* - *x1*|
 - *height* - impute from |*y2* - *y1*|
 - null - impute from input order
 
-If the *x* channel is not defined, the *x2* channel will be used instead if available, and similarly for *y* and *y2*; this is useful for marks that implicitly stack. The *data* input is typically used in conjunction with a custom **reduce** function, as when the built-in single-channel reducers are insufficient.
-"""
+If the *x* channel is not defined, the *x2* channel will be used instead if available, and similarly for *y* and *y2*; this is useful for marks that implicitly stack. The *data* input is typically used in conjunction with a custom **reduce** function, as when the built-in single-channel reducers are insufficient."""
 
 
 class Column(TypedDict, closed=True):
@@ -2421,8 +2387,7 @@ Reducer = TypeAliasType(
     ]
     | ReducerPercentile,
 )
-"""
-How to reduce aggregated (binned or grouped) values; one of:
+"""How to reduce aggregated (binned or grouped) values; one of:
 
 - *first* - the first value, in input order
 - *last* - the last value, in input order
@@ -2443,13 +2408,11 @@ How to reduce aggregated (binned or grouped) values; one of:
 - *pXX* - the percentile value, where XX is a number in [00,99]
 - *identity* - the array of values
 
-[1]: https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm
-"""
+[1]: https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm"""
 
 
 StackOffset = TypeAliasType("StackOffset", StackOffsetName)
-"""
-A stack offset method; one of:
+"""A stack offset method; one of:
 
 - *normalize* - rescale each stack to fill [0, 1]
 - *center* - align the centers of all stacks
@@ -2459,8 +2422,7 @@ If a given stack has zero total value, the *normalize* offset will not adjust th
 *wiggle* offset is recommended for streamgraphs in conjunction with the
 *inside-out* order. For more, see [Byron & Wattenberg][1].
 
-[1]: https://leebyron.com/streamgraph/
-"""
+[1]: https://leebyron.com/streamgraph/"""
 
 
 StackOrder = TypeAliasType(
@@ -2470,13 +2432,11 @@ StackOrder = TypeAliasType(
     | str
     | Sequence[Any],
 )
-"""
-How to order layers prior to stacking; one of:
+"""How to order layers prior to stacking; one of:
 
 - a named stack order method such as *inside-out* or *sum*
 - a field name, for natural order of the corresponding values
-- an array of explicit **z** values in the desired order
-"""
+- an array of explicit **z** values in the desired order"""
 
 
 VectorShape = TypeAliasType("VectorShape", VectorShapeName)
@@ -2535,12 +2495,10 @@ FrameValue = TypeAliasType("FrameValue", float | IntervalTransform | None)
 
 
 Interval = TypeAliasType("Interval", LiteralTimeInterval)
-"""
-How to partition a continuous range into discrete intervals; one of:
+"""How to partition a continuous range into discrete intervals; one of:
 
 - a named time interval such as *day* (for date intervals)
-- a number (for number intervals), defining intervals at integer multiples of *n*
-"""
+- a number (for number intervals), defining intervals at integer multiples of *n*"""
 
 
 class Lag(TypedDict, closed=True):
@@ -4035,15 +3993,13 @@ ChannelValue = TypeAliasType(
     "ChannelValue",
     Sequence[Any] | str | float | bool | Transform | SQLExpression | AggregateExpression | None,
 )
-"""
-A channel's values may be expressed as:
+"""A channel's values may be expressed as:
 
 - a field name, to extract the corresponding value for each datum
 - an iterable of values, typically of the same length as the data
 - a channel transform or SQL expression
 - a constant number or boolean
-- null to represent no value
-"""
+- null to represent no value"""
 
 
 class ChannelValueIntervalSpec1(TypedDict, closed=True):
@@ -4188,14 +4144,12 @@ class SortOrder1(TypedDict, closed=True):
 
 
 SortOrder = TypeAliasType("SortOrder", ChannelValue | SortOrder1 | SortOrder2)
-"""
-How to order values; one of:
+"""How to order values; one of:
 
 - a function for comparing data, returning a signed number
 - a channel value definition for sorting given values in ascending order
 - a {value, order} object for sorting given values
-- a {channel, order} object for sorting the named channel's values
-"""
+- a {channel, order} object for sorting the named channel's values"""
 
 
 class _SphereOpen(TypedDict, total=False):
