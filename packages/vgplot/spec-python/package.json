@@ -4,7 +4,7 @@
   "scripts": {
     "check": "uv run ruff check",
     "fmt": "uv run ruff format",
-    "generate": "uv run --module scripts.schema_mod && pnpm run lint && uv run --module scripts.export_all && pnpm run lint",
+    "generate": "uv run --module scripts.schema_mod && pnpm run lint && uv run --module scripts.export_all && pnpm run lint && pnpm typecheck",
     "lint": "uv run ruff check && uv run ruff format",
     "typecheck": "uv run ty check && uv run pyright"
   },
