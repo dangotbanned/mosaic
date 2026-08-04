@@ -4,7 +4,7 @@ from __future__ import annotations
 
 # ruff: file-ignore[print,subprocess-without-shell-equals-true]
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, LiteralString
+from typing import TYPE_CHECKING, Any, Literal as L, LiteralString as LS, overload
 
 if TYPE_CHECKING:
     import subprocess as sp
@@ -81,12 +81,51 @@ def write_lines(target: str | Path, lines: Iterable[str], /, message: str | None
         print(f"{message} at: {repo_relative_str(target)}")
 
 
-def run(*args: LiteralString, cwd: Path | None = SPEC_PYTHON) -> sp.CompletedProcess[str]:
-    """Run a command in a [subprocess], capturing and decoding output.
+type Tool = L["uv", "ruff"]
 
-    [subprocess]: https://docs.python.org/3/library/subprocess.html#subprocess.run
+
+# TODO @dangotbanned: Change `cwd` to use an enum instead of `None` to represent "leave me alone"
+@overload
+def run(tool: Tool, *args: LS, output: L["pipe"] = "pipe", cwd: Path | None = ...) -> None: ...
+@overload
+def run(
+    tool: Tool, *args: LS, output: L["capture"], cwd: Path | None = ...
+) -> sp.CompletedProcess[str]: ...
+def run(
+    tool: Tool, *args: LS, output: L["capture", "pipe"] = "pipe", cwd: Path | None = SPEC_PYTHON
+) -> sp.CompletedProcess[str] | None:
+    """Run a command in a subprocess.
+
+    Args:
+        tool: A command-line tool to run.
+        *args: Arguments to the tool, where all must be literal strings.
+        output: What to do with the output of the command:
+
+            - *"pipe"*: (default) feed it directly into stdout.
+            - *"capture"*: wrap it and return the result.
+        cwd: Set the current working directory for the subprocess.
+
+            Defaults to `"mosaic/packages/vgplot/spec-python"`
+
+    ## See Also
+    [subprocess.run](https://docs.python.org/3/library/subprocess.html#subprocess.run)
     """
+    import shutil
     import subprocess as sp
 
-    print(f"$ {' '.join(args)}")
-    return sp.run(args, check=True, capture_output=True, encoding="utf-8", cwd=cwd)
+    print(f"$ {' '.join((tool, *args))}")
+    args_ = ((shutil.which(tool) or tool), *args)
+
+    if output == "capture":
+        return sp.run(args_, check=True, capture_output=True, encoding="utf-8", cwd=cwd)
+
+    with sp.Popen(args_, stdout=sp.PIPE, stderr=sp.STDOUT, encoding="utf-8", cwd=cwd) as process:
+        # TODO @dangotbanned: Is there a more direct way to do this?
+        if process.stdout is not None:
+            for chunk in process.stdout:
+                print(chunk, end="")
+    if retcode := process.poll():
+        # TODO @dangotbanned: Try out raising `SystemExit` instead
+        #  `args` and `stderr` have already been displayed at this point
+        raise sp.CalledProcessError(retcode, process.args)
+    return None

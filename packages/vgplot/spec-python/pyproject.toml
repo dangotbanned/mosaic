@@ -257,6 +257,7 @@ combine-as-imports      = true
 [tool.ruff.lint.pep8-naming]
 extend-ignore-names = [
   "L",                   # typing.Literal
+  "LS",                  # typing.LiteralString
   "A",                   # typing.Annotated
 ]
 
