@@ -16,7 +16,9 @@ dev    = [
   { include-group = "tests" },
   { include-group = "typing" }
 ]
-gen    = ["datamodel-code-generator"]
+gen    = [
+  "datamodel-code-generator>=0.72.1",
+]
 repl   = [
   "ipykernel>=7.3.0",
   "rich>=15.0.0",
@@ -278,6 +280,3 @@ rules.unresolved-import = "ignore"
 
 [tool.ty.environment]
 python-version = "3.15"
-
-[tool.uv.sources]
-datamodel-code-generator = { git = "https://github.com/koxudaxi/datamodel-code-generator", rev = "570b395cb7cb2750285ce17fa541f523c64e3cdb" }
