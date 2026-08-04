@@ -239,7 +239,6 @@ from mosaic_spec._gen.mosaic import (
     WindowTransform,
     Years,
 )
-from mosaic_spec._typing_compat import TypeAliasType
 
 __all__ = [
     "Y1",
@@ -461,7 +460,6 @@ __all__ = [
     "ToggleY",
     "Transform",
     "TransformField",
-    "TypeAliasType",
     "VConcat",
     "VSpace",
     "VarPop",

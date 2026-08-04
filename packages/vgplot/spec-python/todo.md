@@ -18,9 +18,9 @@ Here's a big list of things to do/known issues
   - [x] Fix `data: PlotMarkData` Required/NotRequired conflict (~59 type errors)
 - [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between `TypedDict` defs
 - [ ] Add some tests once the top-level namespace starts stabilizing
-- [ ] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
+- [x] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
   - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
-  - [ ] Use `_typing_compat.py` imports for codegen ([blocked by](https://github.com/koxudaxi/datamodel-code-generator/issues/3681))
+  - [x] Use `_typing_compat.py` imports for codegen
 
 ## Splitting one big file
 
