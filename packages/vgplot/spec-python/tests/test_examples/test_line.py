@@ -48,4 +48,4 @@ def test_invalid(file: str, where: str, mark: L["lineY"]) -> None:
             "width": 680,
             "height": 200,
         }  # ty: ignore[invalid-argument-type]
-    }
+    }  # ty: ignore[missing-typed-dict-key]

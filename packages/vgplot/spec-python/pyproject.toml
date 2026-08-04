@@ -42,11 +42,12 @@ output-model-type       = "typing.TypedDict"
 formatters              = ["ruff-check", "ruff-format"]
 target-python-version   = "3.10"
 
-use-generic-container-types = true
-use-tuple-for-fixed-items   = true
-use-type-checking-imports   = true
-enum-field-as-literal       = "all"
-use-type-alias-type         = true
+use-generic-container-types    = true
+use-tuple-for-fixed-items      = true
+use-type-checking-imports      = true
+enum-field-as-literal          = "all"
+use-type-alias-type            = true
+use-total-false-for-typed-dict = true
 
 collapse-reuse-models = true
 skip-root-model       = true
