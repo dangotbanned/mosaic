@@ -632,8 +632,8 @@ wheels = [
 
 [[package]]
 name = "datamodel-code-generator"
-version = "0.71.0"
-source = { registry = "https://pypi.org/simple" }
+version = "0.72.1.dev6+g570b395cb"
+source = { git = "https://github.com/koxudaxi/datamodel-code-generator?rev=570b395cb7cb2750285ce17fa541f523c64e3cdb#570b395cb7cb2750285ce17fa541f523c64e3cdb" }
 dependencies = [
     { name = "argcomplete" },
     { name = "black", marker = "sys_platform != 'emscripten'" },
@@ -644,10 +644,6 @@ dependencies = [
     { name = "pydantic" },
     { name = "pyyaml" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/54/f5/f4ce23d99503b147c9ec514dc995a96d3b4d2a3284252ad665f875a3145d/datamodel_code_generator-0.71.0.tar.gz", hash = "sha256:d27cd7a0d10f9b2db74a41db7f3e050c226da9cf0afb4916a7ab56275ebacbf2", size = 1684916, upload-time = "2026-07-24T15:32:04.334Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c6/4d/556cb290170f41b97ce50fd872e10a266f141d7a38352bb3071e4ae61f41/datamodel_code_generator-0.71.0-py3-none-any.whl", hash = "sha256:680b68338d59e98a0559eeb54d8e5ca33c35b3ec0bef922ec2cc783f2cb28e9a", size = 452379, upload-time = "2026-07-24T15:32:02.467Z" },
 ]
 
 [[package]]
@@ -1731,7 +1727,7 @@ requires-dist = [{ name = "typing-extensions", marker = "python_full_version < '
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "datamodel-code-generator" },
+    { name = "datamodel-code-generator", git = "https://github.com/koxudaxi/datamodel-code-generator?rev=570b395cb7cb2750285ce17fa541f523c64e3cdb" },
     { name = "msgspec", extras = ["toml"], specifier = ">=0.21.1" },
     { name = "pyright" },
     { name = "pytest", specifier = ">=9.1.1" },
@@ -1740,7 +1736,7 @@ dev = [
     { name = "ruff" },
     { name = "ty", specifier = ">=0.0.63" },
 ]
-gen = [{ name = "datamodel-code-generator" }]
+gen = [{ name = "datamodel-code-generator", git = "https://github.com/koxudaxi/datamodel-code-generator?rev=570b395cb7cb2750285ce17fa541f523c64e3cdb" }]
 repl = [
     { name = "ipykernel", specifier = ">=7.3.0" },
     { name = "rich", specifier = ">=15.0.0" },

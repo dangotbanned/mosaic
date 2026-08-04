@@ -61,9 +61,9 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
 
 Things that should be easiest to fix upstream in `datamodel-code-generator`
 
-- [ ] [Support (`total=False`, `Required`) in `TypedDict` (#3680)](https://github.com/koxudaxi/datamodel-code-generator/issues/3680)
+- [x] [Support (`total=False`, `Required`) in `TypedDict` (#3680)](https://github.com/koxudaxi/datamodel-code-generator/issues/3680)
 - [x] [Support overriding default imports (#3681)](https://github.com/koxudaxi/datamodel-code-generator/issues/3681)
-- [ ] [Support configuring `--use-type-alias` behavior (#3682)](https://github.com/koxudaxi/datamodel-code-generator/issues/3682)
+- [x] [Support configuring `--use-type-alias` behavior (#3682)](https://github.com/koxudaxi/datamodel-code-generator/issues/3682)
 
 ## `mosaic-spec` feedback
 

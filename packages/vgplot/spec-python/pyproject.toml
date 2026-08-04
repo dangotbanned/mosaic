@@ -46,6 +46,7 @@ use-generic-container-types = true
 use-tuple-for-fixed-items   = true
 use-type-checking-imports   = true
 enum-field-as-literal       = "all"
+use-type-alias-type         = true
 
 collapse-reuse-models = true
 skip-root-model       = true
@@ -263,3 +264,6 @@ include = ["**/*.py", "**/*.pyi", "**/*.ipynb"]
 
 [tool.ty.environment]
 python-version = "3.15"
+
+[tool.uv.sources]
+datamodel-code-generator = { git = "https://github.com/koxudaxi/datamodel-code-generator", rev = "570b395cb7cb2750285ce17fa541f523c64e3cdb" }
