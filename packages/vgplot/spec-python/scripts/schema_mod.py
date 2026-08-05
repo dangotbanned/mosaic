@@ -63,7 +63,10 @@ def generate_python_schema(source: str | Path, target: str | Path) -> tuple[m.In
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
     schema = serde.read_json(source, m.InputSchema)
     definitions = schema.definitions
+
     spec_def = definitions.pop("Spec")
+    schema.ref = ""  # Removes `"$ref": "#/definitions/Spec"`
+
     schema.definitions = {k: _recursive_replace(v) for k, v in definitions.items()}
     schema.flatten_component_union()
     serde.write_json(target, schema)

@@ -167,10 +167,6 @@ class InputSchema(base.Struct):
     # NOTE: @dangotbanned: would be `"$defs"`
     definitions: dict[DefName, Resolved[JsonSchema]]
 
-    # TODO @dangotbanned: Since `Spec` is removed, this is now invalid: `"#/definitions/Spec"`
-    # Is it just being ignored?
-    ref: Ref = field(name="$ref")
-
     # TODO @dangotbanned: I want to migrate to 2020-12 (2 jumps from draft-07)
     # - docs are easier to read
     # - has examples of multi-file schemas
@@ -178,6 +174,7 @@ class InputSchema(base.Struct):
     # - items -> prefixItems
     #   - for this use case, that's not a big deal
     schema: str = field(name="$schema")
+    ref: Ref = field(name="$ref", default="")
 
     def get(self, target: DefName, /) -> Resolved[JsonSchema]:
         """Get a top-level definition from the schema."""
