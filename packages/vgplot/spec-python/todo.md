@@ -74,3 +74,38 @@ Things that should be easiest to fix upstream in Mosaic
 - [ ] Follow some python-friendly rules when writing **docs** in TS
   - [ ] Avoid confusables (c57e964e6016320bde07227a96cc2b4c047b33a8)
   - [ ] One line short description, ending with a period. Then go wild.
+
+### Unflatten the spec
+
+The current design favors large numbers of options available at a single level.
+Groups of fields with prefixed names can be represented in another level (e.g. `opacity_*` -> `opacity.{*}`).
+
+### Candidates
+
+I expect we can shrink the size of the schema if these groups could be `"$ref"`s, since we can avoid duplicating so much
+
+- `aria_*`
+- `color_*`
+- `facet_*`
+- `font_*`
+- `fx_*`
+- `fy_*`
+- `inset_*`
+- `label_*`
+- `length_*`
+- `line_*`
+- `margin_*`
+- `marker_*`
+- `opacity_*`
+- `projection_*`
+- `r_*`
+- `stroke_*`
+- `symbol_*`
+- `text_*`
+- `tick_*`
+- `x_*`
+- `y_*`
+
+### Example
+
+Branch **(TODO!)** shows what doing this for `fx_*` and `fy_*` on `PlotAttributes` could look like
