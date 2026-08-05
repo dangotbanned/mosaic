@@ -36,6 +36,8 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
 - [ ] interval
 - [ ] params
 - [ ] plot (may need to split further)
+  - `Plot` is `PlotAttributes` with an [extra required field, `"plot"`](https://github.com/dangotbanned/mosaic/blob/spec-python/datamodel-code-generator/packages/vgplot/spec/src/spec/Plot.ts)
+  - But `PlotAttributes` (`_PlotOpen`) has **215** fields, and is giving us 900-1000 duplicated LOC
 - [ ] spec
   - [ ] Use the original class names and don't re-export to top-level, e.g.
     - `import mosaic_spec as ms; ms.spec.Plot(...)`
@@ -45,6 +47,9 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
     - 60x of `str | float | bool | ParamRef`
     - 28x of `Literal["CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"]`
     - **Many** `OneOrSeq[T]` cases ([altair/vegalite/v6/schema/_typing.py#L100-L114])
+- [ ] CSSStyles
+  - Has **508** fields
+  - Next 2 highest have **215** fields
 
 [altair/vegalite/v6/schema/_typing.py#L100-L114]: https://github.com/vega/altair/blob/c217ba4b03386fe303b70c75551e96d4e2bc6f30/altair/vegalite/v6/schema/_typing.py#L100-L114
 
