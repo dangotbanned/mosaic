@@ -12,10 +12,9 @@ from collections import deque
 from pathlib import Path
 from typing import Final
 
-from tools import fs, serde
+from tools import codemod, fs, serde
 from tools.codegen import typed_dict
 from tools.codegen.docstrings import doc
-from tools.codemod import fragments
 from tools.models import mosaic as m
 
 GENERATED_MODULE_NAME = "mosaic"
@@ -88,7 +87,7 @@ def generate_spec_module(
     field_data = typed_dict.Field("data", "Data", "Dataset definitions.")
     module = deque(typed_dict.iter_lines(SPEC_HEAD_NO_DATA, fields_excluding_data))
     module.extend(typed_dict.iter_lines(SPEC_HEAD, (field_data,), bases=(SPEC_HEAD_NO_DATA,)))
-    import_from = fragments.import_from
+    import_from = codemod.fragments.import_from
     module.extendleft(
         (
             import_from(TYPING_COMPAT, ("TypedDict", "TypeAliasType")),
@@ -110,7 +109,7 @@ def generate_spec_module(
     module.extend((f"{SPEC} = TypeAliasType({SPEC!r}, {'|'.join(export_names)})", doc(spec_doc)))
     export_names.append(SPEC)
     module.appendleft(import_from(GENERATED_MODULE, import_names))
-    module.appendleft(fragments.FUTURE_ANNOTATIONS)
+    module.appendleft(codemod.fragments.FUTURE_ANNOTATIONS)
     module.append(f"\n__all__ = {tuple(export_names)}\n")
     fs.write_lines(target, module, "Generated module")
 

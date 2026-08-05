@@ -18,8 +18,7 @@ from __future__ import annotations
 from collections import deque
 from typing import TYPE_CHECKING
 
-from tools import fs
-from tools.codemod import dunder_all, fragments
+from tools import codemod, fs
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -27,10 +26,10 @@ if TYPE_CHECKING:
 
 def main(*sources: Path, target: Path) -> None:
     bare_export_tuples = []
-    contents: deque[str] = deque((fragments.FUTURE_ANNOTATIONS,))
+    contents: deque[str] = deque((codemod.fragments.FUTURE_ANNOTATIONS,))
     for source in sources:
-        names_all = dunder_all.find(source).unparse_value()
-        contents.append(fragments.import_from(source, names_all.replace("'", "")))
+        names_all = codemod.dunder_all.find(source).unparse_value()
+        contents.append(codemod.fragments.import_from(source, names_all.replace("'", "")))
         bare_export_tuples.append(names_all.strip("()"))
 
     contents.append(f"__all__ = {','.join(bare_export_tuples)}")
