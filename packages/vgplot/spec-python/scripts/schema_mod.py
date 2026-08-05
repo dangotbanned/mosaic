@@ -66,6 +66,7 @@ def generate_python_schema(source: str | Path, target: str | Path) -> tuple[m.In
 
     spec_def = definitions.pop("Spec")
     schema.ref = ""  # Removes `"$ref": "#/definitions/Spec"`
+    schema.id = SCHEMA_OUT.name
 
     schema.definitions = {k: _recursive_replace(v) for k, v in definitions.items()}
     schema.flatten_component_union()

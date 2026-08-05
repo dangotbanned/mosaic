@@ -161,11 +161,8 @@ class JsonSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
 
 
 @final
-class InputSchema(base.Struct):
+class InputSchema(base.Struct, kw_only=True):
     """Top level schema for `mosaic-schema.json`."""
-
-    # NOTE: @dangotbanned: would be `"$defs"`
-    definitions: dict[DefName, Resolved[JsonSchema]]
 
     # TODO @dangotbanned: I want to migrate to 2020-12 (2 jumps from draft-07)
     # - docs are easier to read
@@ -174,7 +171,10 @@ class InputSchema(base.Struct):
     # - items -> prefixItems
     #   - for this use case, that's not a big deal
     schema: str = field(name="$schema")
+    id: str = field(name="$id", default="")
     ref: Ref = field(name="$ref", default="")
+    # NOTE: @dangotbanned: would be `"$defs"`
+    definitions: dict[DefName, Resolved[JsonSchema]]
 
     def get(self, target: DefName, /) -> Resolved[JsonSchema]:
         """Get a top-level definition from the schema."""
