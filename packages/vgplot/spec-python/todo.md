@@ -108,4 +108,6 @@ I expect we can shrink the size of the schema if these groups could be `"$ref"`s
 
 ### Example
 
-Branch **(TODO!)** shows what doing this for `fx_*` and `fy_*` on `PlotAttributes` could look like
+Here's what doing this for `fx_*` and `fy_*` on `PlotAttributes` could look like:
+
+- (https://github.com/dangotbanned/mosaic/commit/38fd9cafc4e72785eae6edddde5b28bb959ddae2)
