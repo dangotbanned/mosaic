@@ -53,15 +53,6 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
 
 [altair/vegalite/v6/schema/_typing.py#L100-L114]: https://github.com/vega/altair/blob/c217ba4b03386fe303b70c75551e96d4e2bc6f30/altair/vegalite/v6/schema/_typing.py#L100-L114
 
-## Refactor
-
-- [x] Use `msgspec` for models in `schema_mod`
-  - [x] Input json schema
-  - [x] Replace non-msgspec pipeline
-- [x] Split up `scripts/`
-  - [x] `tools/` (reusable)
-  - [x] `scripts/` (Everything that does one job, on demand)
-
 ## `datamodel-code-generator` feature requests
 
 Things that should be easiest to fix upstream in `datamodel-code-generator`
