@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from mosaic_spec._gen.css_styles import CSSStyles
 from mosaic_spec._gen.mosaic import (
     Y1,
     AggregateExpression,
@@ -49,7 +50,6 @@ from mosaic_spec._gen.mosaic import (
     ContinuousScaleType,
     Contour,
     Count,
-    CSSStyles,
     CumeDist,
     Curve,
     CurveName,

@@ -47,7 +47,7 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
     - 60x of `str | float | bool | ParamRef`
     - 28x of `Literal["CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"]`
     - **Many** `OneOrSeq[T]` cases ([altair/vegalite/v6/schema/_typing.py#L100-L114])
-- [ ] CSSStyles
+- [x] CSSStyles
   - Has **508** fields
   - Next 2 highest have **215** fields
 

@@ -59,7 +59,7 @@ def _recursive_replace[T: (m.JsonSchema, m.ItemSchema)](schema: T) -> T:
     return schema
 
 
-def generate_python_schema(source: str | Path, target: str | Path) -> tuple[m.InputSchema, str]:
+def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSchema, str]:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
     schema = serde.read_json(source, m.InputSchema)
     definitions = schema.definitions
@@ -68,10 +68,33 @@ def generate_python_schema(source: str | Path, target: str | Path) -> tuple[m.In
     schema.ref = ""  # Removes `"$ref": "#/definitions/Spec"`
     schema.id = SCHEMA_OUT.name
 
+    # NOTE: 500 fields, so `CSSStyles` gets to live in another file
+    css_name = "CSSStyles"
+    css_filename = "css-styles.json"
+    css_ref_original = f"#/definitions/{css_name}"
+    css_ref_updated = f"{css_filename}{css_ref_original}"
+    references_css_styles = "Plot", "PlotAttributes"
+
+    for def_name in references_css_styles:
+        for member in definitions[def_name].properties["style"].any_of:
+            if member.ref == css_ref_original:
+                member.ref = css_ref_updated
+                break
+
     schema.definitions = {k: _recursive_replace(v) for k, v in definitions.items()}
     schema.flatten_component_union()
+
+    # NOTE: May want to remove the nesting in "definitions" later
+    schema_css_styles = schema.__replace__(
+        id=css_filename, definitions={css_name: definitions.pop(css_name)}
+    )
+
     serde.write_json(target, schema)
     print(f"Generated python schema at: {fs.repo_relative_str(target)}")
+
+    css_path = target.with_name(css_filename)
+    serde.write_json(css_path, schema_css_styles)
+    print(f"Generated {css_name!r} schema at: {fs.repo_relative_str(css_path)}")
     return schema, spec_def.description
 
 
