@@ -72,6 +72,22 @@ def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSch
     schema.definitions = {k: _recursive_replace(v) for k, v in schema.iter_defs()}
     schema.flatten_component_union()
 
+    # NOTE: Removes indirection, these are identical besides minor doc phrasing
+    schema.insert(
+        "Interval",
+        schema.pop("Interval").__replace__(ref="", any_of=schema.pop("LiteralTimeInterval").any_of),
+    )
+    schema.insert(
+        "Curve", schema.pop("CurveName").__replace__(description=schema.pop("Curve").description)
+    )
+    schema.insert(
+        "StackOffset",
+        schema.pop("StackOffsetName").__replace__(
+            description=schema.pop("StackOffset").description
+        ),
+    )
+    schema.insert("VectorShape", schema.pop("VectorShapeName"))
+
     CSSStylesSplit("CSSStyles", "css-styles.json").run(schema)
     TransformSplit("Transform", "transform.json").run(schema)
 
