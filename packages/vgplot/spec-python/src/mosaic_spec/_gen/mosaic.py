@@ -294,8 +294,8 @@ Other scale types:
 - *identity* - do not transform values when encoding"""
 
 
-CurveName = TypeAliasType(
-    "CurveName",
+Curve = TypeAliasType(
+    "Curve",
     Literal[
         "basis",
         "basis-closed",
@@ -319,7 +319,7 @@ CurveName = TypeAliasType(
         "step-before",
     ],
 )
-"""The built-in curve implementations."""
+"""How to interpolate between control points."""
 
 
 DataArray = TypeAliasType("DataArray", Sequence[Mapping[str, Any]])
@@ -1111,8 +1111,8 @@ class SortOrder2(TypedDict, total=False, closed=True):
     order: Literal["ascending", "descending"]
 
 
-StackOffsetName = TypeAliasType("StackOffsetName", Literal["center", "normalize", "wiggle"])
-"""A built-in stack offset method; one of:
+StackOffset = TypeAliasType("StackOffset", Literal["center", "normalize", "wiggle"])
+"""A stack offset method; one of:
 
 - *normalize* - rescale each stack to fill [0, 1]
 - *center* - align the centers of all stacks
@@ -1299,7 +1299,7 @@ class _VSpaceOpen(TypedDict, total=False):
 class VSpace(_VSpaceOpen, total=False, closed=True): ...
 
 
-VectorShapeName = TypeAliasType("VectorShapeName", Literal["arrow", "spike"])
+VectorShape = TypeAliasType("VectorShape", Literal["arrow", "spike"])
 """The built-in vector shape implementations; one of:
 
 - *arrow* - a straight line with an open arrowhead at the end (↑)
@@ -1357,10 +1357,6 @@ ChannelDomainValue = TypeAliasType(
 If the *x* channel is not defined, the *x2* channel will be used instead if available, and similarly for *y* and *y2*; this is useful for marks that implicitly stack. The *data* input is typically used in conjunction with a custom **reduce** function, as when the built-in single-channel reducers are insufficient."""
 
 
-Curve = TypeAliasType("Curve", CurveName)
-"""How to interpolate between control points."""
-
-
 DataDefinition = TypeAliasType(
     "DataDefinition",
     DataQuery
@@ -1392,6 +1388,37 @@ class Highlight(TypedDict, total=False, closed=True):
     """The stroke color of deemphasized marks. By default the stroke is unchanged."""
     stroke_opacity: float
     """The stroke opacity of deemphasized marks. By default the stroke opacity is unchanged."""
+
+
+Interval = TypeAliasType(
+    "Interval",
+    Literal[
+        "3 months",
+        "10 years",
+        "seconds",
+        "minutes",
+        "hours",
+        "days",
+        "weeks",
+        "months",
+        "quarters",
+        "halfs",
+        "years",
+        "mondays",
+        "tuesdays",
+        "wednesdays",
+        "thursdays",
+        "fridays",
+        "saturdays",
+        "sundays",
+    ]
+    | TimeIntervalName
+    | str,
+)
+"""How to partition a continuous range into discrete intervals; one of:
+
+- a named time interval such as *day* (for date intervals)
+- a number (for number intervals), defining intervals at integer multiples of *n*"""
 
 
 class IntervalX(TypedDict, total=False, closed=True):
@@ -1479,33 +1506,6 @@ class _LegendOpen(TypedDict, total=False):
 
 
 class Legend(_LegendOpen, total=False, closed=True): ...
-
-
-LiteralTimeInterval = TypeAliasType(
-    "LiteralTimeInterval",
-    Literal[
-        "3 months",
-        "10 years",
-        "seconds",
-        "minutes",
-        "hours",
-        "days",
-        "weeks",
-        "months",
-        "quarters",
-        "halfs",
-        "years",
-        "mondays",
-        "tuesdays",
-        "wednesdays",
-        "thursdays",
-        "fridays",
-        "saturdays",
-        "sundays",
-    ]
-    | TimeIntervalName
-    | str,
-)
 
 
 class _MenuOpen(TypedDict, total=False):
@@ -1678,156 +1678,6 @@ ParamDefinition = TypeAliasType("ParamDefinition", ParamValue | Param | ParamDat
 
 Params = TypeAliasType("Params", Mapping[str, ParamDefinition])
 """Top-level Param and Selection definitions."""
-
-
-PlotInteractor = TypeAliasType(
-    "PlotInteractor",
-    Highlight
-    | IntervalX
-    | IntervalY
-    | IntervalXY
-    | NearestX
-    | NearestY
-    | Pan
-    | PanX
-    | PanY
-    | PanZoom
-    | PanZoomX
-    | PanZoomY
-    | Region
-    | Toggle
-    | ToggleX
-    | ToggleY
-    | ToggleColor,
-)
-"""A plot interactor entry."""
-
-
-Reducer = TypeAliasType(
-    "Reducer",
-    Literal[
-        "first",
-        "last",
-        "identity",
-        "count",
-        "distinct",
-        "sum",
-        "proportion",
-        "proportion-facet",
-        "deviation",
-        "min",
-        "min-index",
-        "max",
-        "max-index",
-        "mean",
-        "median",
-        "variance",
-        "mode",
-    ]
-    | ReducerPercentile,
-)
-"""How to reduce aggregated (binned or grouped) values; one of:
-
-- *first* - the first value, in input order
-- *last* - the last value, in input order
-- *count* - the number of elements (frequency)
-- *distinct* - the number of distinct values
-- *sum* - the sum of values
-- *proportion* - the sum proportional to the overall total (weighted frequency)
-- *proportion-facet* - the sum proportional to the facet total
-- *deviation* - the standard deviation
-- *min* - the minimum value
-- *min-index* - the zero-based index of the minimum value
-- *max* - the maximum value
-- *max-index* - the zero-based index of the maximum value
-- *mean* - the mean value (average)
-- *median* - the median value
-- *variance* - the variance per [Welford's algorithm][1]
-- *mode* - the value with the most occurrences
-- *pXX* - the percentile value, where XX is a number in [00,99]
-- *identity* - the array of values
-
-[1]: https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm"""
-
-
-StackOffset = TypeAliasType("StackOffset", StackOffsetName)
-"""A stack offset method; one of:
-
-- *normalize* - rescale each stack to fill [0, 1]
-- *center* - align the centers of all stacks
-- *wiggle* - translate stacks to minimize apparent movement
-
-If a given stack has zero total value, the *normalize* offset will not adjust the stack's position. Both the *center* and *wiggle* offsets ensure that the lowest element across stacks starts at zero for better default axes. The
-*wiggle* offset is recommended for streamgraphs in conjunction with the
-*inside-out* order. For more, see [Byron & Wattenberg][1].
-
-[1]: https://leebyron.com/streamgraph/"""
-
-
-StackOrder = TypeAliasType(
-    "StackOrder",
-    Literal["-value", "-x", "-y", "-z", "-sum", "-appearance", "-inside-out"]
-    | StackOrderName
-    | str
-    | Sequence[Any],
-)
-"""How to order layers prior to stacking; one of:
-
-- a named stack order method such as *inside-out* or *sum*
-- a field name, for natural order of the corresponding values
-- an array of explicit **z** values in the desired order"""
-
-
-VectorShape = TypeAliasType("VectorShape", VectorShapeName)
-"""How to draw a vector: either a named shape or a custom implementation."""
-
-
-class ChannelDomainValueSpec1(TypedDict, total=False, closed=True):
-    """How to derive a scale's domain from a channel's values."""
-
-    limit: float | tuple[Lo, Lo]
-    """
-    If a positive number, limit the domain to the first *n* sorted values. If a negative number, limit the domain to the last *-n* sorted values. Hence, a positive **limit** with **reverse** true will return the top *n* values in descending order.
-
-    If an array [*lo*, *hi*], slices the sorted domain from *lo* (inclusive) to
-    *hi* (exclusive). As with [*array*.slice][1], if either *lo* or *hi* are negative, it indicates an offset from the end of the array; if *lo* is undefined it defaults to 0, and if *hi* is undefined it defaults to Infinity.
-
-    Note: limiting the imputed domain of one scale, say *x*, does not affect the imputed domain of another scale, say *y*; each scale domain is imputed independently.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
-    """
-    order: Literal["ascending", "descending"] | None
-    """How to order reduced values."""
-    reduce: Reducer | bool | None
-    """
-    How to produce a singular value (for subsequent sorting) from aggregated channel values; one of:
-
-    - true (default) - alias for *max*
-    - false or null - disabled; don't impute the scale domain
-    - a named reducer implementation such as *count* or *sum*
-    - a function that takes an array of values and returns the reduced value
-    - an object that implements the *reduceIndex* method
-    """
-    reverse: bool
-    """If true, reverse the order after sorting."""
-    value: Required[ChannelDomainValue]
-
-
-ChannelDomainValueSpec = TypeAliasType(
-    "ChannelDomainValueSpec", ChannelDomainValue | ChannelDomainValueSpec1
-)
-"""How to derive a scale's domain from a channel's values."""
-
-
-Data = TypeAliasType("Data", Mapping[str, DataDefinition])
-"""Top-level dataset definitions."""
-
-
-Interval = TypeAliasType("Interval", LiteralTimeInterval)
-"""How to partition a continuous range into discrete intervals; one of:
-
-- a named time interval such as *day* (for date intervals)
-- a number (for number intervals), defining intervals at integer multiples of *n*"""
 
 
 class PlotAttributes(TypedDict, total=False, closed=True):
@@ -2732,6 +2582,131 @@ class PlotAttributes(TypedDict, total=False, closed=True):
 
     For quantitative scales only.
     """
+
+
+PlotInteractor = TypeAliasType(
+    "PlotInteractor",
+    Highlight
+    | IntervalX
+    | IntervalY
+    | IntervalXY
+    | NearestX
+    | NearestY
+    | Pan
+    | PanX
+    | PanY
+    | PanZoom
+    | PanZoomX
+    | PanZoomY
+    | Region
+    | Toggle
+    | ToggleX
+    | ToggleY
+    | ToggleColor,
+)
+"""A plot interactor entry."""
+
+
+Reducer = TypeAliasType(
+    "Reducer",
+    Literal[
+        "first",
+        "last",
+        "identity",
+        "count",
+        "distinct",
+        "sum",
+        "proportion",
+        "proportion-facet",
+        "deviation",
+        "min",
+        "min-index",
+        "max",
+        "max-index",
+        "mean",
+        "median",
+        "variance",
+        "mode",
+    ]
+    | ReducerPercentile,
+)
+"""How to reduce aggregated (binned or grouped) values; one of:
+
+- *first* - the first value, in input order
+- *last* - the last value, in input order
+- *count* - the number of elements (frequency)
+- *distinct* - the number of distinct values
+- *sum* - the sum of values
+- *proportion* - the sum proportional to the overall total (weighted frequency)
+- *proportion-facet* - the sum proportional to the facet total
+- *deviation* - the standard deviation
+- *min* - the minimum value
+- *min-index* - the zero-based index of the minimum value
+- *max* - the maximum value
+- *max-index* - the zero-based index of the maximum value
+- *mean* - the mean value (average)
+- *median* - the median value
+- *variance* - the variance per [Welford's algorithm][1]
+- *mode* - the value with the most occurrences
+- *pXX* - the percentile value, where XX is a number in [00,99]
+- *identity* - the array of values
+
+[1]: https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm"""
+
+
+StackOrder = TypeAliasType(
+    "StackOrder",
+    Literal["-value", "-x", "-y", "-z", "-sum", "-appearance", "-inside-out"]
+    | StackOrderName
+    | str
+    | Sequence[Any],
+)
+"""How to order layers prior to stacking; one of:
+
+- a named stack order method such as *inside-out* or *sum*
+- a field name, for natural order of the corresponding values
+- an array of explicit **z** values in the desired order"""
+
+
+class ChannelDomainValueSpec1(TypedDict, total=False, closed=True):
+    """How to derive a scale's domain from a channel's values."""
+
+    limit: float | tuple[Lo, Lo]
+    """
+    If a positive number, limit the domain to the first *n* sorted values. If a negative number, limit the domain to the last *-n* sorted values. Hence, a positive **limit** with **reverse** true will return the top *n* values in descending order.
+
+    If an array [*lo*, *hi*], slices the sorted domain from *lo* (inclusive) to
+    *hi* (exclusive). As with [*array*.slice][1], if either *lo* or *hi* are negative, it indicates an offset from the end of the array; if *lo* is undefined it defaults to 0, and if *hi* is undefined it defaults to Infinity.
+
+    Note: limiting the imputed domain of one scale, say *x*, does not affect the imputed domain of another scale, say *y*; each scale domain is imputed independently.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
+    """
+    order: Literal["ascending", "descending"] | None
+    """How to order reduced values."""
+    reduce: Reducer | bool | None
+    """
+    How to produce a singular value (for subsequent sorting) from aggregated channel values; one of:
+
+    - true (default) - alias for *max*
+    - false or null - disabled; don't impute the scale domain
+    - a named reducer implementation such as *count* or *sum*
+    - a function that takes an array of values and returns the reduced value
+    - an object that implements the *reduceIndex* method
+    """
+    reverse: bool
+    """If true, reverse the order after sorting."""
+    value: Required[ChannelDomainValue]
+
+
+ChannelDomainValueSpec = TypeAliasType(
+    "ChannelDomainValueSpec", ChannelDomainValue | ChannelDomainValueSpec1
+)
+"""How to derive a scale's domain from a channel's values."""
+
+
+Data = TypeAliasType("Data", Mapping[str, DataDefinition])
+"""Top-level dataset definitions."""
 
 
 class ChannelDomainSort(TypedDict, total=False, closed=True):
