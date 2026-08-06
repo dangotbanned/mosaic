@@ -10,16 +10,19 @@ from __future__ import annotations
 
 from collections import deque
 from pathlib import Path
-from typing import Final
+from typing import TYPE_CHECKING, Annotated as A, ClassVar, Final, Literal as L
 
 from tools import codemod, fs, serde
 from tools.codegen import typed_dict
 from tools.codegen.docstrings import doc
 from tools.models import mosaic as m
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
 GENERATED_MODULE_NAME = "mosaic"
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
-SCHEMA_OUT = fs.SPEC_PYTHON / "schema" / f"{GENERATED_MODULE_NAME}.json"
+SCHEMA_OUT = fs.SCHEMA / f"{GENERATED_MODULE_NAME}.json"
 
 GENERATED_MODULE = fs.MOSAIC_SPEC / "_gen" / f"{GENERATED_MODULE_NAME}.py"
 TYPING_COMPAT = fs.MOSAIC_SPEC / "_typing_compat.py"
@@ -41,7 +44,7 @@ Mixing this into the bases with the `Component` member is a limited form of an i
 SPEC_HEAD_NO_DATA = f"_{SPEC_HEAD}"
 
 
-def _recursive_replace[T: (m.JsonSchema, m.ItemSchema)](schema: T) -> T:
+def _recursive_replace(schema: m.JsonSchema) -> m.JsonSchema:
     """Visit 4 fields at all levels of the schema, renaming matches for [`KEYS_REPLACE`][]."""
     replace = KEYS_REPLACE.get
     recurse = _recursive_replace
@@ -51,8 +54,8 @@ def _recursive_replace[T: (m.JsonSchema, m.ItemSchema)](schema: T) -> T:
         schema.required = [replace(r, r) for r in required]
     if any_of := schema.any_of:
         schema.any_of = [recurse(a) for a in any_of]
-    if not isinstance(schema, (m.ItemSchema)) and (items := schema.items) and items is not True:
-        if isinstance(items, m.ItemSchema):
+    if (items := schema.items) and items is not True:
+        if isinstance(items, m.JsonSchema):
             schema.items = recurse(items)
         else:
             schema.items = [recurse(i) for i in items]
@@ -62,40 +65,129 @@ def _recursive_replace[T: (m.JsonSchema, m.ItemSchema)](schema: T) -> T:
 def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSchema, str]:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
     schema = serde.read_json(source, m.InputSchema)
-    definitions = schema.definitions
-
-    spec_def = definitions.pop("Spec")
+    spec_def = schema.pop("Spec")
     schema.ref = ""  # Removes `"$ref": "#/definitions/Spec"`
-    schema.id = SCHEMA_OUT.name
+    schema.id = target.name
 
-    # NOTE: 500 fields, so `CSSStyles` gets to live in another file
-    css_name = "CSSStyles"
-    css_filename = "css-styles.json"
-    css_ref_original = f"#/definitions/{css_name}"
-    css_ref_updated = f"{css_filename}{css_ref_original}"
-    references_css_styles = "Plot", "PlotAttributes"
-
-    for def_name in references_css_styles:
-        for member in definitions[def_name].properties["style"].any_of:
-            if member.ref == css_ref_original:
-                member.ref = css_ref_updated
-                break
-
-    schema.definitions = {k: _recursive_replace(v) for k, v in definitions.items()}
+    schema.definitions = {k: _recursive_replace(v) for k, v in schema.iter_defs()}
     schema.flatten_component_union()
 
-    # NOTE: May want to remove the nesting in "definitions" later
-    schema_css_styles = schema.__replace__(
-        id=css_filename, definitions={css_name: definitions.pop(css_name)}
-    )
+    CSSStylesSplit("CSSStyles", "css-styles.json").run(schema)
+    TransformSplit("Transform", "transform.json").run(schema)
 
     serde.write_json(target, schema)
     print(f"Generated python schema at: {fs.repo_relative_str(target)}")
-
-    css_path = target.with_name(css_filename)
-    serde.write_json(css_path, schema_css_styles)
-    print(f"Generated {css_name!r} schema at: {fs.repo_relative_str(css_path)}")
     return schema, spec_def.description
+
+
+class SchemaMod: ...
+
+
+type Extracted[T] = A[T, L["Extracted"]]
+
+
+class SchemaSplit(SchemaMod):
+    _SCHEMA_DIR: ClassVar[Path] = fs.SCHEMA
+
+    def __init__(self, root_name: m.DefName, filename: str) -> None:
+        self.root_name: m.DefName = root_name
+        self.filename: str = filename
+
+    @property
+    def path(self) -> Path:
+        return self._SCHEMA_DIR / self.filename
+
+    def run(self, schema: m.InputSchema) -> None:
+        """Split the definitions required for `root_name` from `schema` into `filename`."""
+        self._update_refs(schema)
+        extracted = self.extract(schema)
+        serde.write_json(self.path, extracted)
+        print(f"Generated {self.root_name!r} schema at: {fs.repo_relative_str(self.path)}")
+
+    def _update_refs(self, schema: m.InputSchema) -> None:
+        """Redirect references to `root_name` to point to `filename`."""
+        root_name, filename = self.root_name, self.filename
+        ref_original = f"#/definitions/{root_name}"
+        for location in self._referenced_by(schema):
+            search = (item for item in location if (_ref := item.ref) == ref_original)
+            if found := next(search, None):
+                found.ref = f"{filename}{ref_original}"
+            else:
+                msg = (
+                    f"Expected to find a ref to {root_name!r} in `iterable`.\n"
+                    f"Failed to update '{filename}{ref_original}'"
+                )
+                raise NotImplementedError(msg)
+
+    def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
+        """Yield search spaces, where each contains a single reference to the new root."""
+        msg = f"'{self._referenced_by.__qualname__}()' is not yet implemented"
+        raise NotImplementedError(msg)
+
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+        """Return the contents of the `filename`'s `"definitions"`."""
+        msg = f"'{self._extract_definitions.__qualname__}()' is not yet implemented"
+        raise NotImplementedError(msg)
+
+    def extract(self, schema: m.InputSchema) -> Extracted[m.InputSchema]:
+        return schema.__replace__(id=self.filename, definitions=self._extract_definitions(schema))
+
+
+class CSSStylesSplit(SchemaSplit):
+    # NOTE: Has 500 fields
+    def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
+        for def_name in "Plot", "PlotAttributes":
+            yield schema.get(def_name).properties["style"].iter_members()
+
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+        return {self.root_name: schema.pop(self.root_name)}
+
+
+def _startswith_def(s: str) -> bool:
+    return s.startswith("#/def")
+
+
+class TransformSplit(SchemaSplit):
+    """Remove `Transform` and it's members from the schema, to define them in another file.
+
+    The definition is a union of unions of typed dicts:
+
+    ```py
+    type ColumnTransform = Column | ...
+    type Transform = ColumnTransform | AggregateTransform | WindowTransform
+
+
+    class Column(TypedDict):
+        column: Any
+    ```
+    """
+
+    def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
+        it = schema.get("ChannelValue").iter_members()
+        yield from (it,)
+
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+        root = schema.pop(self.root_name)
+        transform_defs = {self.root_name: root}
+
+        for kind in root.iter_members():
+            kind_name = kind.def_name
+            for member_ref in schema.get(kind_name).iter_members():
+                member_name = member_ref.def_name
+                transform_defs[member_name] = schema.pop(member_name)
+
+            transform_defs[kind_name] = schema.pop(kind_name)
+
+        only_transform = "BinInterval", "FrameValue", "TransformField"
+        for def_name in only_transform:
+            transform_defs[def_name] = schema.pop(def_name)
+
+        interval_tf = schema.pop("IntervalTransform")
+        for member_ref in interval_tf.iter_members():
+            member_name = member_ref.def_name
+            transform_defs[member_name] = schema.pop(member_name)
+        transform_defs["IntervalTransform"] = interval_tf
+        return transform_defs
 
 
 def generate_spec_module(

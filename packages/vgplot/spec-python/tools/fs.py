@@ -4,7 +4,7 @@ from __future__ import annotations
 
 # ruff: file-ignore[print,subprocess-without-shell-equals-true]
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Literal as L, LiteralString as LS, overload
+from typing import TYPE_CHECKING, Any, Final, Literal as L, LiteralString as LS, overload
 
 if TYPE_CHECKING:
     import subprocess as sp
@@ -36,6 +36,12 @@ WIDGET = VGPLOT_PACKAGE / "widget"
 # NOTE: Local paths
 SPEC_PYTHON = _HERE.parent.parent
 """`mosaic/packages/vgplot/spec-python`"""
+
+SCHEMA: Final = SPEC_PYTHON / "schema"
+"""`mosaic/packages/vgplot/spec-python/schema`.
+
+Output directory for modified schemas.
+"""
 
 SCRIPTS = SPEC_PYTHON / "scripts"
 """`mosaic/packages/vgplot/spec-python/scripts`"""

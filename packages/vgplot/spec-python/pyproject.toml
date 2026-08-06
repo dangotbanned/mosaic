@@ -76,6 +76,8 @@ custom-file-header-mode = "replace"
 custom-file-header      = "# NOTE: DO NOT EDIT.\n# Regenerate with: pnpm generate"
 custom-template-dir     = "templates/datamodel-code-generator"
 import-overrides        = '{"NotRequired": "mosaic_spec._typing_compat", "Required": "mosaic_spec._typing_compat", "TypeAliasType": "mosaic_spec._typing_compat", "TypeVar": "mosaic_spec._typing_compat", "TypedDict": "mosaic_spec._typing_compat"}'
+# NOTE: Used in multiple modules and letting `dcg` handle it was a timesink
+type-overrides          = '{"ParamRef": "mosaic_spec.typing.ParamRef"}'
 
 [tool.hatch.version]
 path    = "package.json"

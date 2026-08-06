@@ -55,7 +55,7 @@ Sadly, this doesn't cover intersecting with a union.
 """
 
 import functools
-from collections.abc import Sequence
+from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Annotated as A, Final, Literal as L, LiteralString, final
 
 from msgspec import field
@@ -70,7 +70,6 @@ type _JsonSchemaFwd = JsonSchema
 type NonRecursiveFields = _NonRecursiveFieldsBase
 type Ref = str
 type Resolved[T] = A[T, L["Resolved"]]
-type Definitions = dict[DefName, Resolved[JsonSchema]]
 
 
 _POUND_DEFS: Final = "#/definitions/"
@@ -83,7 +82,7 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
     description: str = ""
     title: str = ""
     format: str = ""
-    type: Primitive | None = None
+    type: Primitive | Sequence[Primitive] | None = None
     const: str | bool | None = None
     enum: Sequence[str | bool | None] = field(default_factory=list)
     additional_properties: NonRecursiveFields | bool = field(
@@ -108,25 +107,8 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
             self.description = _fix_ambiguous_unicode_characters(doc)
 
 
-class _RecursePropsUnionBase(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
-    properties: dict[str, _JsonSchemaFwd] = field(default_factory=dict)
-    any_of: Sequence[_JsonSchemaFwd] = field(name="anyOf", default_factory=list)
-
-
 @final
-class ItemSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
-    """An element in `"items"`.
-
-    Excludes: `"items"`.
-
-    There are never 2 in a row:
-
-        {"items": {"items": ...}}
-    """
-
-
-@final
-class JsonSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
+class JsonSchema(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
     """The (useful) subset of JSON schema used in `"definitions"`.
 
     ## Notes
@@ -140,8 +122,9 @@ class JsonSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
       or to check a new schema hasn't introduced something unhandled
     """
 
-    type: Primitive | Sequence[Primitive] = field(default_factory=list)  # pyright: ignore[reportIncompatibleVariableOverride]
-    items: ItemSchema | Sequence[ItemSchema] | bool = True
+    properties: dict[str, _JsonSchemaFwd] = field(default_factory=dict)
+    any_of: Sequence[_JsonSchemaFwd] = field(name="anyOf", default_factory=list)
+    items: _JsonSchemaFwd | Sequence[_JsonSchemaFwd] | bool = True
     min_items: int = field(name="minItems", default=0)
     max_items: int | None = field(name="maxItems", default=None)
 
@@ -159,6 +142,12 @@ class JsonSchema(_RecursePropsUnionBase, forbid_unknown_fields=True):
     def is_union(self) -> bool:
         return bool(self.any_of)
 
+    def iter_members(self) -> Iterator[JsonSchema]:
+        """Iterate over the members of a union, raising if the assumption that this is a union has changed."""
+        if not (members := self.any_of):
+            msg = f"Expected a union but `any_of` was empty, got:\n{self!r}"
+            raise NotImplementedError(msg)
+        yield from members
 
 @final
 class InputSchema(base.Struct, kw_only=True):
@@ -180,9 +169,23 @@ class InputSchema(base.Struct, kw_only=True):
         """Get a top-level definition from the schema."""
         return self.definitions[target]
 
+    def pop(self, target: DefName, /) -> Resolved[JsonSchema]:
+        """Remove a top-level definition from the schema."""
+        return self.definitions.pop(target)
+
     def insert(self, name: DefName, schema: Resolved[JsonSchema]) -> None:
         """Add a new top-level definition to the schema."""
         self.definitions[name] = schema
+
+    def iter_defs(
+        self, predicate: Callable[[JsonSchema], bool] | None = None, /
+    ) -> Iterator[tuple[DefName, Resolved[JsonSchema]]]:
+        it: Iterable[tuple[DefName, Resolved[JsonSchema]]]
+        if predicate is None:
+            it = self.definitions.items()
+        else:
+            it = ((name, schema) for name, schema in self.definitions.items() if predicate(schema))
+        yield from it
 
     def _insert_base_open(
         self, name: DefName, schema: Resolved[JsonSchema], /, fmt: LiteralString = "_{name}Open"

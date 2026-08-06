@@ -41,7 +41,9 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
 - [ ] spec
   - [ ] Use the original class names and don't re-export to top-level, e.g.
     - `import mosaic_spec as ms; ms.spec.Plot(...)`
-- [ ] transforms
+- [x] transforms
+  - [x] split
+  - [ ] cleanup
 - [ ] typing (aliases)
   - [ ] A large gain will come from naming duplicated inline types, e.g.
     - 60x of `str | float | bool | ParamRef`
