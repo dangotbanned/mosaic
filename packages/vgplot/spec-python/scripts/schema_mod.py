@@ -187,6 +187,12 @@ class TransformSplit(SchemaSplit):
             member_name = member_ref.def_name
             transform_defs[member_name] = schema.pop(member_name)
         transform_defs["IntervalTransform"] = interval_tf
+        # HACK @dangotbanned: `ParamRef` is not generated in `transform.py`.
+        # - `dcg` tries to do some very complicated things to "solve" circular imports,
+        #   and this + the linked override disables that.
+        # - Ideally, it would ignore circular **typing only** imports or use forward refs in runtime aliases
+        # - https://github.com/dangotbanned/mosaic/blob/7004de2a9f4d9f5ea8cd2c11a827b6d0ee2ab437/packages/vgplot/spec-python/pyproject.toml#L79-L80
+        transform_defs["ParamRef"] = schema.get("ParamRef")
         return transform_defs
 
 
