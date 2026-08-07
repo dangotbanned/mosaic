@@ -632,7 +632,7 @@ wheels = [
 
 [[package]]
 name = "datamodel-code-generator"
-version = "0.72.1"
+version = "0.72.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "argcomplete" },
@@ -645,9 +645,9 @@ dependencies = [
     { name = "pyyaml" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d1/92/74866dde631cb94f4dbc827127b64e199ec40179103d29f54ca29c9306a2/datamodel_code_generator-0.72.1.tar.gz", hash = "sha256:e1789dbaba2eb4edd49b033144f0355754b751ceabc9ecfc7394b27f38348dfc", size = 1847031, upload-time = "2026-08-04T18:14:43.553Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b6/2d/12becb81ac1492ed5f6e3afcb2426e0d665c5ae51fa24bbe951b408dd867/datamodel_code_generator-0.72.2.tar.gz", hash = "sha256:0e11564564ccf12e8ae89ca28b7848c795b40609e9f011e7b3434428eebd6f12", size = 1856918, upload-time = "2026-08-06T14:36:05.515Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/dd/e3/20d5bb1243f281be4310fe2adc0e0e9c9aab4e01e385ec4df1ae7eb854e6/datamodel_code_generator-0.72.1-py3-none-any.whl", hash = "sha256:20ff7ddc09133285bb0724bb51df9ec408695f86b9011561398e583eda9339b2", size = 511686, upload-time = "2026-08-04T18:14:41.968Z" },
+    { url = "https://files.pythonhosted.org/packages/da/e5/a64c15b05307974cf9676a73ab9e11bed49656a1df16188685c73cb290ed/datamodel_code_generator-0.72.2-py3-none-any.whl", hash = "sha256:df75b3a3225085e098337538cb6895f12e4daca80c43dc15284102bd42948dfc", size = 514012, upload-time = "2026-08-06T14:36:03.785Z" },
 ]
 
 [[package]]
@@ -1731,7 +1731,7 @@ requires-dist = [{ name = "typing-extensions", marker = "python_full_version < '
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "datamodel-code-generator", specifier = ">=0.72.1" },
+    { name = "datamodel-code-generator", specifier = ">=0.72.2" },
     { name = "msgspec", extras = ["toml"], specifier = ">=0.21.1" },
     { name = "pyright" },
     { name = "pytest", specifier = ">=9.1.1" },
@@ -1740,7 +1740,7 @@ dev = [
     { name = "ruff" },
     { name = "ty", specifier = ">=0.0.63" },
 ]
-gen = [{ name = "datamodel-code-generator", specifier = ">=0.72.1" }]
+gen = [{ name = "datamodel-code-generator", specifier = ">=0.72.2" }]
 repl = [
     { name = "ipykernel", specifier = ">=7.3.0" },
     { name = "rich", specifier = ">=15.0.0" },

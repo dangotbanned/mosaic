@@ -81,7 +81,7 @@ class Years(TypedDict, total=False, closed=True):
 class Bin(TypedDict, total=False, closed=True):
     """A bin transform."""
 
-    bin: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    bin: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Bin a continuous variable into discrete intervals. The bin argument specifies a data column or expression to bin. Both numerical and temporal (date/time) values are supported."""
     interval: BinInterval
     """The interval bin unit to use, typically used to indicate a date/time unit for binning temporal values, such as `hour`, `day`, or `month`. If `date`, the extent of data values is used to automatically select an interval for temporal data. The value `number` enforces normal numerical binning, even over temporal data. If unspecified, defaults to `number` for numerical data and `date` for temporal data."""
@@ -100,58 +100,56 @@ class Bin(TypedDict, total=False, closed=True):
 class Centroid(TypedDict, total=False, closed=True):
     """A centroid transform."""
 
-    centroid: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    centroid: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the 2D centroid of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
 
 
 class CentroidX(TypedDict, total=False, closed=True):
     """A centroidX transform."""
 
-    centroid_x: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    centroid_x: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the centroid x-coordinate of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
 
 
 class CentroidY(TypedDict, total=False, closed=True):
     """A centroidY transform."""
 
-    centroid_y: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    centroid_y: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the centroid y-coordinate of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
 
 
 class Column(TypedDict, total=False, closed=True):
     """A column transform."""
 
-    column: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    column: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Interpret a string or param-value as a column reference."""
 
 
 class DateDay(TypedDict, total=False, closed=True):
     """A dateDay transform."""
 
-    date_day: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    date_day: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Transform a Date value to a day of the month for cyclic comparison. Year and month values are collapsed to enable comparison over days only."""
 
 
 class DateMonth(TypedDict, total=False, closed=True):
     """A dateMonth transform."""
 
-    date_month: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    date_month: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Transform a Date value to a month boundary for cyclic comparison. Year values are collapsed to enable comparison over months only."""
 
 
 class DateMonthDay(TypedDict, total=False, closed=True):
     """A dateMonthDay transform."""
 
-    date_month_day: Required[
-        str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]
-    ]
+    date_month_day: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Transform a Date value to a month and day boundary for cyclic comparison. Year values are collapsed to enable comparison over months and days only."""
 
 
 class GeoJSON(TypedDict, total=False, closed=True):
     """A geojson transform."""
 
-    geojson: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    geojson: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute a GeoJSON-formatted string from geometry-typed data. This transform requires the DuckDB `spatial` extension."""
 
 
@@ -178,13 +176,13 @@ class Lag(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     lag: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
     """Compute lagging values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows before the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."""
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Last(TypedDict, total=False, closed=True):
@@ -194,13 +192,13 @@ class Last(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
-    last: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    groups: tuple[FrameValue, FrameValue] | ParamRef
+    last: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Return the last column value found in an aggregation group."""
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class LastValue(TypedDict, total=False, closed=True):
@@ -209,13 +207,13 @@ class LastValue(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
-    last_value: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    groups: tuple[FrameValue, FrameValue] | ParamRef
+    last_value: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Get the last value of the given column in the current window frame."""
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Lead(TypedDict, total=False, closed=True):
@@ -224,13 +222,13 @@ class Lead(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     lead: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
     """Compute leading values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows after the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."""
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Max(TypedDict, total=False, closed=True):
@@ -240,13 +238,13 @@ class Max(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
-    max: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    groups: tuple[FrameValue, FrameValue] | ParamRef
+    max: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the maximum value of the given column."""
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Median(TypedDict, total=False, closed=True):
@@ -256,13 +254,13 @@ class Median(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
-    median: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    groups: tuple[FrameValue, FrameValue] | ParamRef
+    median: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the median value of the given column."""
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Min(TypedDict, total=False, closed=True):
@@ -272,13 +270,13 @@ class Min(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
-    min: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    groups: tuple[FrameValue, FrameValue] | ParamRef
+    min: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the minimum value of the given column."""
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Mode(TypedDict, total=False, closed=True):
@@ -288,13 +286,13 @@ class Mode(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
-    mode: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    groups: tuple[FrameValue, FrameValue] | ParamRef
+    mode: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the mode value of the given column."""
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class NTile(TypedDict, total=False, closed=True):
@@ -303,13 +301,13 @@ class NTile(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
-    ntile: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    groups: tuple[FrameValue, FrameValue] | ParamRef
+    ntile: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute an n-tile integer ranging from 1 to the provided argument (num_buckets), dividing the partition as equally as possible."""
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class NthValue(TypedDict, total=False, closed=True):
@@ -318,13 +316,13 @@ class NthValue(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     nth_value: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
     """Get the nth value of the given column in the current window frame, counting from one. The second argument is the offset for the nth row."""
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class PercentRank(TypedDict, total=False, closed=True):
@@ -333,13 +331,13 @@ class PercentRank(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
     percent_rank: Required[Sequence[Any] | None]
     """Compute the percentage rank over an ordered window partition."""
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Product(TypedDict, total=False, closed=True):
@@ -349,13 +347,13 @@ class Product(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    product: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    product: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the product of the given column."""
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Quantile(TypedDict, total=False, closed=True):
@@ -365,13 +363,13 @@ class Quantile(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    quantile: Required[Sequence[str | float | bool | ParamRef]]
+    quantile: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
     """Compute the quantile value of the given column at the provided probability threshold. For example, 0.5 is the median."""
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Rank(TypedDict, total=False, closed=True):
@@ -380,13 +378,13 @@ class Rank(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
     rank: Required[Sequence[Any] | None]
     """Compute the row rank over an ordered window partition. Sorting ties result in gaps in the rank numbers ([1, 1, 3, ...])."""
-    rows: Sequence[FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class RowNumber(TypedDict, total=False, closed=True):
@@ -395,13 +393,13 @@ class RowNumber(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
     row_number: Required[Sequence[Any] | None]
     """Compute the 1-based row number over an ordered window partition."""
-    rows: Sequence[FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Stddev(TypedDict, total=False, closed=True):
@@ -411,12 +409,12 @@ class Stddev(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
-    stddev: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
+    stddev: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the sum of the given column."""
 
 
@@ -427,12 +425,12 @@ class StddevPop(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
-    stddev_pop: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
+    stddev_pop: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the sum of the given column."""
 
 
@@ -443,12 +441,12 @@ class Sum(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
-    sum: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
+    sum: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the sum of the given column."""
 
 
@@ -459,12 +457,12 @@ class VarPop(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
-    var_pop: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
+    var_pop: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the population variance of the given column."""
 
 
@@ -475,85 +473,79 @@ class Variance(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
-    variance: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
+    variance: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the sample variance of the given column."""
 
 
 class Argmax(TypedDict, total=False, closed=True):
     """An argmax aggregate transform."""
 
-    argmax: Required[Sequence[str | float | bool | ParamRef]]
+    argmax: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
     """Find a value of the first column that maximizes the second column."""
     distinct: bool
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Argmin(TypedDict, total=False, closed=True):
     """An argmin aggregate transform."""
 
-    argmin: Required[Sequence[str | float | bool | ParamRef]]
+    argmin: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
     """Find a value of the first column that minimizes the second column."""
     distinct: bool
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Avg(TypedDict, total=False, closed=True):
     """An avg (average, or mean) aggregate transform."""
 
-    avg: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    avg: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Compute the average (mean) value of the given column."""
     distinct: bool
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class Count(TypedDict, total=False, closed=True):
     """A count aggregate transform."""
 
     count: Required[
-        Sequence[Any]
-        | str
-        | float
-        | bool
-        | ParamRef
-        | Sequence[str | float | bool | ParamRef]
-        | None
+        Sequence[Any] | str | float | bool | ParamRef | tuple[str | float | bool | ParamRef] | None
     ]
     """Compute the count of records in an aggregation group."""
     distinct: bool
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class CumeDist(TypedDict, total=False, closed=True):
@@ -564,11 +556,11 @@ class CumeDist(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class DenseRank(TypedDict, total=False, closed=True):
@@ -579,11 +571,11 @@ class DenseRank(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class First(TypedDict, total=False, closed=True):
@@ -593,13 +585,13 @@ class First(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    first: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    first: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Return the first column value found in an aggregation group."""
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 class FirstValue(TypedDict, total=False, closed=True):
@@ -608,13 +600,13 @@ class FirstValue(TypedDict, total=False, closed=True):
     exclude: Literal[
         "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
     ]
-    first_value: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    first_value: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
     """Get the first value of the given column in the current window frame."""
-    groups: Sequence[FrameValue] | ParamRef
+    groups: tuple[FrameValue, FrameValue] | ParamRef
     orderby: TransformField | Sequence[TransformField]
     partitionby: TransformField | Sequence[TransformField]
-    range: Sequence[FrameValue] | ParamRef
-    rows: Sequence[FrameValue] | ParamRef
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
 
 
 WindowTransform = TypeAliasType(

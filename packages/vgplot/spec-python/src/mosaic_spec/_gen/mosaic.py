@@ -21853,7 +21853,7 @@ class _RasterTileOpen(TypedDict, total=False):
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
-    origin: Sequence[float] | ParamRef
+    origin: tuple[float, float] | ParamRef
     """The coordinates of the tile origin in the **x** and **y** data domains. Defaults to [0, 0]."""
     pad: float | ParamRef
     """The bin padding, one of 1 (default) to include extra padding for the final bin, or 0 to make the bins flush with the maximum domain value."""

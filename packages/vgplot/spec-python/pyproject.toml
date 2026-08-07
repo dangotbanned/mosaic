@@ -17,7 +17,7 @@ dev    = [
   { include-group = "typing" }
 ]
 gen    = [
-  "datamodel-code-generator>=0.72.1",
+  "datamodel-code-generator>=0.72.2",
 ]
 repl   = [
   "ipykernel>=7.3.0",
@@ -44,12 +44,13 @@ output-model-type       = "typing.TypedDict"
 formatters              = ["ruff-check", "ruff-format"]
 target-python-version   = "3.10"
 
-use-generic-container-types    = true
-use-tuple-for-fixed-items      = true
-use-type-checking-imports      = true
-enum-field-as-literal          = "all"
-use-type-alias-type            = true
-use-total-false-for-typed-dict = true
+use-generic-container-types       = true
+use-tuple-for-fixed-items         = true
+use-tuple-for-fixed-length-arrays = true
+use-type-checking-imports         = true
+enum-field-as-literal             = "all"
+use-type-alias-type               = true
+use-total-false-for-typed-dict    = true
 
 collapse-reuse-models = true
 skip-root-model       = true
