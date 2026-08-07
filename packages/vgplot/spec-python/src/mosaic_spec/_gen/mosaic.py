@@ -180,8 +180,7 @@ ColorScheme = TypeAliasType(
         "YlOrRd",
         "Rainbow",
         "Sinebow",
-    ]
-    | Mapping[str, Any],
+    ],
 )
 """The built-in color schemes. For categorical data, one of:
 

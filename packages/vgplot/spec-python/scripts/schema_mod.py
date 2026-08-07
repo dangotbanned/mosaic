@@ -79,6 +79,15 @@ def _simplify_type_aliases(schema: m.InputSchema) -> None:
     )
     schema.insert("VectorShape", schema.pop("VectorShapeName"))
 
+    # NOTE: `& Record<never, never>` explodes into 51x `{'type': 'object'}`
+    # https://github.com/dangotbanned/mosaic/blob/91ecaaf1db2716f89c309978a389d1dd822c36e3/packages/vgplot/spec/src/spec/PlotTypes.ts#L383-L384
+    color_scheme = schema.pop("ColorScheme")
+    for s in tuple(color_scheme.any_of):
+        if s.enum:
+            color_scheme = replace(s, description=color_scheme.description)
+            break
+    schema.insert("ColorScheme", color_scheme)
+
 
 def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSchema, str]:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
