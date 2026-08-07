@@ -216,22 +216,24 @@ class PlotTypesSplit(RootSplit):
     """
 
     _DEF_NAMES = (
-        "ColorScaleType",
-        "ColorScheme",
-        "ContinuousScaleType",
-        "Curve",  # CurveName
-        "DiscreteScaleType",
-        "Fixed",
-        "FrameAnchor",
-        "Interpolate",
-        "Interval",  # LiteralTimeInterval
-        "PositionScaleType",
-        "ProjectionName",
-        "Reducer",
-        "ReducerPercentile",
-        "ScaleName",
-        "SymbolType",
-        "TimeIntervalName",
+        "ColorScaleType",  # ref by `{Plot,PlotAttributes}.color_scale`
+        "ColorScheme",  # ref by `{Plot,PlotAttributes}.color_scheme`
+        "ContinuousScaleType",  # ref by `{Plot,PlotAttributes}.{length,opacity,r}_scale`
+        "Curve",  # ref by `marks.Marks.{Curve,CurveAuto}Options.curve` (16x `_*Open` classes)
+        #           replaces `CurveName`
+        "DiscreteScaleType",  # ref by `{Plot,PlotAttributes}.symbol_scale`
+        "Fixed",  # ref by `{Plot,PlotAttributes}` 20x fields each
+        "FrameAnchor",  # ref by `Tip.{anchor,frame_anchor,preferred_anchor}` + 23x `_*Open.frame_anchor`
+        "Interpolate",  # ref by `{Plot,PlotAttributes}.color_interpolate`
+        "Interval",  # ref 60x, lots of places
+        #              replaces `LiteralTimeInterval`
+        "PositionScaleType",  # ref by `{Plot,PlotAttributes}.{x,y}_scale`
+        "ProjectionName",  # ref by `{Plot,PlotAttributes}.projection_type`
+        "Reducer",  # ref by `{ChannelDomainValueSpec1,ChannelDomainSort}.reduce`
+        "ReducerPercentile",  # ref by `Reducer` ^^^^
+        "ScaleName",  # ref by `ChannelValueSpec1.scale`
+        "SymbolType",  # ref by 9x `_*Open.symbol`
+        "TimeIntervalName",  # ref by `Interval` (but this has a unique doc so keep it)
     )
 
     def __init__(self, filename: str) -> None:
