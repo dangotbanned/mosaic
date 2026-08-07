@@ -142,6 +142,14 @@ class JsonSchema(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
     def is_union(self) -> bool:
         return bool(self.any_of)
 
+    def items_schema(self) -> JsonSchema:
+        """Ensure `items` contains another `JsonSchema`."""
+        items = self.items
+        if not isinstance(items, JsonSchema):
+            msg = f"Expected a schema in `items` but got {type(items).__name__!r}, in:\n{self!r}"
+            raise NotImplementedError(msg)
+        return items
+
     def iter_members(self) -> Iterator[JsonSchema]:
         """Iterate over the members of a union, raising if the assumption that this is a union has changed."""
         if not (members := self.any_of):

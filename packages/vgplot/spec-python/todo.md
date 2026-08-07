@@ -29,7 +29,7 @@ Here's a big list of things to do/known issues
 Pylance is non-functional as it isn't able to do the kind of incremental magic that `ty` can within a single file.
 To mitigate this, here are some potential modules/subpackages to lighten the load:
 
-- [ ] interactors (package)
+- [x] `interactors.py`
 - [ ] marks (package xl)
 - [ ] data
 - [ ] input (rename to "inputs")
@@ -41,7 +41,7 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
 - [ ] spec
   - [ ] Use the original class names and don't re-export to top-level, e.g.
     - `import mosaic_spec as ms; ms.spec.Plot(...)`
-- [x] transforms
+- [x] `transforms.py`
   - [x] split
   - [ ] cleanup
 - [ ] typing (aliases)
@@ -49,7 +49,7 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
     - 60x of `str | float | bool | ParamRef`
     - 28x of `Literal["CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"]`
     - **Many** `OneOrSeq[T]` cases ([altair/vegalite/v6/schema/_typing.py#L100-L114])
-- [x] CSSStyles
+- [x] `css_styles.py
   - Has **508** fields
   - Next 2 highest have **215** fields
 

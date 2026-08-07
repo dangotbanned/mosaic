@@ -93,6 +93,7 @@ def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSch
     _simplify_type_aliases(schema)
 
     CSSStylesSplit("CSSStyles", "css-styles.json").run(schema)
+    InteractorsSplit("PlotInteractor", "interactors.json").run(schema)
     TransformSplit("Transform", "transform.json").run(schema)
 
     serde.write_json(target, schema)
@@ -163,8 +164,20 @@ class CSSStylesSplit(SchemaSplit):
         return {self.root_name: schema.pop(self.root_name)}
 
 
-def _startswith_def(s: str) -> bool:
-    return s.startswith("#/def")
+class InteractorsSplit(SchemaSplit):
+    def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
+        it = schema.get("Plot").properties["plot"].items_schema().iter_members()
+        yield from (it,)
+
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+        root = schema.pop(self.root_name)
+        definitions = {self.root_name: root}
+        for member_ref in root.iter_members():
+            member_name = member_ref.def_name
+            definitions[member_name] = schema.pop(member_name)
+        definitions["BrushStyles"] = schema.pop("BrushStyles")
+        definitions["ParamRef"] = schema.get("ParamRef")
+        return definitions
 
 
 class TransformSplit(SchemaSplit):
@@ -188,32 +201,32 @@ class TransformSplit(SchemaSplit):
 
     def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
         root = schema.pop(self.root_name)
-        transform_defs = {self.root_name: root}
+        definitions = {self.root_name: root}
 
         for kind in root.iter_members():
             kind_name = kind.def_name
             for member_ref in schema.get(kind_name).iter_members():
                 member_name = member_ref.def_name
-                transform_defs[member_name] = schema.pop(member_name)
+                definitions[member_name] = schema.pop(member_name)
 
-            transform_defs[kind_name] = schema.pop(kind_name)
+            definitions[kind_name] = schema.pop(kind_name)
 
         only_transform = "BinInterval", "FrameValue", "TransformField"
         for def_name in only_transform:
-            transform_defs[def_name] = schema.pop(def_name)
+            definitions[def_name] = schema.pop(def_name)
 
         interval_tf = schema.pop("IntervalTransform")
         for member_ref in interval_tf.iter_members():
             member_name = member_ref.def_name
-            transform_defs[member_name] = schema.pop(member_name)
-        transform_defs["IntervalTransform"] = interval_tf
+            definitions[member_name] = schema.pop(member_name)
+        definitions["IntervalTransform"] = interval_tf
         # HACK @dangotbanned: `ParamRef` is not generated in `transform.py`.
         # - `dcg` tries to do some very complicated things to "solve" circular imports,
         #   and this + the linked override disables that.
         # - Ideally, it would ignore circular **typing only** imports or use forward refs in runtime aliases
         # - https://github.com/dangotbanned/mosaic/blob/7004de2a9f4d9f5ea8cd2c11a827b6d0ee2ab437/packages/vgplot/spec-python/pyproject.toml#L79-L80
-        transform_defs["ParamRef"] = schema.get("ParamRef")
-        return transform_defs
+        definitions["ParamRef"] = schema.get("ParamRef")
+        return definitions
 
 
 def generate_spec_module(
