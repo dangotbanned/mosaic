@@ -66,27 +66,10 @@ def _simplify_type_aliases(schema: m.InputSchema) -> None:
     # NOTE: Removes indirection, these are identical besides minor doc phrasing
     from copy import replace
 
-    schema.insert(
-        "Interval",
-        replace(schema.pop("Interval"), ref="", any_of=schema.pop("LiteralTimeInterval").any_of),
-    )
-    schema.insert(
-        "Curve", replace(schema.pop("CurveName"), description=schema.pop("Curve").description)
-    )
-    schema.insert(
-        "StackOffset",
-        replace(schema.pop("StackOffsetName"), description=schema.pop("StackOffset").description),
-    )
-    schema.insert("VectorShape", schema.pop("VectorShapeName"))
-
-    # NOTE: `& Record<never, never>` explodes into 51x `{'type': 'object'}`
-    # https://github.com/dangotbanned/mosaic/blob/91ecaaf1db2716f89c309978a389d1dd822c36e3/packages/vgplot/spec/src/spec/PlotTypes.ts#L383-L384
-    color_scheme = schema.pop("ColorScheme")
-    for s in tuple(color_scheme.any_of):
-        if s.enum:
-            color_scheme = replace(s, description=color_scheme.description)
-            break
-    schema.insert("ColorScheme", color_scheme)
+    pop = schema.pop
+    stack_offset = replace(pop("StackOffsetName"), description=pop("StackOffset").description)
+    schema.insert("StackOffset", stack_offset)
+    schema.insert("VectorShape", pop("VectorShapeName"))
 
 
 def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSchema, str]:
@@ -100,6 +83,8 @@ def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSch
     schema.flatten_component_union()
 
     _simplify_type_aliases(schema)
+    # TODO @dangotbanned: Replace the `_simplify` call with `run`
+    PlotTypesSplit("typing.json")._simplify(schema)
 
     CSSStylesSplit("CSSStyles", "css-styles.json").run(schema)
     ParamDefinitionSplit("ParamDefinition", "params.json").run(schema)
@@ -125,23 +110,41 @@ class _CanSetRef(Protocol):
 
 class SchemaSplit(SchemaMod):
     _SCHEMA_DIR: ClassVar[Path] = fs.SCHEMA
-
-    def __init__(self, root_name: m.DefName, filename: str) -> None:
-        self.root_name: m.DefName = root_name
-        self.filename: str = filename
+    filename: str
 
     @property
     def path(self) -> Path:
         return self._SCHEMA_DIR / self.filename
 
     def run(self, schema: m.InputSchema) -> None:
-        """Split the definitions required for `root_name` from `schema` into `filename`."""
-        self._update_refs(schema)
+        """Move definitions from `schema` into `filename`."""
+        self.update_refs(schema)
         extracted = self.extract(schema)
         serde.write_json(self.path, extracted)
-        print(f"Generated {self.root_name!r} schema at: {fs.repo_relative_str(self.path)}")
+        print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
 
-    def _update_refs(self, schema: m.InputSchema) -> None:
+    def update_refs(self, schema: m.InputSchema) -> None:
+        """Redirect references that have moved to point to `filename`."""
+        msg = f"'{self.update_refs.__qualname__}()' is not yet implemented"
+        raise NotImplementedError(msg)
+
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+        """Return the contents of the `filename`'s `"definitions"`."""
+        msg = f"'{self._extract_definitions.__qualname__}()' is not yet implemented"
+        raise NotImplementedError(msg)
+
+    def extract(self, schema: m.InputSchema) -> Extracted[m.InputSchema]:
+        return schema.__replace__(id=self.filename, definitions=self._extract_definitions(schema))
+
+
+class RootSplit(SchemaSplit):
+    """Generate a new schema, starting at a single root type."""
+
+    def __init__(self, root_name: m.DefName, filename: str) -> None:
+        self.root_name: m.DefName = root_name
+        self.filename: str = filename
+
+    def update_refs(self, schema: m.InputSchema) -> None:
         """Redirect references to `root_name` to point to `filename`."""
         root_name, filename = self.root_name, self.filename
         ref_original = f"#/definitions/{root_name}"
@@ -161,16 +164,8 @@ class SchemaSplit(SchemaMod):
         msg = f"'{self._referenced_by.__qualname__}()' is not yet implemented"
         raise NotImplementedError(msg)
 
-    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
-        """Return the contents of the `filename`'s `"definitions"`."""
-        msg = f"'{self._extract_definitions.__qualname__}()' is not yet implemented"
-        raise NotImplementedError(msg)
 
-    def extract(self, schema: m.InputSchema) -> Extracted[m.InputSchema]:
-        return schema.__replace__(id=self.filename, definitions=self._extract_definitions(schema))
-
-
-class CSSStylesSplit(SchemaSplit):
+class CSSStylesSplit(RootSplit):
     # NOTE: Has 500 fields
     def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
         for def_name in "Plot", "PlotAttributes":
@@ -180,7 +175,7 @@ class CSSStylesSplit(SchemaSplit):
         return {self.root_name: schema.pop(self.root_name)}
 
 
-class InteractorsSplit(SchemaSplit):
+class InteractorsSplit(RootSplit):
     def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
         it = schema.get("Plot").properties["plot"].items_schema().iter_members()
         yield from (it,)
@@ -196,7 +191,7 @@ class InteractorsSplit(SchemaSplit):
         return definitions
 
 
-class ParamDefinitionSplit(SchemaSplit):
+class ParamDefinitionSplit(RootSplit):
     def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[_CanSetRef]]:
         obj = schema.get("Params").additional_properties
         if isinstance(obj, bool):
@@ -214,7 +209,54 @@ class ParamDefinitionSplit(SchemaSplit):
         } | {name: schema.pop(name) for ref in root.iter_members() if (name := ref.def_name)}
 
 
-class TransformSplit(SchemaSplit):
+class PlotTypesSplit(RootSplit):
+    """Aliases without a root or external dependencies.
+
+    Tricky because they are referenced in lots of places
+    """
+
+    _DEF_NAMES = (
+        "ColorScaleType",
+        "ColorScheme",
+        "ContinuousScaleType",
+        "Curve",  # CurveName
+        "DiscreteScaleType",
+        "Fixed",
+        "FrameAnchor",
+        "Interpolate",
+        "Interval",  # LiteralTimeInterval
+        "PositionScaleType",
+        "ProjectionName",
+        "Reducer",
+        "ReducerPercentile",
+        "ScaleName",
+        "SymbolType",
+        "TimeIntervalName",
+    )
+
+    def __init__(self, filename: str) -> None:
+        self.filename: str = filename
+
+    def _simplify(self, schema: m.InputSchema) -> None:
+        from copy import replace
+
+        pop = schema.pop
+        schema.insert(
+            "Interval", replace(pop("Interval"), ref="", any_of=pop("LiteralTimeInterval").any_of)
+        )
+        schema.insert("Curve", replace(pop("CurveName"), description=pop("Curve").description))
+
+        # NOTE: `& Record<never, never>` explodes into 51x `{'type': 'object'}`
+        # https://github.com/dangotbanned/mosaic/blob/91ecaaf1db2716f89c309978a389d1dd822c36e3/packages/vgplot/spec/src/spec/PlotTypes.ts#L383-L384
+        color_scheme = pop("ColorScheme")
+        for s in tuple(color_scheme.any_of):
+            if s.enum:
+                color_scheme = replace(s, description=color_scheme.description)
+                break
+        schema.insert("ColorScheme", color_scheme)
+
+
+class TransformSplit(RootSplit):
     """Remove `Transform` and it's members from the schema, to define them in another file.
 
     The definition is a union of unions of typed dicts:
