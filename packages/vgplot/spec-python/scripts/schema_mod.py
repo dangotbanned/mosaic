@@ -62,6 +62,24 @@ def _recursive_replace(schema: m.JsonSchema) -> m.JsonSchema:
     return schema
 
 
+def _simplify_type_aliases(schema: m.InputSchema) -> None:
+    # NOTE: Removes indirection, these are identical besides minor doc phrasing
+    from copy import replace
+
+    schema.insert(
+        "Interval",
+        replace(schema.pop("Interval"), ref="", any_of=schema.pop("LiteralTimeInterval").any_of),
+    )
+    schema.insert(
+        "Curve", replace(schema.pop("CurveName"), description=schema.pop("Curve").description)
+    )
+    schema.insert(
+        "StackOffset",
+        replace(schema.pop("StackOffsetName"), description=schema.pop("StackOffset").description),
+    )
+    schema.insert("VectorShape", schema.pop("VectorShapeName"))
+
+
 def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSchema, str]:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
     schema = serde.read_json(source, m.InputSchema)
@@ -72,21 +90,7 @@ def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSch
     schema.definitions = {k: _recursive_replace(v) for k, v in schema.iter_defs()}
     schema.flatten_component_union()
 
-    # NOTE: Removes indirection, these are identical besides minor doc phrasing
-    schema.insert(
-        "Interval",
-        schema.pop("Interval").__replace__(ref="", any_of=schema.pop("LiteralTimeInterval").any_of),
-    )
-    schema.insert(
-        "Curve", schema.pop("CurveName").__replace__(description=schema.pop("Curve").description)
-    )
-    schema.insert(
-        "StackOffset",
-        schema.pop("StackOffsetName").__replace__(
-            description=schema.pop("StackOffset").description
-        ),
-    )
-    schema.insert("VectorShape", schema.pop("VectorShapeName"))
+    _simplify_type_aliases(schema)
 
     CSSStylesSplit("CSSStyles", "css-styles.json").run(schema)
     TransformSplit("Transform", "transform.json").run(schema)
