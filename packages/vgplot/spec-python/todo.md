@@ -38,10 +38,10 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
 - [ ] inputs (7 KB)
 - [ ] interval (2 KB)
 - [x] `params.py`
-- [ ] plot (may need to split further)
-  - `Plot` is `PlotAttributes` with an [extra required field, `"plot"`](https://github.com/dangotbanned/mosaic/blob/spec-python/datamodel-code-generator/packages/vgplot/spec/src/spec/Plot.ts)
-  - But `PlotAttributes` (`_PlotOpen`) has **215** fields, and is giving us 900-1000 duplicated LOC
-  - `PlotAttribute.ts` (**63 KB**)
+- [ ] plot
+  - [x] Share **215** fields between `Plot` & `PlotAttributes`
+  - [ ] Move to another module (*maybe difficult*)
+    - `PlotAttribute.ts` (**63 KB**)
 - [ ] spec
   - [ ] Use the original class names and don't re-export to top-level, e.g.
     - `import mosaic_spec as ms; ms.spec.Plot(...)`

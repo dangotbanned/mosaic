@@ -1,0 +1,8 @@
+{% extends "TypedDictClass.jinja2" %}
+{%- block class_statement -%}
+class {{extensions["x-base"]["base"]}}({{extensions["x-base"]["root"]}}, total=False):
+{%- endblock class_statement -%}
+{%- block class_body -%}
+{{ super() }}
+class {{ class_name }}({{extensions["x-base"]["base"]}}{{ base_class.removeprefix("TypedDict") }} ): ...
+{%- endblock class_body -%}

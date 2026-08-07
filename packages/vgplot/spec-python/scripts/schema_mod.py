@@ -80,7 +80,8 @@ def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSch
     schema.id = target.name
 
     schema.definitions = {k: _recursive_replace(v) for k, v in schema.iter_defs()}
-    schema.flatten_component_union()
+    # TODO @dangotbanned: Connect this guy up with `generate_spec_module`
+    SpecDeduplicate().run(schema)
 
     _simplify_type_aliases(schema)
     # TODO @dangotbanned: Replace the `_simplify` call with `run`
@@ -96,7 +97,8 @@ def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSch
     return schema, spec_def.description
 
 
-class SchemaMod: ...
+class SchemaMod(Protocol):
+    def run(self, schema: m.InputSchema) -> None: ...
 
 
 type Extracted[T] = A[T, L["Extracted"]]
@@ -168,7 +170,7 @@ class RootSplit(SchemaSplit):
 class CSSStylesSplit(RootSplit):
     # NOTE: Has 500 fields
     def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
-        for def_name in "Plot", "PlotAttributes":
+        for def_name in ("PlotAttributes",):
             yield schema.get(def_name).properties["style"].iter_members()
 
     def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
@@ -307,6 +309,66 @@ class TransformSplit(RootSplit):
         return definitions
 
 
+_PLOT_ATTRS = "PlotAttributes"
+_PLOT = "Plot"
+
+
+class SpecDeduplicate(SchemaMod):
+    """See `tools.models.mosaic` module doc for `Component` detail."""
+
+    _ROOT: ClassVar = {_PLOT: m.XBaseTemplate.format(_PLOT_ATTRS)}
+
+    def run(self, schema: m.InputSchema) -> None:
+        self.insert_base(_PLOT_ATTRS, schema.pop(_PLOT_ATTRS), schema)
+        plot = schema.get(_PLOT)
+        plot.properties = {"plot": plot.properties.pop("plot")}
+
+        # NOTE: Why is this not recursive?
+        # It might make sense to do that eventually, but
+        # - this shows how many levels of nesting there are.
+        # - will raise when expectations change
+        insert = self.insert_base
+        for u_member_0 in schema.get("Component").iter_members():
+            name = u_member_0.def_name
+            member_0 = schema.get(name)
+            if not member_0.is_union():
+                insert(name, member_0, schema)
+            else:
+                for u_member_1 in member_0.iter_members():
+                    member_1_name = u_member_1.def_name
+                    member_1 = schema.get(member_1_name)
+                    if not member_1.is_union():
+                        insert(member_1_name, member_1, schema)
+
+                    elif any(member_2.is_ref() for member_2 in member_1.any_of):
+                        msg_0 = f"TODO @dangotbanned: Expected only anonymous unions at this level, got members: {member_1.any_of!r}"
+                        raise NotImplementedError(msg_0)
+
+                    else:
+                        self._name_union_members(member_1_name, member_1, schema)
+
+    def insert_base(self, name: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema) -> None:
+        """Mark `name` to generate an extra TypedDict that is [open](https://typing.python.org/en/latest/spec/typeddict.html#openness).
+
+        The extra version becomes a shared base class for `name` and the version in `_spec` (if a component).
+        Each of those are then able to be [closed](https://typing.python.org/en/latest/spec/glossary.html#term-closed).
+        """
+        def_schema.x_base = m.XBaseTemplate.from_name(name, self._ROOT.get(name, "TypedDict"))
+        schema.insert(name, def_schema)
+
+    def _name_union_members(
+        self, target: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema
+    ) -> None:
+        """Lift anonymous members of a union into top-level definitions."""
+        doc = def_schema.description
+        member_refs = []
+        for idx, member in enumerate(def_schema.any_of, 1):
+            member_name = f"{target}{idx}"
+            member_refs.append(member.new_ref(member_name))
+            self.insert_base(member_name, member.__replace__(description=doc), schema)
+        def_schema.any_of = member_refs
+
+
 def generate_spec_module(
     components: dict[str, m.JsonSchema], spec_doc: str, target: str | Path
 ) -> None:
@@ -335,7 +397,8 @@ def generate_spec_module(
     export_names = deque[str]()
 
     for original_name, component in components.items():
-        base_open_name = component.x_base_open
+        # TODO @dangotbanned: bad default
+        base_open_name = b.base if (b := component.x_base) else ""
         import_names.append(base_open_name)
         name = f"{SPEC}{original_name}"
         base_spec = SPEC_HEAD_NO_DATA if "data" in component.properties else SPEC_HEAD
@@ -353,7 +416,9 @@ def generate_spec_module(
 def main() -> None:
     # mosaic -> msgspec -> json -> datamodel-codegen -> back here for more
     schema, spec_doc = generate_python_schema(SCHEMA_IN, SCHEMA_OUT)
-    components = {name: s for name, s in schema.definitions.items() if s.x_base_open}
+    components = {
+        name: s for name, s in schema.definitions.items() if s.x_base and name != "PlotAttributes"
+    }
     fs.run("uv", "run", "datamodel-codegen", "--profile=spec")
     print(f"Generated module at: {fs.repo_relative_str(GENERATED_MODULE)}")
     generate_spec_module(components, spec_doc, fs.MOSAIC_SPEC_INTERSECTION)
