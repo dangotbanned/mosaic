@@ -119,3 +119,7 @@ I expect we can shrink the size of the schema if these groups could be `"$ref"`s
 Here's what doing this for `fx_*` and `fy_*` on `PlotAttributes` could look like:
 
 - (https://github.com/dangotbanned/mosaic/commit/38fd9cafc4e72785eae6edddde5b28bb959ddae2)
+
+And here is the same thing in Observable Plot?
+
+- (https://github.com/observablehq/plot/blob/356f579b1d947ee05a914420eddff0f29cee300a/src/plot.d.ts)
