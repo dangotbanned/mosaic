@@ -30,14 +30,18 @@ Pylance is non-functional as it isn't able to do the kind of incremental magic t
 To mitigate this, here are some potential modules/subpackages to lighten the load:
 
 - [x] `interactors.py`
-- [ ] marks (package xl)
-- [ ] data
-- [ ] input (rename to "inputs")
-- [ ] interval
+- [ ] marks (**136 KB**)
+  - [ ] `Marks.ts` (39 KB)
+  - [ ] `Axis.ts` (13 KB)
+  - [ ] 25 others (84 KB) total
+- [ ] data (6 KB)
+- [ ] inputs (7 KB)
+- [ ] interval (2 KB)
 - [x] `params.py`
 - [ ] plot (may need to split further)
   - `Plot` is `PlotAttributes` with an [extra required field, `"plot"`](https://github.com/dangotbanned/mosaic/blob/spec-python/datamodel-code-generator/packages/vgplot/spec/src/spec/Plot.ts)
   - But `PlotAttributes` (`_PlotOpen`) has **215** fields, and is giving us 900-1000 duplicated LOC
+  - `PlotAttribute.ts` (**63 KB**)
 - [ ] spec
   - [ ] Use the original class names and don't re-export to top-level, e.g.
     - `import mosaic_spec as ms; ms.spec.Plot(...)`
@@ -46,6 +50,7 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
   - [ ] cleanup
 - [ ] typing (aliases)
   - [x] `ParamRef`
+  - [ ] `PlotTypes.ts` (14 KB) and **isolated**
   - [ ] A large gain will come from naming duplicated inline types, e.g.
     - 60x of `str | float | bool | ParamRef`
     - 28x of `Literal["CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"]`
