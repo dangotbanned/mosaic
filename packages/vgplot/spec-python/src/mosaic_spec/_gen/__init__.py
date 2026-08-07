@@ -123,12 +123,7 @@ from mosaic_spec._gen.mosaic import (
     Menu,
     Meta,
     Options,
-    Param,
-    ParamDate,
-    ParamDefinition,
-    ParamLiteral,
     Params,
-    ParamValue,
     Plot,
     PlotAttributes,
     PlotDataInline,
@@ -151,7 +146,6 @@ from mosaic_spec._gen.mosaic import (
     ScaleName,
     Search,
     SelectFilter,
-    Selection,
     Slider,
     SortOrder,
     SortOrder1,
@@ -182,6 +176,14 @@ from mosaic_spec._gen.mosaic import (
     VSpace,
     WaffleX,
     WaffleY,
+)
+from mosaic_spec._gen.params import (
+    Param,
+    ParamDate,
+    ParamDefinition,
+    ParamLiteral,
+    ParamValue,
+    Selection,
 )
 from mosaic_spec._gen.transform import (
     AggregateTransform,

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections import deque
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated as A, ClassVar, Final, Literal as L
+from typing import TYPE_CHECKING, Annotated as A, ClassVar, Final, Literal as L, Protocol
 
 from tools import codemod, fs, serde
 from tools.codegen import typed_dict
@@ -93,6 +93,7 @@ def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSch
     _simplify_type_aliases(schema)
 
     CSSStylesSplit("CSSStyles", "css-styles.json").run(schema)
+    ParamDefinitionSplit("ParamDefinition", "params.json").run(schema)
     InteractorsSplit("PlotInteractor", "interactors.json").run(schema)
     TransformSplit("Transform", "transform.json").run(schema)
 
@@ -105,6 +106,12 @@ class SchemaMod: ...
 
 
 type Extracted[T] = A[T, L["Extracted"]]
+
+
+class _CanSetRef(Protocol):
+    """Any object with a mutable `ref` attribute."""
+
+    ref: m.Ref
 
 
 class SchemaSplit(SchemaMod):
@@ -140,7 +147,7 @@ class SchemaSplit(SchemaMod):
                 )
                 raise NotImplementedError(msg)
 
-    def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
+    def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[_CanSetRef]]:
         """Yield search spaces, where each contains a single reference to the new root."""
         msg = f"'{self._referenced_by.__qualname__}()' is not yet implemented"
         raise NotImplementedError(msg)
@@ -178,6 +185,24 @@ class InteractorsSplit(SchemaSplit):
         definitions["BrushStyles"] = schema.pop("BrushStyles")
         definitions["ParamRef"] = schema.get("ParamRef")
         return definitions
+
+
+class ParamDefinitionSplit(SchemaSplit):
+    def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[_CanSetRef]]:
+        obj = schema.get("Params").additional_properties
+        if isinstance(obj, bool):
+            raise NotImplementedError
+        yield from ((obj,),)
+
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+        root = schema.pop(self.root_name)
+        return {
+            self.root_name: root,
+            # HACK @dangotbanned: Would need to go multiple levels deep via `ParamValue` to reach these.
+            # codegen will report if any other refs are missing in the future
+            "ParamRef": schema.get("ParamRef"),
+            "ParamLiteral": schema.pop("ParamLiteral"),
+        } | {name: schema.pop(name) for ref in root.iter_members() if (name := ref.def_name)}
 
 
 class TransformSplit(SchemaSplit):

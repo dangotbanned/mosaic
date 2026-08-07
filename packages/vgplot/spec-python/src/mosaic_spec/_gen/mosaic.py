@@ -6,7 +6,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any, Literal, Union
 
-from mosaic_spec._gen import css_styles, interactors, transform
+from mosaic_spec._gen import css_styles, interactors, params, transform
 from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
 from mosaic_spec.typing import ParamRef
 
@@ -604,30 +604,6 @@ class Meta(TypedDict, total=False):
     """The specification title."""
 
 
-class ParamDate(TypedDict, total=False, closed=True):
-    """A Date-valued Param definition."""
-
-    date: Required[str]
-    """The initial parameter value as an ISO date/time string to be parsed to a Date object."""
-    select: Literal["value"]
-    """
-    The type of reactive parameter. One of:
-    - `"value"` (default) for a standard `Param`
-    - `"intersect"` for a `Selection` that intersects clauses (logical "and")
-    - `"union"` for a `Selection` that unions clauses (logical "or")
-    - `"single"` for a `Selection` that retains a single clause only
-    - `"crossfilter"` for a cross-filtered intersection `Selection`
-    """
-
-
-ParamLiteral = TypeAliasType("ParamLiteral", str | float | bool | None)
-"""Literal Param values."""
-
-
-ParamValue = TypeAliasType("ParamValue", ParamLiteral | Sequence[ParamLiteral | ParamRef])
-"""Valid Param values."""
-
-
 class Margins(TypedDict, total=False, closed=True):
     """A shorthand object notation for setting multiple margin values. The object keys are margin names (top, right, etc)."""
 
@@ -976,26 +952,6 @@ SelectFilter = TypeAliasType(
     Literal["first", "last", "maxX", "maxY", "minX", "minY", "nearest", "nearestX", "nearestY"],
 )
 """Selection filters to apply internally to mark data."""
-
-
-class Selection(TypedDict, total=False, closed=True):
-    """A Selection definition."""
-
-    cross: bool
-    """A flag for cross-filtering, where selections made in a plot filter others but not oneself (default `false`, except for `crossfilter` selections)."""
-    empty: bool
-    """A flag for setting an initial empty selection state. If true, a selection with no clauses corresponds to an empty selection with no records. If false, a selection with no clauses selects all values."""
-    include: ParamRef | Sequence[ParamRef]
-    """Upstream selections whose clauses should be included as part of this selection. Any clauses or activations published to the upstream selections will be relayed to this selection."""
-    select: Required[Literal["crossfilter", "intersect", "single", "union"]]
-    """
-    The type of reactive parameter. One of:
-    - `"value"` (default) for a standard `Param`
-    - `"intersect"` for a `Selection` that intersects clauses (logical "and")
-    - `"union"` for a `Selection` that unions clauses (logical "or")
-    - `"single"` for a `Selection` that retains a single clause only
-    - `"crossfilter"` for a cross-filtered intersection `Selection`
-    """
 
 
 class _SliderOpen(TypedDict, total=False):
@@ -1384,30 +1340,6 @@ class _MenuOpen(TypedDict, total=False):
 
 
 class Menu(_MenuOpen, total=False, closed=True): ...
-
-
-class Param(TypedDict, total=False, closed=True):
-    """A Param definition."""
-
-    select: Literal["value"]
-    """
-    The type of reactive parameter. One of:
-    - `"value"` (default) for a standard `Param`
-    - `"intersect"` for a `Selection` that intersects clauses (logical "and")
-    - `"union"` for a `Selection` that unions clauses (logical "or")
-    - `"single"` for a `Selection` that retains a single clause only
-    - `"crossfilter"` for a cross-filtered intersection `Selection`
-    """
-    value: Required[ParamValue]
-    """The initial parameter value."""
-
-
-ParamDefinition = TypeAliasType("ParamDefinition", ParamValue | Param | ParamDate | Selection)
-"""A Param or Selection definition."""
-
-
-Params = TypeAliasType("Params", Mapping[str, ParamDefinition])
-"""Top-level Param and Selection definitions."""
 
 
 class PlotAttributes(TypedDict, total=False, closed=True):
@@ -2414,6 +2346,10 @@ ChannelDomainValueSpec = TypeAliasType(
 
 Data = TypeAliasType("Data", Mapping[str, DataDefinition])
 """Top-level dataset definitions."""
+
+
+Params = TypeAliasType("Params", Mapping[str, params.ParamDefinition])
+"""Top-level Param and Selection definitions."""
 
 
 class ChannelDomainSort(TypedDict, total=False, closed=True):

@@ -34,7 +34,7 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
 - [ ] data
 - [ ] input (rename to "inputs")
 - [ ] interval
-- [ ] params
+- [x] `params.py`
 - [ ] plot (may need to split further)
   - `Plot` is `PlotAttributes` with an [extra required field, `"plot"`](https://github.com/dangotbanned/mosaic/blob/spec-python/datamodel-code-generator/packages/vgplot/spec/src/spec/Plot.ts)
   - But `PlotAttributes` (`_PlotOpen`) has **215** fields, and is giving us 900-1000 duplicated LOC
@@ -45,11 +45,12 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
   - [x] split
   - [ ] cleanup
 - [ ] typing (aliases)
+  - [x] `ParamRef`
   - [ ] A large gain will come from naming duplicated inline types, e.g.
     - 60x of `str | float | bool | ParamRef`
     - 28x of `Literal["CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"]`
     - **Many** `OneOrSeq[T]` cases ([altair/vegalite/v6/schema/_typing.py#L100-L114])
-- [x] `css_styles.py
+- [x] `css_styles.py`
   - Has **508** fields
   - Next 2 highest have **215** fields
 
