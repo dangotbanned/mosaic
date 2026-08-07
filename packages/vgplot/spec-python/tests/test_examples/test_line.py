@@ -32,7 +32,7 @@ def test_infer(file: str, where: str, mark: L["lineY"]) -> None:
 
 
 def test_typed_dict(file: str, where: str, mark: L["lineY"]) -> None:
-    _spec = ms.SpecPlot(
+    _spec = ms.spec.Plot(
         data={"aapl": ms.DataParquet(type="parquet", file=file, where=where)},
         plot=(ms.LineY(mark=mark, data={"source": "aapl"}, x="Date", y="Close"),),
         width=680,
@@ -41,7 +41,7 @@ def test_typed_dict(file: str, where: str, mark: L["lineY"]) -> None:
 
 
 def test_invalid(file: str, where: str, mark: L["lineY"]) -> None:
-    _spec: ms.SpecPlot = {  # pyright: ignore[reportAssignmentType]
+    _spec: ms.spec.Plot = {  # pyright: ignore[reportAssignmentType]
         "data": {
             "aapl": {"type": "parquet", "file": file, "where": where},
             "plot": [{"mark": mark, "data": {"source": "aapl"}, "x": bytes(1), "y": "Close"}],

@@ -396,11 +396,10 @@ def generate_spec_module(
     import_names = deque[str]()
     export_names = deque[str]()
 
-    for original_name, component in components.items():
+    for name, component in components.items():
         # TODO @dangotbanned: bad default
         base_open_name = b.base if (b := component.x_base) else ""
         import_names.append(base_open_name)
-        name = f"{SPEC}{original_name}"
         base_spec = SPEC_HEAD_NO_DATA if "data" in component.properties else SPEC_HEAD
         module.extend(typed_dict.iter_lines(name, bases=(base_spec, base_open_name), closed=True))
         export_names.append(name)

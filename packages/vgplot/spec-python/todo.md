@@ -42,8 +42,8 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
   - [x] Share **215** fields between `Plot` & `PlotAttributes`
   - [ ] Move to another module (*maybe difficult*)
     - `PlotAttribute.ts` (**63 KB**)
-- [ ] spec
-  - [ ] Use the original class names and don't re-export to top-level, e.g.
+- [x] `spec.py`
+  - [x] Use the original class names and don't re-export to top-level, e.g.
     - `import mosaic_spec as ms; ms.spec.Plot(...)`
 - [x] `transforms.py`
   - [x] split
