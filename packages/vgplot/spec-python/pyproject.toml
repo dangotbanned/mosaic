@@ -11,10 +11,11 @@ dynamic         = ["version"]
 [dependency-groups]
 dev    = [
   "msgspec[toml]>=0.21.1",
+  "polars>=1.43.2",
   "ruff",
   { include-group = "gen" },
   { include-group = "tests" },
-  { include-group = "typing" }
+  { include-group = "typing" },
 ]
 gen    = [
   "datamodel-code-generator>=0.72.2",
