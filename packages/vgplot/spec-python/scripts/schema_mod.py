@@ -340,15 +340,18 @@ class SpecDeduplicate(SchemaMod):
         for member_1_name, member_1 in schema.iter_members_defs(plot_mark):
             if not member_1.is_union():
                 self.insert_base(member_1_name, member_1, schema)
-
-            # TODO @dangotbanned: Move `_name_union_members` inline and check `is_ref` while enumerating
-            elif any(member_2.is_ref() for member_2 in member_1.any_of):
-                msg = f"TODO @dangotbanned: Expected only anonymous unions at this level, got members: {member_1.any_of!r}"
-                raise NotImplementedError(msg)
-
-            # NOTE: `DensityX`, `DensityY`
             else:
-                self._name_union_members(member_1_name, member_1, schema)
+                # NOTE: Lift members of (`DensityX`, `DensityY`) into definitions.
+                doc = member_1.description
+                member_refs = []
+                for idx, member_2 in enumerate(member_1.iter_members(), 1):
+                    if member_2.is_ref():
+                        msg = f"Expected only anonymous unions at this level, but found a reference member {member_2!r}"
+                        raise NotImplementedError(msg)
+                    member_name = f"{member_1_name}{idx}"
+                    member_refs.append(m.JsonSchema.new_ref(member_name))
+                    self.insert_base(member_name, member_2.__replace__(description=doc), schema)
+                member_1.any_of = member_refs
 
     def insert_base(self, name: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema) -> None:
         """Mark `name` to generate an extra TypedDict that is [open](https://typing.python.org/en/latest/spec/typeddict.html#openness).
@@ -358,18 +361,6 @@ class SpecDeduplicate(SchemaMod):
         """
         def_schema.x_base = m.XBaseTemplate.from_name(name, self._ROOT.get(name, "TypedDict"))
         schema.insert(name, def_schema)
-
-    def _name_union_members(
-        self, target: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema
-    ) -> None:
-        """Lift anonymous members of a union into top-level definitions."""
-        doc = def_schema.description
-        member_refs = []
-        for idx, member in enumerate(def_schema.any_of, 1):
-            member_name = f"{target}{idx}"
-            member_refs.append(m.JsonSchema.new_ref(member_name))
-            self.insert_base(member_name, member.__replace__(description=doc), schema)
-        def_schema.any_of = member_refs
 
 
 def generate_spec_module(
