@@ -55,6 +55,7 @@ Sadly, this doesn't cover intersecting with a union.
 """
 
 import functools
+import re
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Annotated as A, Final, Literal as L, final
 
@@ -75,16 +76,42 @@ type Resolved[T] = A[T, L["Resolved"]]
 _POUND_DEFS: Final = "#/definitions/"
 
 
-@final
-class XBaseTemplate(base.Struct, forbid_unknown_fields=True, kw_only=True):
-    """Helper for passing in jinja template data when generating typed dicts.
+class XTemplate(
+    base.Struct,
+    omit_defaults=False,
+    forbid_unknown_fields=True,
+    kw_only=True,
+    tag=functools.partial(re.compile("Template").sub, ""),
+    tag_field="tag",
+):
+    """Helpers for passing in jinja template data when generating typed dicts."""
+
+
+class SingleTemplate(XTemplate):
+    """Generate a single `TypedDict`.
+
+    Which looks like:
+    ```py
+    class <DefName>(<bases>, <keywords>):
+        ... # fields w/ docs are defined here
+    """
+
+    bases: str = "TypedDict"
+    """The class(es) to use as a base class."""
+
+    keywords: L["total=False", "closed=True", "", "total=False, closed=True"] = "total=False"
+    """Keyword arguments for TypedDict's metaclass."""
+
+
+class ExtraTemplate(XTemplate):
+    """Generate two `TypedDict`s.
 
     Which looks like:
     ```py
     class <base>(<root>, total=False):
         ... # fields w/ docs are defined here
 
-    class <original_name>(<base>, total=False, closed=True):...
+    class <DefName>(<base>, total=False, closed=True):...
     ```
     """
 
@@ -93,7 +120,7 @@ class XBaseTemplate(base.Struct, forbid_unknown_fields=True, kw_only=True):
 
     [TypedDictBase.jinja2]: ../../templates/datamodel-code-generator/TypedDictBase.jinja2"""
 
-    root: str
+    root: str = "TypedDict"
     """The base class of `base` itself."""
 
     @classmethod
@@ -101,7 +128,7 @@ class XBaseTemplate(base.Struct, forbid_unknown_fields=True, kw_only=True):
         return f"_{original_name}Open"
 
     @classmethod
-    def from_name(cls, original_name: DefName, /, root: str = "TypedDict") -> XBaseTemplate:
+    def from_name(cls, original_name: DefName, /, root: str) -> ExtraTemplate:
         return cls(base=cls.format(original_name), root=root)
 
 
@@ -120,7 +147,7 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
     )
     required: Sequence[str] = field(default_factory=list)
 
-    x_base: XBaseTemplate | None = field(name="x-base", default=None)
+    x_template: SingleTemplate | ExtraTemplate | None = field(name="x-template", default=None)
     """See also [`x-` prefix annotations](https://json-schema.org/blog/posts/custom-annotations-will-continue#too-long-read-anyway)"""
 
 
@@ -166,6 +193,12 @@ class JsonSchema(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
 
     def is_union(self) -> bool:
         return bool(self.any_of)
+
+    def remove_properties(self, keys: Iterable[str], /) -> None:
+        """Remove a set of *known* keys from `self.properties`."""
+        del_item = self.properties.__delitem__
+        for key in keys:
+            del_item(key)
 
     def items_schema(self) -> JsonSchema:
         """Ensure `items` contains another `JsonSchema`."""

@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 from collections import deque
+from copy import deepcopy
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated as A, ClassVar, Final, Literal as L, Protocol
 
@@ -312,34 +313,48 @@ class TransformSplit(RootSplit):
 _PLOT_ATTRS = "PlotAttributes"
 _PLOT = "Plot"
 
+_COMPONENT = "Component"
+_PLOT_MARK = "PlotMark"
+_MARK_OPTIONS = "MarkOptions"
 
+
+# TODO @dangotbanned: Fix `dcg` generating `MarkOptions` too late
 class SpecDeduplicate(SchemaMod):
     """See `tools.models.mosaic` module doc for `Component` detail."""
 
-    _ROOT: ClassVar = {_PLOT: m.XBaseTemplate.format(_PLOT_ATTRS)}
+    _ROOT: ClassVar = {_PLOT: m.ExtraTemplate.format(_PLOT_ATTRS)}
 
     def run(self, schema: m.InputSchema) -> None:
         self.insert_base(_PLOT_ATTRS, schema.pop(_PLOT_ATTRS), schema)
         plot = schema.get(_PLOT)
         plot.properties = {"plot": plot.properties.pop("plot")}
 
-        root_name = "Component"
-        for name, member in schema.iter_members_defs(schema.get(root_name)):
+        for name, member in schema.iter_members_defs(schema.get(_COMPONENT)):
             if not member.is_union():
                 self.insert_base(name, member, schema)
-            elif name == "PlotMark":
+            elif name == _PLOT_MARK:
                 self._plot_mark(member, schema)
             else:
-                msg = f"Found unexpected union {name!r} in {root_name!r}, got:\n{member!r}"
+                msg = f"Found unexpected union {name!r} in {_COMPONENT!r}, got:\n{member!r}"
                 raise NotImplementedError(msg)
 
     # TODO @dangotbanned: Handle deduplication of marks (71 total)
     # - Related: https://github.com/dangotbanned/mosaic/blob/2abdce2699036a7793533e51e1c3697db7f609f9/bin/generate-python-api.js#L51-L69
     # - JSON Schema is masking the fact that the exports only combine `*Options` interfaces and add a `mark` discriminator
     def _plot_mark(self, plot_mark: m.JsonSchema, schema: m.InputSchema) -> None:
+        owned_props = deepcopy(schema.get(plot_mark.any_of[0].def_name).properties)
+        mark_common = set(owned_props)
+
+        previously_insert_base: list[tuple[m.DefName, m.JsonSchema]] = []
+        """Need a another base class `MarkOptions`, but can't get that until visiting them all.
+        Will hack around for now.
+        """
+
         for member_1_name, member_1 in schema.iter_members_defs(plot_mark):
             if not member_1.is_union():
-                self.insert_base(member_1_name, member_1, schema)
+                mark_common.intersection_update(member_1.properties)
+                previously_insert_base.append((member_1_name, member_1))
+
             else:
                 # NOTE: Lift members of (`DensityX`, `DensityY`) into definitions.
                 doc = member_1.description
@@ -350,8 +365,33 @@ class SpecDeduplicate(SchemaMod):
                         raise NotImplementedError(msg)
                     member_name = f"{member_1_name}{idx}"
                     member_refs.append(m.JsonSchema.new_ref(member_name))
-                    self.insert_base(member_name, member_2.__replace__(description=doc), schema)
+                    mark_common.intersection_update(member_2.properties)
+                    previously_insert_base.append(
+                        (member_name, member_2.__replace__(description=doc))
+                    )
                 member_1.any_of = member_refs
+
+        # TODO @dangotbanned: Make this generic when adding back
+        # Too complicated for now, while there are multiple bases
+        mark_common.discard("mark")
+
+        mark_options = {k: v for k, v in owned_props.items() if k in mark_common}
+        schema.insert(
+            _MARK_OPTIONS,
+            m.JsonSchema(
+                description="Shared options for all marks.",
+                type="object",
+                properties=mark_options,
+                additional_properties=False,
+                x_template=m.SingleTemplate(),
+            ),
+        )
+
+        common = tuple(mark_common)
+        for name, member in previously_insert_base:
+            member.remove_properties(common)
+            member.x_template = m.ExtraTemplate.from_name(name, _MARK_OPTIONS)
+            schema.insert(name, member)
 
     def insert_base(self, name: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema) -> None:
         """Mark `name` to generate an extra TypedDict that is [open](https://typing.python.org/en/latest/spec/typeddict.html#openness).
@@ -359,7 +399,7 @@ class SpecDeduplicate(SchemaMod):
         The extra version becomes a shared base class for `name` and the version in `_spec` (if a component).
         Each of those are then able to be [closed](https://typing.python.org/en/latest/spec/glossary.html#term-closed).
         """
-        def_schema.x_base = m.XBaseTemplate.from_name(name, self._ROOT.get(name, "TypedDict"))
+        def_schema.x_template = m.ExtraTemplate.from_name(name, self._ROOT.get(name, "TypedDict"))
         schema.insert(name, def_schema)
 
 
@@ -392,7 +432,9 @@ def generate_spec_module(
 
     for name, component in components.items():
         # TODO @dangotbanned: bad default
-        base_open_name = b.base if (b := component.x_base) else ""
+        base_open_name = (
+            component.x_template.base if (isinstance(component.x_template, m.ExtraTemplate)) else ""
+        )
         import_names.append(base_open_name)
         base_spec = SPEC_HEAD_NO_DATA if "data" in component.properties else SPEC_HEAD
         module.extend(typed_dict.iter_lines(name, bases=(base_spec, base_open_name), closed=True))
@@ -410,7 +452,9 @@ def main() -> None:
     # mosaic -> msgspec -> json -> datamodel-codegen -> back here for more
     schema, spec_doc = generate_python_schema(SCHEMA_IN, SCHEMA_OUT)
     components = {
-        name: s for name, s in schema.definitions.items() if s.x_base and name != "PlotAttributes"
+        name: s
+        for name, s in schema.definitions.items()
+        if s.x_template and name != "PlotAttributes"
     }
     fs.run("uv", "run", "datamodel-codegen", "--profile=spec")
     print(f"Generated module at: {fs.repo_relative_str(GENERATED_MODULE)}")

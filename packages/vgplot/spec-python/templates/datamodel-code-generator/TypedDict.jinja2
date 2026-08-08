@@ -1,7 +1,9 @@
 {%- if is_functional_syntax %}
 {% include 'TypedDictFunction.jinja2' %}
-{%- elif extensions is defined and extensions.get('x-base') %}
-{% include 'TypedDictBase.jinja2' %}
+{%- elif extensions is defined and extensions.get("x-template", {}).get("tag") == "Extra" %}
+{% include 'TypedDictExtra.jinja2' %}
+{%- elif extensions is defined and extensions.get("x-template", {}).get("tag") == "Single" %}
+{% include 'TypedDictSingle.jinja2' %}
 {%- else %}
 {% include 'TypedDictClass.jinja2' %}
 {%- endif %}
