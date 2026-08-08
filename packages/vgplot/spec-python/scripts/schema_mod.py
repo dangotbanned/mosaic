@@ -323,29 +323,32 @@ class SpecDeduplicate(SchemaMod):
         plot = schema.get(_PLOT)
         plot.properties = {"plot": plot.properties.pop("plot")}
 
-        # NOTE: Why is this not recursive?
-        # It might make sense to do that eventually, but
-        # - this shows how many levels of nesting there are.
-        # - will raise when expectations change
-        insert = self.insert_base
-        for u_member_0 in schema.get("Component").iter_members():
-            name = u_member_0.def_name
-            member_0 = schema.get(name)
-            if not member_0.is_union():
-                insert(name, member_0, schema)
+        root_name = "Component"
+        for name, member in schema.iter_members_defs(schema.get(root_name)):
+            if not member.is_union():
+                self.insert_base(name, member, schema)
+            elif name == "PlotMark":
+                self._plot_mark(member, schema)
             else:
-                for u_member_1 in member_0.iter_members():
-                    member_1_name = u_member_1.def_name
-                    member_1 = schema.get(member_1_name)
-                    if not member_1.is_union():
-                        insert(member_1_name, member_1, schema)
+                msg = f"Found unexpected union {name!r} in {root_name!r}, got:\n{member!r}"
+                raise NotImplementedError(msg)
 
-                    elif any(member_2.is_ref() for member_2 in member_1.any_of):
-                        msg_0 = f"TODO @dangotbanned: Expected only anonymous unions at this level, got members: {member_1.any_of!r}"
-                        raise NotImplementedError(msg_0)
+    # TODO @dangotbanned: Handle deduplication of marks (71 total)
+    # - Related: https://github.com/dangotbanned/mosaic/blob/2abdce2699036a7793533e51e1c3697db7f609f9/bin/generate-python-api.js#L51-L69
+    # - JSON Schema is masking the fact that the exports only combine `*Options` interfaces and add a `mark` discriminator
+    def _plot_mark(self, plot_mark: m.JsonSchema, schema: m.InputSchema) -> None:
+        for member_1_name, member_1 in schema.iter_members_defs(plot_mark):
+            if not member_1.is_union():
+                self.insert_base(member_1_name, member_1, schema)
 
-                    else:
-                        self._name_union_members(member_1_name, member_1, schema)
+            # TODO @dangotbanned: Move `_name_union_members` inline and check `is_ref` while enumerating
+            elif any(member_2.is_ref() for member_2 in member_1.any_of):
+                msg = f"TODO @dangotbanned: Expected only anonymous unions at this level, got members: {member_1.any_of!r}"
+                raise NotImplementedError(msg)
+
+            # NOTE: `DensityX`, `DensityY`
+            else:
+                self._name_union_members(member_1_name, member_1, schema)
 
     def insert_base(self, name: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema) -> None:
         """Mark `name` to generate an extra TypedDict that is [open](https://typing.python.org/en/latest/spec/typeddict.html#openness).
@@ -364,7 +367,7 @@ class SpecDeduplicate(SchemaMod):
         member_refs = []
         for idx, member in enumerate(def_schema.any_of, 1):
             member_name = f"{target}{idx}"
-            member_refs.append(member.new_ref(member_name))
+            member_refs.append(m.JsonSchema.new_ref(member_name))
             self.insert_base(member_name, member.__replace__(description=doc), schema)
         def_schema.any_of = member_refs
 

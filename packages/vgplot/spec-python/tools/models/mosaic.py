@@ -210,6 +210,19 @@ class InputSchema(base.Struct, kw_only=True):
         """Add a new top-level definition to the schema."""
         self.definitions[name] = schema
 
+    def iter_members_defs(
+        self, union: Resolved[JsonSchema], /
+    ) -> Iterator[tuple[DefName, Resolved[JsonSchema]]]:
+        """Iterate over the definitions ref'd by a union of references.
+
+        Resolves `$ref`s defined at the current level, and raises if either:
+        - `union` is not a union
+        - each member is not a reference
+        """
+        for member_ref in union.iter_members():
+            name = member_ref.def_name
+            yield name, self.get(name)
+
     def iter_defs(
         self, predicate: Callable[[JsonSchema], bool] | None = None, /
     ) -> Iterator[tuple[DefName, Resolved[JsonSchema]]]:
