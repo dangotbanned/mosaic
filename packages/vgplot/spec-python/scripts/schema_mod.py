@@ -140,12 +140,12 @@ def generate_python_schema(source: str | Path, target: Path) -> Artifacts:
     schema.id = target.name
 
     schema.definitions = {k: _recursive_replace(v) for k, v in schema.iter_defs()}
+    ParamDefinitionSplit("ParamDefinition", "params.json").run(schema)
     PlotTypesSplit("typing.json").run(schema)
     spec_dedup = SpecDeduplicate("marks.json")
     spec_dedup.run(schema)
 
     CSSStylesSplit("CSSStyles", "css-styles.json").run(schema)
-    ParamDefinitionSplit("ParamDefinition", "params.json").run(schema)
     InteractorsSplit("PlotInteractor", "interactors.json").run(schema)
     TransformSplit("Transform", "transform.json").run(schema)
 
@@ -246,24 +246,25 @@ class InteractorsSplit(RootSplit):
             member_name = member_ref.def_name
             definitions[member_name] = schema.pop(member_name)
         definitions["BrushStyles"] = schema.pop("BrushStyles")
-        definitions["ParamRef"] = schema.get("ParamRef")
         return definitions
 
 
 class ParamDefinitionSplit(RootSplit):
-    def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[_CanSetRef]]:
+    def run(self, schema: m.InputSchema) -> None:
+        extracted = self.extract(schema)
         obj = schema.get("Params").additional_properties
         if isinstance(obj, bool):
             raise NotImplementedError
-        yield from ((obj,),)
+        obj.ref = f"{self.filename}{obj.ref}"
+        schema.map_refs({"ParamRef": self.filename})
+        serde.write_json(self.path, extracted, pretty=True)
+        print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
 
     def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
         root = schema.pop(self.root_name)
         return {
             self.root_name: root,
-            # HACK @dangotbanned: Would need to go multiple levels deep via `ParamValue` to reach these.
-            # codegen will report if any other refs are missing in the future
-            "ParamRef": schema.get("ParamRef"),
+            "ParamRef": schema.pop("ParamRef"),
             "ParamLiteral": schema.pop("ParamLiteral"),
         } | {name: schema.pop(name) for ref in root.iter_members() if (name := ref.def_name)}
 
@@ -369,12 +370,6 @@ class TransformSplit(RootSplit):
             member_name = member_ref.def_name
             definitions[member_name] = schema.pop(member_name)
         definitions["IntervalTransform"] = interval_tf
-        # HACK @dangotbanned: `ParamRef` is not generated in `transform.py`.
-        # - `dcg` tries to do some very complicated things to "solve" circular imports,
-        #   and this + the linked override disables that.
-        # - Ideally, it would ignore circular **typing only** imports or use forward refs in runtime aliases
-        # - https://github.com/dangotbanned/mosaic/blob/7004de2a9f4d9f5ea8cd2c11a827b6d0ee2ab437/packages/vgplot/spec-python/pyproject.toml#L79-L80
-        definitions["ParamRef"] = schema.get("ParamRef")
         return definitions
 
 
@@ -429,7 +424,7 @@ class SpecDeduplicate(SchemaMod):
         plot.x_template = m.ExtraTemplate.from_open_root(_PLOT, _PLOT_ATTRS)
 
     def _plot_mark(self, plot_mark: m.JsonSchema, schema: m.InputSchema) -> None:  # ruff: ignore[complex-structure, too-many-branches, too-many-locals, too-many-statements]
-        definitions: dict[m.DefName, m.JsonSchema] = {"ParamRef": schema.get("ParamRef")}
+        definitions: dict[m.DefName, m.JsonSchema] = {}
         steal = (
             "TipPointer",
             "SelectFilter",
@@ -550,7 +545,7 @@ class SpecDeduplicate(SchemaMod):
     def insert_base(self, name: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema) -> None:
         """Mark `name` to generate an extra TypedDict that is [open](https://typing.python.org/en/latest/spec/typeddict.html#openness).
 
-        The extra version becomes a shared base class for `name` and the version in `_spec` (if a component).
+        The extra version becomes a shared base class for `name` and the version in `spec` (if a component).
         Each of those are then able to be [closed](https://typing.python.org/en/latest/spec/glossary.html#term-closed).
         """
         def_schema.x_template = m.ExtraTemplate.from_name(name, "TypedDict")

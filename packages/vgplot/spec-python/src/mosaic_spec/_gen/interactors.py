@@ -10,7 +10,7 @@ from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from mosaic_spec.typing import ParamRef
+    from mosaic_spec._gen.params import ParamRef
 
 
 class BrushStyles(TypedDict, total=False, closed=True):
@@ -28,67 +28,6 @@ class BrushStyles(TypedDict, total=False, closed=True):
     """The stroke dash array of the brush rectangle."""
     stroke_opacity: float
     """The stroke opacity of the brush rectangle."""
-
-
-class Region(TypedDict, total=False, closed=True):
-    """A rectangular region interactor."""
-
-    bind: Required[ParamRef]
-    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
-    brush: BrushStyles
-    """CSS styles for the brush (SVG `rect`) element."""
-    channels: Required[Sequence[str]]
-    """The encoding channels over which to select values. For a selected mark, selection clauses will cover the backing data fields for each channel."""
-    peers: bool
-    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
-    select: Required[Literal["region"]]
-    """Select aspects of individual marks within a 2D range."""
-
-
-class Toggle(TypedDict, total=False, closed=True):
-    """A toggle interactor."""
-
-    bind: Required[ParamRef]
-    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
-    channels: Required[Sequence[str]]
-    """The encoding channels over which to select values. For a selected mark, selection clauses will cover the backing data fields for each channel."""
-    peers: bool
-    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
-    select: Required[Literal["toggle"]]
-    """Select individual values."""
-
-
-class ToggleColor(TypedDict, total=False, closed=True):
-    """A toggleColor interactor."""
-
-    bind: Required[ParamRef]
-    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
-    peers: bool
-    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
-    select: Required[Literal["toggleColor"]]
-    """Select individual values in the `color` scale domain. Clicking or touching a mark toggles its selection status."""
-
-
-class ToggleX(TypedDict, total=False, closed=True):
-    """A toggleX interactor."""
-
-    bind: Required[ParamRef]
-    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
-    peers: bool
-    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
-    select: Required[Literal["toggleX"]]
-    """Select individual values in the `x` scale domain. Clicking or touching a mark toggles its selection status."""
-
-
-class ToggleY(TypedDict, total=False, closed=True):
-    """A toggleY interactor."""
-
-    bind: Required[ParamRef]
-    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
-    peers: bool
-    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
-    select: Required[Literal["toggleY"]]
-    """Select individual values in the `y` scale domain. Clicking or touching a mark toggles its selection status."""
 
 
 class Highlight(TypedDict, total=False, closed=True):
@@ -281,6 +220,67 @@ class PanZoomY(TypedDict, total=False, closed=True):
     """The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."""
     yfield: str
     """The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used."""
+
+
+class Region(TypedDict, total=False, closed=True):
+    """A rectangular region interactor."""
+
+    bind: Required[ParamRef]
+    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
+    brush: BrushStyles
+    """CSS styles for the brush (SVG `rect`) element."""
+    channels: Required[Sequence[str]]
+    """The encoding channels over which to select values. For a selected mark, selection clauses will cover the backing data fields for each channel."""
+    peers: bool
+    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
+    select: Required[Literal["region"]]
+    """Select aspects of individual marks within a 2D range."""
+
+
+class Toggle(TypedDict, total=False, closed=True):
+    """A toggle interactor."""
+
+    bind: Required[ParamRef]
+    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
+    channels: Required[Sequence[str]]
+    """The encoding channels over which to select values. For a selected mark, selection clauses will cover the backing data fields for each channel."""
+    peers: bool
+    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
+    select: Required[Literal["toggle"]]
+    """Select individual values."""
+
+
+class ToggleColor(TypedDict, total=False, closed=True):
+    """A toggleColor interactor."""
+
+    bind: Required[ParamRef]
+    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
+    peers: bool
+    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
+    select: Required[Literal["toggleColor"]]
+    """Select individual values in the `color` scale domain. Clicking or touching a mark toggles its selection status."""
+
+
+class ToggleX(TypedDict, total=False, closed=True):
+    """A toggleX interactor."""
+
+    bind: Required[ParamRef]
+    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
+    peers: bool
+    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
+    select: Required[Literal["toggleX"]]
+    """Select individual values in the `x` scale domain. Clicking or touching a mark toggles its selection status."""
+
+
+class ToggleY(TypedDict, total=False, closed=True):
+    """A toggleY interactor."""
+
+    bind: Required[ParamRef]
+    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
+    peers: bool
+    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
+    select: Required[Literal["toggleY"]]
+    """Select individual values in the `y` scale domain. Clicking or touching a mark toggles its selection status."""
 
 
 PlotInteractor = TypeAliasType(

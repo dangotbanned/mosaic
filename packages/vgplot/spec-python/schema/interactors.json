@@ -38,7 +38,7 @@
       "description": "A highlight interactor.",
       "properties": {
         "by": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The input selection. Unselected marks are deemphasized."
         },
         "fill": {
@@ -78,7 +78,7 @@
       "description": "An intervalX interactor.",
       "properties": {
         "bind": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection. A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi]."
         },
         "brush": {
@@ -114,7 +114,7 @@
       "description": "An intervalXY interactor.",
       "properties": {
         "bind": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection. A clause of the form `(xfield BETWEEN x1 AND x2) AND (yfield BETWEEN y1 AND y2)` is added for the currently selected intervals."
         },
         "brush": {
@@ -154,7 +154,7 @@
       "description": "An intervalY interactor.",
       "properties": {
         "bind": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection. A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi]."
         },
         "brush": {
@@ -190,7 +190,7 @@
       "description": "A nearestX interactor.",
       "properties": {
         "bind": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection. A clause of the form `field = value` is added for the currently nearest value."
         },
         "channels": {
@@ -228,7 +228,7 @@
       "description": "A nearestY interactor.",
       "properties": {
         "bind": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection. A clause of the form `field = value` is added for the currently nearest value."
         },
         "channels": {
@@ -271,7 +271,7 @@
           "type": "string"
         },
         "x": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
         },
         "xfield": {
@@ -279,7 +279,7 @@
           "type": "string"
         },
         "y": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
         },
         "yfield": {
@@ -302,7 +302,7 @@
           "type": "string"
         },
         "x": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
         },
         "xfield": {
@@ -310,7 +310,7 @@
           "type": "string"
         },
         "y": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
         },
         "yfield": {
@@ -333,7 +333,7 @@
           "type": "string"
         },
         "x": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
         },
         "xfield": {
@@ -341,7 +341,7 @@
           "type": "string"
         },
         "y": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
         },
         "yfield": {
@@ -364,7 +364,7 @@
           "type": "string"
         },
         "x": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
         },
         "xfield": {
@@ -372,7 +372,7 @@
           "type": "string"
         },
         "y": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
         },
         "yfield": {
@@ -395,7 +395,7 @@
           "type": "string"
         },
         "x": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
         },
         "xfield": {
@@ -403,7 +403,7 @@
           "type": "string"
         },
         "y": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
         },
         "yfield": {
@@ -426,7 +426,7 @@
           "type": "string"
         },
         "x": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
         },
         "xfield": {
@@ -434,7 +434,7 @@
           "type": "string"
         },
         "y": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
         },
         "yfield": {
@@ -446,9 +446,6 @@
         "select"
       ],
       "type": "object"
-    },
-    "ParamRef": {
-      "type": "string"
     },
     "PlotInteractor": {
       "anyOf": [
@@ -511,7 +508,7 @@
       "description": "A rectangular region interactor.",
       "properties": {
         "bind": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."
         },
         "brush": {
@@ -547,7 +544,7 @@
       "description": "A toggle interactor.",
       "properties": {
         "bind": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."
         },
         "channels": {
@@ -579,7 +576,7 @@
       "description": "A toggleColor interactor.",
       "properties": {
         "bind": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."
         },
         "peers": {
@@ -603,7 +600,7 @@
       "description": "A toggleX interactor.",
       "properties": {
         "bind": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."
         },
         "peers": {
@@ -627,7 +624,7 @@
       "description": "A toggleY interactor.",
       "properties": {
         "bind": {
-          "$ref": "#/definitions/ParamRef",
+          "$ref": "params.json#/definitions/ParamRef",
           "description": "The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."
         },
         "peers": {

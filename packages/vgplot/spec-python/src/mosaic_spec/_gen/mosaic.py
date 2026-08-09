@@ -7,14 +7,13 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any, Literal, Union
 
 from mosaic_spec._gen.marks import PlotMark
-from mosaic_spec._gen.params import ParamDefinition
+from mosaic_spec._gen.params import ParamDefinition, ParamRef
 from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
 
 if TYPE_CHECKING:
     from mosaic_spec._gen.css_styles import CSSStyles
     from mosaic_spec._gen.interactors import PlotInteractor
     from mosaic_spec._gen.typing import ColorScheme, Interval
-    from mosaic_spec.typing import ParamRef
 
 ColorScaleType = TypeAliasType(
     "ColorScaleType",
@@ -350,44 +349,6 @@ class Meta(TypedDict, total=False):
     """The specification title."""
 
 
-class Margins(TypedDict, total=False, closed=True):
-    """A shorthand object notation for setting multiple margin values. The object keys are margin names (top, right, etc)."""
-
-    bottom: float | ParamRef
-    left: float | ParamRef
-    right: float | ParamRef
-    top: float | ParamRef
-
-
-class PlotLegend(TypedDict, total=False, closed=True):
-    """A legend defined as an entry within a plot."""
-
-    bind: ParamRef
-    """The output selection. If specified, the legend is interactive, using a `toggle` interaction for discrete legends or an `intervalX` interaction for continuous legends."""
-    columns: float
-    """The number of columns to use to layout a discrete legend."""
-    field: str
-    """The data field over which to generate output selection clauses. If unspecified, a matching field is retrieved from existing plot marks."""
-    height: float
-    """The height of a continuous legend, in pixels."""
-    label: str
-    """The legend label."""
-    legend: Required[Literal["color", "opacity", "symbol"]]
-    """A legend of the given type. The valid types are `"color"`, `"opacity"`, and `"symbol"`."""
-    margin_bottom: float
-    """The bottom margin of the legend component, in pixels."""
-    margin_left: float
-    """The left margin of the legend component, in pixels."""
-    margin_right: float
-    """The right margin of the legend component, in pixels."""
-    margin_top: float
-    """The top margin of the legend component, in pixels."""
-    tick_size: float
-    """The size of legend ticks in a continuous legend, in pixels."""
-    width: float
-    """The width of a continuous legend, in pixels."""
-
-
 PositionScaleType = TypeAliasType(
     "PositionScaleType",
     Literal[
@@ -470,6 +431,130 @@ ProjectionName = TypeAliasType(
 - *orthographic* - the orthographic projection
 - *stereographic* - the stereographic projection
 - *transverse-mercator* - the transverse spherical Mercator projection"""
+
+
+class _VSpaceOpen(TypedDict, total=False):
+    """A vspace component."""
+
+    vspace: Required[float | str]
+    """Vertical space to place between components. Number values indicate screen pixels. String values may use CSS units (em, pt, px, etc)."""
+
+
+class VSpace(_VSpaceOpen, total=False, closed=True): ...
+
+
+DataDefinition = TypeAliasType(
+    "DataDefinition",
+    DataQuery
+    | DataArray
+    | DataFile
+    | DataTable
+    | DataParquet
+    | DataCSV
+    | DataSpatial
+    | DataJSON
+    | DataJSONObjects,
+)
+
+
+class _LegendOpen(TypedDict, total=False):
+    """A legend defined as a top-level spec component."""
+
+    bind: ParamRef
+    """The output selection. If specified, the legend is interactive, using a `toggle` interaction for discrete legends or an `intervalX` interaction for continuous legends."""
+    columns: float
+    """The number of columns to use to layout a discrete legend."""
+    field: str
+    """The data field over which to generate output selection clauses. If unspecified, a matching field is retrieved from existing plot marks."""
+    height: float
+    """The height of a continuous legend, in pixels."""
+    label: str
+    """The legend label."""
+    legend: Required[Literal["color", "opacity", "symbol"]]
+    """A legend of the given type. The valid types are `"color"`, `"opacity"`, and `"symbol"`."""
+    margin_bottom: float
+    """The bottom margin of the legend component, in pixels."""
+    margin_left: float
+    """The left margin of the legend component, in pixels."""
+    margin_right: float
+    """The right margin of the legend component, in pixels."""
+    margin_top: float
+    """The top margin of the legend component, in pixels."""
+    plot: Required[str]
+    """The name of the plot this legend applies to. A plot must include a `name` attribute to be referenced."""
+    tick_size: float
+    """The size of legend ticks in a continuous legend, in pixels."""
+    width: float
+    """The width of a continuous legend, in pixels."""
+
+
+class Legend(_LegendOpen, total=False, closed=True): ...
+
+
+class _MenuOpen(TypedDict, total=False):
+    """A menu input component."""
+
+    bind: ParamRef
+    """The output selection. A selection clause is added for the currently selected menu option."""
+    column: str
+    """The name of a database column from which to pull menu options. The unique column values are used as menu options. Used in conjunction with the `from` property."""
+    field: str
+    """The database column name to use within generated selection clause predicates. Defaults to the `column` property."""
+    filter_by: ParamRef
+    """A selection to filter the database table indicated by the `from` property."""
+    input: Required[Literal["menu"]]
+    """A menu input widget."""
+    label: str
+    """A text label for this input."""
+    list_match: Literal["any", "all"]
+    """Required if the database column is an list, this property determines how to match the selected menu option against the list values."""
+    options: Sequence[Any | Options]
+    """An array of menu options, as literal values or option objects. Option objects have a `value` property and an optional `label` property. If no label is provided, the string-coerced value is used."""
+    source: str
+    """The name of a database table to use as a data source for this widget. Used in conjunction with the `column` property."""
+    value: Any
+    """The initial selected menu value."""
+
+
+class Menu(_MenuOpen, total=False, closed=True): ...
+
+
+class Margins(TypedDict, total=False, closed=True):
+    """A shorthand object notation for setting multiple margin values. The object keys are margin names (top, right, etc)."""
+
+    bottom: float | ParamRef
+    left: float | ParamRef
+    right: float | ParamRef
+    top: float | ParamRef
+
+
+class PlotLegend(TypedDict, total=False, closed=True):
+    """A legend defined as an entry within a plot."""
+
+    bind: ParamRef
+    """The output selection. If specified, the legend is interactive, using a `toggle` interaction for discrete legends or an `intervalX` interaction for continuous legends."""
+    columns: float
+    """The number of columns to use to layout a discrete legend."""
+    field: str
+    """The data field over which to generate output selection clauses. If unspecified, a matching field is retrieved from existing plot marks."""
+    height: float
+    """The height of a continuous legend, in pixels."""
+    label: str
+    """The legend label."""
+    legend: Required[Literal["color", "opacity", "symbol"]]
+    """A legend of the given type. The valid types are `"color"`, `"opacity"`, and `"symbol"`."""
+    margin_bottom: float
+    """The bottom margin of the legend component, in pixels."""
+    margin_left: float
+    """The left margin of the legend component, in pixels."""
+    margin_right: float
+    """The right margin of the legend component, in pixels."""
+    margin_top: float
+    """The top margin of the legend component, in pixels."""
+    tick_size: float
+    """The size of legend ticks in a continuous legend, in pixels."""
+    width: float
+    """The width of a continuous legend, in pixels."""
 
 
 class _SearchOpen(TypedDict, total=False):
@@ -562,92 +647,6 @@ class _TableOpen(TypedDict, total=False):
 
 
 class Table(_TableOpen, total=False, closed=True): ...
-
-
-class _VSpaceOpen(TypedDict, total=False):
-    """A vspace component."""
-
-    vspace: Required[float | str]
-    """Vertical space to place between components. Number values indicate screen pixels. String values may use CSS units (em, pt, px, etc)."""
-
-
-class VSpace(_VSpaceOpen, total=False, closed=True): ...
-
-
-DataDefinition = TypeAliasType(
-    "DataDefinition",
-    DataQuery
-    | DataArray
-    | DataFile
-    | DataTable
-    | DataParquet
-    | DataCSV
-    | DataSpatial
-    | DataJSON
-    | DataJSONObjects,
-)
-
-
-class _LegendOpen(TypedDict, total=False):
-    """A legend defined as a top-level spec component."""
-
-    bind: ParamRef
-    """The output selection. If specified, the legend is interactive, using a `toggle` interaction for discrete legends or an `intervalX` interaction for continuous legends."""
-    columns: float
-    """The number of columns to use to layout a discrete legend."""
-    field: str
-    """The data field over which to generate output selection clauses. If unspecified, a matching field is retrieved from existing plot marks."""
-    height: float
-    """The height of a continuous legend, in pixels."""
-    label: str
-    """The legend label."""
-    legend: Required[Literal["color", "opacity", "symbol"]]
-    """A legend of the given type. The valid types are `"color"`, `"opacity"`, and `"symbol"`."""
-    margin_bottom: float
-    """The bottom margin of the legend component, in pixels."""
-    margin_left: float
-    """The left margin of the legend component, in pixels."""
-    margin_right: float
-    """The right margin of the legend component, in pixels."""
-    margin_top: float
-    """The top margin of the legend component, in pixels."""
-    plot: Required[str]
-    """The name of the plot this legend applies to. A plot must include a `name` attribute to be referenced."""
-    tick_size: float
-    """The size of legend ticks in a continuous legend, in pixels."""
-    width: float
-    """The width of a continuous legend, in pixels."""
-
-
-class Legend(_LegendOpen, total=False, closed=True): ...
-
-
-class _MenuOpen(TypedDict, total=False):
-    """A menu input component."""
-
-    bind: ParamRef
-    """The output selection. A selection clause is added for the currently selected menu option."""
-    column: str
-    """The name of a database column from which to pull menu options. The unique column values are used as menu options. Used in conjunction with the `from` property."""
-    field: str
-    """The database column name to use within generated selection clause predicates. Defaults to the `column` property."""
-    filter_by: ParamRef
-    """A selection to filter the database table indicated by the `from` property."""
-    input: Required[Literal["menu"]]
-    """A menu input widget."""
-    label: str
-    """A text label for this input."""
-    list_match: Literal["any", "all"]
-    """Required if the database column is an list, this property determines how to match the selected menu option against the list values."""
-    options: Sequence[Any | Options]
-    """An array of menu options, as literal values or option objects. Option objects have a `value` property and an optional `label` property. If no label is provided, the string-coerced value is used."""
-    source: str
-    """The name of a database table to use as a data source for this widget. Used in conjunction with the `column` property."""
-    value: Any
-    """The initial selected menu value."""
-
-
-class Menu(_MenuOpen, total=False, closed=True): ...
 
 
 Data = TypeAliasType("Data", Mapping[str, DataDefinition])

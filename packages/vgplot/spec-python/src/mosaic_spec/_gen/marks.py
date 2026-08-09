@@ -10,8 +10,8 @@ from mosaic_spec._gen.transform import Transform
 from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
 
 if TYPE_CHECKING:
+    from mosaic_spec._gen.params import ParamRef
     from mosaic_spec._gen.typing import Interval
-    from mosaic_spec.typing import ParamRef
 
 
 class MarkOptions(TypedDict, total=False):
@@ -418,21 +418,6 @@ PlotDataInline = TypeAliasType("PlotDataInline", Sequence[Any])
 """An array of inline data values to visualize. As this data does not come from a database, it can not be filtered by interactive selections."""
 
 
-class PlotFrom(TypedDict, total=False, closed=True):
-    """Input data specification for a plot mark."""
-
-    filter_by: ParamRef
-    """A selection that filters the mark data."""
-    optimize: bool
-    """A flag (default `true`) to enable any mark-specific query optimizations. If `false`, optimizations are disabled to aid testing and debugging."""
-    source: Required[str | ParamRef]
-    """The name of the backing data table."""
-
-
-PlotMarkData = TypeAliasType("PlotMarkData", PlotDataInline | PlotFrom)
-"""Input data for a marks"""
-
-
 ReducerPercentile = TypeAliasType(
     "ReducerPercentile",
     Literal[
@@ -706,41 +691,6 @@ The *hexagon* symbol is also supported.
 [1]: https://www.tandfonline.com/doi/abs/10.1080/10618600.2019.1637746"""
 
 
-class Format(TypedDict, total=False, closed=True):
-    """How channel values are formatted for display. If a format is a string, it is interpreted as a (UTC) time format for temporal channels, and otherwise a number format."""
-
-    aria_label: bool | str | ParamRef
-    fill: bool | str | ParamRef
-    fill_opacity: bool | str | ParamRef
-    font_size: bool | str | ParamRef
-    fx: bool | str | ParamRef
-    fy: bool | str | ParamRef
-    geometry: bool | str | ParamRef
-    height: bool | str | ParamRef
-    href: bool | str | ParamRef
-    length: bool | str | ParamRef
-    opacity: bool | str | ParamRef
-    path: bool | str | ParamRef
-    r: bool | str | ParamRef
-    rotate: bool | str | ParamRef
-    src: bool | str | ParamRef
-    stroke: bool | str | ParamRef
-    stroke_opacity: bool | str | ParamRef
-    stroke_width: bool | str | ParamRef
-    symbol: bool | str | ParamRef
-    text: bool | str | ParamRef
-    title: bool | str | ParamRef
-    weight: bool | str | ParamRef
-    width: bool | str | ParamRef
-    x: bool | str | ParamRef
-    x1: bool | str | ParamRef
-    x2: bool | str | ParamRef
-    y: bool | str | ParamRef
-    y1: bool | str | ParamRef
-    y2: bool | str | ParamRef
-    z: bool | str | ParamRef
-
-
 TipPointer = TypeAliasType("TipPointer", Literal["x", "y", "xy"])
 """The pointer mode for the tip; corresponds to pointerX, pointerY, and pointer."""
 
@@ -860,6 +810,21 @@ class _HexgridOpen(MarkOptions, total=False):
 class Hexgrid(_HexgridOpen, total=False, closed=True): ...
 
 
+class PlotFrom(TypedDict, total=False, closed=True):
+    """Input data specification for a plot mark."""
+
+    filter_by: ParamRef
+    """A selection that filters the mark data."""
+    optimize: bool
+    """A flag (default `true`) to enable any mark-specific query optimizations. If `false`, optimizations are disabled to aid testing and debugging."""
+    source: Required[str | ParamRef]
+    """The name of the backing data table."""
+
+
+PlotMarkData = TypeAliasType("PlotMarkData", PlotDataInline | PlotFrom)
+"""Input data for a marks"""
+
+
 Reducer = TypeAliasType(
     "Reducer",
     Literal[
@@ -919,6 +884,41 @@ StackOrder = TypeAliasType(
 - a named stack order method such as *inside-out* or *sum*
 - a field name, for natural order of the corresponding values
 - an array of explicit **z** values in the desired order"""
+
+
+class Format(TypedDict, total=False, closed=True):
+    """How channel values are formatted for display. If a format is a string, it is interpreted as a (UTC) time format for temporal channels, and otherwise a number format."""
+
+    aria_label: bool | str | ParamRef
+    fill: bool | str | ParamRef
+    fill_opacity: bool | str | ParamRef
+    font_size: bool | str | ParamRef
+    fx: bool | str | ParamRef
+    fy: bool | str | ParamRef
+    geometry: bool | str | ParamRef
+    height: bool | str | ParamRef
+    href: bool | str | ParamRef
+    length: bool | str | ParamRef
+    opacity: bool | str | ParamRef
+    path: bool | str | ParamRef
+    r: bool | str | ParamRef
+    rotate: bool | str | ParamRef
+    src: bool | str | ParamRef
+    stroke: bool | str | ParamRef
+    stroke_opacity: bool | str | ParamRef
+    stroke_width: bool | str | ParamRef
+    symbol: bool | str | ParamRef
+    text: bool | str | ParamRef
+    title: bool | str | ParamRef
+    weight: bool | str | ParamRef
+    width: bool | str | ParamRef
+    x: bool | str | ParamRef
+    x1: bool | str | ParamRef
+    x2: bool | str | ParamRef
+    y: bool | str | ParamRef
+    y1: bool | str | ParamRef
+    y2: bool | str | ParamRef
+    z: bool | str | ParamRef
 
 
 class ChannelDomainValueSpec1(TypedDict, total=False, closed=True):

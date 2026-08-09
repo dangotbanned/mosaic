@@ -5,8 +5,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Literal
 
+from mosaic_spec._gen.params import ParamRef
 from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
-from mosaic_spec.typing import ParamRef
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -18,11 +18,67 @@ BinInterval = TypeAliasType(
 """Binning interval names."""
 
 
+class Centroid(TypedDict, total=False, closed=True):
+    """A centroid transform."""
+
+    centroid: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the 2D centroid of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
+
+
+class CentroidX(TypedDict, total=False, closed=True):
+    """A centroidX transform."""
+
+    centroid_x: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the centroid x-coordinate of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
+
+
+class CentroidY(TypedDict, total=False, closed=True):
+    """A centroidY transform."""
+
+    centroid_y: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the centroid y-coordinate of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
+
+
+class Column(TypedDict, total=False, closed=True):
+    """A column transform."""
+
+    column: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Interpret a string or param-value as a column reference."""
+
+
+class DateDay(TypedDict, total=False, closed=True):
+    """A dateDay transform."""
+
+    date_day: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Transform a Date value to a day of the month for cyclic comparison. Year and month values are collapsed to enable comparison over days only."""
+
+
+class DateMonth(TypedDict, total=False, closed=True):
+    """A dateMonth transform."""
+
+    date_month: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Transform a Date value to a month boundary for cyclic comparison. Year values are collapsed to enable comparison over months only."""
+
+
+class DateMonthDay(TypedDict, total=False, closed=True):
+    """A dateMonthDay transform."""
+
+    date_month_day: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Transform a Date value to a month and day boundary for cyclic comparison. Year values are collapsed to enable comparison over months and days only."""
+
+
 class Days(TypedDict, total=False, closed=True):
     """A date/time interval in units of days."""
 
     days: Required[float]
     """A date/time interval in units of days."""
+
+
+class GeoJSON(TypedDict, total=False, closed=True):
+    """A geojson transform."""
+
+    geojson: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute a GeoJSON-formatted string from geometry-typed data. This transform requires the DuckDB `spatial` extension."""
 
 
 class Hours(TypedDict, total=False, closed=True):
@@ -97,60 +153,11 @@ class Bin(TypedDict, total=False, closed=True):
     """The target number of binning steps to use. To accommodate human-friendly ("nice") bin boundaries, the actual number of bins may diverge from this exact value. This option is ignored when **step** is specified."""
 
 
-class Centroid(TypedDict, total=False, closed=True):
-    """A centroid transform."""
-
-    centroid: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the 2D centroid of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
-
-
-class CentroidX(TypedDict, total=False, closed=True):
-    """A centroidX transform."""
-
-    centroid_x: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the centroid x-coordinate of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
-
-
-class CentroidY(TypedDict, total=False, closed=True):
-    """A centroidY transform."""
-
-    centroid_y: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the centroid y-coordinate of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
-
-
-class Column(TypedDict, total=False, closed=True):
-    """A column transform."""
-
-    column: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Interpret a string or param-value as a column reference."""
-
-
-class DateDay(TypedDict, total=False, closed=True):
-    """A dateDay transform."""
-
-    date_day: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Transform a Date value to a day of the month for cyclic comparison. Year and month values are collapsed to enable comparison over days only."""
-
-
-class DateMonth(TypedDict, total=False, closed=True):
-    """A dateMonth transform."""
-
-    date_month: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Transform a Date value to a month boundary for cyclic comparison. Year values are collapsed to enable comparison over months only."""
-
-
-class DateMonthDay(TypedDict, total=False, closed=True):
-    """A dateMonthDay transform."""
-
-    date_month_day: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Transform a Date value to a month and day boundary for cyclic comparison. Year values are collapsed to enable comparison over months and days only."""
-
-
-class GeoJSON(TypedDict, total=False, closed=True):
-    """A geojson transform."""
-
-    geojson: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute a GeoJSON-formatted string from geometry-typed data. This transform requires the DuckDB `spatial` extension."""
+ColumnTransform = TypeAliasType(
+    "ColumnTransform",
+    Bin | Column | DateMonth | DateMonthDay | DateDay | Centroid | CentroidX | CentroidY | GeoJSON,
+)
+"""A data transform that maps one column value to another."""
 
 
 IntervalTransform = TypeAliasType(
@@ -158,13 +165,6 @@ IntervalTransform = TypeAliasType(
     Years | Months | Days | Hours | Minutes | Seconds | Milliseconds | Microseconds,
 )
 """Date/time interval."""
-
-
-ColumnTransform = TypeAliasType(
-    "ColumnTransform",
-    Bin | Column | DateMonth | DateMonthDay | DateDay | Centroid | CentroidX | CentroidY | GeoJSON,
-)
-"""A data transform that maps one column value to another."""
 
 
 FrameValue = TypeAliasType("FrameValue", float | IntervalTransform | None)

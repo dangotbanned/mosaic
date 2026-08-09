@@ -7,7 +7,6 @@ from collections.abc import Sequence
 from typing import Literal
 
 from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
-from mosaic_spec.typing import ParamRef
 
 
 class ParamDate(TypedDict, total=False, closed=True):
@@ -28,6 +27,9 @@ class ParamDate(TypedDict, total=False, closed=True):
 
 ParamLiteral = TypeAliasType("ParamLiteral", str | float | bool | None)
 """Literal Param values."""
+
+
+ParamRef = TypeAliasType("ParamRef", str)
 
 
 ParamValue = TypeAliasType("ParamValue", ParamLiteral | Sequence[ParamLiteral | ParamRef])

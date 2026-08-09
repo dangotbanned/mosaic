@@ -180,6 +180,7 @@ from mosaic_spec._gen.params import (
     ParamDate,
     ParamDefinition,
     ParamLiteral,
+    ParamRef,
     ParamValue,
     Selection,
 )
@@ -393,6 +394,7 @@ __all__ = [
     "ParamDate",
     "ParamDefinition",
     "ParamLiteral",
+    "ParamRef",
     "ParamValue",
     "Params",
     "PercentRank",

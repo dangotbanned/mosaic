@@ -48,7 +48,6 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
   - [x] split
   - [ ] cleanup
 - [ ] typing (aliases)
-  - [x] `ParamRef`
   - [ ] `PlotTypes.ts` (14 KB) and **isolated**
   - [ ] A large gain will come from naming duplicated inline types, e.g.
     - 60x of `str | float | bool | ParamRef`
