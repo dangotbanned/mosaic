@@ -44,9 +44,11 @@ def read_json[T](path: str | Path, tp: type[T], /) -> T:
         return deserialize(fd.read(), tp)
 
 
-def write_json(path: str | Path, obj: Any) -> None:
+def write_json(path: str | Path, obj: Any, *, pretty: bool = False) -> None:
     """Serialize an object to a JSON file."""
-    _write_bytes_as_str(path, serialize(obj, order="sorted"))
+    bstring = serialize(obj, order="sorted")
+    bstring = msgspec.json.format(bstring) if pretty else bstring
+    _write_bytes_as_str(path, bstring)
 
 
 def write_toml(path: str | Path, obj: Any) -> None:

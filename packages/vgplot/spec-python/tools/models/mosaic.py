@@ -131,6 +131,10 @@ class ExtraTemplate(XTemplate):
     def from_name(cls, original_name: DefName, /, root: str) -> ExtraTemplate:
         return cls(base=cls.format(original_name), root=root)
 
+    @classmethod
+    def from_open_root(cls, original_name: DefName, /, root: DefName) -> ExtraTemplate:
+        return cls(base=cls.format(original_name), root=cls.format(root))
+
 
 class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
     """Excludes: `"items"`, `"properties"`, `"any_of"`."""

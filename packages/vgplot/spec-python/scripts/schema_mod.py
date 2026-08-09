@@ -261,6 +261,15 @@ class PlotTypesSplit(RootSplit):
         schema.insert("ColorScheme", color_scheme)
 
 
+# TODO @dangotbanned: [HIGH PRIORITY] Stop (manually) managing references
+# - Map out where each definition needs to visit to find all `$ref`s
+#   - Probably use a graph
+#   - > This node depends on `{a, b, c}` and they can be found via ...
+# - Wait until each job has "stolen" definitions to do any work
+#   - Current: (update_refs -> extract -> write_json) * N
+#   - Wanted : extract * N -> determine deps * N -> update_refs * N -> write_json * N
+#       - Where each stage is handled in an outer context
+#       - With visibility of dependencies in each file
 class TransformSplit(RootSplit):
     """Remove `Transform` and it's members from the schema, to define them in another file.
 
@@ -277,8 +286,8 @@ class TransformSplit(RootSplit):
     """
 
     def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
-        it = schema.get("ChannelValue").iter_members()
-        yield from (it,)
+        # HACK @dangotbanned: Handling the reference update in `SpecDeduplicate`
+        yield from ()
 
     def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
         root = schema.pop(self.root_name)
@@ -316,35 +325,110 @@ _PLOT = "Plot"
 _COMPONENT = "Component"
 _PLOT_MARK = "PlotMark"
 _MARK_OPTIONS = "MarkOptions"
+_POUND_DEFS = "#/definitions/"
 
 
 # TODO @dangotbanned: Fix `dcg` generating `MarkOptions` too late
+# - [ ] Move marks to `marks.py`
+# - [ ] `_spec.py` fix the subset of `_{name}_Open` imports which come from `marks.py`
 class SpecDeduplicate(SchemaMod):
     """See `tools.models.mosaic` module doc for `Component` detail."""
 
-    _ROOT: ClassVar = {_PLOT: m.ExtraTemplate.format(_PLOT_ATTRS)}
+    filename: str = "marks.json"
+    _SCHEMA_DIR: ClassVar[Path] = fs.SCHEMA
+
+    @property
+    def path(self) -> Path:
+        return self._SCHEMA_DIR / self.filename
 
     def run(self, schema: m.InputSchema) -> None:
         self.insert_base(_PLOT_ATTRS, schema.pop(_PLOT_ATTRS), schema)
-        plot = schema.get(_PLOT)
-        plot.properties = {"plot": plot.properties.pop("plot")}
 
         for name, member in schema.iter_members_defs(schema.get(_COMPONENT)):
             if not member.is_union():
-                self.insert_base(name, member, schema)
+                if name == _PLOT:
+                    self._plot(member)
+                else:
+                    self.insert_base(name, member, schema)
             elif name == _PLOT_MARK:
                 self._plot_mark(member, schema)
             else:
                 msg = f"Found unexpected union {name!r} in {_COMPONENT!r}, got:\n{member!r}"
                 raise NotImplementedError(msg)
 
+    def _plot(self, plot: m.JsonSchema) -> None:
+        prop = plot.properties.pop("plot")
+        # NOTE: ref cleanup
+        for member in prop.items_schema().iter_members():
+            if member.ref == f"{_POUND_DEFS}{_PLOT_MARK}":
+                member.ref = f"{self.filename}{member.ref}"
+                break
+
+        # Plot extends PlotAttributes, adding a single `plot` required property
+        plot.properties = {"plot": prop}
+        plot.x_template = m.ExtraTemplate.from_open_root(_PLOT, _PLOT_ATTRS)
+
     # TODO @dangotbanned: Handle deduplication of marks (71 total)
     # - Related: https://github.com/dangotbanned/mosaic/blob/2abdce2699036a7793533e51e1c3697db7f609f9/bin/generate-python-api.js#L51-L69
     # - JSON Schema is masking the fact that the exports only combine `*Options` interfaces and add a `mark` discriminator
-    def _plot_mark(self, plot_mark: m.JsonSchema, schema: m.InputSchema) -> None:
-        owned_props = deepcopy(schema.get(plot_mark.any_of[0].def_name).properties)
-        mark_common = set(owned_props)
+    def _plot_mark(self, plot_mark: m.JsonSchema, schema: m.InputSchema) -> None:  # ruff: ignore[complex-structure, too-many-branches, too-many-locals, too-many-statements]
+        definitions: dict[m.DefName, m.JsonSchema] = {"ParamRef": schema.get("ParamRef")}
+        # TODO @dangotbanned: Unresolved local $ref targets:
+        # - marks.json: #/definitions/Curve
+        # - marks.json: #/definitions/DensityX
+        # - marks.json: #/definitions/DensityY
+        # - marks.json: #/definitions/GridInterpolate
+        # - marks.json: #/definitions/Interval
+        # - marks.json: #/definitions/MarkerName
+        # - marks.json: #/definitions/PlotMarkData
+        # - marks.json: #/definitions/StackOffset
+        # - marks.json: #/definitions/StackOrder
+        # - marks.json: #/definitions/SymbolType
+        # - marks.json: #/definitions/VectorShape
+        steal = (
+            "TipPointer",
+            "SelectFilter",
+            "ChannelDomainValueSpec",
+            "ChannelDomainValue",
+            "ChannelDomainSort",
+            "ChannelName",
+            "ChannelValueSpec",
+            "ChannelValueIntervalSpec",
+            "SortOrder",
+            "ScaleName",
+            "SQLExpression",
+            "AggregateExpression",
+            "ReducerPercentile",
+            "Reducer",
+            "FrameAnchor",
+        )
+        pop = schema.pop
+        for name in steal:
+            definitions[name] = pop(name)
 
+        channel_value = definitions["ChannelValue"] = pop("ChannelValue")
+        transform_ref = f"{_POUND_DEFS}Transform"
+        # NOTE: ref cleanup
+        for member in channel_value.iter_members():
+            if member.ref == transform_ref:
+                member.ref = f"transform.json{transform_ref}"
+                break
+
+        owned_props = deepcopy(schema.get(plot_mark.any_of[0].def_name).properties)
+        tip_property = owned_props["tip"]
+
+        for idx, member in enumerate(tip_property.iter_members()):
+            if member.type == "object":
+                tip_def = deepcopy(member)
+                tip_def.additional_properties = False
+                tip_def.description = tip_property.description
+                definitions["Tip"] = tip_def
+                _any_of = list(tip_property.any_of)
+                _any_of[idx] = m.JsonSchema.new_ref("Tip")
+                tip_property.any_of = _any_of
+                break
+
+        mark_common = set(owned_props)
         previously_insert_base: list[tuple[m.DefName, m.JsonSchema]] = []
         """Need a another base class `MarkOptions`, but can't get that until visiting them all.
         Will hack around for now.
@@ -370,28 +454,36 @@ class SpecDeduplicate(SchemaMod):
                         (member_name, member_2.__replace__(description=doc))
                     )
                 member_1.any_of = member_refs
+            pop(member_1_name)
 
         # TODO @dangotbanned: Make this generic when adding back
         # Too complicated for now, while there are multiple bases
         mark_common.discard("mark")
+        definitions[_PLOT_MARK] = pop(_PLOT_MARK)
 
-        mark_options = {k: v for k, v in owned_props.items() if k in mark_common}
-        schema.insert(
-            _MARK_OPTIONS,
-            m.JsonSchema(
-                description="Shared options for all marks.",
-                type="object",
-                properties=mark_options,
-                additional_properties=False,
-                x_template=m.SingleTemplate(),
-            ),
+        definitions[_MARK_OPTIONS] = m.JsonSchema(
+            description="Shared options for all marks.",
+            type="object",
+            properties={k: v for k, v in owned_props.items() if k in mark_common},
+            additional_properties=False,
+            x_template=m.SingleTemplate(),
         )
 
         common = tuple(mark_common)
         for name, member in previously_insert_base:
             member.remove_properties(common)
             member.x_template = m.ExtraTemplate.from_name(name, _MARK_OPTIONS)
-            schema.insert(name, member)
+            definitions[name] = member
+
+        # NOTE: ref cleanup
+        for member in reversed(schema.get(_COMPONENT).any_of):
+            if member.ref.endswith(_PLOT_MARK):
+                member.ref = f"{self.filename}{member.ref}"
+                break
+
+        extracted = schema.__replace__(id=self.filename, definitions=definitions)
+        serde.write_json(self.path, extracted, pretty=True)
+        print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
 
     def insert_base(self, name: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema) -> None:
         """Mark `name` to generate an extra TypedDict that is [open](https://typing.python.org/en/latest/spec/typeddict.html#openness).
@@ -399,7 +491,7 @@ class SpecDeduplicate(SchemaMod):
         The extra version becomes a shared base class for `name` and the version in `_spec` (if a component).
         Each of those are then able to be [closed](https://typing.python.org/en/latest/spec/glossary.html#term-closed).
         """
-        def_schema.x_template = m.ExtraTemplate.from_name(name, self._ROOT.get(name, "TypedDict"))
+        def_schema.x_template = m.ExtraTemplate.from_name(name, "TypedDict")
         schema.insert(name, def_schema)
 
 
