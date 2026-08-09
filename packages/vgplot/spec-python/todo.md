@@ -24,7 +24,9 @@ Here's a big list of things to do/known issues
 
 ## Splitting one big file
 
-`mosaic.py` ~~is~~ was too large (~**30k** LOC with docs) and this kills the performance of language servers.  
+[was too large]: https://github.com/dangotbanned/mosaic/commit/d0f225cddfb173da0aea024ad6d03ce4a5041f51
+
+`mosaic.py` ~~is~~ [was too large] (~**30k** LOC with docs) and this kills the performance of language servers.  
 
 Pylance is non-functional as it isn't able to do the kind of incremental magic that `ty` can within a single file.
 To mitigate this, here are some potential modules/subpackages to lighten the load:
