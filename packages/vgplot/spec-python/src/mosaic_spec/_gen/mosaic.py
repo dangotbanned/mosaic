@@ -6,10 +6,14 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any, Literal, Union
 
-from mosaic_spec._gen import css_styles, interactors, marks, params, typing
+from mosaic_spec._gen.marks import PlotMark
+from mosaic_spec._gen.params import ParamDefinition
 from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
 
 if TYPE_CHECKING:
+    from mosaic_spec._gen.css_styles import CSSStyles
+    from mosaic_spec._gen.interactors import PlotInteractor
+    from mosaic_spec._gen.typing import ColorScheme, Interval
     from mosaic_spec.typing import ParamRef
 
 ColorScaleType = TypeAliasType(
@@ -650,7 +654,7 @@ Data = TypeAliasType("Data", Mapping[str, DataDefinition])
 """Top-level dataset definitions."""
 
 
-Params = TypeAliasType("Params", Mapping[str, params.ParamDefinition])
+Params = TypeAliasType("Params", Mapping[str, ParamDefinition])
 """Top-level Param and Selection definitions."""
 
 
@@ -727,7 +731,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """
     color_n: float | ParamRef
     """For a *quantile* scale, the number of quantiles (creates *n* - 1 thresholds); for a *quantize* scale, the approximate number of thresholds; defaults to 5."""
-    color_nice: bool | float | typing.Interval | ParamRef
+    color_nice: bool | float | Interval | ParamRef
     """
     If true, or a tick count or interval, extend the domain to nice round values. Defaults to 1, 2 or 5 times a power of 10 for *linear* scales, and nice time intervals for *utc* and *time* scales. Pass an interval such as
     *minute*, *wednesday* or *month* to specify what constitutes a nice interval.
@@ -754,7 +758,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
 
     For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales, *categorical* for color scales, and otherwise *ordinal*.
     """
-    color_scheme: typing.ColorScheme | ParamRef
+    color_scheme: ColorScheme | ParamRef
     """If specified, shorthand for setting the **colorRange** or **colorInterpolate** option of a *color* scale."""
     color_symmetric: bool | ParamRef
     """
@@ -778,7 +782,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
 
     For quantitative scales only.
     """
-    facet_grid: bool | str | typing.Interval | Sequence[Any] | ParamRef
+    facet_grid: bool | str | Interval | Sequence[Any] | ParamRef
     """Default axis grid for fx and fy scales; typically set to true to enable."""
     facet_label: str | ParamRef | None
     """Default axis label for fx and fy scales; typically set to null to disable."""
@@ -817,7 +821,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """The extent of the scale's inputs (abstract values). By default inferred from channel values. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
     fx_font_variant: str | ParamRef
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
-    fx_grid: bool | str | typing.Interval | Sequence[Any] | ParamRef
+    fx_grid: bool | str | Interval | Sequence[Any] | ParamRef
     """
     Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
@@ -895,7 +899,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """
     fx_tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    fx_ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    fx_ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     fy_align: float | ParamRef
     """
@@ -922,7 +926,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """The extent of the scale's inputs (abstract values). By default inferred from channel values. For ordinal data (strings or booleans), it is an array (or iterable) of values is the desired order, defaulting to natural ascending order."""
     fy_font_variant: str | ParamRef
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
-    fy_grid: bool | str | typing.Interval | Sequence[Any] | ParamRef
+    fy_grid: bool | str | Interval | Sequence[Any] | ParamRef
     """
     Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
@@ -1000,7 +1004,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """
     fy_tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    fy_ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    fy_ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     grid: bool | str | ParamRef
     """
@@ -1035,7 +1039,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """
     length_exponent: float | ParamRef
     """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
-    length_nice: bool | float | typing.Interval | ParamRef
+    length_nice: bool | float | Interval | ParamRef
     """
     If true, or a tick count or interval, extend the domain to nice round values. Defaults to 1, 2 or 5 times a power of 10 for *linear* scales, and nice time intervals for *utc* and *time* scales. Pass an interval such as
     *minute*, *wednesday* or *month* to specify what constitutes a nice interval.
@@ -1101,7 +1105,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
 
     For axes and legends only.
     """
-    opacity_nice: bool | float | typing.Interval | ParamRef
+    opacity_nice: bool | float | Interval | ParamRef
     """
     If true, or a tick count or interval, extend the domain to nice round values. Defaults to 1, 2 or 5 times a power of 10 for *linear* scales, and nice time intervals for *utc* and *time* scales. Pass an interval such as
     *minute*, *wednesday* or *month* to specify what constitutes a nice interval.
@@ -1214,7 +1218,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     r_label: str | ParamRef | None
     """A textual label to show on the axis or legend; if null, show no label. By default the scale label is inferred from channel definitions, possibly with an arrow (↑, →, ↓, or ←) to indicate the direction of increasing value."""
-    r_nice: bool | float | typing.Interval | ParamRef
+    r_nice: bool | float | Interval | ParamRef
     """
     If true, or a tick count or interval, extend the domain to nice round values. Defaults to 1, 2 or 5 times a power of 10 for *linear* scales, and nice time intervals for *utc* and *time* scales. Pass an interval such as
     *minute*, *wednesday* or *month* to specify what constitutes a nice interval.
@@ -1237,7 +1241,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
 
     For quantitative scales only.
     """
-    style: str | css_styles.CSSStyles | ParamRef | None
+    style: str | CSSStyles | ParamRef | None
     """
     Custom styles to override Plot's defaults. Styles may be specified either as a string of inline styles (*e.g.*, `"color: red;"`, in the same fashion as assigning [*element*.style][1]) or an object of properties (*e.g.*, `{color: "red"}`, in the same fashion as assigning [*element*.style properties][2]). Note that unitless numbers ([quirky lengths][3]) such as `{padding: 20}` may not supported by some browsers; you should instead specify a string with units such as `{padding: "20px"}`. By default, the returned plot has a max-width of 100%, and the system-ui font. Plot's marks and axes default to [currentColor][4], meaning that they will inherit the surrounding content's color.
 
@@ -1302,7 +1306,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     x_font_variant: str | ParamRef
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
-    x_grid: bool | str | typing.Interval | Sequence[Any] | ParamRef
+    x_grid: bool | str | Interval | Sequence[Any] | ParamRef
     """
     Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
@@ -1336,7 +1340,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """The axis **label** position offset (in pixels); default depends on margins and orientation."""
     x_line: bool | ParamRef
     """If true, draw a line along the axis; if false (default), do not."""
-    x_nice: bool | float | typing.Interval | ParamRef
+    x_nice: bool | float | Interval | ParamRef
     """
     If true, or a tick count or interval, extend the domain to nice round values. Defaults to 1, 2 or 5 times a power of 10 for *linear* scales, and nice time intervals for *utc* and *time* scales. Pass an interval such as
     *minute*, *wednesday* or *month* to specify what constitutes a nice interval.
@@ -1397,7 +1401,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """
     x_tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    x_ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    x_ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     x_zero: bool | ParamRef
     """
@@ -1450,7 +1454,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """A power scale's exponent (*e.g.*, 0.5 for sqrt); defaults to 1 for a linear scale. For *pow* scales only."""
     y_font_variant: str | ParamRef
     """The font-variant attribute for axis ticks; defaults to *tabular-nums* for quantitative axes."""
-    y_grid: bool | str | typing.Interval | Sequence[Any] | ParamRef
+    y_grid: bool | str | Interval | Sequence[Any] | ParamRef
     """
     Whether to show a grid aligned with the scale's ticks. If true, show a grid with the currentColor stroke; if a string, show a grid with the specified stroke color; if an approximate number of ticks, an interval, or an array of tick values, show corresponding grid lines. See also the grid mark.
 
@@ -1484,7 +1488,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """The axis **label** position offset (in pixels); default depends on margins and orientation."""
     y_line: bool | ParamRef
     """If true, draw a line along the axis; if false (default), do not."""
-    y_nice: bool | float | typing.Interval | ParamRef
+    y_nice: bool | float | Interval | ParamRef
     """
     If true, or a tick count or interval, extend the domain to nice round values. Defaults to 1, 2 or 5 times a power of 10 for *linear* scales, and nice time intervals for *utc* and *time* scales. Pass an interval such as
     *minute*, *wednesday* or *month* to specify what constitutes a nice interval.
@@ -1548,7 +1552,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """
     y_tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    y_ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    y_ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     y_zero: bool | ParamRef
     """
@@ -1564,7 +1568,7 @@ class PlotAttributes(_PlotAttributesOpen, total=False, closed=True): ...
 class _PlotOpen(_PlotAttributesOpen, total=False):
     """A plot component."""
 
-    plot: Required[Sequence[marks.PlotMark | interactors.PlotInteractor | PlotLegend]]
+    plot: Required[Sequence[PlotMark | PlotInteractor | PlotLegend]]
     """An array of plot marks, interactors, or legends. Marks are graphical elements that make up plot layers. Unless otherwise configured, interactors will use the nearest previous mark as a basis for which data fields to select."""
 
 
@@ -1574,17 +1578,7 @@ class Plot(_PlotOpen, total=False, closed=True): ...
 Component = TypeAliasType(
     "Component",
     Union[
-        "HConcat",
-        "VConcat",
-        HSpace,
-        VSpace,
-        Menu,
-        Search,
-        Slider,
-        Table,
-        Plot,
-        marks.PlotMark,
-        Legend,
+        "HConcat", "VConcat", HSpace, VSpace, Menu, Search, Slider, Table, Plot, PlotMark, Legend
     ],
 )
 """A specification component such as a plot, input widget, or layout."""

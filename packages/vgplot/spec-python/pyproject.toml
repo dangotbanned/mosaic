@@ -61,6 +61,7 @@ all-exports-scope     = "children"
 collapse-reuse-models = true
 skip-root-model       = true
 reuse-model           = true
+use-exact-imports     = true        # aka import each symbol
 
 # NOTE: Docs
 use-schema-description    = true

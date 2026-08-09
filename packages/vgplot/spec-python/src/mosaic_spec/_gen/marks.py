@@ -6,10 +6,11 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any, Literal
 
-from mosaic_spec._gen import transform, typing
+from mosaic_spec._gen.transform import Transform
 from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
 
 if TYPE_CHECKING:
+    from mosaic_spec._gen.typing import Interval
     from mosaic_spec.typing import ParamRef
 
 
@@ -998,14 +999,7 @@ class ChannelDomainSort(TypedDict, total=False, closed=True):
 
 ChannelValue = TypeAliasType(
     "ChannelValue",
-    Sequence[Any]
-    | str
-    | float
-    | bool
-    | transform.Transform
-    | SQLExpression
-    | AggregateExpression
-    | None,
+    Sequence[Any] | str | float | bool | Transform | SQLExpression | AggregateExpression | None,
 )
 """A channel's values may be expressed as:
 
@@ -1019,7 +1013,7 @@ ChannelValue = TypeAliasType(
 class ChannelValueIntervalSpec1(TypedDict, total=False, closed=True):
     """In some contexts, when specifying a mark channel's value, you can provide a {value, interval} object to specify an associated interval."""
 
-    interval: Required[typing.Interval]
+    interval: Required[Interval]
     value: Required[ChannelValue]
 
 
@@ -4294,7 +4288,7 @@ class _AxisFxOpen(MarkOptions, total=False):
     """Insets the bottom edge by the specified number of pixels. A positive value insets towards the top edge (reducing effective area), while a negative value insets away from the top edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
 
@@ -4458,7 +4452,7 @@ class _AxisFxOpen(MarkOptions, total=False):
     """
     tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     x: ChannelValueSpec
     """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
@@ -4534,7 +4528,7 @@ class _AxisFyOpen(MarkOptions, total=False):
     """Insets the left edge by the specified number of pixels. A positive value insets towards the right edge (reducing effective area), while a negative value insets away from the right edge (increasing it)."""
     inset_right: float | ParamRef
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
 
@@ -4697,7 +4691,7 @@ class _AxisFyOpen(MarkOptions, total=False):
     """
     tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     x: ChannelValueSpec
     """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
@@ -4773,7 +4767,7 @@ class _AxisXOpen(MarkOptions, total=False):
     """Insets the bottom edge by the specified number of pixels. A positive value insets towards the top edge (reducing effective area), while a negative value insets away from the top edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
 
@@ -4938,7 +4932,7 @@ class _AxisXOpen(MarkOptions, total=False):
     """
     tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     x: ChannelValueSpec
     """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
@@ -5014,7 +5008,7 @@ class _AxisYOpen(MarkOptions, total=False):
     """Insets the left edge by the specified number of pixels. A positive value insets towards the right edge (reducing effective area), while a negative value insets away from the right edge (increasing it)."""
     inset_right: float | ParamRef
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
 
@@ -5177,7 +5171,7 @@ class _AxisYOpen(MarkOptions, total=False):
     """
     tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     x: ChannelValueSpec
     """The horizontal position channel specifying the text's anchor point, typically bound to the *x* scale."""
@@ -5376,7 +5370,7 @@ class _DotXOpen(MarkOptions, total=False):
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
     """
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """An interval (such as *day* or a number), to transform **y** values to the middle of the interval."""
     mark: Required[Literal["dotX"]]
     """
@@ -5419,7 +5413,7 @@ class _DotYOpen(MarkOptions, total=False):
 
     ```js Plot.dot(data, {x: "date", frameAnchor: "top"}) ```
     """
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """An interval (such as *day* or a number), to transform **x** values to the middle of the interval."""
     mark: Required[Literal["dotY"]]
     """
@@ -5477,7 +5471,7 @@ class _GridFxOpen(MarkOptions, total=False):
     """Insets the bottom edge by the specified number of pixels. A positive value insets towards the top edge (reducing effective area), while a negative value insets away from the top edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
 
@@ -5528,7 +5522,7 @@ class _GridFxOpen(MarkOptions, total=False):
     """
     tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     x: ChannelValueSpec
     """The horizontal position of the tick; an optional channel bound to the *x* scale. If not specified, the rule will be horizontally centered in the plot's frame."""
@@ -5578,7 +5572,7 @@ class _GridFyOpen(MarkOptions, total=False):
     """Insets the left edge by the specified number of pixels. A positive value insets towards the right edge (reducing effective area), while a negative value insets away from the right edge (increasing it)."""
     inset_right: float | ParamRef
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
 
@@ -5629,7 +5623,7 @@ class _GridFyOpen(MarkOptions, total=False):
     """
     tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     x: ChannelValueIntervalSpec
     """Shorthand for specifying both the primary and secondary horizontal position of the tick as the bounds of the containing interval; can only be used in conjunction with the **interval** option."""
@@ -5679,7 +5673,7 @@ class _GridXOpen(MarkOptions, total=False):
     """Insets the bottom edge by the specified number of pixels. A positive value insets towards the top edge (reducing effective area), while a negative value insets away from the top edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
 
@@ -5733,7 +5727,7 @@ class _GridXOpen(MarkOptions, total=False):
     """
     tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     x: ChannelValueSpec
     """The horizontal position of the tick; an optional channel bound to the *x* scale. If not specified, the rule will be horizontally centered in the plot's frame."""
@@ -5783,7 +5777,7 @@ class _GridYOpen(MarkOptions, total=False):
     """Insets the left edge by the specified number of pixels. A positive value insets towards the right edge (reducing effective area), while a negative value insets away from the right edge (increasing it)."""
     inset_right: float | ParamRef
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
 
@@ -5837,7 +5831,7 @@ class _GridYOpen(MarkOptions, total=False):
     """
     tick_spacing: float | ParamRef
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
-    ticks: float | typing.Interval | Sequence[Any] | ParamRef
+    ticks: float | Interval | Sequence[Any] | ParamRef
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
     x: ChannelValueIntervalSpec
     """Shorthand for specifying both the primary and secondary horizontal position of the tick as the bounds of the containing interval; can only be used in conjunction with the **interval** option."""
@@ -5878,7 +5872,7 @@ class _RectOpen(MarkOptions, total=False):
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     How to convert a continuous value (**x** for rectY, **y** for rectX, or both for rect) into an interval (**x1** and **x2** for rectY, or **y1** and
     **y2** for rectX, or both for rect); one of:
@@ -6001,7 +5995,7 @@ class _RectXOpen(MarkOptions, total=False):
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     How to convert a continuous value (**x** for rectY, **y** for rectX, or both for rect) into an interval (**x1** and **x2** for rectY, or **y1** and
     **y2** for rectX, or both for rect); one of:
@@ -6110,7 +6104,7 @@ class _RectYOpen(MarkOptions, total=False):
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     How to convert a continuous value (**x** for rectY, **y** for rectX, or both for rect) into an interval (**x1** and **x2** for rectY, or **y1** and
     **y2** for rectX, or both for rect); one of:
@@ -6215,7 +6209,7 @@ class _RuleXOpen(MarkOptions, total=False):
     """Insets the bottom edge by the specified number of pixels. A positive value insets towards the top edge (reducing effective area), while a negative value insets away from the top edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     How to convert a continuous value (**y** for ruleX, or **x** for ruleY) into an interval (**y1** and **y2** for ruleX, or **x1** and **x2** for ruleY); one of:
 
@@ -6301,7 +6295,7 @@ class _RuleYOpen(MarkOptions, total=False):
     """Insets the bottom edge by the specified number of pixels. A positive value insets towards the top edge (reducing effective area), while a negative value insets away from the top edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     How to convert a continuous value (**y** for ruleX, or **x** for ruleY) into an interval (**y1** and **y2** for ruleX, or **x1** and **x2** for ruleY); one of:
 
@@ -6414,7 +6408,7 @@ class _TextXOpen(MarkOptions, total=False):
     **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """An interval (such as *day* or a number), to transform **y** values to the middle of the interval."""
     line_anchor: Literal["top", "middle", "bottom"] | ParamRef
     """
@@ -6528,7 +6522,7 @@ class _TextYOpen(MarkOptions, total=False):
     **textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the
     *middle* of the frame.
     """
-    interval: typing.Interval
+    interval: Interval
     """An interval (such as *day* or a number), to transform **x** values to the middle of the interval."""
     line_anchor: Literal["top", "middle", "bottom"] | ParamRef
     """
@@ -6621,7 +6615,7 @@ class _WaffleXOpen(MarkOptions, total=False):
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY); one of:
 
@@ -6726,7 +6720,7 @@ class _WaffleYOpen(MarkOptions, total=False):
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY); one of:
 
@@ -6829,7 +6823,7 @@ class _BarXOpen(MarkOptions, total=False):
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY); one of:
 
@@ -6928,7 +6922,7 @@ class _BarYOpen(MarkOptions, total=False):
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     inset_top: float | ParamRef
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    interval: typing.Interval | ParamRef
+    interval: Interval | ParamRef
     """
     How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY); one of:
 
