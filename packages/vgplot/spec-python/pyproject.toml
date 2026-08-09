@@ -45,29 +45,28 @@ output-model-type       = "typing.TypedDict"
 formatters              = []
 target-python-version   = "3.10"
 
+enum-field-as-literal             = "all"
 use-generic-container-types       = true
 use-tuple-for-fixed-items         = true
 use-tuple-for-fixed-length-arrays = true
-use-type-checking-imports         = true
-enum-field-as-literal             = "all"
-use-type-alias-type               = true
 use-total-false-for-typed-dict    = true
+use-type-alias-type               = true
+use-type-checking-imports         = true
 
+infer-union-variant-names = true
+snake-case-field          = true
+use-title-as-name         = true
+
+all-exports-scope     = "children"
 collapse-reuse-models = true
 skip-root-model       = true
 reuse-model           = true
-# keep-model-order = true
-all-exports-scope     = "children"
 
 # NOTE: Docs
 use-schema-description    = true
 use-field-description     = true
 use-attribute-docstrings  = true
 use-single-line-docstring = true
-
-use-title-as-name         = true
-snake-case-field          = true
-infer-union-variant-names = true
 
 [tool.datamodel-codegen.profiles.spec]
 input                   = "schema/"
@@ -81,6 +80,11 @@ import-overrides        = '{"NotRequired": "mosaic_spec._typing_compat", "Requir
 # NOTE: Used in multiple modules and letting `dcg` handle it was a timesink
 type-overrides          = '{"ParamRef": "mosaic_spec.typing.ParamRef"}'
 use-title-as-name       = false
+
+# NOTE: Enabled in the main config, but no longer produce a diff for this profile
+collapse-reuse-models     = false
+reuse-model               = false
+infer-union-variant-names = false
 
 [tool.hatch.version]
 path    = "package.json"
