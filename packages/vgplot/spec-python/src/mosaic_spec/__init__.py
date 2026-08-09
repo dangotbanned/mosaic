@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from mosaic_spec import spec
 from mosaic_spec._gen import (
-    Y1,
     AggregateExpression,
     AggregateTransform,
     Area,
@@ -127,7 +126,6 @@ from mosaic_spec._gen import (
     LineX,
     LineY,
     Link,
-    Lo,
     Margins,
     MarkerName,
     MarkOptions,
@@ -236,7 +234,6 @@ from mosaic_spec._gen import (
 from mosaic_spec.spec import Spec
 
 __all__ = (
-    "Y1",
     "AggregateExpression",
     "AggregateTransform",
     "Area",
@@ -361,7 +358,6 @@ __all__ = (
     "LineX",
     "LineY",
     "Link",
-    "Lo",
     "Margins",
     "MarkOptions",
     "MarkerName",

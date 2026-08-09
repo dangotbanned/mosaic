@@ -92,7 +92,6 @@ from mosaic_spec._gen.marks import (
     LineX,
     LineY,
     Link,
-    Lo,
     MarkerName,
     MarkOptions,
     PlotDataInline,
@@ -138,7 +137,6 @@ from mosaic_spec._gen.marks import (
     WaffleY,
 )
 from mosaic_spec._gen.mosaic import (
-    Y1,
     ColorScaleType,
     Component,
     Config,
@@ -243,7 +241,6 @@ from mosaic_spec._gen.transform import (
 from mosaic_spec._gen.typing import ColorScheme, Interval, TimeIntervalName
 
 __all__ = [
-    "Y1",
     "AggregateExpression",
     "AggregateTransform",
     "Area",
@@ -368,7 +365,6 @@ __all__ = [
     "LineX",
     "LineY",
     "Link",
-    "Lo",
     "Margins",
     "MarkOptions",
     "MarkerName",

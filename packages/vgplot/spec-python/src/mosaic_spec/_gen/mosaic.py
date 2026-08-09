@@ -4,11 +4,13 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Any, Literal, Union
+from typing import TYPE_CHECKING, Any, Literal, Union
 
 from mosaic_spec._gen import css_styles, interactors, marks, params, typing
 from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
-from mosaic_spec.typing import ParamRef
+
+if TYPE_CHECKING:
+    from mosaic_spec.typing import ParamRef
 
 ColorScaleType = TypeAliasType(
     "ColorScaleType",
@@ -351,9 +353,6 @@ class Margins(TypedDict, total=False, closed=True):
     left: float | ParamRef
     right: float | ParamRef
     top: float | ParamRef
-
-
-Y1 = TypeAliasType("Y1", float | ParamRef)
 
 
 class PlotLegend(TypedDict, total=False, closed=True):
@@ -1170,7 +1169,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
     """Insets the right edge of the projection by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     projection_inset_top: float | ParamRef
     """Insets the top edge of the projection by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
-    projection_parallels: tuple[Y1, Y1] | ParamRef
+    projection_parallels: tuple[float | ParamRef, float | ParamRef] | ParamRef
     """
     The [standard parallels][1]. For conic projections only.
 
@@ -1182,7 +1181,7 @@ class _PlotAttributesOpen(TypedDict, total=False):
 
     [1]: https://d3js.org/d3-geo/projection#projection_precision
     """
-    projection_rotate: tuple[Y1, Y1, Y1] | ParamRef
+    projection_rotate: tuple[float | ParamRef, float | ParamRef, float | ParamRef] | ParamRef
     """A rotation of the sphere before projection; defaults to [0, 0, 0]. Specified as Euler angles λ (yaw, or reference longitude), φ (pitch, or reference latitude), and optionally γ (roll), in degrees."""
     projection_type: ProjectionName | ParamRef | None
     """

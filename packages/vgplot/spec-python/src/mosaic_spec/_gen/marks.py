@@ -277,9 +277,6 @@ class AggregateExpression(TypedDict, total=False, closed=True):
     """A label for this expression, for example to label a plot axis."""
 
 
-Lo = TypeAliasType("Lo", float)
-
-
 ChannelName = TypeAliasType(
     "ChannelName",
     Literal[
@@ -926,7 +923,7 @@ StackOrder = TypeAliasType(
 class ChannelDomainValueSpec1(TypedDict, total=False, closed=True):
     """How to derive a scale's domain from a channel's values."""
 
-    limit: float | tuple[Lo, Lo]
+    limit: float | tuple[float, float]
     """
     If a positive number, limit the domain to the first *n* sorted values. If a negative number, limit the domain to the last *-n* sorted values. Hence, a positive **limit** with **reverse** true will return the top *n* values in descending order.
 
@@ -967,7 +964,7 @@ class ChannelDomainSort(TypedDict, total=False, closed=True):
     fx: ChannelDomainValueSpec
     fy: ChannelDomainValueSpec
     length: ChannelDomainValueSpec
-    limit: float | tuple[Lo, Lo]
+    limit: float | tuple[float, float]
     """
     If a positive number, limit the domain to the first *n* sorted values. If a negative number, limit the domain to the last *-n* sorted values. Hence, a positive **limit** with **reverse** true will return the top *n* values in descending order.
 
