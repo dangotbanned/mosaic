@@ -149,7 +149,7 @@ def generate_python_schema(source: str | Path, target: Path) -> Artifacts:
     InteractorsSplit("PlotInteractor", "interactors.json").run(schema)
     TransformSplit("Transform", "transform.json").run(schema)
 
-    serde.write_json(target, schema)
+    serde.write_json(target, schema, pretty=True)
     print(f"Generated python schema at: {fs.repo_relative_str(target)}")
     return Artifacts(schema, marks=spec_dedup.extracted, spec_description=spec_def.description)
 
@@ -179,7 +179,7 @@ class SchemaSplit(SchemaMod):
         """Move definitions from `schema` into `filename`."""
         self.update_refs(schema)
         extracted = self.extract(schema)
-        serde.write_json(self.path, extracted)
+        serde.write_json(self.path, extracted, pretty=True)
         print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
 
     def update_refs(self, schema: m.InputSchema) -> None:

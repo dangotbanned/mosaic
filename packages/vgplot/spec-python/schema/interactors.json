@@ -1,1 +1,650 @@
-{"$id":"interactors.json","$schema":"http://json-schema.org/draft-07/schema#","definitions":{"BrushStyles":{"additionalProperties":false,"description":"Styles for rectangular selection brushes.","properties":{"fill":{"description":"The fill color of the brush rectangle.","type":"string"},"fillOpacity":{"description":"The fill opacity of the brush rectangle.","type":"number"},"opacity":{"description":"The overall opacity of the brush rectangle.","type":"number"},"stroke":{"description":"The stroke color of the brush rectangle.","type":"string"},"strokeDasharray":{"description":"The stroke dash array of the brush rectangle.","type":"string"},"strokeOpacity":{"description":"The stroke opacity of the brush rectangle.","type":"number"}},"type":"object"},"Highlight":{"additionalProperties":false,"description":"A highlight interactor.","properties":{"by":{"$ref":"#/definitions/ParamRef","description":"The input selection. Unselected marks are deemphasized."},"fill":{"description":"The fill color of deemphasized marks. By default the fill is unchanged.","type":"string"},"fillOpacity":{"description":"The fill opacity of deemphasized marks. By default the fill opacity is unchanged.","type":"number"},"opacity":{"description":"The overall opacity of deemphasized marks. By default the opacity is set to 0.2.","type":"number"},"select":{"const":"highlight","description":"Highlight selected marks by deemphasizing the others.","type":"string"},"stroke":{"description":"The stroke color of deemphasized marks. By default the stroke is unchanged.","type":"string"},"strokeOpacity":{"description":"The stroke opacity of deemphasized marks. By default the stroke opacity is unchanged.","type":"number"}},"required":["select","by"],"type":"object"},"IntervalX":{"additionalProperties":false,"description":"An intervalX interactor.","properties":{"bind":{"$ref":"#/definitions/ParamRef","description":"The output selection. A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi]."},"brush":{"$ref":"#/definitions/BrushStyles","description":"CSS styles for the brush (SVG `rect`) element."},"field":{"description":"The name of the field (database column) over which the interval selection should be defined. If unspecified, the  channel field of the first valid prior mark definition is used.","type":"string"},"peers":{"description":"A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.","type":"boolean"},"pixelSize":{"description":"The size of an interactive pixel (default `1`). Larger pixel sizes reduce the brush resolution, which can reduce the size of pre-aggregated materialized views.","type":"number"},"select":{"const":"intervalX","description":"Select a continuous 1D interval selection over the `x` scale domain.","type":"string"}},"required":["bind","select"],"type":"object"},"IntervalXY":{"additionalProperties":false,"description":"An intervalXY interactor.","properties":{"bind":{"$ref":"#/definitions/ParamRef","description":"The output selection. A clause of the form `(xfield BETWEEN x1 AND x2) AND (yfield BETWEEN y1 AND y2)` is added for the currently selected intervals."},"brush":{"$ref":"#/definitions/BrushStyles","description":"CSS styles for the brush (SVG `rect`) element."},"peers":{"description":"A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.","type":"boolean"},"pixelSize":{"description":"The size of an interactive pixel (default `1`). Larger pixel sizes reduce the brush resolution, which can reduce the size of pre-aggregated materialized views.","type":"number"},"select":{"const":"intervalXY","description":"Select a continuous 2D interval selection over the `x` and `y` scale domains.","type":"string"},"xfield":{"description":"The name of the field (database column) over which the `x`-component of the interval selection should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.","type":"string"},"yfield":{"description":"The name of the field (database column) over which the `y`-component of the interval selection should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.","type":"string"}},"required":["bind","select"],"type":"object"},"IntervalY":{"additionalProperties":false,"description":"An intervalY interactor.","properties":{"bind":{"$ref":"#/definitions/ParamRef","description":"The output selection. A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi]."},"brush":{"$ref":"#/definitions/BrushStyles","description":"CSS styles for the brush (SVG `rect`) element."},"field":{"description":"The name of the field (database column) over which the interval selection should be defined. If unspecified, the  channel field of the first valid prior mark definition is used.","type":"string"},"peers":{"description":"A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.","type":"boolean"},"pixelSize":{"description":"The size of an interactive pixel (default `1`). Larger pixel sizes reduce the brush resolution, which can reduce the size of pre-aggregated materialized views.","type":"number"},"select":{"const":"intervalY","description":"Select a continuous 1D interval selection over the `y` scale domain.","type":"string"}},"required":["bind","select"],"type":"object"},"NearestX":{"additionalProperties":false,"description":"A nearestX interactor.","properties":{"bind":{"$ref":"#/definitions/ParamRef","description":"The output selection. A clause of the form `field = value` is added for the currently nearest value."},"channels":{"description":"The encoding channels whose domain values should be selected. For example, a setting of `['color']` selects the data value backing the color channel, whereas `['x', 'z']` selects both x and z channel domain values. If unspecified, the selected channels default to match the current pointer settings: a `nearestX` interactor selects the `['x']` channels, while a `nearest` interactor selects the `['x', 'y']` channels.","items":{"type":"string"},"type":"array"},"fields":{"description":"The fields (database column names) to use in generated selection clause predicates. If unspecified, the fields backing the selected *channels* in the first valid prior mark definition are used by default.","items":{"type":"string"},"type":"array"},"maxRadius":{"description":"The maximum radius of a nearest selection (default 40). Marks with (x, y) coordinates outside this radius will not be selected as nearest points.","type":"number"},"select":{"const":"nearestX","description":"Select values from the mark closest to the pointer *x* location.","type":"string"}},"required":["bind","select"],"type":"object"},"NearestY":{"additionalProperties":false,"description":"A nearestY interactor.","properties":{"bind":{"$ref":"#/definitions/ParamRef","description":"The output selection. A clause of the form `field = value` is added for the currently nearest value."},"channels":{"description":"The encoding channels whose domain values should be selected. For example, a setting of `['color']` selects the data value backing the color channel, whereas `['x', 'z']` selects both x and z channel domain values. If unspecified, the selected channels default to match the current pointer settings: a `nearestX` interactor selects the `['x']` channels, while a `nearest` interactor selects the `['x', 'y']` channels.","items":{"type":"string"},"type":"array"},"fields":{"description":"The fields (database column names) to use in generated selection clause predicates. If unspecified, the fields backing the selected *channels* in the first valid prior mark definition are used by default.","items":{"type":"string"},"type":"array"},"maxRadius":{"description":"The maximum radius of a nearest selection (default 40). Marks with (x, y) coordinates outside this radius will not be selected as nearest points.","type":"number"},"select":{"const":"nearestY","description":"Select values from the mark closest to the pointer *y* location.","type":"string"}},"required":["bind","select"],"type":"object"},"Pan":{"additionalProperties":false,"description":"A pan interactor.","properties":{"select":{"const":"pan","description":"Pan a plot along both the `x` and `y` scales.","type":"string"},"x":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."},"xfield":{"description":"The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.","type":"string"},"y":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."},"yfield":{"description":"The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.","type":"string"}},"required":["select"],"type":"object"},"PanX":{"additionalProperties":false,"description":"A panX interactor.","properties":{"select":{"const":"panX","description":"Pan a plot along the `x` scale only.","type":"string"},"x":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."},"xfield":{"description":"The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.","type":"string"},"y":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."},"yfield":{"description":"The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.","type":"string"}},"required":["select"],"type":"object"},"PanY":{"additionalProperties":false,"description":"A panY interactor.","properties":{"select":{"const":"panY","description":"Pan a plot along the `y` scale only.","type":"string"},"x":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."},"xfield":{"description":"The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.","type":"string"},"y":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."},"yfield":{"description":"The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.","type":"string"}},"required":["select"],"type":"object"},"PanZoom":{"additionalProperties":false,"description":"A panZoom interactor.","properties":{"select":{"const":"panZoom","description":"Pan and zoom a plot along both the `x` and `y` scales.","type":"string"},"x":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."},"xfield":{"description":"The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.","type":"string"},"y":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."},"yfield":{"description":"The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.","type":"string"}},"required":["select"],"type":"object"},"PanZoomX":{"additionalProperties":false,"description":"A panZoomX interactor.","properties":{"select":{"const":"panZoomX","description":"Pan and zoom a plot along the `x` scale only.","type":"string"},"x":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."},"xfield":{"description":"The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.","type":"string"},"y":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."},"yfield":{"description":"The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.","type":"string"}},"required":["select"],"type":"object"},"PanZoomY":{"additionalProperties":false,"description":"A panZoomY interactor.","properties":{"select":{"const":"panZoomY","description":"Pan and zoom a plot along the `y` scale only.","type":"string"},"x":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."},"xfield":{"description":"The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.","type":"string"},"y":{"$ref":"#/definitions/ParamRef","description":"The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."},"yfield":{"description":"The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.","type":"string"}},"required":["select"],"type":"object"},"ParamRef":{"type":"string"},"PlotInteractor":{"anyOf":[{"$ref":"#/definitions/Highlight"},{"$ref":"#/definitions/IntervalX"},{"$ref":"#/definitions/IntervalY"},{"$ref":"#/definitions/IntervalXY"},{"$ref":"#/definitions/NearestX"},{"$ref":"#/definitions/NearestY"},{"$ref":"#/definitions/Pan"},{"$ref":"#/definitions/PanX"},{"$ref":"#/definitions/PanY"},{"$ref":"#/definitions/PanZoom"},{"$ref":"#/definitions/PanZoomX"},{"$ref":"#/definitions/PanZoomY"},{"$ref":"#/definitions/Region"},{"$ref":"#/definitions/Toggle"},{"$ref":"#/definitions/ToggleX"},{"$ref":"#/definitions/ToggleY"},{"$ref":"#/definitions/ToggleColor"}],"description":"A plot interactor entry."},"Region":{"additionalProperties":false,"description":"A rectangular region interactor.","properties":{"bind":{"$ref":"#/definitions/ParamRef","description":"The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."},"brush":{"$ref":"#/definitions/BrushStyles","description":"CSS styles for the brush (SVG `rect`) element."},"channels":{"description":"The encoding channels over which to select values. For a selected mark, selection clauses will cover the backing data fields for each channel.","items":{"type":"string"},"type":"array"},"peers":{"description":"A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.","type":"boolean"},"select":{"const":"region","description":"Select aspects of individual marks within a 2D range.","type":"string"}},"required":["bind","channels","select"],"type":"object"},"Toggle":{"additionalProperties":false,"description":"A toggle interactor.","properties":{"bind":{"$ref":"#/definitions/ParamRef","description":"The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."},"channels":{"description":"The encoding channels over which to select values. For a selected mark, selection clauses will cover the backing data fields for each channel.","items":{"type":"string"},"type":"array"},"peers":{"description":"A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.","type":"boolean"},"select":{"const":"toggle","description":"Select individual values.","type":"string"}},"required":["bind","channels","select"],"type":"object"},"ToggleColor":{"additionalProperties":false,"description":"A toggleColor interactor.","properties":{"bind":{"$ref":"#/definitions/ParamRef","description":"The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."},"peers":{"description":"A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.","type":"boolean"},"select":{"const":"toggleColor","description":"Select individual values in the `color` scale domain. Clicking or touching a mark toggles its selection status.","type":"string"}},"required":["bind","select"],"type":"object"},"ToggleX":{"additionalProperties":false,"description":"A toggleX interactor.","properties":{"bind":{"$ref":"#/definitions/ParamRef","description":"The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."},"peers":{"description":"A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.","type":"boolean"},"select":{"const":"toggleX","description":"Select individual values in the `x` scale domain. Clicking or touching a mark toggles its selection status.","type":"string"}},"required":["bind","select"],"type":"object"},"ToggleY":{"additionalProperties":false,"description":"A toggleY interactor.","properties":{"bind":{"$ref":"#/definitions/ParamRef","description":"The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."},"peers":{"description":"A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.","type":"boolean"},"select":{"const":"toggleY","description":"Select individual values in the `y` scale domain. Clicking or touching a mark toggles its selection status.","type":"string"}},"required":["bind","select"],"type":"object"}}}
+{
+  "$id": "interactors.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "BrushStyles": {
+      "additionalProperties": false,
+      "description": "Styles for rectangular selection brushes.",
+      "properties": {
+        "fill": {
+          "description": "The fill color of the brush rectangle.",
+          "type": "string"
+        },
+        "fillOpacity": {
+          "description": "The fill opacity of the brush rectangle.",
+          "type": "number"
+        },
+        "opacity": {
+          "description": "The overall opacity of the brush rectangle.",
+          "type": "number"
+        },
+        "stroke": {
+          "description": "The stroke color of the brush rectangle.",
+          "type": "string"
+        },
+        "strokeDasharray": {
+          "description": "The stroke dash array of the brush rectangle.",
+          "type": "string"
+        },
+        "strokeOpacity": {
+          "description": "The stroke opacity of the brush rectangle.",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "Highlight": {
+      "additionalProperties": false,
+      "description": "A highlight interactor.",
+      "properties": {
+        "by": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The input selection. Unselected marks are deemphasized."
+        },
+        "fill": {
+          "description": "The fill color of deemphasized marks. By default the fill is unchanged.",
+          "type": "string"
+        },
+        "fillOpacity": {
+          "description": "The fill opacity of deemphasized marks. By default the fill opacity is unchanged.",
+          "type": "number"
+        },
+        "opacity": {
+          "description": "The overall opacity of deemphasized marks. By default the opacity is set to 0.2.",
+          "type": "number"
+        },
+        "select": {
+          "const": "highlight",
+          "description": "Highlight selected marks by deemphasizing the others.",
+          "type": "string"
+        },
+        "stroke": {
+          "description": "The stroke color of deemphasized marks. By default the stroke is unchanged.",
+          "type": "string"
+        },
+        "strokeOpacity": {
+          "description": "The stroke opacity of deemphasized marks. By default the stroke opacity is unchanged.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "select",
+        "by"
+      ],
+      "type": "object"
+    },
+    "IntervalX": {
+      "additionalProperties": false,
+      "description": "An intervalX interactor.",
+      "properties": {
+        "bind": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection. A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi]."
+        },
+        "brush": {
+          "$ref": "#/definitions/BrushStyles",
+          "description": "CSS styles for the brush (SVG `rect`) element."
+        },
+        "field": {
+          "description": "The name of the field (database column) over which the interval selection should be defined. If unspecified, the  channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        },
+        "peers": {
+          "description": "A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.",
+          "type": "boolean"
+        },
+        "pixelSize": {
+          "description": "The size of an interactive pixel (default `1`). Larger pixel sizes reduce the brush resolution, which can reduce the size of pre-aggregated materialized views.",
+          "type": "number"
+        },
+        "select": {
+          "const": "intervalX",
+          "description": "Select a continuous 1D interval selection over the `x` scale domain.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bind",
+        "select"
+      ],
+      "type": "object"
+    },
+    "IntervalXY": {
+      "additionalProperties": false,
+      "description": "An intervalXY interactor.",
+      "properties": {
+        "bind": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection. A clause of the form `(xfield BETWEEN x1 AND x2) AND (yfield BETWEEN y1 AND y2)` is added for the currently selected intervals."
+        },
+        "brush": {
+          "$ref": "#/definitions/BrushStyles",
+          "description": "CSS styles for the brush (SVG `rect`) element."
+        },
+        "peers": {
+          "description": "A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.",
+          "type": "boolean"
+        },
+        "pixelSize": {
+          "description": "The size of an interactive pixel (default `1`). Larger pixel sizes reduce the brush resolution, which can reduce the size of pre-aggregated materialized views.",
+          "type": "number"
+        },
+        "select": {
+          "const": "intervalXY",
+          "description": "Select a continuous 2D interval selection over the `x` and `y` scale domains.",
+          "type": "string"
+        },
+        "xfield": {
+          "description": "The name of the field (database column) over which the `x`-component of the interval selection should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        },
+        "yfield": {
+          "description": "The name of the field (database column) over which the `y`-component of the interval selection should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bind",
+        "select"
+      ],
+      "type": "object"
+    },
+    "IntervalY": {
+      "additionalProperties": false,
+      "description": "An intervalY interactor.",
+      "properties": {
+        "bind": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection. A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi]."
+        },
+        "brush": {
+          "$ref": "#/definitions/BrushStyles",
+          "description": "CSS styles for the brush (SVG `rect`) element."
+        },
+        "field": {
+          "description": "The name of the field (database column) over which the interval selection should be defined. If unspecified, the  channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        },
+        "peers": {
+          "description": "A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.",
+          "type": "boolean"
+        },
+        "pixelSize": {
+          "description": "The size of an interactive pixel (default `1`). Larger pixel sizes reduce the brush resolution, which can reduce the size of pre-aggregated materialized views.",
+          "type": "number"
+        },
+        "select": {
+          "const": "intervalY",
+          "description": "Select a continuous 1D interval selection over the `y` scale domain.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bind",
+        "select"
+      ],
+      "type": "object"
+    },
+    "NearestX": {
+      "additionalProperties": false,
+      "description": "A nearestX interactor.",
+      "properties": {
+        "bind": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection. A clause of the form `field = value` is added for the currently nearest value."
+        },
+        "channels": {
+          "description": "The encoding channels whose domain values should be selected. For example, a setting of `['color']` selects the data value backing the color channel, whereas `['x', 'z']` selects both x and z channel domain values. If unspecified, the selected channels default to match the current pointer settings: a `nearestX` interactor selects the `['x']` channels, while a `nearest` interactor selects the `['x', 'y']` channels.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fields": {
+          "description": "The fields (database column names) to use in generated selection clause predicates. If unspecified, the fields backing the selected *channels* in the first valid prior mark definition are used by default.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "maxRadius": {
+          "description": "The maximum radius of a nearest selection (default 40). Marks with (x, y) coordinates outside this radius will not be selected as nearest points.",
+          "type": "number"
+        },
+        "select": {
+          "const": "nearestX",
+          "description": "Select values from the mark closest to the pointer *x* location.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bind",
+        "select"
+      ],
+      "type": "object"
+    },
+    "NearestY": {
+      "additionalProperties": false,
+      "description": "A nearestY interactor.",
+      "properties": {
+        "bind": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection. A clause of the form `field = value` is added for the currently nearest value."
+        },
+        "channels": {
+          "description": "The encoding channels whose domain values should be selected. For example, a setting of `['color']` selects the data value backing the color channel, whereas `['x', 'z']` selects both x and z channel domain values. If unspecified, the selected channels default to match the current pointer settings: a `nearestX` interactor selects the `['x']` channels, while a `nearest` interactor selects the `['x', 'y']` channels.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fields": {
+          "description": "The fields (database column names) to use in generated selection clause predicates. If unspecified, the fields backing the selected *channels* in the first valid prior mark definition are used by default.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "maxRadius": {
+          "description": "The maximum radius of a nearest selection (default 40). Marks with (x, y) coordinates outside this radius will not be selected as nearest points.",
+          "type": "number"
+        },
+        "select": {
+          "const": "nearestY",
+          "description": "Select values from the mark closest to the pointer *y* location.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bind",
+        "select"
+      ],
+      "type": "object"
+    },
+    "Pan": {
+      "additionalProperties": false,
+      "description": "A pan interactor.",
+      "properties": {
+        "select": {
+          "const": "pan",
+          "description": "Pan a plot along both the `x` and `y` scales.",
+          "type": "string"
+        },
+        "x": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
+        },
+        "xfield": {
+          "description": "The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        },
+        "y": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
+        },
+        "yfield": {
+          "description": "The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "select"
+      ],
+      "type": "object"
+    },
+    "PanX": {
+      "additionalProperties": false,
+      "description": "A panX interactor.",
+      "properties": {
+        "select": {
+          "const": "panX",
+          "description": "Pan a plot along the `x` scale only.",
+          "type": "string"
+        },
+        "x": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
+        },
+        "xfield": {
+          "description": "The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        },
+        "y": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
+        },
+        "yfield": {
+          "description": "The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "select"
+      ],
+      "type": "object"
+    },
+    "PanY": {
+      "additionalProperties": false,
+      "description": "A panY interactor.",
+      "properties": {
+        "select": {
+          "const": "panY",
+          "description": "Pan a plot along the `y` scale only.",
+          "type": "string"
+        },
+        "x": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
+        },
+        "xfield": {
+          "description": "The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        },
+        "y": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
+        },
+        "yfield": {
+          "description": "The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "select"
+      ],
+      "type": "object"
+    },
+    "PanZoom": {
+      "additionalProperties": false,
+      "description": "A panZoom interactor.",
+      "properties": {
+        "select": {
+          "const": "panZoom",
+          "description": "Pan and zoom a plot along both the `x` and `y` scales.",
+          "type": "string"
+        },
+        "x": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
+        },
+        "xfield": {
+          "description": "The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        },
+        "y": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
+        },
+        "yfield": {
+          "description": "The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "select"
+      ],
+      "type": "object"
+    },
+    "PanZoomX": {
+      "additionalProperties": false,
+      "description": "A panZoomX interactor.",
+      "properties": {
+        "select": {
+          "const": "panZoomX",
+          "description": "Pan and zoom a plot along the `x` scale only.",
+          "type": "string"
+        },
+        "x": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
+        },
+        "xfield": {
+          "description": "The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        },
+        "y": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
+        },
+        "yfield": {
+          "description": "The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "select"
+      ],
+      "type": "object"
+    },
+    "PanZoomY": {
+      "additionalProperties": false,
+      "description": "A panZoomY interactor.",
+      "properties": {
+        "select": {
+          "const": "panZoomY",
+          "description": "Pan and zoom a plot along the `y` scale only.",
+          "type": "string"
+        },
+        "x": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `x` domain. A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zom interval [x1, x2]."
+        },
+        "xfield": {
+          "description": "The name of the field (database column) over which the `x`-component of the pan/zoom interval should be defined. If unspecified, the `x` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        },
+        "y": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."
+        },
+        "yfield": {
+          "description": "The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "select"
+      ],
+      "type": "object"
+    },
+    "ParamRef": {
+      "type": "string"
+    },
+    "PlotInteractor": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Highlight"
+        },
+        {
+          "$ref": "#/definitions/IntervalX"
+        },
+        {
+          "$ref": "#/definitions/IntervalY"
+        },
+        {
+          "$ref": "#/definitions/IntervalXY"
+        },
+        {
+          "$ref": "#/definitions/NearestX"
+        },
+        {
+          "$ref": "#/definitions/NearestY"
+        },
+        {
+          "$ref": "#/definitions/Pan"
+        },
+        {
+          "$ref": "#/definitions/PanX"
+        },
+        {
+          "$ref": "#/definitions/PanY"
+        },
+        {
+          "$ref": "#/definitions/PanZoom"
+        },
+        {
+          "$ref": "#/definitions/PanZoomX"
+        },
+        {
+          "$ref": "#/definitions/PanZoomY"
+        },
+        {
+          "$ref": "#/definitions/Region"
+        },
+        {
+          "$ref": "#/definitions/Toggle"
+        },
+        {
+          "$ref": "#/definitions/ToggleX"
+        },
+        {
+          "$ref": "#/definitions/ToggleY"
+        },
+        {
+          "$ref": "#/definitions/ToggleColor"
+        }
+      ],
+      "description": "A plot interactor entry."
+    },
+    "Region": {
+      "additionalProperties": false,
+      "description": "A rectangular region interactor.",
+      "properties": {
+        "bind": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."
+        },
+        "brush": {
+          "$ref": "#/definitions/BrushStyles",
+          "description": "CSS styles for the brush (SVG `rect`) element."
+        },
+        "channels": {
+          "description": "The encoding channels over which to select values. For a selected mark, selection clauses will cover the backing data fields for each channel.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "peers": {
+          "description": "A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.",
+          "type": "boolean"
+        },
+        "select": {
+          "const": "region",
+          "description": "Select aspects of individual marks within a 2D range.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bind",
+        "channels",
+        "select"
+      ],
+      "type": "object"
+    },
+    "Toggle": {
+      "additionalProperties": false,
+      "description": "A toggle interactor.",
+      "properties": {
+        "bind": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."
+        },
+        "channels": {
+          "description": "The encoding channels over which to select values. For a selected mark, selection clauses will cover the backing data fields for each channel.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "peers": {
+          "description": "A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.",
+          "type": "boolean"
+        },
+        "select": {
+          "const": "toggle",
+          "description": "Select individual values.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bind",
+        "channels",
+        "select"
+      ],
+      "type": "object"
+    },
+    "ToggleColor": {
+      "additionalProperties": false,
+      "description": "A toggleColor interactor.",
+      "properties": {
+        "bind": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."
+        },
+        "peers": {
+          "description": "A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.",
+          "type": "boolean"
+        },
+        "select": {
+          "const": "toggleColor",
+          "description": "Select individual values in the `color` scale domain. Clicking or touching a mark toggles its selection status.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bind",
+        "select"
+      ],
+      "type": "object"
+    },
+    "ToggleX": {
+      "additionalProperties": false,
+      "description": "A toggleX interactor.",
+      "properties": {
+        "bind": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."
+        },
+        "peers": {
+          "description": "A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.",
+          "type": "boolean"
+        },
+        "select": {
+          "const": "toggleX",
+          "description": "Select individual values in the `x` scale domain. Clicking or touching a mark toggles its selection status.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bind",
+        "select"
+      ],
+      "type": "object"
+    },
+    "ToggleY": {
+      "additionalProperties": false,
+      "description": "A toggleY interactor.",
+      "properties": {
+        "bind": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."
+        },
+        "peers": {
+          "description": "A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups.",
+          "type": "boolean"
+        },
+        "select": {
+          "const": "toggleY",
+          "description": "Select individual values in the `y` scale domain. Clicking or touching a mark toggles its selection status.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bind",
+        "select"
+      ],
+      "type": "object"
+    }
+  }
+}
