@@ -594,7 +594,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -997,7 +997,7 @@
               "type": "number"
             },
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "items": {},
@@ -1176,7 +1176,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -1579,7 +1579,7 @@
               "type": "number"
             },
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "items": {},
@@ -1758,7 +1758,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -2161,7 +2161,7 @@
               "type": "number"
             },
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "items": {},
@@ -2340,7 +2340,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -2743,7 +2743,7 @@
               "type": "number"
             },
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "items": {},
@@ -2844,7 +2844,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -3011,7 +3011,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -3847,7 +3847,7 @@
           "additionalProperties": false,
           "properties": {
             "interval": {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             "value": {
               "$ref": "#/definitions/ChannelValue"
@@ -4110,6 +4110,32 @@
         "root": "MarkOptions",
         "tag": "Extra"
       }
+    },
+    "Curve": {
+      "description": "How to interpolate between control points.",
+      "enum": [
+        "basis",
+        "basis-closed",
+        "basis-open",
+        "bundle",
+        "bump-x",
+        "bump-y",
+        "cardinal",
+        "cardinal-closed",
+        "cardinal-open",
+        "catmull-rom",
+        "catmull-rom-closed",
+        "catmull-rom-open",
+        "linear",
+        "linear-closed",
+        "monotone-x",
+        "monotone-y",
+        "natural",
+        "step",
+        "step-after",
+        "step-before"
+      ],
+      "type": "string"
     },
     "DelaunayLink": {
       "additionalProperties": false,
@@ -4861,6 +4887,23 @@
         "root": "MarkOptions",
         "tag": "Extra"
       }
+    },
+    "DensityX": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/DensityX1"
+        },
+        {
+          "$ref": "#/definitions/DensityX2"
+        },
+        {
+          "$ref": "#/definitions/DensityX3"
+        },
+        {
+          "$ref": "#/definitions/DensityX4"
+        }
+      ],
+      "description": "The densityX mark."
     },
     "DensityX1": {
       "additionalProperties": false,
@@ -5617,6 +5660,23 @@
         "root": "MarkOptions",
         "tag": "Extra"
       }
+    },
+    "DensityY": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/DensityY1"
+        },
+        {
+          "$ref": "#/definitions/DensityY2"
+        },
+        {
+          "$ref": "#/definitions/DensityY3"
+        },
+        {
+          "$ref": "#/definitions/DensityY4"
+        }
+      ],
+      "description": "The densityY mark."
     },
     "DensityY1": {
       "additionalProperties": false,
@@ -6493,7 +6553,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -6594,7 +6654,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -7219,7 +7279,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -7333,7 +7393,7 @@
               "type": "number"
             },
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "items": {},
@@ -7447,7 +7507,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -7561,7 +7621,7 @@
               "type": "number"
             },
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "items": {},
@@ -7599,6 +7659,17 @@
         "root": "MarkOptions",
         "tag": "Extra"
       }
+    },
+    "GridInterpolate": {
+      "description": "A spatial interpolation method; one of:\n\n- *none* - do not perform interpolation (the default), maps samples to single bins\n- *linear* - apply proportional linear interpolation across adjacent bins\n- *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)\n- *barycentric* - apply barycentric interpolation over the Delaunay triangulation\n- *random-walk* - apply a random walk from each pixel, stopping when near a sample",
+      "enum": [
+        "none",
+        "linear",
+        "nearest",
+        "barycentric",
+        "random-walk"
+      ],
+      "type": "string"
     },
     "GridX": {
       "additionalProperties": false,
@@ -7675,7 +7746,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -7789,7 +7860,7 @@
               "type": "number"
             },
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "items": {},
@@ -7903,7 +7974,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -8017,7 +8088,7 @@
               "type": "number"
             },
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "items": {},
@@ -9919,8 +9990,57 @@
         "tag": "Single"
       }
     },
+    "MarkerName": {
+      "description": "The built-in marker implementations; one of:\n\n- *arrow* - an arrowhead with *auto* orientation\n- *arrow-reverse* - an arrowhead with *auto-start-reverse* orientation\n- *dot* - a filled *circle* with no stroke and 2.5px radius\n- *circle-fill* - a filled circle with a white stroke and 3px radius\n- *circle-stroke* - a stroked circle with a white fill and 3px radius\n- *circle* - alias for *circle-fill*\n- *tick* - a small opposing line\n- *tick-x* - a small horizontal line\n- *tick-y* - a small vertical line",
+      "enum": [
+        "arrow",
+        "arrow-reverse",
+        "dot",
+        "circle",
+        "circle-fill",
+        "circle-stroke",
+        "tick",
+        "tick-x",
+        "tick-y"
+      ],
+      "type": "string"
+    },
     "ParamRef": {
       "type": "string"
+    },
+    "PlotDataInline": {
+      "description": "An array of inline data values to visualize. As this data does not come from a database, it can not be filtered by interactive selections.",
+      "items": {},
+      "type": "array"
+    },
+    "PlotFrom": {
+      "additionalProperties": false,
+      "description": "Input data specification for a plot mark.",
+      "properties": {
+        "filterBy": {
+          "$ref": "#/definitions/ParamRef",
+          "description": "A selection that filters the mark data."
+        },
+        "optimize": {
+          "description": "A flag (default `true`) to enable any mark-specific query optimizations. If `false`, optimizations are disabled to aid testing and debugging.",
+          "type": "boolean"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/ParamRef"
+            }
+          ],
+          "description": "The name of the backing data table."
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "type": "object"
     },
     "PlotMark": {
       "anyOf": [
@@ -10121,6 +10241,17 @@
         }
       ],
       "description": "A plot mark entry."
+    },
+    "PlotMarkData": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/PlotDataInline"
+        },
+        {
+          "$ref": "#/definitions/PlotFrom"
+        }
+      ],
+      "description": "Input data for a marks"
     },
     "Raster": {
       "additionalProperties": false,
@@ -10430,7 +10561,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -10605,7 +10736,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -10780,7 +10911,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -11173,7 +11304,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -11341,7 +11472,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -11791,6 +11922,91 @@
         "tag": "Extra"
       }
     },
+    "StackOffset": {
+      "description": "A built-in stack offset method; one of:\n\n- *normalize* - rescale each stack to fill [0, 1]\n- *center* - align the centers of all stacks\n- *wiggle* - translate stacks to minimize apparent movement\n\nIf a given stack has zero total value, the *normalize* offset will not adjust the stack's position. Both the *center* and *wiggle* offsets ensure that the lowest element across stacks starts at zero for better default axes. The\n*wiggle* offset is recommended for streamgraphs in conjunction with the\n*inside-out* order. For more, see [Byron & Wattenberg][1].\n\n[1]: https://leebyron.com/streamgraph/",
+      "enum": [
+        "center",
+        "normalize",
+        "wiggle"
+      ],
+      "type": "string"
+    },
+    "StackOrder": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/StackOrderName"
+        },
+        {
+          "const": "-value",
+          "type": "string"
+        },
+        {
+          "const": "-x",
+          "type": "string"
+        },
+        {
+          "const": "-y",
+          "type": "string"
+        },
+        {
+          "const": "-z",
+          "type": "string"
+        },
+        {
+          "const": "-sum",
+          "type": "string"
+        },
+        {
+          "const": "-appearance",
+          "type": "string"
+        },
+        {
+          "const": "-inside-out",
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "items": {},
+          "type": "array"
+        }
+      ],
+      "description": "How to order layers prior to stacking; one of:\n\n- a named stack order method such as *inside-out* or *sum*\n- a field name, for natural order of the corresponding values\n- an array of explicit **z** values in the desired order"
+    },
+    "StackOrderName": {
+      "description": "The built-in stack order methods; one of:\n\n- *x* - alias of *value*; for stackX only\n- *y* - alias of *value*; for stackY only\n- *value* - ascending value (or descending with **reverse**)\n- *sum* - total value per series\n- *appearance* - position of maximum value per series\n- *inside-out* (default with *wiggle*) - order the earliest-appearing series on the inside\n\nThe *inside-out* order is recommended for streamgraphs in conjunction with the *wiggle* offset. For more, see [Byron & Wattenberg][1].\n\n[1]: https://leebyron.com/streamgraph/",
+      "enum": [
+        "value",
+        "x",
+        "y",
+        "z",
+        "sum",
+        "appearance",
+        "inside-out"
+      ],
+      "type": "string"
+    },
+    "SymbolType": {
+      "description": "The built-in symbol implementations. For fill, one of:\n\n- *circle* - a circle\n- *cross* - a Greek cross with arms of equal length\n- *diamond* - a rhombus\n- *square* - a square\n- *star* - a pentagonal star (pentagram)\n- *triangle* - an up-pointing triangle\n- *wye* - a Y with arms of equal length\n\nFor stroke (based on [Heman Robinson's research][1]), one of:\n\n- *circle* - a circle\n- *plus* - a plus sign\n- *times* - an X with arms of equal length\n- *triangle2* - an (alternate) up-pointing triangle\n- *asterisk* - an asterisk\n- *square2* - a (alternate) square\n- *diamond2* - a rotated square\n\nThe *hexagon* symbol is also supported.\n\n[1]: https://www.tandfonline.com/doi/abs/10.1080/10618600.2019.1637746",
+      "enum": [
+        "asterisk",
+        "circle",
+        "cross",
+        "diamond",
+        "diamond2",
+        "hexagon",
+        "plus",
+        "square",
+        "square2",
+        "star",
+        "times",
+        "triangle",
+        "triangle2",
+        "wye"
+      ],
+      "type": "string"
+    },
     "Text": {
       "additionalProperties": false,
       "description": "The text mark.",
@@ -12103,7 +12319,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -12344,7 +12560,7 @@
           "description": "The frame anchor specifies defaults for **x** and **y**, along with\n**textAnchor** and **lineAnchor**, based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*, *bottom-left*), or the\n*middle* of the frame."
         },
         "interval": {
-          "$ref": "#/definitions/Interval",
+          "$ref": "typing.json#/definitions/Interval",
           "description": "An interval (such as *day* or a number), to transform **x** values to the middle of the interval."
         },
         "lineAnchor": {
@@ -13555,6 +13771,14 @@
         "tag": "Extra"
       }
     },
+    "VectorShape": {
+      "description": "The built-in vector shape implementations; one of:\n\n- *arrow* - a straight line with an open arrowhead at the end (↑)\n- *spike* - an isosceles triangle with a flat base (▲)",
+      "enum": [
+        "arrow",
+        "spike"
+      ],
+      "type": "string"
+    },
     "VectorX": {
       "additionalProperties": false,
       "description": "The vectorX mark.",
@@ -14106,7 +14330,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"
@@ -14317,7 +14541,7 @@
         "interval": {
           "anyOf": [
             {
-              "$ref": "#/definitions/Interval"
+              "$ref": "typing.json#/definitions/Interval"
             },
             {
               "$ref": "#/definitions/ParamRef"

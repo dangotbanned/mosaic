@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from collections import deque
 from copy import deepcopy
+from dataclasses import dataclass
+from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated as A, ClassVar, Final, Literal as L, Protocol
 
@@ -19,13 +21,13 @@ from tools.codegen.docstrings import doc
 from tools.models import mosaic as m
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Iterator
 
 GENERATED_MODULE_NAME = "mosaic"
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
 SCHEMA_OUT = fs.SCHEMA / f"{GENERATED_MODULE_NAME}.json"
 
-GENERATED_MODULE = fs.MOSAIC_SPEC / "_gen" / f"{GENERATED_MODULE_NAME}.py"
+GENERATED_MODULE_MAIN = fs.MOSAIC_SPEC_GEN / f"{GENERATED_MODULE_NAME}.py"
 TYPING_COMPAT = fs.MOSAIC_SPEC / "_typing_compat.py"
 
 KEYS_REPLACE: Final = {"as": "bind", "from": "source", "for": "plot"}
@@ -42,7 +44,7 @@ SPEC_HEAD: Final = "SpecHead"
 
 Mixing this into the bases with the `Component` member is a limited form of an intersection type.
 """
-SPEC_HEAD_NO_DATA = f"_{SPEC_HEAD}"
+SPEC_HEAD_NO_DATA: Final = "_SpecHead"
 
 
 def _recursive_replace(schema: m.JsonSchema) -> m.JsonSchema:
@@ -63,17 +65,74 @@ def _recursive_replace(schema: m.JsonSchema) -> m.JsonSchema:
     return schema
 
 
-def _simplify_type_aliases(schema: m.InputSchema) -> None:
-    # NOTE: Removes indirection, these are identical besides minor doc phrasing
-    from copy import replace
+@dataclass
+class Artifacts:
+    mosaic: m.InputSchema
+    marks: m.InputSchema
+    spec_description: str
 
-    pop = schema.pop
-    stack_offset = replace(pop("StackOffsetName"), description=pop("StackOffset").description)
-    schema.insert("StackOffset", stack_offset)
-    schema.insert("VectorShape", pop("VectorShapeName"))
+    def iter_components(self) -> Iterator[tuple[m.DefName, str, L["_SpecHead", "SpecHead"], Path]]:
+        paths = GENERATED_MODULE_MAIN, fs.MOSAIC_SPEC_GEN / "marks.py"
+        all_defs = self.mosaic.definitions, self.marks.definitions
+        for path, defs in zip(paths, all_defs, strict=False):
+            for name, schema in defs.items():
+                if (
+                    (template := schema.x_template)
+                    and isinstance(template, m.ExtraTemplate)
+                    and name != "PlotAttributes"
+                ):
+                    base_open_name = template.base
+                    base_spec = SPEC_HEAD_NO_DATA if "data" in schema.properties else SPEC_HEAD
+                    yield name, base_open_name, base_spec, path
+
+    def generate_spec_module(self, target: Path) -> None:
+        fields_excluding_data = (
+            typed_dict.Field("config", "Config", "Configuration options."),
+            typed_dict.Field("meta", "Meta", "Specification metadata."),
+            typed_dict.Field("params", "Params", "Param and Selection definitions."),
+            typed_dict.Field(
+                "plot_defaults",
+                "PlotAttributes",
+                "A default set of attributes to apply to all plot components.",
+            ),
+        )
+        field_data = typed_dict.Field("data", "Data", "Dataset definitions.")
+        module = deque(typed_dict.iter_lines(SPEC_HEAD_NO_DATA, fields_excluding_data))
+        module.extend(typed_dict.iter_lines(SPEC_HEAD, (field_data,), bases=(SPEC_HEAD_NO_DATA,)))
+        import_from = codemod.fragments.import_from
+        module.extendleft(
+            (
+                import_from(TYPING_COMPAT, ("TypedDict", "TypeAliasType")),
+                import_from(
+                    GENERATED_MODULE_MAIN, (fld.tp for fld in (*fields_excluding_data, field_data))
+                ),
+            )
+        )
+        import_statements = deque[str]()
+        export_names = deque[str]()
+
+        for name, base_open_name, base_spec, path in self.iter_components():
+            module.extend(
+                typed_dict.iter_lines(name, bases=(base_spec, base_open_name), closed=True)
+            )
+            export_names.append(name)
+            import_statements.append(import_from(path, base_open_name))
+
+        export_names_sort = sorted(export_names)
+        module.extend(
+            (
+                f"{SPEC} = TypeAliasType({SPEC!r}, {'|'.join(export_names_sort)})",
+                doc(self.spec_description),
+            )
+        )
+        export_names_sort.append(SPEC)
+        module.extendleft(import_statements)
+        module.appendleft(codemod.fragments.FUTURE_ANNOTATIONS)
+        module.append(f"\n__all__ = {tuple(export_names_sort)}\n")
+        fs.write_lines(target, module, "Generated module")
 
 
-def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSchema, str]:
+def generate_python_schema(source: str | Path, target: Path) -> Artifacts:
     print(f"Reading json schema at: {Path(source).relative_to(fs.MONOREPO_ROOT).as_posix()}")
     schema = serde.read_json(source, m.InputSchema)
     spec_def = schema.pop("Spec")
@@ -81,12 +140,9 @@ def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSch
     schema.id = target.name
 
     schema.definitions = {k: _recursive_replace(v) for k, v in schema.iter_defs()}
-    # TODO @dangotbanned: Connect this guy up with `generate_spec_module`
-    SpecDeduplicate().run(schema)
-
-    _simplify_type_aliases(schema)
-    # TODO @dangotbanned: Replace the `_simplify` call with `run`
-    PlotTypesSplit("typing.json")._simplify(schema)
+    PlotTypesSplit("typing.json").run(schema)
+    spec_dedup = SpecDeduplicate("marks.json")
+    spec_dedup.run(schema)
 
     CSSStylesSplit("CSSStyles", "css-styles.json").run(schema)
     ParamDefinitionSplit("ParamDefinition", "params.json").run(schema)
@@ -95,7 +151,7 @@ def generate_python_schema(source: str | Path, target: Path) -> tuple[m.InputSch
 
     serde.write_json(target, schema)
     print(f"Generated python schema at: {fs.repo_relative_str(target)}")
-    return schema, spec_def.description
+    return Artifacts(schema, marks=spec_dedup.extracted, spec_description=spec_def.description)
 
 
 class SchemaMod(Protocol):
@@ -242,23 +298,26 @@ class PlotTypesSplit(RootSplit):
     def __init__(self, filename: str) -> None:
         self.filename: str = filename
 
-    def _simplify(self, schema: m.InputSchema) -> None:
-        from copy import replace
-
+    def run(self, schema: m.InputSchema) -> None:
         pop = schema.pop
-        schema.insert(
-            "Interval", replace(pop("Interval"), ref="", any_of=pop("LiteralTimeInterval").any_of)
-        )
-        schema.insert("Curve", replace(pop("CurveName"), description=pop("Curve").description))
+        definitions = {
+            "Interval": pop("Interval").__replace__(
+                ref="", any_of=pop("LiteralTimeInterval").any_of
+            ),
+            "TimeIntervalName": pop("TimeIntervalName"),
+        }
 
         # NOTE: `& Record<never, never>` explodes into 51x `{'type': 'object'}`
         # https://github.com/dangotbanned/mosaic/blob/91ecaaf1db2716f89c309978a389d1dd822c36e3/packages/vgplot/spec/src/spec/PlotTypes.ts#L383-L384
         color_scheme = pop("ColorScheme")
         for s in tuple(color_scheme.any_of):
             if s.enum:
-                color_scheme = replace(s, description=color_scheme.description)
+                definitions["ColorScheme"] = s.__replace__(description=color_scheme.description)
                 break
-        schema.insert("ColorScheme", color_scheme)
+        typing_schema = schema.__replace__(id=self.filename, definitions=definitions)
+        schema.map_refs(dict.fromkeys(definitions, self.filename))
+        serde.write_json(self.path, typing_schema, pretty=True)
+        print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
 
 
 # TODO @dangotbanned: [HIGH PRIORITY] Stop (manually) managing references
@@ -328,14 +387,15 @@ _MARK_OPTIONS = "MarkOptions"
 _POUND_DEFS = "#/definitions/"
 
 
-# TODO @dangotbanned: Fix `dcg` generating `MarkOptions` too late
-# - [ ] Move marks to `marks.py`
-# - [ ] `_spec.py` fix the subset of `_{name}_Open` imports which come from `marks.py`
+# TODO @dangotbanned: Simplify `SpecDeduplicate._plot_mark`
 class SpecDeduplicate(SchemaMod):
     """See `tools.models.mosaic` module doc for `Component` detail."""
 
-    filename: str = "marks.json"
     _SCHEMA_DIR: ClassVar[Path] = fs.SCHEMA
+    extracted: m.InputSchema
+
+    def __init__(self, filename: str) -> None:
+        self.filename: str = filename
 
     @property
     def path(self) -> Path:
@@ -368,23 +428,8 @@ class SpecDeduplicate(SchemaMod):
         plot.properties = {"plot": prop}
         plot.x_template = m.ExtraTemplate.from_open_root(_PLOT, _PLOT_ATTRS)
 
-    # TODO @dangotbanned: Handle deduplication of marks (71 total)
-    # - Related: https://github.com/dangotbanned/mosaic/blob/2abdce2699036a7793533e51e1c3697db7f609f9/bin/generate-python-api.js#L51-L69
-    # - JSON Schema is masking the fact that the exports only combine `*Options` interfaces and add a `mark` discriminator
     def _plot_mark(self, plot_mark: m.JsonSchema, schema: m.InputSchema) -> None:  # ruff: ignore[complex-structure, too-many-branches, too-many-locals, too-many-statements]
         definitions: dict[m.DefName, m.JsonSchema] = {"ParamRef": schema.get("ParamRef")}
-        # TODO @dangotbanned: Unresolved local $ref targets:
-        # - marks.json: #/definitions/Curve
-        # - marks.json: #/definitions/DensityX
-        # - marks.json: #/definitions/DensityY
-        # - marks.json: #/definitions/GridInterpolate
-        # - marks.json: #/definitions/Interval
-        # - marks.json: #/definitions/MarkerName
-        # - marks.json: #/definitions/PlotMarkData
-        # - marks.json: #/definitions/StackOffset
-        # - marks.json: #/definitions/StackOrder
-        # - marks.json: #/definitions/SymbolType
-        # - marks.json: #/definitions/VectorShape
         steal = (
             "TipPointer",
             "SelectFilter",
@@ -395,16 +440,32 @@ class SpecDeduplicate(SchemaMod):
             "ChannelValueSpec",
             "ChannelValueIntervalSpec",
             "SortOrder",
-            "ScaleName",
+            "ScaleName",  # (PlotTypes)
             "SQLExpression",
             "AggregateExpression",
-            "ReducerPercentile",
-            "Reducer",
-            "FrameAnchor",
+            "ReducerPercentile",  # (PlotTypes)
+            "Reducer",  # (PlotTypes)
+            "FrameAnchor",  # (PlotTypes)
+            "StackOrder",
+            "StackOrderName",
+            "MarkerName",
+            "SymbolType",
+            "GridInterpolate",
+            "PlotFrom",
+            "PlotDataInline",
+            "PlotMarkData",
         )
         pop = schema.pop
         for name in steal:
             definitions[name] = pop(name)
+
+        # NOTE: Removes indirection, these are identical besides minor doc phrasing
+        pop("StackOffset")
+        pop("VectorShape")
+        definitions["StackOffset"] = pop("StackOffsetName")
+        definitions["VectorShape"] = pop("VectorShapeName")
+
+        definitions["Curve"] = pop("CurveName").__replace__(description=pop("Curve").description)
 
         channel_value = definitions["ChannelValue"] = pop("ChannelValue")
         transform_ref = f"{_POUND_DEFS}Transform"
@@ -454,6 +515,7 @@ class SpecDeduplicate(SchemaMod):
                         (member_name, member_2.__replace__(description=doc))
                     )
                 member_1.any_of = member_refs
+                definitions[member_1_name] = member_1
             pop(member_1_name)
 
         # TODO @dangotbanned: Make this generic when adding back
@@ -481,8 +543,8 @@ class SpecDeduplicate(SchemaMod):
                 member.ref = f"{self.filename}{member.ref}"
                 break
 
-        extracted = schema.__replace__(id=self.filename, definitions=definitions)
-        serde.write_json(self.path, extracted, pretty=True)
+        self.extracted = schema.__replace__(id=self.filename, definitions=definitions)
+        serde.write_json(self.path, self.extracted, pretty=True)
         print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
 
     def insert_base(self, name: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema) -> None:
@@ -495,62 +557,56 @@ class SpecDeduplicate(SchemaMod):
         schema.insert(name, def_schema)
 
 
-def generate_spec_module(
-    components: dict[str, m.JsonSchema], spec_doc: str, target: str | Path
-) -> None:
-    fields_excluding_data = (
-        typed_dict.Field("config", "Config", "Configuration options."),
-        typed_dict.Field("meta", "Meta", "Specification metadata."),
-        typed_dict.Field("params", "Params", "Param and Selection definitions."),
-        typed_dict.Field(
-            "plot_defaults",
-            "PlotAttributes",
-            "A default set of attributes to apply to all plot components.",
-        ),
-    )
-    field_data = typed_dict.Field("data", "Data", "Dataset definitions.")
-    module = deque(typed_dict.iter_lines(SPEC_HEAD_NO_DATA, fields_excluding_data))
-    module.extend(typed_dict.iter_lines(SPEC_HEAD, (field_data,), bases=(SPEC_HEAD_NO_DATA,)))
-    import_from = codemod.fragments.import_from
-    module.extendleft(
-        (
-            import_from(TYPING_COMPAT, ("TypedDict", "TypeAliasType")),
-            import_from(GENERATED_MODULE, (fld.tp for fld in (*fields_excluding_data, field_data))),
-        )
-    )
-
-    import_names = deque[str]()
-    export_names = deque[str]()
-
-    for name, component in components.items():
-        # TODO @dangotbanned: bad default
-        base_open_name = (
-            component.x_template.base if (isinstance(component.x_template, m.ExtraTemplate)) else ""
-        )
-        import_names.append(base_open_name)
-        base_spec = SPEC_HEAD_NO_DATA if "data" in component.properties else SPEC_HEAD
-        module.extend(typed_dict.iter_lines(name, bases=(base_spec, base_open_name), closed=True))
-        export_names.append(name)
-
-    module.extend((f"{SPEC} = TypeAliasType({SPEC!r}, {'|'.join(export_names)})", doc(spec_doc)))
-    export_names.append(SPEC)
-    module.appendleft(import_from(GENERATED_MODULE, import_names))
-    module.appendleft(codemod.fragments.FUTURE_ANNOTATIONS)
-    module.append(f"\n__all__ = {tuple(export_names)}\n")
-    fs.write_lines(target, module, "Generated module")
-
-
 def main() -> None:
     # mosaic -> msgspec -> json -> datamodel-codegen -> back here for more
-    schema, spec_doc = generate_python_schema(SCHEMA_IN, SCHEMA_OUT)
-    components = {
-        name: s
-        for name, s in schema.definitions.items()
-        if s.x_template and name != "PlotAttributes"
-    }
+    artifacts = generate_python_schema(SCHEMA_IN, SCHEMA_OUT)
+
     fs.run("uv", "run", "datamodel-codegen", "--profile=spec")
-    print(f"Generated module at: {fs.repo_relative_str(GENERATED_MODULE)}")
-    generate_spec_module(components, spec_doc, fs.MOSAIC_SPEC_INTERSECTION)
+    module_names = (
+        f"- {fs.repo_relative_str(fp)}"
+        for fp in fs.MOSAIC_SPEC_GEN.iterdir()
+        if fp.stem != "__init__" and fp.suffix == ".py"
+    )
+    print(f"Generated modules at:\n{'\n'.join(module_names)}")
+    fix_mark_options_order(fs.MOSAIC_SPEC_GEN / "marks.py")
+    artifacts.generate_spec_module(fs.MOSAIC_SPEC_INTERSECTION)
+
+
+def fix_mark_options_order(target: Path) -> None:
+    """Multiple hacks, stacked on top of eachother.
+
+    ## Notes
+    - Giving up on trying to fix this is a reasonable way
+        - `MarkOptions` gets defined almost at the bottom of the module
+        - it depends on lots of symbols defined in `marks.py`,
+          so I don't want to move it to another module just to work around `dcg`
+    - ast is enough to find things
+        - but it transforms attribute "docstrings" into regular strings
+        - so using unparse would be destructive
+    - so use the line numbers and then manipulate the lines
+    """
+    import ast
+
+    from tools.codemod.common import parse_module
+
+    fp_marks = target
+    marks_module = parse_module(fp_marks)
+    start, end = 0, 0
+
+    for node in reversed(marks_module.body):
+        if isinstance(node, ast.ClassDef) and node.name == "MarkOptions":
+            start = node.lineno - 1
+            if node.end_lineno is None:
+                raise NotImplementedError
+            end = node.end_lineno
+            break
+
+    move_to = next(node.lineno - 1 for node in marks_module.body if isinstance(node, ast.ClassDef))
+    marks_lines = fp_marks.read_text("utf8").splitlines()
+    lines_reordered = chain(
+        marks_lines[:move_to], marks_lines[start:end], marks_lines[move_to:start], marks_lines[end:]
+    )
+    fs.write_lines(fp_marks, lines_reordered, "Fixed MarkOptions order")
 
 
 if __name__ == "__main__":

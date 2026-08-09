@@ -24,23 +24,20 @@ Here's a big list of things to do/known issues
 
 ## Splitting one big file
 
-`mosaic.py` is too large (~**30k** LOC with docs) and this kills the performance of language servers.  
+`mosaic.py` ~~is~~ was too large (~**30k** LOC with docs) and this kills the performance of language servers.  
 
 Pylance is non-functional as it isn't able to do the kind of incremental magic that `ty` can within a single file.
 To mitigate this, here are some potential modules/subpackages to lighten the load:
 
 - [x] `interactors.py`
-- [ ] marks (**136 KB**)
-  - [ ] `Marks.ts` (39 KB)
-  - [ ] `Axis.ts` (13 KB)
-  - [ ] 25 others (84 KB) total
+- [x] `marks.py` (**136 KB**)
 - [ ] data (6 KB)
 - [ ] inputs (7 KB)
 - [ ] interval (2 KB)
 - [x] `params.py`
 - [ ] plot
   - [x] Share **215** fields between `Plot` & `PlotAttributes`
-  - [ ] Move to another module (*maybe difficult*)
+  - [ ] Move to another module (*maybe difficult, due what it depends on*)
     - `PlotAttribute.ts` (**63 KB**)
 - [x] `spec.py`
   - [x] Use the original class names and don't re-export to top-level, e.g.

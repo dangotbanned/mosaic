@@ -42,7 +42,7 @@ custom-file-header-mode = "prepend"
 enable-command-header   = true
 disable-timestamp       = true
 output-model-type       = "typing.TypedDict"
-formatters              = ["ruff-check", "ruff-format"]
+formatters              = []
 target-python-version   = "3.10"
 
 use-generic-container-types       = true
@@ -209,7 +209,8 @@ extend-safe-fixes                        = [
   "EM",
   "TRY",
   "literal-membership",
-  "unspecified-encoding"
+  "unspecified-encoding",
+  "unnecessary-multiline-docstring"
 ]
 future-annotations                       = true
 flake8-builtins.ignorelist               = ["format", "input"]

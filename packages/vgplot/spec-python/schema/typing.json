@@ -1,0 +1,168 @@
+{
+  "$id": "typing.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ColorScheme": {
+      "description": "The built-in color schemes. For categorical data, one of:\n\n- *Accent* - eight colors\n- *Category10* - ten colors\n- *Dark2* - eight colors\n- *Observable10* (default) - ten colors\n- *Paired* - twelve paired colors\n- *Pastel1* - nine colors\n- *Pastel2* - eight colors\n- *Set1* - nine colors\n- *Set2* - eight colors\n- *Set3* - twelve colors\n- *Tableau10* - ten colors\n\nFor diverging data, one of:\n\n- *BrBG* - from brown to white to blue-green\n- *PRGn* - from purple to white to green\n- *PiYG* - from pink to white to yellow-green\n- *PuOr* - from purple to white to orange\n- *RdBu* (default) - from red to white to blue\n- *RdGy* - from red to white to gray\n- *RdYlBu* - from red to yellow to blue\n- *RdYlGn* - from red to yellow to green\n- *Spectral* - from red to blue, through the spectrum\n- *BuRd* - from blue to white to red\n- *BuYlRd* - from blue to yellow to red\n\nFor sequential data, one of:\n\n- *Blues* - from white to blue\n- *Greens* - from white to green\n- *Greys* - from white to gray\n- *Oranges* - from white to orange\n- *Purples* - from white to purple\n- *Reds* - from white to red\n- *Turbo* (default) - from blue to red, through the spectrum\n- *Viridis* - from blue to green to yellow\n- *Magma* - from purple to orange to yellow\n- *Inferno* - from purple to orange to yellow\n- *Plasma* - from purple to orange to yellow\n- *Cividis* - from blue to yellow\n- *Cubehelix* - from black to white, rotating hue\n- *Warm* - from purple to green, through warm hues\n- *Cool* - from green to to purple, through cool hues\n- *BuGn* - from light blue to dark green\n- *BuPu* - from light blue to dark purple\n- *GnBu* - from light green to dark blue\n- *OrRd* - from light orange to dark red\n- *PuBu* - from light purple to dark blue\n- *PuBuGn* - from light purple to blue to dark green\n- *PuRd* - from light purple to dark red\n- *RdPu* - from light red to dark purple\n- *YlGn* - from light yellow to dark green\n- *YlGnBu* - from light yellow to green to dark blue\n- *YlOrBr* - from light yellow to orange to dark brown\n- *YlOrRd* - from light yellow to orange to dark red\n\nFor cyclical data, one of:\n\n- *Rainbow* (default) - the less-angry rainbow color scheme\n- *Sinebow* - Bumgardner and Loyd's “sinebow” scheme",
+      "enum": [
+        "Accent",
+        "Category10",
+        "Dark2",
+        "Observable10",
+        "Paired",
+        "Pastel1",
+        "Pastel2",
+        "Set1",
+        "Set2",
+        "Set3",
+        "Tableau10",
+        "BrBG",
+        "PRGn",
+        "PiYG",
+        "PuOr",
+        "RdBu",
+        "RdGy",
+        "RdYlBu",
+        "RdYlGn",
+        "Spectral",
+        "BuRd",
+        "BuYlRd",
+        "Blues",
+        "Greens",
+        "Greys",
+        "Oranges",
+        "Purples",
+        "Reds",
+        "Turbo",
+        "Viridis",
+        "Magma",
+        "Inferno",
+        "Plasma",
+        "Cividis",
+        "Cubehelix",
+        "Warm",
+        "Cool",
+        "BuGn",
+        "BuPu",
+        "GnBu",
+        "OrRd",
+        "PuBu",
+        "PuBuGn",
+        "PuRd",
+        "RdPu",
+        "YlGn",
+        "YlGnBu",
+        "YlOrBr",
+        "YlOrRd",
+        "Rainbow",
+        "Sinebow"
+      ],
+      "type": "string"
+    },
+    "Interval": {
+      "anyOf": [
+        {
+          "const": "3 months",
+          "type": "string"
+        },
+        {
+          "const": "10 years",
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/TimeIntervalName"
+        },
+        {
+          "const": "seconds",
+          "type": "string"
+        },
+        {
+          "const": "minutes",
+          "type": "string"
+        },
+        {
+          "const": "hours",
+          "type": "string"
+        },
+        {
+          "const": "days",
+          "type": "string"
+        },
+        {
+          "const": "weeks",
+          "type": "string"
+        },
+        {
+          "const": "months",
+          "type": "string"
+        },
+        {
+          "const": "quarters",
+          "type": "string"
+        },
+        {
+          "const": "halfs",
+          "type": "string"
+        },
+        {
+          "const": "years",
+          "type": "string"
+        },
+        {
+          "const": "mondays",
+          "type": "string"
+        },
+        {
+          "const": "tuesdays",
+          "type": "string"
+        },
+        {
+          "const": "wednesdays",
+          "type": "string"
+        },
+        {
+          "const": "thursdays",
+          "type": "string"
+        },
+        {
+          "const": "fridays",
+          "type": "string"
+        },
+        {
+          "const": "saturdays",
+          "type": "string"
+        },
+        {
+          "const": "sundays",
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "How to partition a continuous range into discrete intervals; one of:\n\n- a named time interval such as *day* (for date intervals)\n- a number (for number intervals), defining intervals at integer multiples of *n*"
+    },
+    "TimeIntervalName": {
+      "description": "The built-in time intervals; UTC or local time, depending on context. The\n*week* interval is an alias for *sunday*. The *quarter* interval is every three months, and the *half* interval is every six months, aligned at the start of the year.",
+      "enum": [
+        "second",
+        "minute",
+        "hour",
+        "day",
+        "week",
+        "month",
+        "quarter",
+        "half",
+        "year",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ],
+      "type": "string"
+    }
+  }
+}

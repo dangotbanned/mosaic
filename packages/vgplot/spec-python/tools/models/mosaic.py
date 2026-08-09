@@ -56,7 +56,7 @@ Sadly, this doesn't cover intersecting with a union.
 
 import functools
 import re
-from collections.abc import Callable, Iterable, Iterator, Sequence
+from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from typing import Annotated as A, Final, Literal as L, final
 
 from msgspec import field
@@ -65,6 +65,9 @@ from tools.models import base
 
 type DefName = str
 """The name that keys the schema in `{"definitions": {<here>: ...}}`"""
+
+type FileName = str
+"""The name of a file, as defined by [`pathlib.Path.name`][]."""
 
 type Primitive = L["array", "boolean", "integer", "null", "number", "object", "string"]
 type _JsonSchemaFwd = JsonSchema
@@ -154,6 +157,12 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
     x_template: SingleTemplate | ExtraTemplate | None = field(name="x-template", default=None)
     """See also [`x-` prefix annotations](https://json-schema.org/blog/posts/custom-annotations-will-continue#too-long-read-anyway)"""
 
+    def map_refs(self, function: Callable[[Ref], Ref | None], /) -> None:
+        if ref := self.ref:
+            if new_ref := function(ref):
+                self.ref = new_ref
+        elif not isinstance(self.additional_properties, bool):
+            self.additional_properties.map_refs(function)
 
     def is_ref(self) -> bool:
         return bool(self.ref)
@@ -219,6 +228,26 @@ class JsonSchema(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
             raise NotImplementedError(msg)
         yield from members
 
+    def map_refs(self, function: Callable[[Ref], Ref | None], /) -> None:
+        if ref := self.ref:
+            if new_ref := function(ref):
+                self.ref = new_ref
+        elif members := self.any_of:
+            for member in members:
+                member.map_refs(function)
+        elif (items := self.items) and items is not True:
+            if isinstance(items, JsonSchema):
+                items.map_refs(function)
+            else:
+                for item in items:
+                    item.map_refs(function)
+        else:
+            for prop in self.properties.values():
+                prop.map_refs(function)
+            if not isinstance(self.additional_properties, bool):
+                self.additional_properties.map_refs(function)
+
+
 @final
 class InputSchema(base.Struct, kw_only=True):
     """Top level schema for `mosaic-schema.json`."""
@@ -270,6 +299,11 @@ class InputSchema(base.Struct, kw_only=True):
             it = ((name, schema) for name, schema in self.definitions.items() if predicate(schema))
         yield from it
 
+    def map_refs(self, ctx: Mapping[DefName, A[FileName, L["json"]]], /) -> None:
+        function = ref_mapper(ctx)
+        for schema in self.definitions.values():
+            schema.map_refs(function)
+
 
 @functools.lru_cache(1024)
 def _fix_ambiguous_unicode_characters(string: str, /) -> str:
@@ -282,3 +316,9 @@ def _fix_ambiguous_unicode_characters(string: str, /) -> str:
     string = string.replace("’", "'")  # ruff: ignore[ambiguous-unicode-character-string]
     string = string.replace("–", "-")  # ruff: ignore[ambiguous-unicode-character-string]
     return string  # ruff: ignore[unnecessary-assign]
+
+
+def ref_mapper(ctx: Mapping[DefName, A[FileName, L["json"]]], /) -> Callable[[Ref], Ref | None]:
+    """Construct a `$ref` replacement function for [`JsonSchema.map_refs`][]."""
+    defs = _POUND_DEFS
+    return {f"{defs}{k}": f"{v}{defs}{k}" for k, v in ctx.items()}.get
