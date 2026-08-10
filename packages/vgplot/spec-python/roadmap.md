@@ -19,12 +19,39 @@ Here's a big list of things to do/known issues. Current priorities are deduplica
     - Reduced `mosaic.py` **53k** -> **28k** LOC
   - [x] Fix `closed=True` on base class (~100 type errors)
   - [x] Fix `data: PlotMarkData` Required/NotRequired conflict (~59 type errors)
-- [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between
-      `TypedDict` defs
-- [ ] Add some tests once the top-level namespace starts stabilizing
 - [x] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
   - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
   - [x] Use `_typing_compat.py` imports for codegen
+- [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between
+      `TypedDict` defs
+- [ ] Configure [`pyrefly`] and run it during `typecheck`
+- [ ] Add some tests once the top-level namespace starts stabilizing
+  - [ ] Add codegen for [`tests/test_examples/`]
+  - [ ] Add a `tests/test_peps/` suite
+    - [ ] Completed
+      - [ ] [PEP 589 - `TypedDict`]
+      - [ ] [PEP 655 - `Required` and `NotRequired`]
+      - [ ] [PEP 692 - `**TypedDict` (kwargs)]
+      - [ ] [PEP 695 - Type Parameter Syntax]
+        - Just the `TypeAliasType` part
+      - [ ] [PEP 728 - `closed` and `extra_items`]
+      - [ ] [PEP 747 - `TypeForm`]
+    - [ ] Open
+      - [ ] [PEP 764 - Inline typed dictionaries]
+        - `ty` marks this syntax as `@Todo`
+        - `pyright` seems to ignore it
+      - [ ] [PEP 821 - `**TypedDict` (Callable)]
+      - [ ] [PEP 827 - Type Manipulation]
+
+[PEP 589 - `TypedDict`]: https://peps.python.org/pep-0589/
+[PEP 655 - `Required` and `NotRequired`]: https://peps.python.org/pep-0655/
+[PEP 692 - `**TypedDict` (kwargs)]: https://peps.python.org/pep-0692/
+[PEP 695 - Type Parameter Syntax]: https://peps.python.org/pep-0695/
+[PEP 728 - `closed` and `extra_items`]: https://peps.python.org/pep-0728/
+[PEP 747 - `TypeForm`]: https://peps.python.org/pep-0747/
+[PEP 764 - Inline typed dictionaries]: https://peps.python.org/pep-0764/
+[PEP 821 - `**TypedDict` (Callable)]: https://peps.python.org/pep-0821/
+[PEP 827 - Type Manipulation]: https://peps.python.org/pep-0827/
 
 ## Splitting one big file
 
@@ -134,3 +161,5 @@ And here is the same thing in Observable Plot?
 [Support overriding default imports (#3681)]: https://github.com/koxudaxi/datamodel-code-generator/issues/3681
 [Support configuring `--use-type-alias` behavior (#3682)]: https://github.com/koxudaxi/datamodel-code-generator/issues/3682
 [extension fields]: https://datamodel-code-generator.koxudaxi.dev/custom_template/#schema-extensions
+[`pyrefly`]: https://pyrefly.org/en/docs/
+[`tests/test_examples/`]: ./tests/test_examples/__init__.py
