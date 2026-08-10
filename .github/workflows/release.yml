@@ -107,7 +107,7 @@ jobs:
         uses: pnpm/action-setup@v6
 
       - name: Setup node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           # 24.x for npm >= 11.5.1, required by OIDC trusted publishing
           node-version: "24.x"
@@ -148,7 +148,7 @@ jobs:
           echo "## Released v$VERSION" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish to npm
-        run: pnpm exec lerna publish from-git --yes
+        run: pnpm publish -r --access public --no-git-checks
 
       - name: Build Python packages
         run: |

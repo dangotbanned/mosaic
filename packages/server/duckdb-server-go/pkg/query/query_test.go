@@ -13,7 +13,7 @@ import (
 )
 
 // setupTestDB creates a new in-memory DuckDB instance for testing
-func setupTestDB(t *testing.T) *DB {
+func setupTestDB(t *testing.T, opts ...OptionFunc) *DB {
 	t.Helper()
 
 	ctx := context.Background()
@@ -27,7 +27,8 @@ func setupTestDB(t *testing.T) *DB {
 		Level: slog.LevelError, // Only show errors during tests
 	}))
 
-	db, err := New(ctx, connector, WithLogger(logger))
+	opts = append([]OptionFunc{WithLogger(logger)}, opts...)
+	db, err := New(ctx, connector, opts...)
 	require.NoError(t, err)
 
 	// Clean up when test completes
@@ -40,6 +41,160 @@ func setupTestDB(t *testing.T) *DB {
 	})
 
 	return db
+}
+
+func TestDB_FunctionBlocklist(t *testing.T) {
+	db := setupTestDB(t, WithFunctionBlocklist([]string{" RANGE ", "MD5", "SUM", "ROW_NUMBER"}))
+	ctx := context.Background()
+
+	tests := []struct {
+		name     string
+		function string
+		query    string
+		format   string
+	}{
+		{
+			name:     "JSON table function",
+			function: "range",
+			query:    "SELECT * FROM range(3)",
+			format:   "json",
+		},
+		{
+			name:     "JSON scalar function",
+			function: "md5",
+			query:    "SELECT md5('mosaic')",
+			format:   "json",
+		},
+		{
+			name:     "JSON window aggregate",
+			function: "sum",
+			query:    "SELECT sum(i) OVER () FROM (VALUES (1), (2), (3)) t(i)",
+			format:   "json",
+		},
+		{
+			name:     "JSON window function",
+			function: "row_number",
+			query:    "SELECT row_number() OVER ()",
+			format:   "json",
+		},
+		{
+			name:     "Arrow table function",
+			function: "range",
+			query:    "SELECT * FROM range(3)",
+			format:   "arrow",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var err error
+			if tt.format == "arrow" {
+				_, _, err = db.QueryArrow(ctx, tt.query, nil, false)
+			} else {
+				_, _, err = db.QueryJSON(ctx, tt.query, nil, false)
+			}
+
+			require.ErrorContains(t, err, "use of function '"+tt.function+"' is not allowed")
+		})
+	}
+}
+
+func TestDB_FunctionBlocklistHandlesUnsupportedStatements(t *testing.T) {
+	db := setupTestDB(t, WithFunctionBlocklist([]string{"range"}))
+	ctx := context.Background()
+
+	t.Run("JSON", func(t *testing.T) {
+		_, _, err := db.QueryJSON(ctx, "PRAGMA version", nil, false)
+		require.ErrorIs(t, err, ErrUnsupportedStatement)
+		require.ErrorContains(t, err, "query: validation failed: query: not implemented: Only SELECT statements can be serialized to json")
+		require.NotContains(t, err.Error(), "()")
+		require.NotContains(t, err.Error(), " at :")
+	})
+
+	t.Run("Arrow", func(t *testing.T) {
+		_, _, err := db.QueryArrow(ctx, "PRAGMA version", nil, false)
+		require.ErrorIs(t, err, ErrUnsupportedStatement)
+		require.ErrorContains(t, err, "query: validation failed: query: not implemented: Only SELECT statements can be serialized to json")
+		require.NotContains(t, err.Error(), "()")
+		require.NotContains(t, err.Error(), " at :")
+	})
+}
+
+func TestDB_CacheValidatesSchemas(t *testing.T) {
+	tests := []struct {
+		name   string
+		format string
+	}{
+		{name: "JSON", format: "json"},
+		{name: "Arrow", format: "arrow"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			db := setupTestDB(t)
+			ctx := context.Background()
+
+			err := db.Exec(ctx, `
+				CREATE SCHEMA tenant_a;
+				CREATE TABLE tenant_a.secret (value VARCHAR);
+				INSERT INTO tenant_a.secret VALUES ('tenant-a-only')
+			`)
+			require.NoError(t, err)
+
+			const query = "SELECT * FROM tenant_a.secret"
+			if tt.format == "arrow" {
+				_, fromCache, err := db.QueryArrow(ctx, query, []string{"tenant_a"}, true)
+				require.NoError(t, err)
+				assert.False(t, fromCache)
+
+				_, fromCache, err = db.QueryArrow(ctx, query, []string{"tenant_b"}, true)
+				require.ErrorContains(t, err, "unauthorized access to schema")
+				assert.False(t, fromCache)
+
+				_, fromCache, err = db.QueryArrow(ctx, query, []string{"tenant_a"}, true)
+				require.NoError(t, err)
+				assert.True(t, fromCache)
+			} else {
+				_, fromCache, err := db.QueryJSON(ctx, query, []string{"tenant_a"}, true)
+				require.NoError(t, err)
+				assert.False(t, fromCache)
+
+				_, fromCache, err = db.QueryJSON(ctx, query, []string{"tenant_b"}, true)
+				require.ErrorContains(t, err, "unauthorized access to schema")
+				assert.False(t, fromCache)
+
+				_, fromCache, err = db.QueryJSON(ctx, query, []string{"tenant_a"}, true)
+				require.NoError(t, err)
+				assert.True(t, fromCache)
+			}
+		})
+	}
+}
+
+func TestDB_CacheSeparatesFormats(t *testing.T) {
+	db := setupTestDB(t)
+	ctx := context.Background()
+	const query = "SELECT 42 AS answer"
+
+	jsonData, fromCache, err := db.QueryJSON(ctx, query, nil, true)
+	require.NoError(t, err)
+	assert.False(t, fromCache)
+	assert.True(t, json.Valid(jsonData))
+
+	arrowData, fromCache, err := db.QueryArrow(ctx, query, nil, true)
+	require.NoError(t, err)
+	assert.False(t, fromCache)
+	assert.False(t, json.Valid(arrowData))
+
+	cachedJSON, fromCache, err := db.QueryJSON(ctx, query, nil, true)
+	require.NoError(t, err)
+	assert.True(t, fromCache)
+	assert.Equal(t, jsonData, cachedJSON)
+
+	cachedArrow, fromCache, err := db.QueryArrow(ctx, query, nil, true)
+	require.NoError(t, err)
+	assert.True(t, fromCache)
+	assert.Equal(t, arrowData, cachedArrow)
 }
 
 func TestDB_Exec(t *testing.T) {
@@ -63,6 +218,14 @@ func TestDB_Exec(t *testing.T) {
 		err := db.Exec(ctx, "INVALID SQL STATEMENT")
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "query: failed to execute query")
+	})
+
+	t.Run("function validation rejects exec", func(t *testing.T) {
+		db := setupTestDB(t, WithFunctionBlocklist([]string{"range"}))
+
+		err := db.Exec(ctx, "SELECT 1")
+		require.ErrorIs(t, err, ErrExecWithValidation)
+		assert.EqualError(t, err, "query: exec command is disabled when schema or function validation is active")
 	})
 }
 

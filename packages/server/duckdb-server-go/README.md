@@ -32,7 +32,7 @@ You can customize the server behavior with the following command-line flags:
 -   `--cert <path>`: Path to a TLS certificate file to enable HTTPS.
 -   `--key <path>`: Path to a TLS private key file to enable HTTPS.
 -   `--schema-match-headers`: Comma-separated list of headers to match against schema names for multi-tenant access control (e.g., `X-Tenant-Id,verified-user-id`).
--   `--load-extensions`: Comma-separated list of extensions to install and load at startup. Use a pipe after the extension name to specify the repository. Unspecified repositories will default to 'core'. (e.g. `mysql_scanner,netquack|community,aws|core_nightly`
+-   `--load-extensions`: Comma-separated list of extensions to install and load at startup. Use a pipe after the extension name to specify the repository. Unspecified repositories use DuckDB's default. (e.g. `mysql_scanner,netquack|community,aws|core_nightly`
 -   `--function-blocklist`: Comma-separated list of functions to block, useful for blocking functions that may pose security or performance risks. (e.g., 'bigquery_query,read_parquet')`
 
 By default, the server will look for `localhost.pem` and `localhost-key.pem` in the current directory to enable HTTPS if the `--cert` and `--key` flags are not provided.
@@ -44,15 +44,127 @@ mkcert -install # Install mkcert CA
 mkcert localhost # create localhost.pem and localhost-key.pem
 ```
 
+### Programmatic Extension Initialization
+
+The `pkg/extensions` package accepts the same extension strings as `--load-extensions`, while keeping flag parsing and
+logging out of the reusable API:
+
+```go
+import (
+	"context"
+	"database/sql"
+	"database/sql/driver"
+
+	"github.com/duckdb/duckdb-go/v2"
+	"github.com/uwdata/mosaic/packages/server/duckdb-server-go/pkg/extensions"
+)
+
+func openDB(connectorCtx context.Context) (*sql.DB, error) {
+	values := []string{
+		"httpfs",
+		"netquack|community",
+		"aws|core_nightly",
+	}
+	connector, err := duckdb.NewConnector(":memory:", func(execer driver.ExecerContext) error {
+		return extensions.ParseAndInstall(connectorCtx, execer, values...)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	db := sql.OpenDB(connector)
+	if err := db.PingContext(connectorCtx); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+	return db, nil
+}
+```
+
+`duckdb.NewConnector` is lazy: creating it does not invoke the callback. `PingContext`, the first query, or an explicit
+`Connect` forces the first physical connection and therefore verifies extension initialization before the application
+reports itself ready. The callback reuses `connectorCtx` for every connection, so it must be a long-lived
+connector-lifetime context rather than a request context.
+
+For explicit lifecycle control, call the helpers directly from the connector callback:
+
+```go
+connector, err := duckdb.NewConnector(":memory:", func(execer driver.ExecerContext) error {
+	if err := extensions.LoadInstalled(connectorCtx, execer, "httpfs"); err != nil {
+		return err
+	}
+	if err := extensions.InstallAndLoad(
+		connectorCtx,
+		execer,
+		"custom_scanner",
+		"/srv/duckdb/repository",
+	); err != nil {
+		return err
+	}
+	if err := extensions.LoadFile(
+		connectorCtx,
+		execer,
+		"/opt/duckdb/custom_reader.duckdb_extension",
+	); err != nil {
+		return err
+	}
+	return extensions.InstallAndLoadFile(
+		connectorCtx,
+		execer,
+		"/opt/duckdb/custom_writer.duckdb_extension",
+	)
+})
+```
+
+A custom repository path names a directory laid out as a DuckDB extension repository; it is not the path of a single
+`.duckdb_extension` file. Use `LoadFile` or `InstallAndLoadFile` for a standalone file. `LoadInstalled` skips installation
+and loads an extension that is already present in DuckDB's extension directory, which supports images or hosts where
+extensions are provisioned before server startup. `LoadFile` loads the source path directly on every connection.
+`InstallAndLoadFile` first copies the file into DuckDB's extension directory, then loads the installed extension name
+DuckDB derives from the filename (`custom_writer.duckdb_extension` becomes `custom_writer`), so the source path is only
+needed while installation runs. Bare relative filenames are emitted with a `./` prefix so DuckDB treats them as files
+rather than extension names. Likewise, prefix a bare relative repository directory with `./` to distinguish it from a
+DuckDB repository name.
+
+`ParseAndInstall` trims surrounding command-line grammar whitespace, rejects blank entries or extra repository
+delimiters, and executes entries immediately. Extension and repository semantics are left to DuckDB. Values passed to
+helper functions are literal because whitespace can be part of a valid path; callers reading them from YAML,
+environment variables, or similar configuration should normalize them if that is their desired policy.
+Call `Validate` first when malformed grammar should be reported before the connector opens; the example server does so
+for `--load-extensions`.
+
+The package safely quotes extension names, file paths, and custom repositories, then delegates extension names, aliases,
+repositories, file compatibility, and repeated or conflicting entries to DuckDB. Entries are executed in caller order
+without deduplication, so DuckDB's own errors remain the source of truth.
+
+DuckDB applies `LOAD` to each physical connection, so the connector callback repeats its complete ordered work whenever
+the connector creates one. Install-and-load calls repeat `INSTALL` as well; DuckDB decides whether an installed artifact
+can be reused, while each connection still receives its own `LOAD`. The first failed `INSTALL` or `LOAD` stops the
+callback and returns a contextual error, so that connection is not created. A later connection retries from the
+beginning. The example server's extension inventory query provides this preflight before HTTP serving starts.
+
+Extensions are trusted native code that run with the server process's privileges. Load only trusted repositories and
+files. DuckDB signature verification is an important safeguard where it applies; allowing unsigned extensions removes
+that safeguard. Local binaries must also match the DuckDB version, extension ABI, operating system, and architecture.
+
 ### Multi-Tenant Access Control
 
 `schema-match-headers` isn't part of the mosaic server API, but is provided here as an example of how to have
-multiple users / customers share the same DuckDB server instance while keeping their data isolated.
+multiple users / customers share the same DuckDB server instance while restricting table queries to tenant schemas.
 
-1. **Client side**: set `preagg.schema` when calling `new Coordinator` ([docs](https://idl.uw.edu/mosaic/api/core/coordinator.html#constructor)) to
-   something like a tenant id, user id, or organization id. If you want results to be shared across users, you should
-   use tenant ids or organization ids, not user ids. Mosaic will use that value as the schema name for any temporary
-   tables with pre-aggregated data. Note that any of your own queries for preloading data will also need to use that schema name.
+1. **Client side**: Give each tenant a dedicated pre-aggregation schema when constructing and registering its coordinator
+   ([docs](https://idl.uw.edu/mosaic/api/core/coordinator.html#constructor)):
+
+   ```js
+   const mc = new Coordinator(connector, {
+     preagg: { enabled: false, schema: tenantSchema }
+   });
+   coordinator(mc);
+   ```
+
+   The schema name is part of the tenant authorization policy and must not be shared by mutually untrusted tenants. It
+   must be one of the schema names supplied by the trusted headers described below. If results should be shared across
+   users, use a tenant id or organization id rather than a user id.
 2. **Authentication**: This implementation assumes that there is some authentication mechanism in place that sets the
    trusted authentication headers in the request. The server will use these headers to determine which schema
    to use for the query. This might be a server-side cookie sent through with mosaic requests, or a header set on outbound
@@ -61,6 +173,22 @@ multiple users / customers share the same DuckDB server instance while keeping t
    you trust to match against schema names. Inbound requests will be checked for these headers, and if they are present,
    the server will allow access to any schemas that match the header values. If no headers are present, and `--schema-match-headers`
    is set, the server will return a 401 Unauthorized error.
+
+_Note:_ Schema matching authorizes schema references in submitted SQL; it does not isolate the shared DuckDB process,
+filesystem, network, extensions, or credentials. It assumes a single catalog; attached catalogs are outside this policy
+boundary, and explicitly catalog-qualified table, `SHOW`, and function references are rejected. The function blocklist
+applies only to explicit function calls. Schema matching does not restrict catalog metadata returned by functions such as
+`duckdb_tables()` and `pragma_table_info()`. If metadata is sensitive, add the exact metadata-function names exposed by the
+deployment to `--function-blocklist`; wildcard patterns such as `duckdb_*` are not supported, and the list must be reviewed
+when DuckDB or its extensions change. To restrict file-reading functions, also enable schema matching so DuckDB replacement
+scans such as `FROM 'data.parquet'` are rejected as unqualified table references. These controls are not a sandbox: run the
+server with access only to external resources that are safe for every tenant.
+
+If either `--schema-match-headers` or `--function-blocklist` is configured, `json` and `arrow` requests are limited to
+statements DuckDB can serialize for validation; unsupported forms such as `PRAGMA` and `SET` are rejected, with HTTP
+requests receiving a 400 response. All `exec` requests are also rejected until full-statement authorization is supported.
+This includes every `Coordinator.exec(...)` call, such as data loading, preloading, and DDL/DML. Mosaic pre-aggregation
+also uses `exec` to create schemas and tables, so set `preagg: { enabled: false }` in this mode.
 
 ## API
 

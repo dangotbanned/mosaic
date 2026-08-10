@@ -12,7 +12,7 @@ import (
 	"github.com/coder/websocket"
 	"github.com/coder/websocket/wsjson"
 
-	"github.com/uwdata/mosaic/packages/server/duckdb-server-go/internal/query"
+	"github.com/uwdata/mosaic/packages/server/duckdb-server-go/pkg/query"
 )
 
 type Command string
@@ -28,6 +28,12 @@ type QueryParams struct {
 	SQL     *string  `json:"sql"`
 	Persist *bool    `json:"persist"`
 	Name    *string  `json:"name"`
+}
+
+type queryParamsError string
+
+func (e queryParamsError) Error() string {
+	return string(e)
 }
 
 type Server struct {
@@ -203,7 +209,21 @@ func (s *Server) handleHTTP(w http.ResponseWriter, r *http.Request) {
 
 	data, cacheHit, err := s.execCommand(r.Context(), params, allowedSchemas)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		status := http.StatusInternalServerError
+		var (
+			errorDetails query.ErrorDetails
+			paramsError  queryParamsError
+		)
+		switch {
+		case errors.Is(err, query.ErrExecWithValidation),
+			errors.Is(err, query.ErrUnsupportedStatement),
+			errors.As(err, &errorDetails),
+			errors.As(err, &paramsError):
+			status = http.StatusBadRequest
+		case errors.Is(err, query.ErrAccessDenied):
+			status = http.StatusForbidden
+		}
+		http.Error(w, err.Error(), status)
 		return
 	}
 
@@ -259,6 +279,9 @@ func (s *Server) execCommand(ctx context.Context, params QueryParams, allowedSch
 
 	switch *params.Type {
 	case CommandExec:
+		if len(s.schemaMatchHeaders) > 0 {
+			return nil, false, query.ErrExecWithValidation
+		}
 		return nil, false, s.db.Exec(ctx, *params.SQL) // No data to return for exec command
 
 	case CommandArrow:
@@ -276,19 +299,19 @@ func (s *Server) execCommand(ctx context.Context, params QueryParams, allowedSch
 func (p QueryParams) Validate(logger *slog.Logger) error {
 	if p.Type == nil || *p.Type == "" {
 		logger.Error("server: missing required 'type' parameter")
-		return errors.New("missing required 'type' parameter")
+		return queryParamsError("missing required 'type' parameter")
 	}
 
 	switch *p.Type {
 	case CommandArrow, CommandExec, CommandJSON:
 	default:
 		logger.Error("server: invalid 'type' parameter", "type", *p.Type)
-		return errors.New("invalid 'type' parameter: " + string(*p.Type))
+		return queryParamsError("invalid 'type' parameter: " + string(*p.Type))
 	}
 
 	if p.SQL == nil || *p.SQL == "" {
 		logger.Error("server: missing required 'sql' parameter")
-		return errors.New("missing required 'sql' parameter")
+		return queryParamsError("missing required 'sql' parameter")
 	}
 
 	return nil
@@ -298,7 +321,7 @@ func getAllowedSchemas(req *http.Request, schemaMatchHeaders []string) []string 
 	var allowedSchemas []string
 
 	for _, matchHeader := range schemaMatchHeaders {
-		allowedSchema := req.Header.Get(matchHeader)
+		allowedSchema := req.Header.Get(strings.TrimSpace(matchHeader))
 		if allowedSchema != "" {
 			allowedSchemas = append(allowedSchemas, allowedSchema)
 		}
