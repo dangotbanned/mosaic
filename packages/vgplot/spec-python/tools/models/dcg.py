@@ -23,7 +23,7 @@ class _FrozenStruct(msgspec.Struct, frozen=True, omit_defaults=True, repr_omit_d
         def __copy__(self) -> Self: ...
 
 
-type ModuleName = L["mosaic"]
+type ModuleName = L["css_styles", "interactors", "marks", "mosaic", "params", "transform", "typing"]
 """The stem of the module name that it was generated into."""
 
 
@@ -48,7 +48,7 @@ class EmitModel(_FrozenStruct, frozen=True, kw_only=True):
     name: str
     """Name of the TypedDict."""
 
-    module: L["mosaic"]
+    module: ModuleName
     """The stem of the module name that it was generated into."""
 
     source_ref: str
