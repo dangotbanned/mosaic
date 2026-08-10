@@ -1,10 +1,16 @@
 # mosaic-spec
 
-Python typing for authoring [Mosaic](https://idl.uw.edu/mosaic/) visualizations, derived from [Mosaic Spec](https://idl.uw.edu/mosaic/spec/).
+Python typing for authoring [Mosaic] visualizations, derived from [Mosaic Spec].
+
+[Mosaic]: https://idl.uw.edu/mosaic/
+[Mosaic Spec]: https://idl.uw.edu/mosaic/spec/
 
 > [!CAUTION]
 > This API is experimental and breaking changes should be expected.  
-> See ([#1075](https://github.com/uwdata/mosaic/issues/1075)) for motivation and ([roadmap](./roadmap.md)) for what's next.
+> See ([#1075]) for motivation and ([roadmap]) for what's next.
+
+[#1075]: https://github.com/uwdata/mosaic/issues/1075
+[roadmap]: ./roadmap.md
 
 ## Usage
 
@@ -13,8 +19,10 @@ Python typing for authoring [Mosaic](https://idl.uw.edu/mosaic/) visualizations,
 
 [`vgplot/spec/src/spec/Spec.ts`]: ../spec/src/spec/Spec.ts
 
-`mosaic_spec` exports [Typed dictionaries] and [Type aliases] describing the full public interface of [`vgplot/spec/src/spec/Spec.ts`].  
-These symbols can be used in annotations to provide type checking for `dict` literals:
+`mosaic_spec` exports [Typed dictionaries] and [Type aliases] describing the
+full public interface of [`vgplot/spec/src/spec/Spec.ts`].  
+These symbols can be used in annotations to provide type checking for `dict`
+literals:
 
 ```py
 import mosaic_spec as ms
@@ -34,7 +42,8 @@ ms.LineY(
     x="u",
     y="v",
     stroke="steelblue",
-    curve="monotone-x",  # > The curve (interpolation) method for connecting adjacent points. One of ...
+    curve="monotone-x",
+    # ^ The curve (interpolation) method for connecting adjacent points. One of ...
     marker="circle",
     mark="lineY",
 )
@@ -43,7 +52,9 @@ ms.LineY(
 [`mosaic_spec.spec`]: ./src/mosaic_spec/spec.py
 [Intersection Types]: https://www.typescriptlang.org/docs/handbook/2/objects.html#intersection-types
 
-The [`mosaic_spec.spec`] namespace provides an entrypoint for each of the 81 plot, input widget, or layout components - as a means to represent TypeScript's [Intersection Types]:
+The [`mosaic_spec.spec`] namespace provides an entrypoint for each of the 81
+plot, input widget, or layout components - as a means to represent TypeScript's
+[Intersection Types]:
 
 ```py
 spec = ms.spec.Plot(
