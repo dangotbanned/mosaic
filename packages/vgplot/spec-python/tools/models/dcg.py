@@ -128,13 +128,6 @@ class EmitModel(_FrozenStruct, frozen=True, kw_only=True):
         )
     """
 
-    title: str | None = None
-    """Only used twice?
-
-    - Lo -> lo
-    - Y1 -> y1
-    """
-
     fields: A[tuple[EmitField, ...], msgspec.Meta(min_length=1)]
     """All of the fields defined for the TypedDict.
 
@@ -214,7 +207,7 @@ class TypeAlias(base.Struct):
 class TypedDict(base.Struct):
     """172 models.
 
-    Excludes extras from `x-base-open` and `_spec`.
+    Excludes extras from `x-template` and `spec`.
 
     ## Ranked by number of fields
     ### Top 3
