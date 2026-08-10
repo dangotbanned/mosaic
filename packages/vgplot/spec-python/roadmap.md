@@ -1,6 +1,7 @@
 # Roadmap
 
-Here's a big list of things to do/known issues. Current priorities are deduplication and reducing [LSP] overhead.
+Here's a big list of things to do/known issues. Current priorities are deduplication and reducing
+[LSP] overhead.
 
 [LSP]: https://en.wikipedia.org/wiki/Language_Server_Protocol
 
@@ -13,12 +14,13 @@ Here's a big list of things to do/known issues. Current priorities are deduplica
   - [x] `mosaic_spec`
 - [x] Use `.py` for target output instead of `.pyi`
 - [x] Fix emitting 81 version of `Spec`
-  - [x] Caused by a huge intersection type `Spec = SpecHead & Component` (see [explanation](https://github.com/dangotbanned/mosaic/blob/b3793004b483dbdfff0c6e390f9cc24fcbf897a7/packages/vgplot/spec-python/tools/models/source.py#L1-L55))
+  - [x] Caused by a huge intersection type `Spec = SpecHead & Component` (see [explanation])
   - [x] Remove `Spec` from `mosaic.json`
     - Reduced `mosaic.py` **53k** -> **28k** LOC
   - [x] Fix `closed=True` on base class (~100 type errors)
   - [x] Fix `data: PlotMarkData` Required/NotRequired conflict (~59 type errors)
-- [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between `TypedDict` defs
+- [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between
+      `TypedDict` defs
 - [ ] Add some tests once the top-level namespace starts stabilizing
 - [x] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
   - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
@@ -28,10 +30,11 @@ Here's a big list of things to do/known issues. Current priorities are deduplica
 
 [was too large]: https://github.com/dangotbanned/mosaic/commit/d0f225cddfb173da0aea024ad6d03ce4a5041f51
 
-`mosaic.py` ~~is~~ [was too large] (~**30k** LOC with docs) and this kills the performance of language servers.  
+`mosaic.py` ~~is~~ [was too large] (~**30k** LOC with docs) and this kills the performance of
+language servers.  
 
-Pylance is non-functional as it isn't able to do the kind of incremental magic that `ty` can within a single file.
-To mitigate this, here are some potential modules/subpackages to lighten the load:
+Pylance is non-functional as it isn't able to do the kind of incremental magic that `ty` can within
+a single file. To mitigate this, here are some potential modules/subpackages to lighten the load:
 
 - [x] `interactors.py`
 - [x] `marks.py` (**136 KB**)
@@ -53,7 +56,8 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
   - [ ] `PlotTypes.ts` (14 KB) and **isolated**
   - [ ] A large gain will come from naming duplicated inline types, e.g.
     - 60x of `str | float | bool | ParamRef`
-    - 28x of `Literal["CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"]`
+    - 28x of
+      `Literal["CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"]`
     - **Many** `OneOrSeq[T]` cases ([altair/vegalite/v6/schema/_typing.py#L100-L114])
 - [x] `css_styles.py`
   - Has **508** fields
@@ -65,9 +69,9 @@ To mitigate this, here are some potential modules/subpackages to lighten the loa
 
 Things that should be easiest to fix upstream in `datamodel-code-generator`
 
-- [x] [Support (`total=False`, `Required`) in `TypedDict` (#3680)](https://github.com/koxudaxi/datamodel-code-generator/issues/3680)
-- [x] [Support overriding default imports (#3681)](https://github.com/koxudaxi/datamodel-code-generator/issues/3681)
-- [x] [Support configuring `--use-type-alias` behavior (#3682)](https://github.com/koxudaxi/datamodel-code-generator/issues/3682)
+- [x] [Support (`total=False`, `Required`) in `TypedDict` (#3680)]
+- [x] [Support overriding default imports (#3681)]
+- [x] [Support configuring `--use-type-alias` behavior (#3682)]
 
 ## `mosaic-spec` feedback
 
@@ -76,7 +80,7 @@ Things that should be easiest to fix upstream in Mosaic
 - [ ] Avoid anonymous literal/enums
 - [ ] Generally, try to provide names for complex, repeated types
 - [ ] Output multiple schemas -> fixes one big file issue
-- [ ] Add `"x-*"` [extension fields](https://datamodel-code-generator.koxudaxi.dev/custom_template/#schema-extensions) into the schema which can be used here for templating
+- [ ] Add `"x-*"` [extension fields] into the schema which can be used here for templating
   - Which file did the symbol come from?
   - Inheritance?
 - [ ] Follow some python-friendly rules when writing **docs** in TS
@@ -85,12 +89,13 @@ Things that should be easiest to fix upstream in Mosaic
 
 ### Unflatten the spec
 
-The current design favors large numbers of options available at a single level.
-Groups of fields with prefixed names can be represented in another level (e.g. `opacity_*` -> `opacity.{*}`).
+The current design favors large numbers of options available at a single level. Groups of fields
+with prefixed names can be represented in another level (e.g. `opacity_*` -> `opacity.{*}`).
 
 ### Candidates
 
-I expect we can shrink the size of the schema if these groups could be `"$ref"`s, since we can avoid duplicating so much
+I expect we can shrink the size of the schema if these groups could be `"$ref"`s, since we can avoid
+duplicating so much
 
 - `aria_*`
 - `color_*`
@@ -123,3 +128,9 @@ Here's what doing this for `fx_*` and `fy_*` on `PlotAttributes` could look like
 And here is the same thing in Observable Plot?
 
 - (https://github.com/observablehq/plot/blob/356f579b1d947ee05a914420eddff0f29cee300a/src/plot.d.ts)
+
+[explanation]: https://github.com/dangotbanned/mosaic/blob/b3793004b483dbdfff0c6e390f9cc24fcbf897a7/packages/vgplot/spec-python/tools/models/source.py#L1-L55
+[Support (`total=False`, `Required`) in `TypedDict` (#3680)]: https://github.com/koxudaxi/datamodel-code-generator/issues/3680
+[Support overriding default imports (#3681)]: https://github.com/koxudaxi/datamodel-code-generator/issues/3681
+[Support configuring `--use-type-alias` behavior (#3682)]: https://github.com/koxudaxi/datamodel-code-generator/issues/3682
+[extension fields]: https://datamodel-code-generator.koxudaxi.dev/custom_template/#schema-extensions
