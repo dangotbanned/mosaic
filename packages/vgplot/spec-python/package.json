@@ -9,5 +9,5 @@
     "typecheck": "uv run ty check && uv run pyright",
     "test": "uv run pytest --numprocesses=1"
   },
-  "version": "0.29.2"
+  "version": "0.30.0"
 }
