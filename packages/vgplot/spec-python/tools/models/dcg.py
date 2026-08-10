@@ -119,6 +119,15 @@ class EmitMetadataV1(base.Struct):
         modules = {name: Module.from_emit(name, models) for name, models in it}
         return Root(modules)
 
+    @classmethod
+    def read_json(cls) -> Self:
+        """Read the metadata of the last generation run into this struct."""
+        from tools import fs, serde
+
+        pyproject = fs.read_pyproject()
+        dumped = pyproject["tool"]["datamodel-codegen"]["profiles"]["spec"]["emit-model-metadata"]
+        return serde.read_json((fs.SPEC_PYTHON / dumped), cls)
+
 
 @final
 class Field(_FrozenStruct, frozen=True, kw_only=True, cache_hash=True):
