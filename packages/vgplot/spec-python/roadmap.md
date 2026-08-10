@@ -1,6 +1,8 @@
 # Roadmap
 
-Here's a big list of things to do/known issues
+Here's a big list of things to do/known issues. Current priorities are deduplication and reducing [LSP] overhead.
+
+[LSP]: https://en.wikipedia.org/wiki/Language_Server_Protocol
 
 ## General
 
