@@ -1,4 +1,51 @@
-"""[datamodel-code-generator] artifacts.
+"""Inspecting [datamodel-code-generator] artifacts.
+
+## Examples
+The last generation can be inspected via the `read_json` constructor:
+
+```py
+from tools.models import dcg
+
+last_run = dcg.EmitMetadataV1.read_json()
+
+len(last_run.models)
+229
+```
+
+Where each "model" has a representation like:
+```py
+last_run.models[100]
+EmitModel(
+    name="AggregateExpression",
+    module="marks",
+    source_ref="marks.json#/definitions/AggregateExpression",
+    source_path=("definitions", "AggregateExpression"),
+    fields=(
+        EmitField(
+            name="agg", alias="agg", original_name="agg", type="Required[str]", required=True
+        ),
+        EmitField(name="label", alias="label", original_name="label", type="str"),
+    ),
+)
+```
+
+Use `convert_models()` for a per-module representation:
+
+```py
+useful = last_run.convert_models()
+useful
+Root(
+    modules={
+        "typing": Module(name="typing", typed_dicts={...}, type_aliases={...}),
+        "transform": Module(name="transform", typed_dicts={...}, type_aliases={...}),
+        "params": Module(name="params", typed_dicts={...}, type_aliases={...}),
+        "mosaic": Module(name="mosaic", typed_dicts={...}, type_aliases={...}),
+        "marks": Module(name="marks", typed_dicts={...}, type_aliases={...}),
+        "interactors": Module(name="interactors", typed_dicts={...}, type_aliases={...}),
+        "css_styles": Module(name="css_styles", typed_dicts={...}, type_aliases={...}),
+    }
+)
+```
 
 [datamodel-code-generator]: https://github.com/koxudaxi/datamodel-code-generator
 """
