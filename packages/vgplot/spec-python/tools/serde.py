@@ -12,6 +12,8 @@ import msgspec
 if TYPE_CHECKING:
     from collections.abc import Buffer, Callable, Mapping
 
+    from typing_extensions import TypeForm
+
     from tools.fs import IntoPath
 
 __all__ = ("convert_json", "deserialize_json", "read_json", "serialize_json", "write_json")
@@ -25,6 +27,12 @@ def serialize_json(obj: Any, /, *, order: L["deterministic", "sorted"] | None = 
 def deserialize_json[T](buf: Buffer | str, tp: type[T], /) -> T:
     """Deserialize an object from JSON into `T`."""
     return _decoder_json(tp).decode(buf)
+
+
+def deserialize_yaml[T](buf: Buffer | str, tp: type[T] | TypeForm[T], /) -> T:
+    """Deserialize an object from YAML into `T`."""
+    # NOTE: msgspec overloads "forget" to use `Buffer` after the first one
+    return msgspec.yaml.decode(buf, type=tp, dec_hook=_decoder_hook)  # ty: ignore[no-matching-overload] # pyright: ignore[reportCallIssue,reportArgumentType]
 
 
 def convert_json[T](obj: msgspec.Struct | Mapping[str, Any], into: type[T], /) -> T:
@@ -56,6 +64,12 @@ def write_json(path: IntoPath, obj: Any, *, pretty: bool = False) -> None:
 def write_toml(path: IntoPath, obj: Any) -> None:
     """Serialize an object to a TOML file."""
     _write_bytes_as_str(path, msgspec.toml.encode(obj, order="sorted"))
+
+
+def read_yaml[T](path: IntoPath, tp: type[T] | TypeForm[T], /) -> T:
+    """Deserialize a YAML file into `T`."""
+    with Path(path).open(encoding="utf8") as fd:
+        return deserialize_yaml(fd.read(), tp)
 
 
 def _write_bytes_as_str(path: IntoPath, b_string: bytes, /) -> None:
