@@ -37,7 +37,7 @@ def test_infer() -> None:
                         "data": {"source": "latency", "filter_by": "$filter"},
                         "x": "time",
                         "y": "latency",
-                        "fill": {"argmax": ["route", "count"]},
+                        "fill": {"argmax": ("route", "count")},
                         "fill_opacity": {"sum": "count"},
                         "width": 2016,
                         "height": 500,

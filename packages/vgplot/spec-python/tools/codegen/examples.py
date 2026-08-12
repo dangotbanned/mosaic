@@ -31,14 +31,8 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 type Lit = bool | int | float | str | None
-type Json = Lit | list[Json] | dict[str, Json]
-
-# `msgspec` hits an error with the correct recursive type:
-#   `RecursionError: Stack overflow (used 1952 kB) while analyzing a type`
-type _JsonNoRecursion = (
-    Lit | list[Lit | list[Any] | dict[str, Any]] | dict[str, Lit | list[Any] | dict[str, Any]]
-)
-type JsonSpec = dict[str, Json]
+type JsonIn = Lit | list[JsonIn] | dict[str, JsonIn]
+type JsonOut = Lit | list[JsonOut] | tuple[JsonOut, ...] | dict[str, JsonOut]
 
 
 class _Meta(TypedDict, total=False):
@@ -51,12 +45,12 @@ class _Config(TypedDict, total=False):
     extensions: str | list[str]
 
 
-class YamlSpec(TypedDict, total=False, extra_items=_JsonNoRecursion):
+class YamlSpec(TypedDict, total=False, extra_items=JsonIn):
     meta: _Meta
     config: _Config
-    data: dict[str, _JsonNoRecursion]
-    params: dict[str, _JsonNoRecursion]
-    plotDefaults: dict[str, _JsonNoRecursion]
+    data: dict[str, JsonIn]
+    params: dict[str, JsonIn]
+    plotDefaults: dict[str, JsonIn]
 
 
 _GROUP_1 = r"\g<1>"
@@ -85,26 +79,81 @@ def _py_name(s: str, /) -> str:
     return _GET_KEY(s) or _pascal_to_snake_case(s)
 
 
-@functools.singledispatch
-def _from_json(obj: Json, /) -> Json:
-    return obj
+_LIST_AS_TUPLE: Final = frozenset(
+    (
+        "argmax",
+        "argmin",
+        "avg",
+        "bin",
+        "centroid",
+        "centroid_x",
+        "centroid_y",
+        "column",
+        "count",
+        "date_day",
+        "date_month_day",
+        "first",
+        "first_value",
+        "geojson",
+        "groups",
+        "last",
+        "last_value",
+        "limit",
+        "max",
+        "median",
+        "min",
+        "mode",
+        "ntile",
+        "origin",
+        "product",
+        "projection_parallels",
+        "projection_rotate",
+        "quantile",
+        "range",
+        "rows",
+        "stddev",
+        "stddev_pop",
+        "sum",
+        "var_pop",
+        "variance",
+    )
+)
+"""Keys that are typed as fixed-length tuples.
+
+When deserializing, they will be a `list` and therefore produce typing yells.
+"""
+
+_STOP: Final = bool, int, float, str, type(None)
 
 
-@_from_json.register(list)
-def _(obj: list[Json], /) -> list[Json]:
-    return [_from_json(el) for el in obj]
-
-
-@_from_json.register(dict)
-def _(obj: dict[str, Json], /) -> dict[str, Json]:
-    return {_py_name(k): _from_json(v) for k, v in obj.items()}
+def _translate(obj: JsonIn | Any, /) -> JsonOut:
+    # micro-opt
+    _stop = _STOP
+    _list: Final = list
+    if isinstance(obj, _stop):
+        return obj
+    if isinstance(obj, _list):
+        return [_translate(el) for el in obj]
+    if _LIST_AS_TUPLE.isdisjoint(obj):
+        return {_py_name(k): _translate(v) for k, v in obj.items()}
+    return {
+        k_: (
+            tuple(_translate(el) for el in v)
+            if k_ in _LIST_AS_TUPLE and isinstance(v, _list)
+            else [_translate(el) for el in v]
+            if isinstance(v, _list)
+            else _translate(v)
+        )
+        for k, v in obj.items()
+        if (k_ := _py_name(k))
+    }
 
 
 class Example:
     title: str
     description: str
     source: Path
-    converted: dict[str, Json]
+    converted: dict[str, JsonOut]
 
     @classmethod
     def _extract_meta(cls, spec: YamlSpec) -> tuple[str, str]:
@@ -124,13 +173,12 @@ class Example:
 
     @classmethod
     def from_path(cls, source: Path) -> Self:
-
         # NOTE: `extra_items` isn't supported in msgspec (iirc)
         spec: YamlSpec = read_yaml(source, Any)
         self = cls.__new__(cls)
         self.source = source
         self.title, self.description = cls._extract_meta(spec)
-        self.converted = {_py_name(k): _from_json(v) for k, v in spec.items()}
+        self.converted = {_py_name(k): _translate(v) for k, v in spec.items()}
         return self
 
     def render_test_module(self) -> str:
