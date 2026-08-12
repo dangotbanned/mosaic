@@ -2,20 +2,66 @@
 
 from __future__ import annotations
 
-# ruff: file-ignore[print,subprocess-without-shell-equals-true]
+import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final, Literal as L, LiteralString as LS, overload
 
 if TYPE_CHECKING:
     import subprocess as sp
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Iterator
 
+# ruff: file-ignore[print,subprocess-without-shell-equals-true]
+
+type IntoPath = str | Path | os.PathLike[str]
+"""Anything that can be converted into a [`pathlib.Path`][]."""
+
+type Suffix = L[
+    ".css",
+    ".csv",
+    ".geojson",
+    ".js",
+    ".json",
+    ".md",
+    ".parquet",
+    ".py",
+    ".toml",
+    ".ts",
+    ".tsv",
+    ".yaml",
+]
+"""Any file extension that would (realistically) be used in this project."""
+
+type Tool = L["uv", "ruff"]
 
 _HERE = Path(__file__)
 
 # NOTE: External paths
 MONOREPO_ROOT = _HERE.parent.parent.parent.parent.parent
 """`mosaic`"""
+
+EXAMPLES_SPECS = MONOREPO_ROOT / "specs"
+"""`mosaic/specs`.
+
+Monorepo-level directory containing examples for each target format.
+
+## Important
+The source for `mosaic/docs/public/specs`.
+"""
+
+EXAMPLES_SPECS_YAML = EXAMPLES_SPECS / "yaml"
+"""`mosaic/specs/yaml`.
+
+Manually authored examples.
+
+## Important
+Everything is generated from yaml.
+"""
+
+EXAMPLES_SPECS_PYTHON = EXAMPLES_SPECS / "python"
+"""`mosaic/specs/python`.
+
+Generated `vgplot-python` examples, for comparison.
+"""
 
 PACKAGES = MONOREPO_ROOT / "packages"
 """`mosaic/packages`"""
@@ -69,7 +115,7 @@ PYPROJECT_TOML = SPEC_PYTHON / "pyproject.toml"
 """`mosaic/packages/vgplot/spec-python/pyproject.toml`"""
 
 
-def repo_relative_str(source: str | Path) -> str:
+def repo_relative_str(source: IntoPath) -> str:
     """Return a path representation for errors/logs."""
     return Path(source).relative_to(SPEC_PYTHON).as_posix()
 
@@ -81,7 +127,55 @@ def read_pyproject() -> dict[str, Any]:
     return tomllib.loads(PYPROJECT_TOML.read_text("utf8"))
 
 
-def write_lines(target: str | Path, lines: Iterable[str], /, message: str | None = None) -> None:
+def iter_dir(source_dir: IntoPath, *include_suffix: Suffix) -> Iterator[Path]:
+    """Iterate over the paths in `source_dir`.
+
+    Args:
+        source_dir: The parent directory.
+        *include_suffix: Require each result to be a file with one of these extensions.
+
+    ## Notes
+    [1]: https://docs.python.org/3/library/pathlib.html#pathlib.Path.iterdir
+    [2]: https://docs.python.org/3/library/os.html#os.scandir
+
+    - Faster than [`pathlib.Path.iterdir`][1], but that should be preferred if you
+      want to pay for defined behavior in the event a file is [removed/added during iteration][2]
+    - Doesn't require re/glob/fnmatch
+
+    ## Examples
+    Equivalent glob: `path/to/dir/*`
+
+    >>> files_or_dirs = iter_dir("path/to/dir")
+
+    Equivalent glob: `path/to/dir/*.{yaml,toml}`
+
+    >>> yaml_or_toml = iter_dir("path/to/dir", ".yaml", ".toml")
+
+    The latter is not supported by [python's glob], and is inspired by [globset] syntax.
+
+    [python's glob]: https://docs.python.org/3/library/pathlib.html#pattern-language
+    [globset]: https://docs.rs/globset/latest/globset/#syntax
+    """
+    constructor = type(Path(source_dir))
+    for entry in scan_dir(source_dir, *include_suffix):
+        yield constructor(entry)
+
+
+def scan_dir(source_dir: IntoPath, *include_suffix: Suffix) -> Iterator[os.DirEntry[str]]:
+    """Iterate over the entries in `source_dir`.
+
+    The lower-level counterpart to [`iter_dir`][].
+    """
+    with os.scandir(source_dir) as it_scan:
+        if not include_suffix:
+            yield from it_scan
+            return
+        for entry in it_scan:
+            if entry.is_file() and entry.name.endswith(include_suffix):
+                yield entry
+
+
+def write_lines(target: IntoPath, lines: Iterable[str], /, message: str | None = None) -> None:
     """Join `lines` and write them to `target`."""
     target = Path(target)
     target.touch()
@@ -90,18 +184,15 @@ def write_lines(target: str | Path, lines: Iterable[str], /, message: str | None
         print(f"{message} at: {repo_relative_str(target)}")
 
 
-type Tool = L["uv", "ruff"]
-
-
 # TODO @dangotbanned: Change `cwd` to use an enum instead of `None` to represent "leave me alone"
 @overload
-def run(tool: Tool, *args: LS, output: L["pipe"] = "pipe", cwd: Path | None = ...) -> None: ...
+def run(tool: Tool, *args: LS, output: L["pipe"] = "pipe", cwd: IntoPath | None = ...) -> None: ...
 @overload
 def run(
-    tool: Tool, *args: LS, output: L["capture"], cwd: Path | None = ...
+    tool: Tool, *args: LS, output: L["capture"], cwd: IntoPath | None = ...
 ) -> sp.CompletedProcess[str]: ...
 def run(
-    tool: Tool, *args: LS, output: L["capture", "pipe"] = "pipe", cwd: Path | None = SPEC_PYTHON
+    tool: Tool, *args: LS, output: L["capture", "pipe"] = "pipe", cwd: IntoPath | None = SPEC_PYTHON
 ) -> sp.CompletedProcess[str] | None:
     """Run a command in a subprocess.
 
