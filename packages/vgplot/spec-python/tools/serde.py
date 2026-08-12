@@ -14,20 +14,20 @@ if TYPE_CHECKING:
 
     from tools.fs import IntoPath
 
-__all__ = ("convert", "deserialize", "read_json", "serialize", "write_json")
+__all__ = ("convert_json", "deserialize_json", "read_json", "serialize_json", "write_json")
 
 
-def serialize(obj: Any, /, *, order: L["deterministic", "sorted"] | None = None) -> bytes:
+def serialize_json(obj: Any, /, *, order: L["deterministic", "sorted"] | None = None) -> bytes:
     """Serialize an object as JSON."""
-    return _encoder(order).encode(obj)
+    return _encoder_json(order).encode(obj)
 
 
-def deserialize[T](buf: Buffer | str, tp: type[T], /) -> T:
+def deserialize_json[T](buf: Buffer | str, tp: type[T], /) -> T:
     """Deserialize an object from JSON into `T`."""
-    return _decoder(tp).decode(buf)
+    return _decoder_json(tp).decode(buf)
 
 
-def convert[T](obj: msgspec.Struct | Mapping[str, Any], into: type[T], /) -> T:
+def convert_json[T](obj: msgspec.Struct | Mapping[str, Any], into: type[T], /) -> T:
     """Convert a struct-like object through `msgspec`.
 
     This is like a field filter with struct-level configuration on strict-ness.
@@ -37,18 +37,18 @@ def convert[T](obj: msgspec.Struct | Mapping[str, Any], into: type[T], /) -> T:
 
     [msgspec.convert]: https://msgspec.dev/api#msgspec.convert
     """
-    return deserialize(serialize(obj), into)
+    return deserialize_json(serialize_json(obj), into)
 
 
 def read_json[T](path: IntoPath, tp: type[T], /) -> T:
     """Deserialize a JSON file into `T`."""
     with Path(path).open(encoding="utf8") as fd:
-        return deserialize(fd.read(), tp)
+        return deserialize_json(fd.read(), tp)
 
 
 def write_json(path: IntoPath, obj: Any, *, pretty: bool = False) -> None:
     """Serialize an object to a JSON file."""
-    bstring = serialize(obj, order="sorted")
+    bstring = serialize_json(obj, order="sorted")
     bstring = msgspec.json.format(bstring) if pretty else bstring
     _write_bytes_as_str(path, bstring)
 
@@ -66,12 +66,12 @@ def _write_bytes_as_str(path: IntoPath, b_string: bytes, /) -> None:
 
 
 @functools.cache
-def _decoder[T](tp: type[T], /) -> msgspec.json.Decoder[T]:
+def _decoder_json[T](tp: type[T], /) -> msgspec.json.Decoder[T]:
     return msgspec.json.Decoder(tp, dec_hook=_decoder_hook)
 
 
 @functools.cache
-def _encoder(order: L["deterministic", "sorted"] | None = None, /) -> msgspec.json.Encoder:
+def _encoder_json(order: L["deterministic", "sorted"] | None = None, /) -> msgspec.json.Encoder:
     return msgspec.json.Encoder(order=order, enc_hook=_encoder_hook)
 
 
