@@ -26,7 +26,7 @@ Here's a big list of things to do/known issues. Current priorities are deduplica
       `TypedDict` defs
 - [ ] Configure [`pyrefly`] and run it during `typecheck`
 - [ ] Add some tests once the top-level namespace starts stabilizing
-  - [ ] Add codegen for [`tests/test_examples/`]
+  - [x] Add codegen for [`tests/test_examples/`]
   - [ ] Add a `tests/test_peps/` suite
     - [ ] Completed
       - [ ] [PEP 589 - `TypedDict`]
