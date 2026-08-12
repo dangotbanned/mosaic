@@ -28,7 +28,7 @@ def main(target_dir: Path, /) -> None:
         package_init.touch()
 
     for source in fs.iter_dir(fs.EXAMPLES_SPECS_YAML, ".yaml"):
-        rendered = Example.from_path(source).render()
+        rendered = Example.from_path(source).render_test_module()
         _derive_target_path(target_dir, source).write_text(rendered, "utf-8", newline="\n")
 
 

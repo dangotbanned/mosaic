@@ -133,14 +133,14 @@ class Example:
         self.converted = {_py_name(k): _from_json(v) for k, v in spec.items()}
         return self
 
-    def render(self) -> str:
-        return TEMPLATE.format(
+    def render_test_module(self) -> str:
+        return TEMPLATE_TEST_MODULE.format(
             doc=doc(f"{self.title.removesuffix('.')}.\n\n{self.description}\n"),
             content=self.converted,
         )
 
 
-TEMPLATE: Final = """\
+TEMPLATE_TEST_MODULE: Final = """\
 {doc}
 from __future__ import annotations
 
