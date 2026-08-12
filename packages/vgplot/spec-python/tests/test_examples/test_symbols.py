@@ -78,4 +78,4 @@ def test_infer() -> None:
                 ]
             },
         ],
-    }
+    }  # ty: ignore[invalid-assignment]

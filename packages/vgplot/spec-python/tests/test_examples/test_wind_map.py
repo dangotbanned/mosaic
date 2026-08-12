@@ -54,4 +54,4 @@ def test_infer() -> None:
                 "label": "Vector Length",
             },
         ],
-    }
+    }  # ty: ignore[invalid-assignment]

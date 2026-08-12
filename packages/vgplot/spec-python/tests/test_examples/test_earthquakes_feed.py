@@ -43,4 +43,4 @@ def test_infer() -> None:
         ],
         "margin": 2,
         "projection_type": "equirectangular",
-    }
+    }  # ty: ignore[invalid-assignment]

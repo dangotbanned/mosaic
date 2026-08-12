@@ -40,4 +40,4 @@ def test_infer() -> None:
         ],
         "margin": 0,
         "projection_type": "albers",
-    }
+    }  # ty: ignore[invalid-assignment]

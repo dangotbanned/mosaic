@@ -64,4 +64,4 @@ def test_infer() -> None:
                 "x_tick_format": "d",
             },
         ],
-    }
+    }  # ty: ignore[invalid-assignment]

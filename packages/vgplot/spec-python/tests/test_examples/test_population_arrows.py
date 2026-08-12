@@ -60,4 +60,4 @@ def test_infer() -> None:
             },
             {"input": "menu", "label": "Bend Arrows?", "options": [True, False], "bind": "$bend"},
         ],
-    }
+    }  # ty: ignore[invalid-assignment]

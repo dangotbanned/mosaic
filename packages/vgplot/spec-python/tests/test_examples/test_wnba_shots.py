@@ -89,4 +89,4 @@ def test_infer() -> None:
             },
             {"legend": "color", "plot": "shot-chart"},
         ],
-    }
+    }  # ty: ignore[invalid-assignment]

@@ -49,4 +49,4 @@ def test_infer() -> None:
                 "color_domain": "Fixed",
             },
         ],
-    }
+    }  # ty: ignore[invalid-assignment]

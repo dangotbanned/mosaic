@@ -70,4 +70,4 @@ def test_infer() -> None:
                 "projection_rotate": "$rotate",
             },
         ],
-    }
+    }  # ty: ignore[invalid-assignment]

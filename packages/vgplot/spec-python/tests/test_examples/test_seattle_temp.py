@@ -42,4 +42,4 @@ def test_infer() -> None:
         "y_label": "Temperature Range (°C)",
         "width": 680,
         "height": 300,
-    }
+    }  # ty: ignore[invalid-assignment]

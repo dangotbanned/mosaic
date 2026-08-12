@@ -37,4 +37,4 @@ def test_infer() -> None:
         "y_label": "Close",
         "width": 680,
         "height": 200,
-    }
+    }  # ty: ignore[invalid-assignment]

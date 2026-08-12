@@ -61,4 +61,4 @@ def test_infer() -> None:
         "width": 680,
         "height": 400,
         "margin_right": 35,
-    }
+    }  # ty: ignore[invalid-assignment]

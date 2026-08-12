@@ -85,4 +85,4 @@ def test_infer() -> None:
                 "margin_bottom": 35,
             },
         ],
-    }
+    }  # ty: ignore[invalid-assignment]

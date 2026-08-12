@@ -75,4 +75,4 @@ def test_infer() -> None:
                 "height": 200,
             },
         ],
-    }
+    }  # ty: ignore[invalid-assignment]
