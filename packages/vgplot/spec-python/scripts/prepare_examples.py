@@ -33,8 +33,6 @@ def main(target_dir: Path, /) -> None:
 
 
 if __name__ == "__main__":
-    # TODO @dangotbanned: Move handwritten tests out of `test_examples` and use that instead
-    target = fs.TESTS / "test_examples_gen"
+    target = fs.TESTS / "test_examples"
     main(target)
     print(f"Generated examples at: {fs.repo_relative_str(target)}")
-    # TODO @dangotbanned: run ruff on the result
