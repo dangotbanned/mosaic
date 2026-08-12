@@ -92,6 +92,9 @@ Output directory for modified schemas.
 SCRIPTS = SPEC_PYTHON / "scripts"
 """`mosaic/packages/vgplot/spec-python/scripts`"""
 
+TESTS = SPEC_PYTHON / "tests"
+"""`mosaic/packages/vgplot/spec-python/tests`"""
+
 SRC = SPEC_PYTHON / "src"
 """`mosaic/packages/vgplot/spec-python/src`"""
 
