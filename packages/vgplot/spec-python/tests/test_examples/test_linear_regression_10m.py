@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {
             "flights10m": "SELECT GREATEST(-60, LEAST(ARR_DELAY, 180))::DOUBLE AS delay, DISTANCE AS distance, DEP_TIME AS time FROM 'https://pub-1da360b43ceb401c809f68ca37c7f8a4.r2.dev/data/flights-10m.parquet'",
             "flights10p": "SELECT * FROM flights10m USING SAMPLE 10%",

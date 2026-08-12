@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.HConcat = {
         "data": {
             "athletes_batched": {
                 "file": "data/athletes.parquet",
@@ -84,5 +84,5 @@ def test_infer() -> None:
                     {"legend": "color", "plot": "heights"},
                 ]
             }
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

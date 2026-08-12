@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Plot = {
         "data": {
             "feed": {"type": "spatial", "file": "data/usgs-feed.geojson"},
             "world": {"type": "spatial", "file": "data/countries-110m.json", "layer": "land"},
@@ -40,7 +40,7 @@ def test_infer() -> None:
                 "href": "url",
                 "target": "_blank",
             },
-        ],
+        ],  # ty: ignore[invalid-argument-type]
         "margin": 2,
         "projection_type": "equirectangular",
-    }  # ty: ignore[invalid-assignment]
+    }

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Plot = {
         "data": {
             "counties": {
                 "type": "spatial",
@@ -45,7 +45,7 @@ def test_infer() -> None:
                 "tip": True,
                 "title": "name",
             },
-        ],
+        ],  # ty: ignore[invalid-argument-type]
         "margin": 0,
         "projection_type": "albers",
-    }  # ty: ignore[invalid-assignment]
+    }

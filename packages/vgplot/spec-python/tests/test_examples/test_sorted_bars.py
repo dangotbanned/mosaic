@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"athletes": {"file": "data/athletes.parquet"}},
         "vconcat": [
             {
@@ -41,5 +41,5 @@ def test_infer() -> None:
                 "y_label_anchor": "top",
                 "margin_top": 15,
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

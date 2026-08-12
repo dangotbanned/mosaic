@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"walk": {"file": "data/random-walk.parquet"}},
         "params": {"point": 0},
         "vconcat": [
@@ -38,5 +38,5 @@ def test_infer() -> None:
                 "width": 680,
                 "height": 200,
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

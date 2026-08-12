@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {
             "bls_unemp": {"file": "data/bls-metro-unemployment.parquet"},
             "feed": {"type": "spatial", "file": "data/usgs-feed.geojson"},
@@ -95,5 +95,5 @@ def test_infer() -> None:
                 "margin": 0,
                 "projection_type": "albers",
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

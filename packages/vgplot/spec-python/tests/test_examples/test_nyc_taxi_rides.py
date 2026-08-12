@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "config": {"extensions": "spatial"},
         "data": {
             "rides": {
@@ -119,5 +119,5 @@ def test_infer() -> None:
                 "width": 680,
                 "height": 100,
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

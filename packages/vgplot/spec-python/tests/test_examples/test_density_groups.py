@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"penguins": {"file": "data/penguins.parquet"}},
         "params": {"bandwidth": 20, "normalize": "none", "stack": False, "offset": None},
         "vconcat": [

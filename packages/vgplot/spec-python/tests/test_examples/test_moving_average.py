@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"cases": {"file": "data/berlin-covid.parquet"}},
         "params": {"frame": [-6, 0]},
         "vconcat": [
@@ -58,5 +58,5 @@ def test_infer() -> None:
                     {"label": "Global average [-∞, +∞]", "value": [None, None]},
                 ],
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

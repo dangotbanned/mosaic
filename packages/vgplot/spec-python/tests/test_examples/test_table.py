@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Table = {
         "data": {"flights": {"file": "data/flights-200k.parquet"}},
         "input": "table",
         "source": "flights",

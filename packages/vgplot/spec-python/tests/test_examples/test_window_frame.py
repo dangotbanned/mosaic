@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Plot = {
         "data": {"aapl": {"file": "data/stocks.parquet", "where": "Symbol = 'AAPL'"}},
         "plot": [
             {
@@ -33,8 +33,8 @@ def test_infer() -> None:
                 "x": "Date",
                 "y": {"avg": "Close", "orderby": "Date", "range": ({"months": 3}, {"months": 3})},
             },
-        ],
+        ],  # ty: ignore[invalid-argument-type]
         "y_label": "Close",
         "width": 680,
         "height": 200,
-    }  # ty: ignore[invalid-assignment]
+    }

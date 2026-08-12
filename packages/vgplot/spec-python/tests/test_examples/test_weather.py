@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"weather": {"file": "data/seattle-weather.parquet"}},
         "params": {
             "click": {"select": "single"},
@@ -88,5 +88,5 @@ def test_infer() -> None:
                 "color_range": "$colors",
                 "width": 680,
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

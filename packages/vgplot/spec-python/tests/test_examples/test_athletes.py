@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.HConcat = {
         "data": {"athletes": {"file": "data/athletes.parquet"}},
         "params": {
             "category": {"select": "intersect"},

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"flights": {"file": "data/flights-200k.parquet"}},
         "params": {"bandwidth": 7, "thresholds": 10},
         "vconcat": [

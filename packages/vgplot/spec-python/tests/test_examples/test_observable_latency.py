@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {
             "latency": {
                 "file": "https://pub-1da360b43ceb401c809f68ca37c7f8a4.r2.dev/data/observable-latency.parquet"
@@ -84,5 +84,5 @@ def test_infer() -> None:
                 "margin_left": 220,
                 "margin_bottom": 35,
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

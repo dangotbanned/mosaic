@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"metros": {"file": "data/metros.parquet"}},
         "params": {"bend": True},
         "vconcat": [
@@ -59,5 +59,5 @@ def test_infer() -> None:
                 "color_tick_format": "+f",
             },
             {"input": "menu", "label": "Bend Arrows?", "options": [True, False], "bind": "$bend"},
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

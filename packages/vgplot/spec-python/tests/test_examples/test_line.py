@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Plot = {
         "data": {"aapl": {"file": "data/stocks.parquet", "where": "Symbol = 'AAPL'"}},
         "plot": [{"mark": "lineY", "data": {"source": "aapl"}, "x": "Date", "y": "Close"}],
         "width": 680,

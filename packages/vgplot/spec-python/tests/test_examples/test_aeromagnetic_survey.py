@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"ca55": {"file": "data/ca55-south.parquet"}},
         "params": {"interp": "random-walk", "blur": 0},
         "vconcat": [
@@ -48,5 +48,5 @@ def test_infer() -> None:
                 "color_scale": "diverging",
                 "color_domain": "Fixed",
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

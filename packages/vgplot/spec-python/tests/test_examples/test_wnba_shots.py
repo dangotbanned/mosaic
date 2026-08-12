@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {
             "shots": {
                 "file": "data/wnba-shots-2023.parquet",
@@ -88,5 +88,5 @@ def test_infer() -> None:
                 "width": 510,
             },
             {"legend": "color", "plot": "shot-chart"},
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

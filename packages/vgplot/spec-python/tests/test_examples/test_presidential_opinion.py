@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"presidents": {"file": "data/us-president-favorability.parquet"}},
         "params": {"sign": 1},
         "vconcat": [
@@ -52,5 +52,5 @@ def test_infer() -> None:
                 ],
                 "bind": "$sign",
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

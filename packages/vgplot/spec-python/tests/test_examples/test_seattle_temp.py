@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Plot = {
         "data": {"weather": {"file": "data/seattle-weather.parquet"}},
         "plot": [
             {
@@ -37,9 +37,9 @@ def test_infer() -> None:
                 "curve": "monotone-x",
             },
             {"mark": "ruleY", "data": [15], "stroke_opacity": 0.5, "stroke_dasharray": "5 5"},
-        ],
+        ],  # ty: ignore[invalid-argument-type]
         "x_tick_format": "%b",
         "y_label": "Temperature Range (°C)",
         "width": 680,
         "height": 300,
-    }  # ty: ignore[invalid-assignment]
+    }

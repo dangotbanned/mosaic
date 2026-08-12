@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"proteins": {"file": "data/protein-design.parquet"}},
         "params": {
             "query": {"select": "crossfilter"},
@@ -204,5 +204,5 @@ def test_infer() -> None:
                 "width": 680,
                 "height": 215,
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

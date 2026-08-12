@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {
             "wind": {"file": "data/wind.parquet", "select": ["*", "row_number() over () as id"]}
         },
@@ -53,5 +53,5 @@ def test_infer() -> None:
                 "bind": "$length",
                 "label": "Vector Length",
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

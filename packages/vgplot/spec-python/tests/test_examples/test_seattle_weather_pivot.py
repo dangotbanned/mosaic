@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Table = {
         "data": {
             "seattle_weather": {"file": "data/seattle-weather.parquet"},
             "weather_by_year": "PIVOT (SELECT *, year(date) AS year FROM seattle_weather) ON weather IN ('drizzle', 'fog', 'rain', 'snow', 'sun') USING count(*) GROUP BY year ORDER BY year\n",

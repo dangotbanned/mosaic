@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {
             "states": {"type": "spatial", "file": "data/us-counties-10m.json", "layer": "states"},
             "nation": {"type": "spatial", "file": "data/us-counties-10m.json", "layer": "nation"},

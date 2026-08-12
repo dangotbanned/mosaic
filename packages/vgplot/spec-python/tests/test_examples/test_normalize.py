@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Plot = {
         "data": {
             "stocks": {"file": "data/stocks.parquet"},
             "labels": "SELECT MAX(Date) as Date, ARGMAX(Close, Date) AS Close, Symbol FROM stocks GROUP BY Symbol",
@@ -51,7 +51,7 @@ def test_infer() -> None:
                 "stroke": "Symbol",
             },
             {"select": "nearestX", "bind": "$point"},
-        ],
+        ],  # ty: ignore[invalid-argument-type]
         "y_scale": "log",
         "y_domain": [0.2, 6],
         "y_grid": True,
@@ -61,4 +61,4 @@ def test_infer() -> None:
         "width": 680,
         "height": 400,
         "margin_right": 35,
-    }  # ty: ignore[invalid-assignment]
+    }

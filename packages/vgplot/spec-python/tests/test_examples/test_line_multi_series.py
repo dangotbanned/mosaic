@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Plot = {
         "data": {"bls_unemp": {"file": "data/bls-metro-unemployment.parquet"}},
         "plot": [
             {"mark": "ruleY", "data": [0]},

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {
             "earthquakes": {"file": "data/earthquakes.parquet"},
             "land": {"type": "spatial", "file": "data/countries-110m.json", "layer": "land"},
@@ -69,5 +69,5 @@ def test_infer() -> None:
                 "projection_type": "orthographic",
                 "projection_rotate": "$rotate",
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

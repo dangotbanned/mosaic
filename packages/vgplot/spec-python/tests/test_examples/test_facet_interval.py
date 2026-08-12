@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.HConcat = {
         "data": {"penguins": {"file": "data/penguins.parquet"}},
         "hconcat": [
             {

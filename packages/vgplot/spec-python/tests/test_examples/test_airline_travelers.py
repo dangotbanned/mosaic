@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Plot = {
         "data": {
             "travelers": {"file": "data/travelers.parquet"},
             "endpoint": "SELECT * FROM travelers ORDER BY date DESC LIMIT 1\n",

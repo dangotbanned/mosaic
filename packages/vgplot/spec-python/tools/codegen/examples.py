@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import functools
 import re
-from typing import TYPE_CHECKING, Any, Final, Self
+from typing import TYPE_CHECKING, Any, Final, LiteralString as LS, Self
 
 from typing_extensions import TypedDict
 
@@ -154,6 +154,8 @@ class Example:
     description: str
     source: Path
     converted: dict[str, JsonOut]
+    type: LS
+    """Symbol from `mosaic_spec` to use as an annotation."""
 
     @classmethod
     def _extract_meta(cls, spec: YamlSpec) -> tuple[str, str]:
@@ -179,12 +181,23 @@ class Example:
         self.source = source
         self.title, self.description = cls._extract_meta(spec)
         self.converted = {_py_name(k): _translate(v) for k, v in spec.items()}
+        if "plot" in self.converted:
+            self.type = "spec.Plot"
+        elif "vconcat" in self.converted:
+            self.type = "spec.VConcat"
+        elif "hconcat" in self.converted:
+            self.type = "spec.HConcat"
+        elif "input" in self.converted and self.converted["input"] == "table":
+            self.type = "spec.Table"
+        else:
+            self.type = "Spec"
         return self
 
     def render_test_module(self) -> str:
         return TEMPLATE_TEST_MODULE.format(
             doc=doc(f"{self.title.removesuffix('.')}.\n\n{self.description}\n"),
             content=self.converted,
+            type=self.type,
         )
 
 
@@ -196,6 +209,6 @@ import mosaic_spec as ms
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {content}
+    _spec: ms.{type} = {content}
 
 """

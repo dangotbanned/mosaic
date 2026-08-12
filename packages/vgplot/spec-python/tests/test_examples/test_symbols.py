@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.VConcat = {
         "data": {"penguins": {"file": "data/penguins.parquet"}},
         "params": {"x": "body_mass", "y": "flipper_length"},
         "vconcat": [
@@ -77,5 +77,5 @@ def test_infer() -> None:
                     {"legend": "symbol", "plot": "filled", "columns": 1},
                 ]
             },
-        ],
-    }  # ty: ignore[invalid-assignment]
+        ],  # ty: ignore[invalid-argument-type]
+    }

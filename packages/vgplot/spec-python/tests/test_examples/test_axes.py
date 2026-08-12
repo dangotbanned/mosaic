@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_infer() -> None:
-    _spec: ms.Spec = {
+    _spec: ms.spec.Plot = {
         "plot": [
             {"mark": "gridY", "stroke_dasharray": "0.75 2", "stroke_opacity": 1},
             {
