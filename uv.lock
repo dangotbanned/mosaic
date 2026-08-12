@@ -1701,7 +1701,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "datamodel-code-generator" },
-    { name = "msgspec", extra = ["toml"] },
+    { name = "msgspec", extra = ["toml", "yaml"] },
     { name = "polars" },
     { name = "pyright" },
     { name = "pytest" },
@@ -1735,7 +1735,7 @@ requires-dist = [{ name = "typing-extensions", marker = "python_full_version < '
 [package.metadata.requires-dev]
 dev = [
     { name = "datamodel-code-generator", specifier = ">=0.72.2" },
-    { name = "msgspec", extras = ["toml"], specifier = ">=0.21.1" },
+    { name = "msgspec", extras = ["toml", "yaml"], specifier = ">=0.21.1" },
     { name = "polars", specifier = ">=1.43.2" },
     { name = "pyright" },
     { name = "pytest", specifier = ">=9.1.1" },
@@ -1881,6 +1881,9 @@ wheels = [
 toml = [
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "tomli-w" },
+]
+yaml = [
+    { name = "pyyaml" },
 ]
 
 [[package]]

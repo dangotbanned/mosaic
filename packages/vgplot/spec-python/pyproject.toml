@@ -10,7 +10,7 @@ dynamic         = ["version"]
 
 [dependency-groups]
 dev    = [
-  "msgspec[toml]>=0.21.1",
+  "msgspec[toml,yaml]>=0.21.1",
   "polars>=1.43.2",
   "ruff",
   { include-group = "gen" },
