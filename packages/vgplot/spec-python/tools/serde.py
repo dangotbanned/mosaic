@@ -12,6 +12,8 @@ import msgspec
 if TYPE_CHECKING:
     from collections.abc import Buffer, Callable, Mapping
 
+    from tools.fs import IntoPath
+
 __all__ = ("convert", "deserialize", "read_json", "serialize", "write_json")
 
 
@@ -38,25 +40,25 @@ def convert[T](obj: msgspec.Struct | Mapping[str, Any], into: type[T], /) -> T:
     return deserialize(serialize(obj), into)
 
 
-def read_json[T](path: str | Path, tp: type[T], /) -> T:
+def read_json[T](path: IntoPath, tp: type[T], /) -> T:
     """Deserialize a JSON file into `T`."""
     with Path(path).open(encoding="utf8") as fd:
         return deserialize(fd.read(), tp)
 
 
-def write_json(path: str | Path, obj: Any, *, pretty: bool = False) -> None:
+def write_json(path: IntoPath, obj: Any, *, pretty: bool = False) -> None:
     """Serialize an object to a JSON file."""
     bstring = serialize(obj, order="sorted")
     bstring = msgspec.json.format(bstring) if pretty else bstring
     _write_bytes_as_str(path, bstring)
 
 
-def write_toml(path: str | Path, obj: Any) -> None:
+def write_toml(path: IntoPath, obj: Any) -> None:
     """Serialize an object to a TOML file."""
     _write_bytes_as_str(path, msgspec.toml.encode(obj, order="sorted"))
 
 
-def _write_bytes_as_str(path: str | Path, b_string: bytes, /) -> None:
+def _write_bytes_as_str(path: IntoPath, b_string: bytes, /) -> None:
     path = Path(path)
     path.touch()
     with path.open("w", encoding="utf8", newline="\n") as fd:
