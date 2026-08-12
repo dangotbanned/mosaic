@@ -229,6 +229,8 @@ pydocstyle.convention                    = "google"
 
 allowed-confusables = [
   "γ",                   # (GREEK SMALL LETTER GAMMA) https://en.wikipedia.org/wiki/Euler_angles
+  "σ",                   # (GREEK SMALL LETTER SIGMA)
+  "×",                   # (MULTIPLICATION SIGN)
 ]
 
 ignore = [
