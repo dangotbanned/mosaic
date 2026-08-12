@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Annotated as A, ClassVar, Final, Literal as L, Protocol
 
 from tools import codemod, fs, serde
-from tools.codegen import typed_dict
+from tools.codegen import convert, typed_dict
 from tools.codegen.docstrings import doc
 from tools.models import mosaic as m
 
@@ -48,8 +48,8 @@ SPEC_HEAD_NO_DATA: Final = "_SpecHead"
 
 
 def _recursive_replace(schema: m.JsonSchema) -> m.JsonSchema:
-    """Visit 4 fields at all levels of the schema, renaming matches for [`KEYS_REPLACE`][]."""
-    replace = KEYS_REPLACE.get
+    """Visit 4 fields at all levels of the schema, renaming matches for [`tools.codegen.convert.KEYS_REPLACE`][]."""
+    replace = convert.KEYS_REPLACE.get
     recurse = _recursive_replace
     if properties := schema.properties:
         schema.properties = {replace(k, k): (recurse(v)) for k, v in properties.items()}
