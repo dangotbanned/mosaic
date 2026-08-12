@@ -1,7 +1,6 @@
 """Contour Plot.
 
 Here `heatmap` and `contour` marks visualize the density of data points in a scatter plot of penguin measurments. Setting the `fill` color to `"species"` subdivides the data into three sets of densities.
-
 """
 
 from __future__ import annotations

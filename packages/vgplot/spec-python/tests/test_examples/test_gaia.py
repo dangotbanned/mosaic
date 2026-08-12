@@ -6,7 +6,6 @@ A `raster` sky map reveals our Milky Way galaxy. Select high parallax stars in t
 in the plot of stellar color vs. magnitude on the right.
 
 _You may need to wait a few seconds for the dataset to load._
-
 """
 
 from __future__ import annotations

@@ -24,10 +24,8 @@ was left in its original position ("og") or moved to a desirable position
 The dashboard below enables exploration of the results to identify
 promising protein designs and assess the effects of process parameters.
 
-
 ## Credit
 Adapted from a [UW CSE 512](https://courses.cs.washington.edu/courses/cse512/24sp/) project by Christina Savvides, Alexander Shida, Riti Biswas, and Nora McNamara-Bordewick. Data from the [UW Institute for Protein Design](https://www.ipd.uw.edu/).
-
 """
 
 from __future__ import annotations

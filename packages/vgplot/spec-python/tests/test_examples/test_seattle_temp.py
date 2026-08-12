@@ -1,7 +1,6 @@
 """Seattle Temperatures.
 
 Historical monthly temperatures in Seattle, WA. The gray range shows the minimum and maximum recorded temperatures. The blue range shows the average lows and highs.
-
 """
 
 from __future__ import annotations

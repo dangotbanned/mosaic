@@ -1,7 +1,6 @@
 """Bias Parameter.
 
 Dynamically adjust queried values by adding a Param value. The SQL expression is re-computed in the database upon updates.
-
 """
 
 from __future__ import annotations

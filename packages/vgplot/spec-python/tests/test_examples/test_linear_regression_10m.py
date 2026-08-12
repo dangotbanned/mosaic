@@ -1,7 +1,6 @@
 """Linear Regression 10M.
 
 A linear regression plot predicting flight arrival delay based on the time of departure, over 10 million flight records. Regression computation is performed in the database, with optimized selection updates using pre-aggregated materialized views. The area around a regression line shows a 95% confidence interval. Select a region to view regression results for a data subset.
-
 """
 
 from __future__ import annotations

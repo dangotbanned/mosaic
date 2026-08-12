@@ -4,7 +4,6 @@ Histograms showing arrival delay, departure time, and distance flown for 10 mill
 Once loaded, automatic pre-aggregation optimizations enable efficient cross-filtered selections.
 
 _You may need to wait a few seconds for the dataset to load._
-
 """
 
 from __future__ import annotations

@@ -4,7 +4,6 @@ A subset of supported mark types.
 
 - Row 1: `barY`, `lineY`, `text`, `tickY`, `areaY`
 - Row 2: `regressionY`, `hexbin`, `contour`, `heatmap`, `denseLine`
-
 """
 
 from __future__ import annotations

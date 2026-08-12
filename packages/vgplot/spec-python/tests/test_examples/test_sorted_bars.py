@@ -1,7 +1,6 @@
 """Sorted Bars.
 
 Sort and limit an aggregate bar chart of gold medals by country.
-
 """
 
 from __future__ import annotations

@@ -7,7 +7,6 @@ What spatial patterns can you find?
 Requires the DuckDB `spatial` extension.
 
 _You may need to wait a few seconds for the dataset to load._
-
 """
 
 from __future__ import annotations

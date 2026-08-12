@@ -1,7 +1,6 @@
 """Triangle Wave.
 
 A test specification to compare M4 optimized and unoptimized line charts.
-
 """
 
 from __future__ import annotations

@@ -163,9 +163,9 @@ class Example:
             description = meta.pop("description", "")
             if credit := meta.pop("credit", None):
                 if description:
-                    description = f"{description}\n\n## Credit\n{credit}"
+                    description = f"{description.strip()}\n\n## Credit\n{credit}"
                 else:
-                    description = f"## Credit\n{credit}"
+                    description = f"\n## Credit\n{credit}"
 
             # NOTE: Missing cases may want to use file name
             return _fix_ambiguous_unicode_characters(
@@ -194,11 +194,11 @@ class Example:
         return self
 
     def render_test_module(self) -> str:
-        return TEMPLATE_TEST_MODULE.format(
-            doc=doc(f"{self.title.removesuffix('.')}.\n\n{self.description}\n"),
-            content=self.converted,
-            type=self.type,
+        title = f"{self.title.removesuffix('.')}."
+        docstring = (
+            doc(f"{title}\n\n{desc.strip()}\n") if (desc := self.description) else doc(title)
         )
+        return TEMPLATE_TEST_MODULE.format(doc=docstring, content=self.converted, type=self.type)
 
 
 TEMPLATE_TEST_MODULE: Final = """\

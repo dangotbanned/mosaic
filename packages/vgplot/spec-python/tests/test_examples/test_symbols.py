@@ -1,7 +1,6 @@
 """Symbol Plots.
 
 Two scatter plots with `dot` marks: one with stroked symbols, the other filled. Drop-down menus control which data table columns are plotted.
-
 """
 
 from __future__ import annotations

@@ -7,7 +7,6 @@ Or, select a range in the heatmap to show the corresponding most-requested route
 
 _You may need to wait a few seconds for the dataset to load._
 
-
 ## Credit
 Adapted from an [Observable Framework example](https://observablehq.com/framework/examples/api/).
 """

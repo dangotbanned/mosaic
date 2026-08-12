@@ -2,7 +2,6 @@
 
 Opinion poll data on historical U.S. presidents. Image marks are used to show presidential pictures. The dropdown menu toggles the opinion metric shown.
 
-
 ## Credit
 Adapted from an [Observable Plot example](https://observablehq.com/@observablehq/plot-image-medals).
 """

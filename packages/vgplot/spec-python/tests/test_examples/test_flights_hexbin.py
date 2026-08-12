@@ -1,7 +1,6 @@
 """Flights Hexbin.
 
 Hexagonal bins show the density of over 200,000 flights by departure time and arrival delay. Select regions in the marginal histograms to filter the density display.
-
 """
 
 from __future__ import annotations

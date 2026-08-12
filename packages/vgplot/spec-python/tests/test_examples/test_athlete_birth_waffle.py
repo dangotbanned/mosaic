@@ -2,7 +2,6 @@
 
 Waffle chart counting Olympic athletes based on which half-decade they were born. The inputs enable adjustment of waffle mark design options.
 
-
 ## Credit
 Adapted from an [Observable Plot example](https://observablehq.com/@observablehq/plot-waffle-unit).
 """
