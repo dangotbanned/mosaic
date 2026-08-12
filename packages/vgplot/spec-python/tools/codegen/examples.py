@@ -24,6 +24,7 @@ from typing_extensions import TypedDict
 
 from tools.codegen.convert import KEYS_REPLACE
 from tools.codegen.docstrings import doc
+from tools.models.mosaic import _fix_ambiguous_unicode_characters
 from tools.serde import read_yaml
 
 if TYPE_CHECKING:
@@ -99,7 +100,6 @@ def _(obj: dict[str, Json], /) -> dict[str, Json]:
     return {_py_name(k): _from_json(v) for k, v in obj.items()}
 
 
-# TODO @dangotbanned: Clean up description with `tools.models.mosaic._fix_ambiguous_unicode_characters`
 class Example:
     title: str
     description: str
@@ -117,7 +117,9 @@ class Example:
                     description = f"## Credit\n{credit}"
 
             # NOTE: Missing cases may want to use file name
-            return meta.pop("title", "TODO: missing title"), description
+            return _fix_ambiguous_unicode_characters(
+                meta.pop("title", "TODO: missing title")
+            ), _fix_ambiguous_unicode_characters(description)
         return "TODO: missing meta", ""
 
     @classmethod
