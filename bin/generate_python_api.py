@@ -11,9 +11,11 @@ Lowers the barrier for who can fix schema gen issues (One language is easier tha
 
 from __future__ import annotations
 
+import json
 import keyword
 import re
 from dataclasses import dataclass
+from operator import attrgetter
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -25,6 +27,8 @@ type Schema = dict[str, Any]
 
 Uses the variable name `def` in JS, but reserved keyword here.
 """
+
+type Definitions = dict[str, Schema]
 
 _GROUP_1 = r"\g<1>"
 _GROUP_2 = r"\g<2>"
@@ -94,6 +98,75 @@ def mark_info(schema: Schema) -> MarkInfo | None:
     if len(consts) != 1:
         return None
     return MarkInfo(consts.pop(), props, desc)
+
+
+def generate_marks(schemas: Iterable[Schema]) -> list[str]:
+    marks = [info for s in schemas if (info := mark_info(s))]
+    marks.sort(key=attrgetter("mark"))
+
+    out = [
+        HEADER,
+        "from typing import Any",
+        "",
+        "from vgplot._types import UNSET, ChannelValue, MarkData",
+        "from vgplot.plot import Mark",
+        "",
+        "",
+        "def _mark(name: str, args: dict[str, Any]) -> Mark:",
+        "    args = dict(args)",
+        '    data = args.pop("data")',
+        '    options = args.pop("options")',
+        "    enc = {k: v for k, v in args.items() if v is not UNSET}",
+        "    enc.update(options)",
+        "    return Mark(name, data=data, enc=enc or None)",
+        "",
+        "",
+    ]
+    export_names = []
+    pattern = re.compile(r"^[A-Za-z][A-Za-z0-9]*$")
+    for m in marks:
+        mark = m.mark
+        fn_name = ident(mark)
+        export_names.append(fn_name)
+        # Channel/option properties: everything except the `mark` const, `data`,
+        # and any non-identifier keys (e.g. a stray `$schema`).
+
+        params = [
+            f"    {ident(parameter)}: ChannelValue | UNSET = UNSET,"
+            for parameter in m.props
+            if parameter not in {"mark", "data"} and pattern.search(parameter)
+        ]
+        doc = docline(m.description, f"The {mark} mark.")
+        out.extend(
+            (
+                f"def {fn_name}(",
+                "    data: MarkData = None,",
+                "    *,",
+                *params,
+                "    **options: Any,",
+                ") -> Mark:",
+                f'    """{doc}"""',
+                f"    return _mark({mark!r}, locals())",
+                "",
+                "",
+            )
+        )
+    out.extend((f"__all__ = {tuple(export_names)!r}", ""))
+
+    fp = OUT_DIR / "marks.py"
+    fp.touch()
+    fp.write_text("\n".join(out), "utf-8", newline="\n")
+    return export_names
+
+
+def main() -> None:
+    with SCHEMA_PATH.open(encoding="utf-8") as fd:
+        schema: dict[str, Any] = json.load(fd)
+    definitions: Definitions = schema["definitions"]
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    SPEC_GEN_DIR.mkdir(parents=True, exist_ok=True)
+
+    _mark_names = generate_marks(definitions.values())
 
 
 PYTHON_KEYWORDS = frozenset(keyword.kwlist)
