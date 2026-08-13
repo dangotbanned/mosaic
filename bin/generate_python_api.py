@@ -23,20 +23,24 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
 
-class Schema(TypedDict, total=False):
-    """An item in the `"definitions"` field of the schema.
+Schema = TypedDict(
+    "Schema",
+    {
+        "$ref": str,  # NOTE: Identifier requires using the ugly functional form
+        "properties": dict[str, "Schema"],
+        "description": str,
+        "anyOf": list["Schema"],
+        "required": list[str],
+        "type": str,
+        "minItems": int,
+        "maxItems": int,
+    },
+    total=False,
+)
+"""An item in the `"definitions"` field of the schema.
 
     Uses the variable name `def` in JS, but reserved keyword here.
-    """
-
-    properties: dict[str, Schema]
-    description: str
-    anyOf: list[Schema]
-    required: list[str]
-    type: str
-    minItems: int
-    maxItems: int
-
+"""
 
 type Definitions = dict[str, Schema]
 
