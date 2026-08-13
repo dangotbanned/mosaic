@@ -8,14 +8,14 @@ Lowers the barrier for who can fix schema gen issues (One language is easier tha
 
 from __future__ import annotations
 
-# ruff: file-ignore[missing-return-type-undocumented-public-function, unused-variable]
 import keyword
 import re
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeAlias
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Sequence
 
 Schema: TypeAlias = dict[str, Any]
 """An item in the `"definitions"` field of the schema.
@@ -60,15 +60,37 @@ def is_boolean_attr(schema: Schema) -> bool:
     return any(o.get("type") == "boolean" for o in opts)
 
 
-def mark_info(schema: Schema):
+@dataclass
+class MarkInfo:
+    mark: str
+    props: dict[str, dict[str, Any]]
+    description: str
+
+
+def mark_info(schema: Schema) -> MarkInfo | None:
     """Extract a mark's const name and unioned channel properties from a def.
 
-    Handles both flat defs and `anyOf`/`allOf` intersection defs (e.g. densityX).
+    Handles both flat defs and `anyOf` intersection defs (e.g. densityX).
     """
-    if (props := schema.get("properties")) and (mark := props.get("mark")):
-        ...
+    props: dict[str, dict[str, Any]]
+    desc: str = schema.get("description", "")
+    if (
+        (props := schema.get("properties", {}))
+        and props.get("mark")
+        and (const := props["mark"].get("const"))
+    ):
+        return MarkInfo(const, props, desc)
+    branches: Sequence[dict[str, dict[str, dict[str, Any] | Any]]] = schema.get("anyOf", ())
+    consts = set[str]()
+    props = {}
 
-    raise NotImplementedError
+    for b in branches:
+        if c := b.get("properties", {}).get("mark", {}).get("const", ""):
+            consts.add(c)
+            props.update(b["properties"])
+    if len(consts) != 1:
+        return None
+    return MarkInfo(consts.pop(), props, desc)
 
 
 PYTHON_KEYWORDS = frozenset(keyword.kwlist)
