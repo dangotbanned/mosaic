@@ -267,17 +267,16 @@ def generate_transforms(definitions: Definitions) -> list[str]:
         fn_name = ident(discriminator_name)
         export_names.append(fn_name)
         min_, max_ = arg_range(discriminator)
-        # not sure why this slicing was there?
-        args = TRANSFORM_ARGS.get(discriminator_name, ("col",))[:max_]
-
-        params = [
-            f"{a}: TransformArg{'' if i < min_ else ' | UNSET = UNSET'}" for i, a in enumerate(args)
-        ]
-        body = (
-            f"    return {LB}{discriminator_name!r}: None, **options{RB}"
-            if not max_
-            else f"    return _transform({discriminator_name!r}, ({','.join(args)},), options)"
-        )
+        params: list[str] = []
+        if max_:
+            args = TRANSFORM_ARGS.get(discriminator_name, ("col",))
+            params = [
+                f"{a}: TransformArg{'' if i < min_ else ' | UNSET = UNSET'}"
+                for i, a in enumerate(args)
+            ]
+            body = f"    return _transform({discriminator_name!r}, ({','.join(args)},), options)"
+        else:
+            body = f"    return {LB}{discriminator_name!r}: None, **options{RB}"
         params.append("**options: Any")
         out.extend(
             (
