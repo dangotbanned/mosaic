@@ -165,18 +165,14 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
         "    return Mark(name, data=data, enc=enc or None)",
     ]
     export_names = []
-    pattern = re.compile(r"^[A-Za-z][A-Za-z0-9]*$")
     for m in marks:
         mark = m.mark
         fn_name = ident(mark)
         export_names.append(fn_name)
-        # Channel/option properties: everything except the `mark` const, `data`,
-        # and any non-identifier keys (e.g. a stray `$schema`).
-
         params = [
-            f"    {ident(parameter)}: ChannelValue | UNSET = UNSET,"
-            for parameter in m.props
-            if parameter not in {"mark", "data"} and pattern.search(parameter)
+            f"    {ident(p)}: ChannelValue | UNSET = UNSET,"
+            for p in m.props
+            if p not in {"mark", "data", "$schema"}
         ]
         out.extend(
             (
