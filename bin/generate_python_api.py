@@ -50,6 +50,17 @@ HEADER = (
     "# Regenerate with: <TODO>\n"
 )
 
+TRANSFORM_ARGS = {
+    "argmax": ["col", "by"],
+    "argmin": ["col", "by"],
+    "quantile": ["col", "p"],
+    "lag": ["col", "offset", "default"],
+    "lead": ["col", "offset", "default"],
+    "nth_value": ["col", "offset"],
+    "ntile": ["buckets"],
+}
+"""Python parameter names for transforms that take more than a single column."""
+
 _GROUP_1 = r"\g<1>"
 _GROUP_2 = r"\g<2>"
 _CAMEL_PATTERN = re.compile(r"([a-z0-9])([A-Z])")
@@ -177,6 +188,27 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
     fp.touch()
     fp.write_text("\n".join(out), "utf-8", newline="\n")
     return export_names
+
+
+def generate_attributes(schemas: Iterable[Schema]) -> list[str]:
+    msg = f"TODO {generate_attributes.__name__}()"
+    raise NotImplementedError(msg)
+
+
+def generate_encodings(schemas: Iterable[Schema]) -> list[str]:
+    msg = f"TODO {generate_encodings.__name__}()"
+    raise NotImplementedError(msg)
+
+
+def arg_range(schema: Schema) -> tuple[int, int]:
+    """Positional-argument range [min, max] admitted by a transform key schema."""
+    msg = f"TODO {arg_range.__name__}()"
+    raise NotImplementedError(msg)
+
+
+def write_init() -> None:
+    msg = f"TODO {write_init.__name__}()"
+    raise NotImplementedError(msg)
 
 
 def main() -> None:
