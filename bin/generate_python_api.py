@@ -17,16 +17,26 @@ import re
 from dataclasses import dataclass
 from operator import attrgetter
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypedDict
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
+    from collections.abc import Iterable
 
-type Schema = dict[str, Any]
-"""An item in the `"definitions"` field of the schema.
 
-Uses the variable name `def` in JS, but reserved keyword here.
-"""
+class Schema(TypedDict, total=False):
+    """An item in the `"definitions"` field of the schema.
+
+    Uses the variable name `def` in JS, but reserved keyword here.
+    """
+
+    properties: dict[str, Schema]
+    description: str
+    anyOf: list[Schema]
+    required: list[str]
+    type: str
+    minItems: int
+    maxItems: int
+
 
 type Definitions = dict[str, Schema]
 
@@ -94,14 +104,14 @@ def docline(desc: str, fallback: str = "") -> str:
 
 def is_boolean_attr(schema: Schema) -> bool:
     """Return True if the attribute schema admits a boolean (so it gets a `= True` default)."""
-    opts: Iterable[dict[str, Any]] = schema.get("anyOf") or schema.get("oneOf") or (schema,)
+    opts = schema.get("anyOf") or (schema,)
     return any(o.get("type") == "boolean" for o in opts)
 
 
 @dataclass
 class MarkInfo:
     mark: str
-    props: dict[str, dict[str, Any]]
+    props: dict[str, Schema]
     description: str
 
 
@@ -110,15 +120,10 @@ def mark_info(schema: Schema) -> MarkInfo | None:
 
     Handles both flat defs and `anyOf` intersection defs (e.g. densityX).
     """
-    props: dict[str, dict[str, Any]]
-    desc: str = schema.get("description", "")
-    if (
-        (props := schema.get("properties", {}))
-        and props.get("mark")
-        and (const := props["mark"].get("const"))
-    ):
+    desc = schema.get("description", "")
+    if (props := schema.get("properties", {})) and (const := props.get("mark", {}).get("const")):
         return MarkInfo(const, props, desc)
-    branches: Sequence[dict[str, dict[str, dict[str, Any] | Any]]] = schema.get("anyOf", ())
+    branches = schema.get("anyOf", ())
     consts = set[str]()
     props = {}
 
@@ -190,7 +195,7 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
     return export_names
 
 
-def generate_attributes(schemas: Iterable[Schema]) -> list[str]:
+def generate_attributes(plot_attributes: Schema) -> list[str]:
     msg = f"TODO {generate_attributes.__name__}()"
     raise NotImplementedError(msg)
 
@@ -219,3 +224,4 @@ def main() -> None:
     SPEC_GEN_DIR.mkdir(parents=True, exist_ok=True)
 
     _mark_names = generate_marks(definitions.values())
+    _attr_names = generate_attributes(definitions["PlotAttributes"])
