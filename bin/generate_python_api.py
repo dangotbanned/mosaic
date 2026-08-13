@@ -60,7 +60,7 @@ EXCLUDE_ATTRS = frozenset(("margins",))
 
 HEADER = (
     "# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate_python_api.py.\n"
-    "# Regenerate with: <TODO>\n"
+    "# Regenerate with: pnpm generate:python-api-py\n"
 )
 
 TRANSFORM_ARGS: Final = {
