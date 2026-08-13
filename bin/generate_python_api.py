@@ -54,10 +54,17 @@ SPEC_GEN_DIR = VGPLOT_DIR / "spec/src/generated"
 EXCLUDE_ATTRS = frozenset(("margins",))
 """Attributes handled by special hand-written helpers (not simple value directives)."""
 
+INDENT: Final = " " * 4
+EMPTY: Final = ""
+LB, RB = "{", "}"
+NL: Final = "\n"
+UNSET: Final = "UNSET"
+KWDS: Final = "options"
+ANN_DICT = "dict[str, Any]"
 
 HEADER = (
-    "# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate_python_api.py.\n"
-    "# Regenerate with: pnpm generate:python-api-py\n"
+    f"# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate_python_api.py.{NL}"
+    f"# Regenerate with: pnpm generate:python-api-py{NL}"
 )
 
 TRANSFORM_ARGS: Final = {
@@ -79,9 +86,9 @@ _CAMEL_REPL = rf"{_GROUP_1}_{_GROUP_2}"
 
 def write_lines(target: Path, lines: str | Iterable[str]) -> None:
     """Write `lines` to `target`."""
-    lines = ("\n".join(lines) if not isinstance(lines, str) else lines) + "\n"
+    lines = (NL.join(lines) if not isinstance(lines, str) else lines) + NL
     target.touch()
-    target.write_text(lines, "utf8", newline="\n")
+    target.write_text(lines, "utf8", newline=NL)
 
 
 def py_identifier(name: str) -> str:
@@ -92,20 +99,20 @@ def py_identifier(name: str) -> str:
     if is_keyword(s):
         url = "https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords"
         msg = (
-            f"Cannot use {s!r} as an identifier as it is a Python keyword.\n"
-            f"Hint: try picking a different name?\nSee also: {url}"
+            f"Cannot use {s!r} as an identifier as it is a Python keyword.{NL}"
+            f"Hint: try picking a different name?{NL}See also: {url}"
         )
         raise SyntaxError(msg)
     return s
 
 
-def docline(desc: str, fallback: str = "") -> str:
+def docline(desc: str, fallback: str = EMPTY) -> str:
     """First sentence of a schema description, with markdown links stripped and escaped for a docstring."""
     # NOTE: man, this is complicated
     text = desc or fallback
     text = re.sub(r"\[([^\]]+)\]\([^)]*\)", _GROUP_1, text)  # [text](url) -> text
     text = re.sub(r"\[([^\]]+)\]\[[^\]]*\]", _GROUP_1, text)  # [text][ref] -> text
-    text = re.sub(r"\[(\d+)\]", "", text)  # bare footnote [1] -> (removed)
+    text = re.sub(r"\[(\d+)\]", EMPTY, text)  # bare footnote [1] -> (removed)
     text = re.sub(r"\[([^\]]+)\]", _GROUP_1, text)  # [text] shortcut -> text
     text = re.sub(r"\s+", " ", text).strip()
 
@@ -127,7 +134,7 @@ def mark_info(schema: Schema) -> MarkInfo | None:
 
     Handles both flat defs and `anyOf` intersection defs (e.g. densityX).
     """
-    desc = schema.get("description", "")
+    desc = schema.get("description", EMPTY)
     if (props := schema.get("properties", {})) and (const := props.get("mark", {}).get("const")):
         return MarkInfo(const, props, desc)
     branches = schema.get("anyOf", ())
@@ -135,7 +142,7 @@ def mark_info(schema: Schema) -> MarkInfo | None:
     props = {}
 
     for b in branches:
-        if c := b.get("properties", {}).get("mark", {}).get("const", ""):
+        if c := b.get("properties", {}).get("mark", {}).get("const", EMPTY):
             consts.add(c)
             props.update(b["properties"])
     if len(consts) != 1:
@@ -150,15 +157,15 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
     out = [
         HEADER,
         "from typing import Any",
-        "from vgplot._types import UNSET, ChannelValue, MarkData",
+        f"from vgplot._types import {UNSET}, ChannelValue, MarkData",
         "from vgplot.plot import Mark",
-        "def _mark(name: str, args: dict[str, Any]) -> Mark:",
-        "    args = dict(args)",
-        '    data = args.pop("data")',
-        '    options = args.pop("options")',
-        "    enc = {k: v for k, v in args.items() if v is not UNSET}",
-        "    enc.update(options)",
-        "    return Mark(name, data=data, enc=enc or None)",
+        f"def _mark(name: str, args: {ANN_DICT}) -> Mark:",
+        f"{INDENT}args = dict(args)",
+        f'{INDENT}data = args.pop("data")',
+        f'{INDENT}{KWDS} = args.pop("{KWDS}")',
+        f"{INDENT}enc = {LB}k: v for k, v in args.items() if v is not {UNSET}{RB}",
+        f"{INDENT}enc.update({KWDS})",
+        f"{INDENT}return Mark(name, data=data, enc=enc or None)",
     ]
     export_names = []
     for m in marks:
@@ -166,20 +173,20 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
         fn_name = py_identifier(mark)
         export_names.append(fn_name)
         params = [
-            f"    {py_identifier(p)}: ChannelValue | UNSET = UNSET,"
+            f"{INDENT}{py_identifier(p)}: ChannelValue | {UNSET} = {UNSET},"
             for p in m.props
             if p not in {"mark", "data", "$schema"}
         ]
         out.extend(
             (
                 f"def {fn_name}(",
-                "    data: MarkData = None,",
-                "    *,",
+                f"{INDENT}data: MarkData = None,",
+                f"{INDENT}*,",
                 *params,
-                "    **options: Any,",
+                f"{INDENT}**{KWDS}: Any,",
                 ") -> Mark:",
-                f"    {docline(m.description, f'The {mark} mark.')}",
-                f"    return _mark({mark!r}, locals())",
+                f"{INDENT}{docline(m.description, f'The {mark} mark.')}",
+                f"{INDENT}return _mark({mark!r}, locals())",
             )
         )
     out.append(f"__all__ = {tuple(export_names)!r}")
@@ -196,12 +203,12 @@ def generate_attributes(plot_attributes: Schema) -> list[str]:
         fn_name = py_identifier(attr)
         export_names.append(fn_name)
         is_boolean_attr = any(o.get("type") == "boolean" for o in schema.get("anyOf", (schema,)))
-        value = f"value: AttrValue{' = True' if is_boolean_attr else ''}"
+        value = f"value: AttrValue{' = True' if is_boolean_attr else EMPTY}"
         out.extend(
             (
                 f"def {fn_name}({value}) -> Directive:",
-                f"    {docline(schema.get('description', ''), f'The {attr} attribute.')}",
-                f"    return Directive({attr!r}, value)",
+                f"{INDENT}{docline(schema.get('description', EMPTY), f'The {attr} attribute.')}",
+                f"{INDENT}return Directive({attr!r}, value)",
             )
         )
     out.append(f"__all__ = {tuple(export_names)!r}")
@@ -210,14 +217,13 @@ def generate_attributes(plot_attributes: Schema) -> list[str]:
 
 
 _POUND_DEFS = "#/definitions/"
-LB, RB = "{", "}"
 
 
 def _iter_transform_defs(definitions: Definitions) -> Iterator[tuple[str, Schema]]:
     for kind_ref in definitions["Transform"].get("anyOf", ()):
-        kind_def = definitions.get(kind_ref.get("$ref", "").removeprefix(_POUND_DEFS), {})
+        kind_def = definitions.get(kind_ref.get("$ref", EMPTY).removeprefix(_POUND_DEFS), {})
         for member_ref in kind_def.get("anyOf", ()):
-            name = member_ref.get("$ref", "").removeprefix(_POUND_DEFS)
+            name = member_ref.get("$ref", EMPTY).removeprefix(_POUND_DEFS)
             yield name, definitions.get(name, {})
 
 
@@ -226,18 +232,18 @@ def generate_transforms(definitions: Definitions) -> list[str]:
     out = [
         HEADER,
         "from typing import Any",
-        "from vgplot._types import UNSET, TransformArg",
-        "def _transform(name: str, args: tuple[Any, ...], options: dict[str, Any]) -> dict[str, Any]:",
-        "    vals = [a for a in args if a is not UNSET]",
-        '    value: Any = vals[0] if len(vals) == 1 else vals or ""',
-        "    return {name: value, **options}",
+        f"from vgplot._types import {UNSET}, TransformArg",
+        f"def _transform(name: str, args: tuple[Any, ...], {KWDS}: {ANN_DICT}) -> {ANN_DICT}:",
+        f"{INDENT}vals = [a for a in args if a is not {UNSET}]",
+        f"{INDENT}value: Any = vals[0] if len(vals) == 1 else vals or ''",
+        f"{INDENT}return {LB}name: value, **{KWDS}{RB}",
     ]
     export_names = []
     for _, schema in sorted(_iter_transform_defs(definitions), key=itemgetter(0)):
         props = schema.get("properties", {})
         discriminator_name = next(iter(schema.get("required", ())))
         discriminator = props[discriminator_name]
-        description = discriminator.get("description", "")
+        description = discriminator.get("description", EMPTY)
         fn_name = py_identifier(discriminator_name)
         export_names.append(fn_name)
         min_, max_ = arg_range(discriminator)
@@ -245,17 +251,17 @@ def generate_transforms(definitions: Definitions) -> list[str]:
         if max_:
             args = TRANSFORM_ARGS.get(discriminator_name, ("col",))
             params = [
-                f"{a}: TransformArg{'' if i < min_ else ' | UNSET = UNSET'}"
+                f"{a}: TransformArg{EMPTY if i < min_ else f' | {UNSET} = {UNSET}'}"
                 for i, a in enumerate(args)
             ]
-            body = f"    return _transform({discriminator_name!r}, ({','.join(args)},), options)"
+            body = f"{INDENT}return _transform({discriminator_name!r}, ({','.join(args)},), {KWDS})"
         else:
-            body = f"    return {LB}{discriminator_name!r}: None, **options{RB}"
-        params.append("**options: Any")
+            body = f"{INDENT}return {LB}{discriminator_name!r}: None, **{KWDS}{RB}"
+        params.append(f"**{KWDS}: Any")
         out.extend(
             (
-                f"def {fn_name}({','.join(params)}) -> dict[str, Any]:",
-                f"    {docline(description, f'The {discriminator_name} transform.')}",
+                f"def {fn_name}({','.join(params)}) -> {ANN_DICT}:",
+                f"{INDENT}{docline(description, f'The {discriminator_name} transform.')}",
                 body,
             )
         )
