@@ -154,11 +154,8 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
     out = [
         HEADER,
         "from typing import Any",
-        "",
         "from vgplot._types import UNSET, ChannelValue, MarkData",
         "from vgplot.plot import Mark",
-        "",
-        "",
         "def _mark(name: str, args: dict[str, Any]) -> Mark:",
         "    args = dict(args)",
         '    data = args.pop("data")',
@@ -166,8 +163,6 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
         "    enc = {k: v for k, v in args.items() if v is not UNSET}",
         "    enc.update(options)",
         "    return Mark(name, data=data, enc=enc or None)",
-        "",
-        "",
     ]
     export_names = []
     pattern = re.compile(r"^[A-Za-z][A-Za-z0-9]*$")
@@ -193,8 +188,6 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
                 ") -> Mark:",
                 f"    {docline(m.description, f'The {mark} mark.')}",
                 f"    return _mark({mark!r}, locals())",
-                "",
-                "",
             )
         )
     out.append(f"__all__ = {tuple(export_names)!r}")
@@ -203,13 +196,7 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
 
 
 def generate_attributes(plot_attributes: Schema) -> list[str]:
-    out = [
-        HEADER,
-        "from vgplot._types import AttrValue",
-        "from vgplot.plot import Directive",
-        "",
-        "",
-    ]
+    out = [HEADER, "from vgplot._types import AttrValue", "from vgplot.plot import Directive"]
     export_names = []
     for attr, schema in plot_attributes.get("properties", {}).items():
         if attr in EXCLUDE_ATTRS:
@@ -221,8 +208,6 @@ def generate_attributes(plot_attributes: Schema) -> list[str]:
                 f"def {fn_name}(value: AttrValue{' = True' if is_boolean_attr(schema) else ''}) -> Directive:",
                 f"    {docline(schema.get('description', ''), f'The {attr} attribute.')}",
                 f"    return Directive({attr!r}, value)",
-                "",
-                "",
             )
         )
     out.append(f"__all__ = {tuple(export_names)!r}")
@@ -247,16 +232,11 @@ def generate_transforms(definitions: Definitions) -> list[str]:
     out = [
         HEADER,
         "from typing import Any",
-        "",
         "from vgplot._types import UNSET, TransformArg",
-        "",
-        "",
         "def _transform(name: str, args: tuple[Any, ...], options: dict[str, Any]) -> dict[str, Any]:",
         "    vals = [a for a in args if a is not UNSET]",
         '    value: Any = vals[0] if len(vals) == 1 else vals or ""',
         "    return {name: value, **options}",
-        "",
-        "",
     ]
     export_names = []
     for _, schema in sorted(_iter_transform_defs(definitions), key=itemgetter(0)):
@@ -283,8 +263,6 @@ def generate_transforms(definitions: Definitions) -> list[str]:
                 f"def {fn_name}({','.join(params)}) -> dict[str, Any]:",
                 f"    {docline(description, f'The {discriminator_name} transform.')}",
                 body,
-                "",
-                "",
             )
         )
 
