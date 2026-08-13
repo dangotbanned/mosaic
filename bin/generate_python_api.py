@@ -8,7 +8,7 @@ Lowers the barrier for who can fix schema gen issues (One language is easier tha
 
 from __future__ import annotations
 
-# ruff: noqa: ANN201, F841
+# ruff: file-ignore[missing-return-type-undocumented-public-function, unused-variable]
 import keyword
 import re
 from pathlib import Path
@@ -56,9 +56,7 @@ def docline(desc: str, fallback: str = "") -> str:
 
 def is_boolean_attr(schema: Schema) -> bool:
     """Return True if the attribute schema admits a boolean (so it gets a `= True` default)."""
-    opts: Iterable[dict[str, Any]] = (
-        schema.get("anyOf") or schema.get("oneOf") or (schema,)
-    )
+    opts: Iterable[dict[str, Any]] = schema.get("anyOf") or schema.get("oneOf") or (schema,)
     return any(o.get("type") == "boolean" for o in opts)
 
 
