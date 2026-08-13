@@ -30,6 +30,26 @@ Uses the variable name `def` in JS, but reserved keyword here.
 
 type Definitions = dict[str, Schema]
 
+
+PYTHON_KEYWORDS = frozenset(keyword.kwlist)
+
+BIN_DIR = Path(__file__).parent
+ROOT_DIR = BIN_DIR.parent
+PACKAGES_DIR = ROOT_DIR / "packages"
+VGPLOT_DIR = PACKAGES_DIR / "vgplot"
+SCHEMA_PATH = VGPLOT_DIR / "spec/dist/mosaic-schema.json"
+OUT_DIR = VGPLOT_DIR / "vgplot-python/vgplot/_generated"
+SPEC_GEN_DIR = VGPLOT_DIR / "spec/src/generated"
+
+EXCLUDE_ATTRS = frozenset(("margins",))
+"""Attributes handled by special hand-written helpers (not simple value directives)."""
+
+
+HEADER = (
+    "# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate_python_api.py.\n"
+    "# Regenerate with: <TODO>\n"
+)
+
 _GROUP_1 = r"\g<1>"
 _GROUP_2 = r"\g<2>"
 _CAMEL_PATTERN = re.compile(r"([a-z0-9])([A-Z])")
@@ -167,23 +187,3 @@ def main() -> None:
     SPEC_GEN_DIR.mkdir(parents=True, exist_ok=True)
 
     _mark_names = generate_marks(definitions.values())
-
-
-PYTHON_KEYWORDS = frozenset(keyword.kwlist)
-
-BIN_DIR = Path(__file__).parent
-ROOT_DIR = BIN_DIR.parent
-PACKAGES_DIR = ROOT_DIR / "packages"
-VGPLOT_DIR = PACKAGES_DIR / "vgplot"
-SCHEMA_PATH = VGPLOT_DIR / "spec/dist/mosaic-schema.json"
-OUT_DIR = VGPLOT_DIR / "vgplot-python/vgplot/_generated"
-SPEC_GEN_DIR = VGPLOT_DIR / "spec/src/generated"
-
-EXCLUDE_ATTRS = frozenset(("margins",))
-"""Attributes handled by special hand-written helpers (not simple value directives)."""
-
-
-HEADER = (
-    "# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate_python_api.py.\n"
-    "# Regenerate with: <TODO>\n"
-)
