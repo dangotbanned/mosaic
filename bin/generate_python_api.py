@@ -279,7 +279,7 @@ def generate_transforms(definitions: Definitions) -> list[str]:
         body = (
             f"    return {LB}{key!r}: None, **options{RB}"
             if not max_
-            else f"    return _transform({key!r}, {args!r}, options)"
+            else f"    return _transform({key!r}, ({','.join(args)},), options)"
         )
         params.append("**options: Any")
         out.extend(
