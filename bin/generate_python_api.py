@@ -10,10 +10,10 @@ Lowers the barrier for who can fix schema gen issues (One language is easier tha
 from __future__ import annotations
 
 import json
-import keyword
 import re
 from collections import deque
 from dataclasses import dataclass
+from keyword import iskeyword as is_keyword
 from operator import attrgetter, itemgetter
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final, LiteralString, TypedDict
@@ -42,9 +42,6 @@ Schema = TypedDict(
 """
 
 type Definitions = dict[str, Schema]
-
-
-PYTHON_KEYWORDS = frozenset(keyword.kwlist)
 
 BIN_DIR = Path(__file__).parent
 ROOT_DIR = BIN_DIR.parent
@@ -91,10 +88,16 @@ def camel_case_to_snake(name: str) -> str:
     return name if not name else _CAMEL_PATTERN.sub(_CAMEL_REPL, name).lower()
 
 
-def ident(name: str) -> str:
-    """Python identifier for a schema (camelCase) name, keyword-safe."""
+def py_identifier(name: str) -> str:
     s = camel_case_to_snake(name)
-    return f"{s}_" if s in PYTHON_KEYWORDS else s
+    if is_keyword(s):
+        url = "https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords"
+        msg = (
+            f"Cannot use {s!r} as an identifier as it is a Python keyword.\n"
+            f"Hint: try picking a different name?\nSee also: {url}"
+        )
+        raise SyntaxError(msg)
+    return s
 
 
 def docline(desc: str, fallback: str = "") -> str:
@@ -167,10 +170,10 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
     export_names = []
     for m in marks:
         mark = m.mark
-        fn_name = ident(mark)
+        fn_name = py_identifier(mark)
         export_names.append(fn_name)
         params = [
-            f"    {ident(p)}: ChannelValue | UNSET = UNSET,"
+            f"    {py_identifier(p)}: ChannelValue | UNSET = UNSET,"
             for p in m.props
             if p not in {"mark", "data", "$schema"}
         ]
@@ -197,7 +200,7 @@ def generate_attributes(plot_attributes: Schema) -> list[str]:
     for attr, schema in plot_attributes.get("properties", {}).items():
         if attr in EXCLUDE_ATTRS:
             continue
-        fn_name = ident(attr)
+        fn_name = py_identifier(attr)
         export_names.append(fn_name)
         out.extend(
             (
@@ -240,7 +243,7 @@ def generate_transforms(definitions: Definitions) -> list[str]:
         discriminator_name = next(iter(schema.get("required", ())))
         discriminator = props[discriminator_name]
         description = discriminator.get("description", "")
-        fn_name = ident(discriminator_name)
+        fn_name = py_identifier(discriminator_name)
         export_names.append(fn_name)
         min_, max_ = arg_range(discriminator)
         params: list[str] = []
