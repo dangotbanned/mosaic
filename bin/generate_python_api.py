@@ -115,12 +115,6 @@ def docline(desc: str, fallback: str = "") -> str:
     return f'"""{text}"""'
 
 
-def is_boolean_attr(schema: Schema) -> bool:
-    """Return True if the attribute schema admits a boolean (so it gets a `= True` default)."""
-    opts = schema.get("anyOf") or (schema,)
-    return any(o.get("type") == "boolean" for o in opts)
-
-
 @dataclass
 class MarkInfo:
     mark: str
@@ -201,9 +195,11 @@ def generate_attributes(plot_attributes: Schema) -> list[str]:
             continue
         fn_name = py_identifier(attr)
         export_names.append(fn_name)
+        is_boolean_attr = any(o.get("type") == "boolean" for o in schema.get("anyOf", (schema,)))
+        value = f"value: AttrValue{' = True' if is_boolean_attr else ''}"
         out.extend(
             (
-                f"def {fn_name}(value: AttrValue{' = True' if is_boolean_attr(schema) else ''}) -> Directive:",
+                f"def {fn_name}({value}) -> Directive:",
                 f"    {docline(schema.get('description', ''), f'The {attr} attribute.')}",
                 f"    return Directive({attr!r}, value)",
             )
