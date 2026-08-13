@@ -4,23 +4,22 @@
 """Reproducing `bin/generate-python-api.js` in python.
 
 Lowers the barrier for who can fix schema gen issues (One language is easier than 2).
-
-## Notes
-- May want to pull in `jsonschema`/`fastjsonschema` as an inline script dep
 """
 
+# ruff: file-ignore[print]
 from __future__ import annotations
 
 import json
 import keyword
 import re
+from collections import deque
 from dataclasses import dataclass
 from operator import attrgetter, itemgetter
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Final, TypedDict
+from typing import TYPE_CHECKING, Any, Final, LiteralString, TypedDict
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
+    from collections.abc import Collection, Iterable, Iterator
 
 
 Schema = TypedDict(
@@ -316,10 +315,22 @@ def arg_range(schema: Schema) -> tuple[int, int]:
     return min(mins), max(maxs)
 
 
-# TODO @dangotbanned: Use a supported export pattern
-def write_init() -> None:
-    msg = f"TODO {write_init.__name__}()"
-    raise NotImplementedError(msg)
+type AbsoluteName = LiteralString
+"""[Absolute name][1] of the module.
+
+[1]: https://docs.python.org/3/reference/simple_stmts.html#the-import-statement
+"""
+
+
+def write_init(exports: dict[AbsoluteName, Collection[str]]) -> None:
+    out = deque([HEADER])
+    names_all = deque()
+    for module, export_names in exports.items():
+        out.append(f"from {module} import {','.join(export_names)}")
+        names_all.extend(export_names)
+
+    out.append(f"__all__ = {tuple(names_all)!r}")
+    write_lines(OUT_DIR / "__init__.py", out)
 
 
 def main() -> None:
@@ -329,6 +340,20 @@ def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     SPEC_GEN_DIR.mkdir(parents=True, exist_ok=True)
 
-    _mark_names = generate_marks(definitions.values())
-    _attr_names = generate_attributes(definitions["PlotAttributes"])
-    _enc_names = generate_transforms(definitions)
+    mark_names = generate_marks(definitions.values())
+    attr_names = generate_attributes(definitions["PlotAttributes"])
+    enc_names = generate_transforms(definitions)
+    write_init(
+        {
+            "vgplot._generated.marks": mark_names,
+            "vgplot._generated.attributes": attr_names,
+            "vgplot._generated.encodings": enc_names,
+        }
+    )
+    print(
+        f"Generated {len(mark_names)} marks + {len(attr_names)} attributes + {len(enc_names)} encodings -> vgplot/_generated/"
+    )
+
+
+if __name__ == "__main__":
+    main()
