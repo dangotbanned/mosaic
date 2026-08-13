@@ -84,12 +84,11 @@ def write_lines(target: Path, lines: str | Iterable[str]) -> None:
     target.write_text(lines, "utf8", newline="\n")
 
 
-def camel_case_to_snake(name: str) -> str:
-    return name if not name else _CAMEL_PATTERN.sub(_CAMEL_REPL, name).lower()
-
-
 def py_identifier(name: str) -> str:
-    s = camel_case_to_snake(name)
+    if not name:
+        msg = "Cannot create an identifier from an empty string"
+        raise TypeError(msg)
+    s = _CAMEL_PATTERN.sub(_CAMEL_REPL, name).lower()
     if is_keyword(s):
         url = "https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords"
         msg = (
