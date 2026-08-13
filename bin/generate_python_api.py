@@ -77,6 +77,13 @@ _CAMEL_PATTERN = re.compile(r"([a-z0-9])([A-Z])")
 _CAMEL_REPL = rf"{_GROUP_1}_{_GROUP_2}"
 
 
+def write_lines(target: Path, lines: str | Iterable[str]) -> None:
+    """Write `lines` to `target`."""
+    lines = ("\n".join(lines) if not isinstance(lines, str) else lines) + "\n"
+    target.touch()
+    target.write_text(lines, "utf8", newline="\n")
+
+
 def camel_case_to_snake(name: str) -> str:
     return name if not name else _CAMEL_PATTERN.sub(_CAMEL_REPL, name).lower()
 
@@ -99,7 +106,8 @@ def docline(desc: str, fallback: str = "") -> str:
 
     first: str = next(iter(re.split(r"(?<=\.)\s", text)), fallback)
     text = re.sub(r"\\", "\\\\", first)
-    return re.sub(r'"', '\\"\\"\\"', text)
+    text = re.sub(r'"', '\\"\\"\\"', text)
+    return f'"""{text}"""'
 
 
 def is_boolean_attr(schema: Schema) -> bool:
@@ -172,7 +180,6 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
             for parameter in m.props
             if parameter not in {"mark", "data"} and pattern.search(parameter)
         ]
-        doc = docline(m.description, f"The {mark} mark.")
         out.extend(
             (
                 f"def {fn_name}(",
@@ -181,23 +188,43 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
                 *params,
                 "    **options: Any,",
                 ") -> Mark:",
-                f'    """{doc}"""',
+                f"    {docline(m.description, f'The {mark} mark.')}",
                 f"    return _mark({mark!r}, locals())",
                 "",
                 "",
             )
         )
-    out.extend((f"__all__ = {tuple(export_names)!r}", ""))
-
-    fp = OUT_DIR / "marks.py"
-    fp.touch()
-    fp.write_text("\n".join(out), "utf-8", newline="\n")
+    out.append(f"__all__ = {tuple(export_names)!r}")
+    write_lines(OUT_DIR / "marks.py", out)
     return export_names
 
 
 def generate_attributes(plot_attributes: Schema) -> list[str]:
-    msg = f"TODO {generate_attributes.__name__}()"
-    raise NotImplementedError(msg)
+    out = [
+        HEADER,
+        "from vgplot._types import AttrValue",
+        "from vgplot.plot import Directive",
+        "",
+        "",
+    ]
+    export_names = []
+    for attr, schema in plot_attributes.get("properties", {}).items():
+        if attr in EXCLUDE_ATTRS:
+            continue
+        fn_name = ident(attr)
+        export_names.append(fn_name)
+        out.extend(
+            (
+                f"def {fn_name}(value: AttrValue{' = True' if is_boolean_attr(schema) else ''}) -> Directive:",
+                f"    {docline(schema.get('description', ''), f'The {attr} attribute.')}",
+                f"    return Directive({attr!r}, value)",
+                "",
+                "",
+            )
+        )
+    out.append(f"__all__ = {tuple(export_names)!r}")
+    write_lines(OUT_DIR / "attributes.py", out)
+    return export_names
 
 
 def generate_encodings(schemas: Iterable[Schema]) -> list[str]:
