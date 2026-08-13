@@ -15,12 +15,12 @@ import json
 import keyword
 import re
 from dataclasses import dataclass
-from operator import attrgetter
+from operator import attrgetter, itemgetter
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypedDict
+from typing import TYPE_CHECKING, Any, Final, TypedDict
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Iterator
 
 
 Schema = TypedDict(
@@ -64,14 +64,14 @@ HEADER = (
     "# Regenerate with: <TODO>\n"
 )
 
-TRANSFORM_ARGS = {
-    "argmax": ["col", "by"],
-    "argmin": ["col", "by"],
-    "quantile": ["col", "p"],
-    "lag": ["col", "offset", "default"],
-    "lead": ["col", "offset", "default"],
-    "nth_value": ["col", "offset"],
-    "ntile": ["buckets"],
+TRANSFORM_ARGS: Final = {
+    "argmax": ("col", "by"),
+    "argmin": ("col", "by"),
+    "quantile": ("col", "p"),
+    "lag": ("col", "offset", "default"),
+    "lead": ("col", "offset", "default"),
+    "nth_value": ("col", "offset"),
+    "ntile": ("buckets",),
 }
 """Python parameter names for transforms that take more than a single column."""
 
@@ -231,17 +231,92 @@ def generate_attributes(plot_attributes: Schema) -> list[str]:
     return export_names
 
 
-def generate_encodings(schemas: Iterable[Schema]) -> list[str]:
-    msg = f"TODO {generate_encodings.__name__}()"
-    raise NotImplementedError(msg)
+_POUND_DEFS = "#/definitions/"
+LB, RB = "{", "}"
+
+
+def generate_transforms(definitions: Definitions) -> list[str]:
+    # NOTE: The whole `transform-keys.js` thing looks like a hallucination
+    root = "Transform"
+    transforms = {}
+    for kind_ref in definitions[root].get("anyOf", ()):
+        # `ColumnTransform, AggregateTransform, WindowTransform`
+        kind_def = definitions.get(kind_ref.get("$ref", "").removeprefix(_POUND_DEFS), {})
+
+        for member_ref in kind_def.get("anyOf", ()):
+            member_name = member_ref.get("$ref", "").removeprefix(_POUND_DEFS)
+            # `Bin", Column, ...`
+            # `Argmax, Argmin, ...`
+            # `RowNumber, Rank, ...`
+            transforms[member_name] = definitions.get(member_name, {})
+
+    out = [
+        HEADER,
+        "from typing import Any",
+        "",
+        "from vgplot._types import UNSET, TransformArg",
+        "",
+        "",
+        "def _transform(name: str, args: tuple[Any, ...], options: dict[str, Any]) -> dict[str, Any]:",
+        "    vals = [a for a in args if a is not UNSET]",
+        '    value: Any = vals[0] if len(vals) == 1 else vals or ""',
+        "    return {name: value, **options}",
+        "",
+        "",
+    ]
+    export_names = []
+    for _, schema in sorted(transforms.items(), key=itemgetter(0)):
+        props = schema.get("properties", {})
+        key = next(iter(schema.get("required", ())))
+        fn_name = ident(key)
+        export_names.append(fn_name)
+        min_, max_ = arg_range(props[key])
+        # not sure why this slicing was there?
+        args = TRANSFORM_ARGS.get(key, ("col",))[:max_]
+
+        params = [
+            f"{a}: TransformArg{'' if i < min_ else ' | UNSET = UNSET'}" for i, a in enumerate(args)
+        ]
+        body = (
+            f"    return {LB}{key!r}: None, **options{RB}"
+            if not max_
+            else f"    return _transform({key!r}, {args!r}, options)"
+        )
+        params.append("**options: Any")
+        out.extend(
+            (
+                f"def {fn_name}({','.join(params)}) -> dict[str, Any]:",
+                f"    {docline(schema.get('description', ''), f'The {key} transform.')}",
+                body,
+                "",
+                "",
+            )
+        )
+
+    out.append(f"__all__ = {tuple(export_names)!r}")
+    write_lines(OUT_DIR / "encodings.py", out)
+    return export_names
 
 
 def arg_range(schema: Schema) -> tuple[int, int]:
     """Positional-argument range [min, max] admitted by a transform key schema."""
-    msg = f"TODO {arg_range.__name__}()"
-    raise NotImplementedError(msg)
+    if (schema.get("anyOf")) is None:
+        return schema["minItems"], schema["maxItems"]
+
+    def _flatten_min_max(s: Schema) -> Iterator[tuple[int, int]]:
+        for sub in s.get("anyOf", ()):
+            if sub.get("anyOf", ()):
+                yield from _flatten_min_max(sub)
+            elif (min_ := sub.get("minItems")) is not None and (
+                max_ := sub.get("maxItems")
+            ) is not None:
+                yield (min_, max_)
+
+    mins, maxs = zip(*_flatten_min_max(schema), strict=True)
+    return min(mins), max(maxs)
 
 
+# TODO @dangotbanned: Use a supported export pattern
 def write_init() -> None:
     msg = f"TODO {write_init.__name__}()"
     raise NotImplementedError(msg)
@@ -256,3 +331,4 @@ def main() -> None:
 
     _mark_names = generate_marks(definitions.values())
     _attr_names = generate_attributes(definitions["PlotAttributes"])
+    _enc_names = generate_transforms(definitions)
