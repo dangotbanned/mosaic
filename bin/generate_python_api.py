@@ -1,3 +1,6 @@
+# /// script
+# requires-python = ">=3.14"
+# ///
 """Reproducing `bin/generate-python-api.js` in python.
 
 Lowers the barrier for who can fix schema gen issues (One language is easier than 2).
@@ -12,12 +15,12 @@ import keyword
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeAlias
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
-Schema: TypeAlias = dict[str, Any]
+type Schema = dict[str, Any]
 """An item in the `"definitions"` field of the schema.
 
 Uses the variable name `def` in JS, but reserved keyword here.

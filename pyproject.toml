@@ -63,6 +63,8 @@ ignore = [
     "mixed-case-variable-in-global-scope", # TODO @dangotbanned: Fix in codegen
     "missing-required-import",
 ]
+[tool.ruff.per-file-target-version]
+"bin/*" =  "py314"
 
 [tool.pytest]
 strict_xfail = true
@@ -82,6 +84,7 @@ ignore = ["**/.venv/", "../../../**/*typeshed*"]  # Do not display diagnostics i
 typeCheckingMode = "standard"
 reportUnnecessaryTypeIgnoreComment = "error"
 reportUnusedExpression = "none" # covered by ruff
+executionEnvironments = [ { root = "bin", pythonVersion = "3.14" } ]
 
 [tool.ty.rules]
 missing-type-argument = "error"
