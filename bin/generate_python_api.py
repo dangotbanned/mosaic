@@ -234,7 +234,7 @@ _POUND_DEFS = "#/definitions/"
 LB, RB = "{", "}"
 
 
-def generate_transforms(definitions: Definitions) -> list[str]:
+def generate_transforms(definitions: Definitions) -> list[str]:  # ruff: ignore[too-many-locals]
     # NOTE: The whole `transform-keys.js` thing looks like a hallucination
     root = "Transform"
     transforms = {}
@@ -266,26 +266,28 @@ def generate_transforms(definitions: Definitions) -> list[str]:
     export_names = []
     for _, schema in sorted(transforms.items(), key=itemgetter(0)):
         props = schema.get("properties", {})
-        key = next(iter(schema.get("required", ())))
-        fn_name = ident(key)
+        discriminator_name = next(iter(schema.get("required", ())))
+        discriminator = props[discriminator_name]
+        description = discriminator.get("description", "")
+        fn_name = ident(discriminator_name)
         export_names.append(fn_name)
-        min_, max_ = arg_range(props[key])
+        min_, max_ = arg_range(discriminator)
         # not sure why this slicing was there?
-        args = TRANSFORM_ARGS.get(key, ("col",))[:max_]
+        args = TRANSFORM_ARGS.get(discriminator_name, ("col",))[:max_]
 
         params = [
             f"{a}: TransformArg{'' if i < min_ else ' | UNSET = UNSET'}" for i, a in enumerate(args)
         ]
         body = (
-            f"    return {LB}{key!r}: None, **options{RB}"
+            f"    return {LB}{discriminator_name!r}: None, **options{RB}"
             if not max_
-            else f"    return _transform({key!r}, ({','.join(args)},), options)"
+            else f"    return _transform({discriminator_name!r}, ({','.join(args)},), options)"
         )
         params.append("**options: Any")
         out.extend(
             (
                 f"def {fn_name}({','.join(params)}) -> dict[str, Any]:",
-                f"    {docline(schema.get('description', ''), f'The {key} transform.')}",
+                f"    {docline(description, f'The {discriminator_name} transform.')}",
                 body,
                 "",
                 "",
