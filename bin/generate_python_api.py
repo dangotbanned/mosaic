@@ -234,21 +234,16 @@ _POUND_DEFS = "#/definitions/"
 LB, RB = "{", "}"
 
 
-def generate_transforms(definitions: Definitions) -> list[str]:  # ruff: ignore[too-many-locals]
-    # NOTE: The whole `transform-keys.js` thing looks like a hallucination
-    root = "Transform"
-    transforms = {}
-    for kind_ref in definitions[root].get("anyOf", ()):
-        # `ColumnTransform, AggregateTransform, WindowTransform`
+def _iter_transform_defs(definitions: Definitions) -> Iterator[tuple[str, Schema]]:
+    for kind_ref in definitions["Transform"].get("anyOf", ()):
         kind_def = definitions.get(kind_ref.get("$ref", "").removeprefix(_POUND_DEFS), {})
-
         for member_ref in kind_def.get("anyOf", ()):
-            member_name = member_ref.get("$ref", "").removeprefix(_POUND_DEFS)
-            # `Bin", Column, ...`
-            # `Argmax, Argmin, ...`
-            # `RowNumber, Rank, ...`
-            transforms[member_name] = definitions.get(member_name, {})
+            name = member_ref.get("$ref", "").removeprefix(_POUND_DEFS)
+            yield name, definitions.get(name, {})
 
+
+def generate_transforms(definitions: Definitions) -> list[str]:
+    # NOTE: The whole `transform-keys.js` thing looks like a hallucination
     out = [
         HEADER,
         "from typing import Any",
@@ -264,7 +259,7 @@ def generate_transforms(definitions: Definitions) -> list[str]:  # ruff: ignore[
         "",
     ]
     export_names = []
-    for _, schema in sorted(transforms.items(), key=itemgetter(0)):
+    for _, schema in sorted(_iter_transform_defs(definitions), key=itemgetter(0)):
         props = schema.get("properties", {})
         discriminator_name = next(iter(schema.get("required", ())))
         discriminator = props[discriminator_name]
