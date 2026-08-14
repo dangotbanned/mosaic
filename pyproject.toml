@@ -64,6 +64,7 @@ required-imports        = ["from __future__ import annotations"]
 "dev/notebooks/*" = ["ANN", "N", "useless-return", "unsorted-imports", "missing-required-import", "useless-expression"]
 "**/*sentinel*.py" = ["suspicious-pickle-usage"]
 "packages/vgplot/vgplot-python/vgplot/_compat.py" = ["N"]
+"packages/vgplot/vgplot-python/vgplot/__init__.py" = ["undefined-local-with-import-star"]
 "**tests/**/*.py" = ["magic-value-comparison"]
 
 "**/specs/python/*.py" = [

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import vgplot._generated
-from vgplot._generated import *  # noqa: F403
+from vgplot import _generated
+from vgplot._generated import *  # pyright: ignore[reportWildcardImportFromLibrary]
 from vgplot.data import csv, data, json, parquet, spatial, table
 from vgplot.encodings import channels, sql
 from vgplot.params import param, selection
@@ -103,6 +103,6 @@ __all__ = (
     "vspace",
 )
 
-__all__ += vgplot._generated.__all__
+__all__ += _generated.__all__
 
-del vgplot._generated
+del _generated
