@@ -11,7 +11,8 @@ extend-include = ["*.ipynb"]
 fix = true
 
 [tool.ruff.format]
-skip-magic-trailing-comma = true
+# TODO @dangotbanned: Propose `true` in another PR (changes too many examples)
+skip-magic-trailing-comma = false
 
 [tool.ruff.lint]
 preview = true
