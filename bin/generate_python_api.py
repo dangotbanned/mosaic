@@ -10,9 +10,11 @@ Lowers the barrier for who can fix schema gen issues (One language is easier tha
 from __future__ import annotations
 
 import json
+import operator
 import re
 from collections import deque
 from dataclasses import dataclass, field
+from functools import reduce
 from keyword import iskeyword as is_keyword
 from operator import attrgetter, itemgetter
 from pathlib import Path
@@ -63,6 +65,7 @@ Schema = TypedDict(
         "type": str,
         "minItems": int,
         "maxItems": int,
+        "const": str,
     },
     total=False,
 )
@@ -136,25 +139,15 @@ class MarkInfo:
     description: str
 
 
-def mark_info(schema: Schema) -> MarkInfo | None:
-    """Extract a mark's const name and unioned channel properties from a def.
-
-    Handles both flat defs and `anyOf` intersection defs (e.g. densityX).
-    """
-    desc = schema.get("description", EMPTY)
-    if (props := schema.get("properties", {})) and (const := props.get("mark", {}).get("const")):
-        return MarkInfo(const, props, desc)
-    branches = schema.get("anyOf", ())
-    consts = set[str]()
-    props = {}
-
-    for b in branches:
-        if c := b.get("properties", {}).get("mark", {}).get("const", EMPTY):
-            consts.add(c)
-            props.update(b["properties"])
-    if len(consts) != 1:
-        return None
-    return MarkInfo(consts.pop(), props, desc)
+def _iter_mark_info(definitions: Definitions) -> Iterator[MarkInfo]:
+    hash_defs = "#/definitions/"
+    for mark_ref in definitions["PlotMark"].get("anyOf", ()):
+        mark_def = definitions.get(mark_ref.get("$ref", EMPTY).removeprefix(hash_defs), {})
+        if any_of := mark_def.get("anyOf"):
+            props = reduce(operator.or_, (i_def["properties"] for i_def in any_of))
+        else:
+            props = mark_def["properties"]
+        yield MarkInfo(props["mark"]["const"], props, mark_def.get("description", EMPTY))
 
 
 def _link_relative(path: Path, /) -> str:
@@ -268,7 +261,6 @@ generated = Package(VGPLOT_PYTHON_SRC, "_generated")
     {"typing": "Any", "vgplot._types": [UNSET, "ChannelValue", "MarkData"], "vgplot.plot": "Mark"}
 )
 def marks(definitions: Definitions, export: ExportFn, /) -> Iterator[Line]:
-    schemas = definitions.values()
     yield dedent(f"""\
     def _mark(name: str, args: {ANN_DICT}) -> Mark:
         args = dict(args)
@@ -278,7 +270,7 @@ def marks(definitions: Definitions, export: ExportFn, /) -> Iterator[Line]:
         enc.update({KWDS})
         return Mark(name, data=data, enc=enc or None)""")
     exclude = frozenset(("mark", "data", "$schema"))
-    for m in sorted((info for s in schemas if (info := mark_info(s))), key=attrgetter("mark")):
+    for m in sorted(_iter_mark_info(definitions), key=attrgetter("mark")):
         mark = m.mark
         fn_name = py_identifier(mark)
         export(fn_name)
