@@ -2,6 +2,7 @@
 # generated-spec round-trip suite does not exercise directly.
 from __future__ import annotations
 
+import types
 from typing import TYPE_CHECKING
 
 import pytest
@@ -106,6 +107,31 @@ class TestDataFrames:
         assert d["data"]["athletes"] == {"type": "csv", "file": "athletes.csv"}
 
 
+def test_intentional_re_exports() -> None:
+    intentional_export_names = frozenset(vg.__all__)
+    exclude = intentional_export_names | {"annotations"}
+    not_in_all = {
+        k: v for k, v in vars(vg).items() if k not in exclude and not k.startswith("__")
+    }
+    for symbol_name, symbol in not_in_all.items():
+        assert_top_level_module(symbol_name, symbol)
+
+
+def assert_top_level_module(symbol_name: str, symbol: object) -> None:
+    __tracebackhide__ = True
+    package = vg.__package__
+    assert package == "vgplot"
+
+    msg = f"in the top-level {package!r} namespace."
+
+    assert isinstance(symbol, types.ModuleType), (
+        f"Found undocumented re-export {symbol_name!r} {msg}\n\nGot: {symbol!r}"
+    )
+    assert symbol.__package__ == package, (
+        f"Module {symbol.__name__!r} should not be directly accessible {msg}\n\nGot: {symbol!r}"
+    )
+
+
 if TYPE_CHECKING:
 
     def typing_dunder_all() -> None:
@@ -114,7 +140,6 @@ if TYPE_CHECKING:
         _ = vg.errorbar_x
         _ = vg.mark
 
-        # TODO @dangotbanned: Get pyright to error on these
         # Error (`_generated` modules)
-        _ = vg.attributes  # ty: ignore[unresolved-attribute]
-        _ = vg.marks  # ty: ignore[unresolved-attribute]
+        _ = vg.attributes  # ty: ignore[unresolved-attribute] # pyright: ignore[reportAttributeAccessIssue]
+        _ = vg.marks  # ty: ignore[unresolved-attribute] # pyright: ignore[reportAttributeAccessIssue]

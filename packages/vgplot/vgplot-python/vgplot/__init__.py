@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from ._generated import *  # noqa: F403
-from ._generated import __all__ as _generated_all
-from .data import csv, data, json, parquet, spatial, table
-from .encodings import channels, sql
-from .params import param, selection
-from .plot import (
+import vgplot._generated
+from vgplot._generated import *  # noqa: F403
+from vgplot.data import csv, data, json, parquet, spatial, table
+from vgplot.encodings import channels, sql
+from vgplot.params import param, selection
+from vgplot.plot import (
     brush,
     checkbox,
     color_legend,
@@ -46,9 +46,9 @@ from .plot import (
     vconcat,
     vspace,
 )
-from .spec import Spec, View, spec
+from vgplot.spec import Spec, View, spec
 
-__all__ = [
+__all__ = (
     "Spec",
     "View",
     "brush",
@@ -101,4 +101,8 @@ __all__ = [
     "toggle_y",
     "vconcat",
     "vspace",
-] + list(_generated_all)  # pyright: ignore[reportUnsupportedDunderAll]
+)
+
+__all__ += vgplot._generated.__all__
+
+del vgplot._generated

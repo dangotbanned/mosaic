@@ -12,14 +12,14 @@ from __future__ import annotations
 import json
 import re
 from collections import deque
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from keyword import iskeyword as is_keyword
 from operator import attrgetter, itemgetter
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Final, LiteralString, TypedDict
+from typing import TYPE_CHECKING, Any, ClassVar, Final, Literal as L, TypedDict
 
 if TYPE_CHECKING:
-    from collections.abc import Collection, Iterable, Iterator
+    from collections.abc import Collection, Iterable, Iterator, Sequence
 
 
 Schema = TypedDict(
@@ -82,6 +82,9 @@ _GROUP_1 = r"\g<1>"
 _GROUP_2 = r"\g<2>"
 _CAMEL_PATTERN = re.compile(r"([a-z0-9])([A-Z])")
 _CAMEL_REPL = rf"{_GROUP_1}_{_GROUP_2}"
+
+join = ",".join
+"""Join strings using a comma separator."""
 
 
 def write_lines(target: Path, lines: str | Iterable[str]) -> None:
@@ -150,28 +153,71 @@ def mark_info(schema: Schema) -> MarkInfo | None:
     return MarkInfo(consts.pop(), props, desc)
 
 
-def generate_marks(schemas: Iterable[Schema]) -> list[str]:
+type AbsoluteName = L[
+    "typing",
+    "vgplot._types",
+    "vgplot.plot",
+    "vgplot._generated.marks",
+    "vgplot._generated.attributes",
+    "vgplot._generated.encodings",
+]
+"""[Absolute name][1] of the module.
+
+[1]: https://docs.python.org/3/reference/simple_stmts.html#the-import-statement
+"""
+
+
+@dataclass
+class Module:
+    name: L["attributes", "encodings", "marks", "__init__"]
+    deps: dict[AbsoluteName, Sequence[str]]
+    exports: deque[str] = field(default_factory=deque)
+    BASE_HEADER: ClassVar = (
+        f"# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate_python_api.py.{NL}"
+        f"# Regenerate with: pnpm generate:python-api-py{NL}"
+    )
+
+    @property
+    def path(self) -> Path:
+        return OUT_DIR / f"{self.name}.py"
+
+    def iter_header(self) -> Iterator[str]:
+        yield self.BASE_HEADER
+        for module, names in self.deps.items():
+            yield f"from {module} import {join(names)}"
+
+    def render_exports(self) -> str:
+        return f"__all__ = {tuple(self.exports)!r}"
+
+
+def generate_marks(schemas: Iterable[Schema]) -> deque[str]:
     marks = [info for s in schemas if (info := mark_info(s))]
     marks.sort(key=attrgetter("mark"))
+    module = Module(
+        "marks",
+        {
+            "typing": ["Any"],
+            "vgplot._types": [UNSET, "ChannelValue", "MarkData"],
+            "vgplot.plot": ["Mark"],
+        },
+    )
 
-    out = [
-        HEADER,
-        "from typing import Any",
-        f"from vgplot._types import {UNSET}, ChannelValue, MarkData",
-        "from vgplot.plot import Mark",
-        f"def _mark(name: str, args: {ANN_DICT}) -> Mark:",
-        f"{INDENT}args = dict(args)",
-        f'{INDENT}data = args.pop("data")',
-        f'{INDENT}{KWDS} = args.pop("{KWDS}")',
-        f"{INDENT}enc = {LB}k: v for k, v in args.items() if v is not {UNSET}{RB}",
-        f"{INDENT}enc.update({KWDS})",
-        f"{INDENT}return Mark(name, data=data, enc=enc or None)",
-    ]
-    export_names = []
+    out = deque(
+        (
+            f"def _mark(name: str, args: {ANN_DICT}) -> Mark:",
+            f"{INDENT}args = dict(args)",
+            f'{INDENT}data = args.pop("data")',
+            f'{INDENT}{KWDS} = args.pop("{KWDS}")',
+            f"{INDENT}enc = {LB}k: v for k, v in args.items() if v is not {UNSET}{RB}",
+            f"{INDENT}enc.update({KWDS})",
+            f"{INDENT}return Mark(name, data=data, enc=enc or None)",
+        )
+    )
+
     for m in marks:
         mark = m.mark
         fn_name = py_identifier(mark)
-        export_names.append(fn_name)
+        module.exports.append(fn_name)
         params = [
             f"{INDENT}{py_identifier(p)}: ChannelValue | {UNSET} = {UNSET},"
             for p in m.props
@@ -189,13 +235,18 @@ def generate_marks(schemas: Iterable[Schema]) -> list[str]:
                 f"{INDENT}return _mark({mark!r}, locals())",
             )
         )
-    out.append(f"__all__ = {tuple(export_names)!r}")
-    write_lines(OUT_DIR / "marks.py", out)
-    return export_names
+
+    # TODO @dangotbanned: Keep working on this
+    # The `__init__` should basically write itself when each module is kept together
+    out.extendleft(module.iter_header())
+    out.append(module.render_exports())
+    write_lines(module.path, out)
+    return module.exports
 
 
 def generate_attributes(plot_attributes: Schema) -> list[str]:
-    out = [HEADER, "from vgplot._types import AttrValue", "from vgplot.plot import Directive"]
+    module = Module("attributes", {"vgplot._types": ["AttrValue"], "vgplot.plot": ["Directive"]})
+    out: deque[str] = deque()
     export_names = []
     for attr, schema in plot_attributes.get("properties", {}).items():
         if attr in EXCLUDE_ATTRS:
@@ -211,8 +262,10 @@ def generate_attributes(plot_attributes: Schema) -> list[str]:
                 f"{INDENT}return Directive({attr!r}, value)",
             )
         )
+    out.extendleft(module.iter_header())
+    # TODO @dangotbanned: Add to exports in loop, then render
     out.append(f"__all__ = {tuple(export_names)!r}")
-    write_lines(OUT_DIR / "attributes.py", out)
+    write_lines(module.path, out)
     return export_names
 
 
@@ -229,15 +282,18 @@ def _iter_transform_defs(definitions: Definitions) -> Iterator[tuple[str, Schema
 
 def generate_transforms(definitions: Definitions) -> list[str]:
     # NOTE: The whole `transform-keys.js` thing looks like a hallucination
-    out = [
-        HEADER,
-        "from typing import Any",
-        f"from vgplot._types import {UNSET}, TransformArg",
-        f"def _transform(name: str, args: tuple[Any, ...], {KWDS}: {ANN_DICT}) -> {ANN_DICT}:",
-        f"{INDENT}vals = [a for a in args if a is not {UNSET}]",
-        f"{INDENT}value: Any = vals[0] if len(vals) == 1 else vals or ''",
-        f"{INDENT}return {LB}name: value, **{KWDS}{RB}",
-    ]
+    module = Module(
+        "encodings",
+        {"typing": ["Any"], "vgplot._types": [UNSET, "TransformArg"], "vgplot.plot": ["Mark"]},
+    )
+    out = deque(
+        (
+            f"def _transform(name: str, args: tuple[Any, ...], {KWDS}: {ANN_DICT}) -> {ANN_DICT}:",
+            f"{INDENT}vals = [a for a in args if a is not {UNSET}]",
+            f"{INDENT}value: Any = vals[0] if len(vals) == 1 else vals or ''",
+            f"{INDENT}return {LB}name: value, **{KWDS}{RB}",
+        )
+    )
     export_names = []
     for _, schema in sorted(_iter_transform_defs(definitions), key=itemgetter(0)):
         props = schema.get("properties", {})
@@ -266,8 +322,10 @@ def generate_transforms(definitions: Definitions) -> list[str]:
             )
         )
 
+    out.extendleft(module.iter_header())
+    # TODO @dangotbanned: Add to exports in loop, then render
     out.append(f"__all__ = {tuple(export_names)!r}")
-    write_lines(OUT_DIR / "encodings.py", out)
+    write_lines(module.path, out)
     return export_names
 
 
@@ -287,13 +345,6 @@ def arg_range(schema: Schema) -> tuple[int, int]:
 
     mins, maxs = zip(*_flatten_min_max(schema), strict=True)
     return min(mins), max(maxs)
-
-
-type AbsoluteName = LiteralString
-"""[Absolute name][1] of the module.
-
-[1]: https://docs.python.org/3/reference/simple_stmts.html#the-import-statement
-"""
 
 
 def write_init(exports: dict[AbsoluteName, Collection[str]]) -> None:
@@ -317,6 +368,14 @@ def main() -> None:
     mark_names = generate_marks(definitions.values())
     attr_names = generate_attributes(definitions["PlotAttributes"])
     enc_names = generate_transforms(definitions)
+    Module(
+        "__init__",
+        {
+            "vgplot._generated.marks": mark_names,
+            "vgplot._generated.attributes": attr_names,
+            "vgplot._generated.encodings": enc_names,
+        },
+    )
     write_init(
         {
             "vgplot._generated.marks": mark_names,
