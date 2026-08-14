@@ -1,14 +1,14 @@
-# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate-python-api.js.
-# Regenerate with: pnpm run generate:python-api
+# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate_python_api.py.
+# Regenerate with: pnpm generate:python-api-py
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..plot import Directive
+from vgplot.plot import Directive
 
 if TYPE_CHECKING:
-    from .._types import AttrValue
+    from vgplot._types import AttrValue
 
 
 def align(value: AttrValue) -> Directive:
@@ -281,11 +281,6 @@ def fx_tick_rotate(value: AttrValue) -> Directive:
     return Directive("fxTickRotate", value)
 
 
-def fx_ticks(value: AttrValue) -> Directive:
-    """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
-    return Directive("fxTicks", value)
-
-
 def fx_tick_size(value: AttrValue) -> Directive:
     """The length of axis tick marks in pixels; negative values extend in the opposite direction."""
     return Directive("fxTickSize", value)
@@ -294,6 +289,11 @@ def fx_tick_size(value: AttrValue) -> Directive:
 def fx_tick_spacing(value: AttrValue) -> Directive:
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
     return Directive("fxTickSpacing", value)
+
+
+def fx_ticks(value: AttrValue) -> Directive:
+    """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
+    return Directive("fxTicks", value)
 
 
 def fy_align(value: AttrValue) -> Directive:
@@ -411,11 +411,6 @@ def fy_tick_rotate(value: AttrValue) -> Directive:
     return Directive("fyTickRotate", value)
 
 
-def fy_ticks(value: AttrValue) -> Directive:
-    """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
-    return Directive("fyTicks", value)
-
-
 def fy_tick_size(value: AttrValue) -> Directive:
     """The length of axis tick marks in pixels; negative values extend in the opposite direction."""
     return Directive("fyTickSize", value)
@@ -424,6 +419,11 @@ def fy_tick_size(value: AttrValue) -> Directive:
 def fy_tick_spacing(value: AttrValue) -> Directive:
     """The desired approximate spacing between adjacent axis ticks, affecting the default **ticks**; defaults to 80 pixels for *x* and *fx*, and 35 pixels for *y* and *fy*."""
     return Directive("fyTickSpacing", value)
+
+
+def fy_ticks(value: AttrValue) -> Directive:
+    """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
+    return Directive("fyTicks", value)
 
 
 def grid(value: AttrValue = True) -> Directive:
@@ -881,11 +881,6 @@ def x_tick_rotate(value: AttrValue) -> Directive:
     return Directive("xTickRotate", value)
 
 
-def x_ticks(value: AttrValue) -> Directive:
-    """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
-    return Directive("xTicks", value)
-
-
 def x_tick_size(value: AttrValue) -> Directive:
     """The length of axis tick marks in pixels; negative values extend in the opposite direction."""
     return Directive("xTickSize", value)
@@ -896,14 +891,19 @@ def x_tick_spacing(value: AttrValue) -> Directive:
     return Directive("xTickSpacing", value)
 
 
-def xy_domain(value: AttrValue) -> Directive:
-    """Set the *x* and *y* scale domains."""
-    return Directive("xyDomain", value)
+def x_ticks(value: AttrValue) -> Directive:
+    """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
+    return Directive("xTicks", value)
 
 
 def x_zero(value: AttrValue = True) -> Directive:
     """Whether the **domain** must include zero."""
     return Directive("xZero", value)
+
+
+def xy_domain(value: AttrValue) -> Directive:
+    """Set the *x* and *y* scale domains."""
+    return Directive("xyDomain", value)
 
 
 def y_align(value: AttrValue) -> Directive:
@@ -1061,11 +1061,6 @@ def y_tick_rotate(value: AttrValue) -> Directive:
     return Directive("yTickRotate", value)
 
 
-def y_ticks(value: AttrValue) -> Directive:
-    """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
-    return Directive("yTicks", value)
-
-
 def y_tick_size(value: AttrValue) -> Directive:
     """The length of axis tick marks in pixels; negative values extend in the opposite direction."""
     return Directive("yTickSize", value)
@@ -1076,12 +1071,17 @@ def y_tick_spacing(value: AttrValue) -> Directive:
     return Directive("yTickSpacing", value)
 
 
+def y_ticks(value: AttrValue) -> Directive:
+    """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
+    return Directive("yTicks", value)
+
+
 def y_zero(value: AttrValue = True) -> Directive:
     """Whether the **domain** must include zero."""
     return Directive("yZero", value)
 
 
-__all__ = [
+__all__ = (
     "align",
     "aria_description",
     "aria_label",
@@ -1296,4 +1296,4 @@ __all__ = [
     "y_tick_spacing",
     "y_ticks",
     "y_zero",
-]
+)

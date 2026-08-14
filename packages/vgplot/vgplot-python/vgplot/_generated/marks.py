@@ -1,12 +1,12 @@
-# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate-python-api.js.
-# Regenerate with: pnpm run generate:python-api
+# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate_python_api.py.
+# Regenerate with: pnpm generate:python-api-py
 
 from __future__ import annotations
 
 from typing import Any
 
-from .._types import UNSET, ChannelValue, MarkData
-from ..plot import Mark
+from vgplot._types import UNSET, ChannelValue, MarkData
+from vgplot.plot import Mark
 
 
 def _mark(name: str, args: dict[str, Any]) -> Mark:
@@ -1264,7 +1264,7 @@ def density(
     text_overflow: ChannelValue | UNSET = UNSET,
     tip: ChannelValue | UNSET = UNSET,
     title: ChannelValue | UNSET = UNSET,
-    type_: ChannelValue | UNSET = UNSET,
+    type: ChannelValue | UNSET = UNSET,
     width: ChannelValue | UNSET = UNSET,
     x: ChannelValue | UNSET = UNSET,
     y: ChannelValue | UNSET = UNSET,
@@ -1326,7 +1326,7 @@ def density_x(
     tension: ChannelValue | UNSET = UNSET,
     tip: ChannelValue | UNSET = UNSET,
     title: ChannelValue | UNSET = UNSET,
-    type_: ChannelValue | UNSET = UNSET,
+    type: ChannelValue | UNSET = UNSET,
     y: ChannelValue | UNSET = UNSET,
     z: ChannelValue | UNSET = UNSET,
     marker: ChannelValue | UNSET = UNSET,
@@ -1406,7 +1406,7 @@ def density_y(
     tension: ChannelValue | UNSET = UNSET,
     tip: ChannelValue | UNSET = UNSET,
     title: ChannelValue | UNSET = UNSET,
-    type_: ChannelValue | UNSET = UNSET,
+    type: ChannelValue | UNSET = UNSET,
     x: ChannelValue | UNSET = UNSET,
     z: ChannelValue | UNSET = UNSET,
     marker: ChannelValue | UNSET = UNSET,
@@ -2308,7 +2308,7 @@ def hexbin(
     text_overflow: ChannelValue | UNSET = UNSET,
     tip: ChannelValue | UNSET = UNSET,
     title: ChannelValue | UNSET = UNSET,
-    type_: ChannelValue | UNSET = UNSET,
+    type: ChannelValue | UNSET = UNSET,
     x: ChannelValue | UNSET = UNSET,
     y: ChannelValue | UNSET = UNSET,
     z: ChannelValue | UNSET = UNSET,
@@ -4057,7 +4057,7 @@ def waffle_y(
     return _mark("waffleY", locals())
 
 
-__all__ = [
+__all__ = (
     "area",
     "area_x",
     "area_y",
@@ -4123,4 +4123,4 @@ __all__ = [
     "voronoi_mesh",
     "waffle_x",
     "waffle_y",
-]
+)

@@ -1,11 +1,11 @@
-# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate-python-api.js.
-# Regenerate with: pnpm run generate:python-api
+# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate_python_api.py.
+# Regenerate with: pnpm generate:python-api-py
 
 from __future__ import annotations
 
 from typing import Any
 
-from .._types import UNSET, TransformArg
+from vgplot._types import UNSET, TransformArg
 
 
 def _transform(
@@ -151,16 +151,16 @@ def mode(col: TransformArg, **options: Any) -> dict[str, Any]:
     return _transform("mode", (col,), options)
 
 
+def ntile(buckets: TransformArg, **options: Any) -> dict[str, Any]:
+    """Compute an n-tile integer ranging from 1 to the provided argument (num_buckets), dividing the partition as equally as possible."""
+    return _transform("ntile", (buckets,), options)
+
+
 def nth_value(
     col: TransformArg, offset: TransformArg | UNSET = UNSET, **options: Any
 ) -> dict[str, Any]:
     """Get the nth value of the given column in the current window frame, counting from one."""
     return _transform("nth_value", (col, offset), options)
-
-
-def ntile(buckets: TransformArg, **options: Any) -> dict[str, Any]:
-    """Compute an n-tile integer ranging from 1 to the provided argument (num_buckets), dividing the partition as equally as possible."""
-    return _transform("ntile", (buckets,), options)
 
 
 def percent_rank(**options: Any) -> dict[str, Any]:
@@ -203,17 +203,17 @@ def sum(col: TransformArg, **options: Any) -> dict[str, Any]:
     return _transform("sum", (col,), options)
 
 
-def variance(col: TransformArg, **options: Any) -> dict[str, Any]:
-    """Compute the sample variance of the given column."""
-    return _transform("variance", (col,), options)
-
-
 def var_pop(col: TransformArg, **options: Any) -> dict[str, Any]:
     """Compute the population variance of the given column."""
     return _transform("varPop", (col,), options)
 
 
-__all__ = [
+def variance(col: TransformArg, **options: Any) -> dict[str, Any]:
+    """Compute the sample variance of the given column."""
+    return _transform("variance", (col,), options)
+
+
+__all__ = (
     "argmax",
     "argmin",
     "avg",
@@ -251,4 +251,4 @@ __all__ = [
     "sum",
     "var_pop",
     "variance",
-]
+)
