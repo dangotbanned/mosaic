@@ -16,6 +16,7 @@ from dataclasses import dataclass, field
 from keyword import iskeyword as is_keyword
 from operator import attrgetter, itemgetter
 from pathlib import Path
+from textwrap import dedent
 from typing import TYPE_CHECKING, Any, ClassVar, Final, Literal as L, Protocol, TypedDict
 
 if TYPE_CHECKING:
@@ -26,7 +27,6 @@ VGPLOT_DIR = Path(__file__).parent.parent / "packages" / "vgplot"
 SCHEMA_PATH = VGPLOT_DIR / "spec/dist/mosaic-schema.json"
 VGPLOT_PYTHON_SRC = VGPLOT_DIR / "vgplot-python/vgplot"
 
-INDENT: Final = " " * 4
 EMPTY: Final = ""
 LB, RB = "{", "}"
 NL: Final = "\n"
@@ -269,25 +269,24 @@ generated = Package(VGPLOT_PYTHON_SRC, "_generated")
 )
 def marks(definitions: Definitions, export: ExportFn, /) -> Iterator[Line]:
     schemas = definitions.values()
-    yield f"def _mark(name: str, args: {ANN_DICT}) -> Mark:"
-    yield f"{INDENT}args = dict(args)"
-    yield f'{INDENT}data = args.pop("data")'
-    yield f'{INDENT}{KWDS} = args.pop("{KWDS}")'
-    yield f"{INDENT}enc = {LB}k: v for k, v in args.items() if v is not {UNSET}{RB}"
-    yield f"{INDENT}enc.update({KWDS})"
-    yield f"{INDENT}return Mark(name, data=data, enc=enc or None)"
-
+    yield dedent(f"""\
+    def _mark(name: str, args: {ANN_DICT}) -> Mark:
+        args = dict(args)
+        data = args.pop("data")
+        {KWDS} = args.pop("{KWDS}")
+        enc = {LB}k: v for k, v in args.items() if v is not {UNSET}{RB}
+        enc.update({KWDS})
+        return Mark(name, data=data, enc=enc or None)""")
+    exclude = frozenset(("mark", "data", "$schema"))
     for m in sorted((info for s in schemas if (info := mark_info(s))), key=attrgetter("mark")):
         mark = m.mark
         fn_name = py_identifier(mark)
         export(fn_name)
-        yield f"def {fn_name}(data: MarkData = None, *,"
-        for p in m.props:
-            if p not in {"mark", "data", "$schema"}:
-                yield f"{INDENT}{py_identifier(p)}: ChannelValue | {UNSET} = {UNSET},"
-        yield f"{INDENT}**{KWDS}: Any) -> Mark:"
-        yield f"{INDENT}{docline(m.description, f'The {mark} mark.')}"
-        yield f"{INDENT}return _mark({mark!r}, locals())"
+        props = (py_identifier(p) for p in m.props if p not in exclude)
+        yield dedent(f"""\
+        def {fn_name}(data: MarkData = None, *, {join(f"{p}: ChannelValue | {UNSET} = {UNSET}" for p in props)}, **{KWDS}: Any) -> Mark:
+            {docline(m.description, f"The {mark} mark.")}
+            return _mark({mark!r}, locals())""")
 
 
 @generated.module({"vgplot._types": "AttrValue", "vgplot.plot": "Directive"})
@@ -298,9 +297,10 @@ def attributes(definitions: Definitions, export: ExportFn, /) -> Iterator[Line]:
         fn_name = py_identifier(attr)
         export(fn_name)
         is_boolean_attr = any(o.get("type") == "boolean" for o in schema.get("anyOf", (schema,)))
-        yield f"def {fn_name}(value: AttrValue{' = True' if is_boolean_attr else EMPTY}) -> Directive:"
-        yield f"{INDENT}{docline(schema.get('description', EMPTY), f'The {attr} attribute.')}"
-        yield f"{INDENT}return Directive({attr!r}, value)"
+        yield dedent(f"""\
+        def {fn_name}(value: AttrValue{" = True" if is_boolean_attr else EMPTY}) -> Directive:
+            {docline(schema.get("description", EMPTY), f"The {attr} attribute.")}
+            return Directive({attr!r}, value)""")
 
 
 @generated.module(
@@ -308,10 +308,11 @@ def attributes(definitions: Definitions, export: ExportFn, /) -> Iterator[Line]:
 )
 def encodings(definitions: Definitions, export: ExportFn, /) -> Iterator[Line]:
     # NOTE: The whole `transform-keys.js` thing looks like a hallucination
-    yield f"def _transform(name: str, args: tuple[Any, ...], {KWDS}: {ANN_DICT}) -> {ANN_DICT}:"
-    yield f"{INDENT}vals = [a for a in args if a is not {UNSET}]"
-    yield f"{INDENT}value: Any = vals[0] if len(vals) == 1 else vals or ''"
-    yield f"{INDENT}return {LB}name: value, **{KWDS}{RB}"
+    yield dedent(f"""\
+    def _transform(name: str, args: tuple[Any, ...], {KWDS}: {ANN_DICT}) -> {ANN_DICT}:
+        vals = [a for a in args if a is not {UNSET}]
+        value: Any = vals[0] if len(vals) == 1 else vals or ''
+        return {LB}name: value, **{KWDS}{RB}""")
     for _, schema in sorted(_iter_transform_defs(definitions), key=itemgetter(0)):
         props = schema.get("properties", {})
         discriminator_name = next(iter(schema.get("required", ())))
@@ -327,13 +328,14 @@ def encodings(definitions: Definitions, export: ExportFn, /) -> Iterator[Line]:
                 f"{a}: TransformArg{EMPTY if i < min_ else f' | {UNSET} = {UNSET}'}"
                 for i, a in enumerate(args)
             ]
-            body = f"{INDENT}return _transform({discriminator_name!r}, ({join(args)},), {KWDS})"
+            body = f"return _transform({discriminator_name!r}, ({join(args)},), {KWDS})"
         else:
-            body = f"{INDENT}return {LB}{discriminator_name!r}: None, **{KWDS}{RB}"
+            body = f"return {LB}{discriminator_name!r}: None, **{KWDS}{RB}"
         params.append(f"**{KWDS}: Any")
-        yield f"def {fn_name}({join(params)}) -> {ANN_DICT}:"
-        yield f"{INDENT}{docline(description, f'The {discriminator_name} transform.')}"
-        yield body
+        yield dedent(f"""\
+        def {fn_name}({join(params)}) -> {ANN_DICT}:
+            {docline(description, f"The {discriminator_name} transform.")}
+            {body}""")
 
 
 def _iter_transform_defs(definitions: Definitions) -> Iterator[tuple[str, Schema]]:
