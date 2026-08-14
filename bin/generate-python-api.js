@@ -4,11 +4,8 @@
 // legends, data sources, params, and the runtime core stay hand-written.
 //
 // Run: node bin/generate-python-api.js   (or: pnpm run generate:python-api)
-// @ts-ignore
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-// @ts-ignore
 import { resolve, dirname } from 'node:path';
-// @ts-ignore
 import { fileURLToPath } from 'node:url';
 import { camelCaseToSnake } from '../packages/vgplot/spec/src/util.js';
 import { PYTHON_KEYWORDS } from '../packages/vgplot/spec/src/python-codegen.js';
@@ -26,21 +23,14 @@ const HEADER =
   '# DO NOT EDIT. Generated from the Mosaic JSON schema by bin/generate-python-api.js.\n' +
   '# Regenerate with: pnpm run generate:python-api\n';
 
-/**
- * Python identifier for a schema (camelCase) name, keyword-safe.
- * @param {string} name
- */
+/** Python identifier for a schema (camelCase) name, keyword-safe. */
 function ident(name) {
   const s = camelCaseToSnake(name);
   return PYTHON_KEYWORDS.has(s) ? s + '_' : s;
 }
 
-/**
- * First sentence of a schema description, with markdown links stripped and
- * escaped for a docstring.
- * @param {string} desc
- * @param {string} fallback
- */
+/** First sentence of a schema description, with markdown links stripped and
+ * escaped for a docstring. */
 function docline(desc, fallback) {
   let text = (desc || fallback || '')
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')   // [text](url) -> text
@@ -52,20 +42,14 @@ function docline(desc, fallback) {
   return first.replace(/\\/g, '\\\\').replace(/"""/g, '\\"\\"\\"');
 }
 
-/**
- * True if the attribute schema admits a boolean (so it gets a `= True` default).
- * @param {{ anyOf?: { type: string }[]; oneOf?: { type: string }[]; type: string;}} def
- */
+/** True if the attribute schema admits a boolean (so it gets a `= True` default). */
 function isBooleanAttr(def) {
   const opts = def.anyOf || def.oneOf || [def];
-  return opts.some((o) => o.type === 'boolean');
+  return opts.some(o => o.type === 'boolean');
 }
 
-/**
- * Extract a mark's const name and unioned channel properties from a def,
- * handling both flat defs and `anyOf`/`allOf` intersection defs (e.g. densityX).
- * @param {{ properties: { mark: { const: any; }; }; description: any; anyOf: any; allOf: any; }} def
- */
+/** Extract a mark's const name and unioned channel properties from a def,
+ * handling both flat defs and `anyOf`/`allOf` intersection defs (e.g. densityX). */
 function markInfo(def) {
   if (def.properties?.mark?.const) {
     return { mark: def.properties.mark.const, props: def.properties, description: def.description };
@@ -83,9 +67,6 @@ function markInfo(def) {
   return { mark: [...consts][0], props, description: def.description };
 }
 
-/**
- * @param {{ [s: string]: any; } | ArrayLike<any>} defs
- */
 function generateMarks(defs) {
   const marks = [];
   for (const d of Object.values(defs)) {
@@ -131,9 +112,6 @@ function generateMarks(defs) {
   return names;
 }
 
-/**
- * @param {{ PlotAttributes: any; }} defs
- */
 function generateAttributes(defs) {
   const pa = defs.PlotAttributes;
   if (!pa) throw new Error('PlotAttributes not found in schema');
@@ -174,23 +152,17 @@ const TRANSFORM_ARGS = {
   ntile: ['buckets'],
 };
 
-/**
- * Positional-argument range [min, max] admitted by a transform key schema.
- * @param {{ type: string; minItems: any; maxItems: any; anyOf: any[]; }} sch
- */
+/** Positional-argument range [min, max] admitted by a transform key schema. */
 function argRange(sch) {
   if (sch.type === 'array') return [sch.minItems ?? 0, sch.maxItems ?? sch.minItems ?? 0];
   if (sch.type === 'null') return [0, 0];
   if (sch.anyOf) {
     const rs = sch.anyOf.map(argRange);
-    return [Math.min(...rs.map((/** @type {any[]} */ r) => r[0])), Math.max(...rs.map((/** @type {any[]} */ r) => r[1]))];
+    return [Math.min(...rs.map(r => r[0])), Math.max(...rs.map(r => r[1]))];
   }
   return [1, 1]; // scalar argument (string/number/boolean/param ref)
 }
 
-/**
- * @param {{ [x: string]: any; }} defs
- */
 function generateEncodings(defs) {
   const seen = new Set();
   const transforms = [];
@@ -223,7 +195,7 @@ function generateEncodings(defs) {
     const [min, max] = argRange(prop);
     const args = (TRANSFORM_ARGS[key] ?? ['col']).slice(0, max);
     while (args.length < max) args.push(`arg${args.length + 1}`);
-    const params = args.map((/** @type {any} */ a, /** @type {number} */ i) => `${a}: TransformArg${i < min ? '' : ' | UNSET = UNSET'}`);
+    const params = args.map((a, i) => `${a}: TransformArg${i < min ? '' : ' | UNSET = UNSET'}`);
     const body = max === 0
       ? `    return {${JSON.stringify(key)}: None, **options}`
       : `    return _transform(${JSON.stringify(key)}, (${args.join(', ')}${args.length === 1 ? ',' : ''}), options)`;
@@ -261,9 +233,6 @@ function writeInit() {
 }
 
 const schema = JSON.parse(readFileSync(SCHEMA, 'utf8'));
-/** Mapping to  symbols from `packages/vgplot/spec/src/spec/index.ts`
- * @type {{ [x: string]: any; } & { PlotAttributes: any; }} 
-*/
 const defs = schema.definitions || schema.$defs;
 mkdirSync(OUT_DIR, { recursive: true });
 mkdirSync(SPEC_GEN_DIR, { recursive: true });
