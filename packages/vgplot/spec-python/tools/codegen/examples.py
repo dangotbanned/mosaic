@@ -25,7 +25,7 @@ from typing_extensions import TypedDict
 from tools.codegen.convert import KEYS_REPLACE
 from tools.codegen.docstrings import doc
 from tools.models.mosaic import _fix_ambiguous_unicode_characters
-from tools.serde import read_yaml
+from tools.serde import read_yaml_untyped
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -176,7 +176,7 @@ class Example:
     @classmethod
     def from_path(cls, source: Path) -> Self:
         # NOTE: `extra_items` isn't supported in msgspec (iirc)
-        spec: YamlSpec = read_yaml(source, Any)
+        spec: YamlSpec = read_yaml_untyped(source)
         self = cls.__new__(cls)
         self.source = source
         self.title, self.description = cls._extract_meta(spec)

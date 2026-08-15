@@ -72,6 +72,14 @@ def read_yaml[T](path: IntoPath, tp: type[T] | TypeForm[T], /) -> T:
         return deserialize_yaml(fd.read(), tp)
 
 
+def read_yaml_untyped(path: IntoPath) -> Any:
+    """Like `read_yaml`, but avoids `pyright` and `ty` disagreement on how the gradual version should work.
+
+    Prefer [`read_yaml`][] if possible.
+    """
+    return read_yaml(path, Any)
+
+
 def _write_bytes_as_str(path: IntoPath, b_string: bytes, /) -> None:
     path = Path(path)
     path.touch()
