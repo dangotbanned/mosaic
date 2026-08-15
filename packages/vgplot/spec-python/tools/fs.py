@@ -31,7 +31,7 @@ type Suffix = L[
 ]
 """Any file extension that would (realistically) be used in this project."""
 
-type Tool = L["uv", "ruff"]
+type Tool = L["uv", "ruff", "rumdl"]
 
 _HERE = Path(__file__)
 
@@ -192,16 +192,21 @@ def write_lines(target: IntoPath, lines: Iterable[str], /, message: str | None =
 def run(tool: Tool, *args: LS, output: L["pipe"] = "pipe", cwd: IntoPath | None = ...) -> None: ...
 @overload
 def run(
-    tool: Tool, *args: LS, output: L["capture"], cwd: IntoPath | None = ...
+    tool: Tool, *args: LS, input: str | None = ..., output: L["capture"], cwd: IntoPath | None = ...
 ) -> sp.CompletedProcess[str]: ...
 def run(
-    tool: Tool, *args: LS, output: L["capture", "pipe"] = "pipe", cwd: IntoPath | None = SPEC_PYTHON
+    tool: Tool,
+    *args: LS,
+    input: str | None = None,
+    output: L["capture", "pipe"] = "pipe",
+    cwd: IntoPath | None = SPEC_PYTHON,
 ) -> sp.CompletedProcess[str] | None:
     """Run a command in a subprocess.
 
     Args:
         tool: A command-line tool to run.
         *args: Arguments to the tool, where all must be literal strings.
+        input: Text to feed into stdin. (Incompatible with `output="pipe"`)
         output: What to do with the output of the command:
 
             - *"pipe"*: (default) feed it directly into stdout.
@@ -216,11 +221,16 @@ def run(
     import shutil
     import subprocess as sp
 
-    print(f"$ {' '.join((tool, *args))}")
+    format_cmd = " ".join((tool, *args))
+    if len(format_cmd) > 80:
+        format_cmd = format_cmd[:50] + "..." + format_cmd[-30:]
+    print(f"$ {format_cmd}")
     args_ = ((shutil.which(tool) or tool), *args)
 
     if output == "capture":
-        return sp.run(args_, check=True, capture_output=True, encoding="utf-8", cwd=cwd)
+        return sp.run(
+            args_, check=True, capture_output=True, encoding="utf-8", cwd=cwd, input=input
+        )
 
     with sp.Popen(args_, stdout=sp.PIPE, stderr=sp.STDOUT, encoding="utf-8", cwd=cwd) as process:
         # TODO @dangotbanned: Is there a more direct way to do this?

@@ -13,9 +13,13 @@ dev    = [
   "msgspec[toml,yaml]>=0.21.1",
   "polars>=1.43.2",
   "ruff",
+  { include-group = "docs" },
   { include-group = "gen" },
   { include-group = "tests" },
-  { include-group = "typing" },
+  { include-group = "typing" }
+]
+docs   = [
+  "rumdl>=0.2.55",
 ]
 gen    = [
   "datamodel-code-generator>=0.72.2",
