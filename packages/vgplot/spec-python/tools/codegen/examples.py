@@ -151,18 +151,22 @@ def _translate(obj: JsonIn | Any, /) -> JsonOut:
 
 type Title = str
 type Description = str
+type Credit = str
 
 
 class Example:
     title: Title
     description: Description
+    credit: Credit
     source: Path
     converted: dict[str, JsonOut]
     type: LS
     """Symbol from `mosaic_spec` to use as an annotation."""
 
     @classmethod
-    def _extract_doc_components(cls, spec: YamlSpec, source: Path) -> tuple[Title, Description]:
+    def _extract_doc_components(
+        cls, spec: YamlSpec, source: Path
+    ) -> tuple[Title, Description, Credit]:
         if not (meta := spec.pop("meta", {})) or not (title := meta.pop("title", "")):
             parts, *rest = source.stem.split("-")
             title = " ".join((parts.title(), *rest))
@@ -170,14 +174,13 @@ class Example:
             title = _fix_ambiguous_unicode_characters(title.removesuffix("."))
         title = f"{title}."
         if description := meta.pop("description", ""):
-            description = description.strip()
-            if credit := (meta.pop("credit", "").strip()):
-                description = f"{description}\n\n## Credit\n{credit}"
-        elif credit := (meta.pop("credit", "").strip()):
-            description = f"## Credit\n{credit}"
+            description = _fix_ambiguous_unicode_characters(description.strip())
         else:
-            return title, "*Missing description*"
-        return title, _fix_ambiguous_unicode_characters(description)
+            description = "*Missing description*"
+        if credit := (meta.pop("credit", "").strip()):
+            credit = _fix_ambiguous_unicode_characters(credit)
+
+        return title, description, credit
 
     @classmethod
     def from_path(cls, source: Path) -> Self:
@@ -185,7 +188,7 @@ class Example:
         spec: YamlSpec = read_yaml_untyped(source)
         self = cls.__new__(cls)
         self.source = source
-        self.title, self.description = cls._extract_doc_components(spec, source)
+        self.title, self.description, self.credit = cls._extract_doc_components(spec, source)
         self.converted = {_py_name(k): _translate(v) for k, v in spec.items()}
         if "plot" in self.converted:
             self.type = "spec.Plot"
