@@ -149,29 +149,35 @@ def _translate(obj: JsonIn | Any, /) -> JsonOut:
     }
 
 
+type Title = str
+type Description = str
+
+
 class Example:
-    title: str
-    description: str
+    title: Title
+    description: Description
     source: Path
     converted: dict[str, JsonOut]
     type: LS
     """Symbol from `mosaic_spec` to use as an annotation."""
 
     @classmethod
-    def _extract_meta(cls, spec: YamlSpec) -> tuple[str, str]:
-        if meta := spec.pop("meta", None):
-            description = meta.pop("description", "")
-            if credit := meta.pop("credit", None):
-                if description:
-                    description = f"{description.strip()}\n\n## Credit\n{credit}"
-                else:
-                    description = f"\n## Credit\n{credit}"
-
-            # NOTE: Missing cases may want to use file name
-            return _fix_ambiguous_unicode_characters(
-                meta.pop("title", "TODO: missing title")
-            ), _fix_ambiguous_unicode_characters(description)
-        return "TODO: missing meta", ""
+    def _extract_doc_components(cls, spec: YamlSpec, source: Path) -> tuple[Title, Description]:
+        if not (meta := spec.pop("meta", {})) or not (title := meta.pop("title", "")):
+            parts, *rest = source.stem.split("-")
+            title = " ".join((parts.title(), *rest))
+        else:
+            title = _fix_ambiguous_unicode_characters(title.removesuffix("."))
+        title = f"{title}."
+        if description := meta.pop("description", ""):
+            description = description.strip()
+            if credit := (meta.pop("credit", "").strip()):
+                description = f"{description}\n\n## Credit\n{credit}"
+        elif credit := (meta.pop("credit", "").strip()):
+            description = f"## Credit\n{credit}"
+        else:
+            return title, "*Missing description*"
+        return title, _fix_ambiguous_unicode_characters(description)
 
     @classmethod
     def from_path(cls, source: Path) -> Self:
@@ -179,7 +185,7 @@ class Example:
         spec: YamlSpec = read_yaml_untyped(source)
         self = cls.__new__(cls)
         self.source = source
-        self.title, self.description = cls._extract_meta(spec)
+        self.title, self.description = cls._extract_doc_components(spec, source)
         self.converted = {_py_name(k): _translate(v) for k, v in spec.items()}
         if "plot" in self.converted:
             self.type = "spec.Plot"
@@ -194,10 +200,7 @@ class Example:
         return self
 
     def render_test_module(self) -> str:
-        title = f"{self.title.removesuffix('.')}."
-        docstring = (
-            doc(f"{title}\n\n{desc.strip()}\n") if (desc := self.description) else doc(title)
-        )
+        docstring = doc(f"{self.title}\n\n{self.description}\n")
         return TEMPLATE_TEST_MODULE.format(doc=docstring, content=self.converted, type=self.type)
 
 
@@ -210,5 +213,4 @@ import mosaic_spec as ms
 
 def test_infer() -> None:
     _spec: ms.{type} = {content}
-
 """

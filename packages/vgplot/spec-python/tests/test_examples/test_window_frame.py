@@ -1,4 +1,7 @@
-"""TODO: missing meta."""
+"""Window frame.
+
+*Missing description*
+"""
 
 from __future__ import annotations
 

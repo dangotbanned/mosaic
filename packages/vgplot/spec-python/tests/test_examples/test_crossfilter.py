@@ -1,4 +1,7 @@
-"""TODO: missing meta."""
+"""Crossfilter.
+
+*Missing description*
+"""
 
 from __future__ import annotations
 
