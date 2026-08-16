@@ -20,7 +20,7 @@ from tools.codegen.docstrings import doc
 from tools.models import mosaic as m
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
+    from collections.abc import Callable, Iterable, Iterator
 
 GENERATED_MODULE_NAME = "mosaic"
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
@@ -62,6 +62,27 @@ def _recursive_replace(schema: m.JsonSchema) -> m.JsonSchema:
         else:
             schema.items = [recurse(i) for i in items]
     return schema
+
+
+def _replace_annotation_with_ref(
+    def_name: m.DefName, source: m.JsonSchema
+) -> Callable[[m.JsonSchema], m.JsonSchema]:
+    replacement = source.new_ref(def_name)
+    matches = source.__eq__
+
+    def recurse(target: m.JsonSchema, /) -> m.JsonSchema:
+        if any_of := target.any_of:
+            target.any_of = [recurse(a) for a in any_of]
+        if (items := target.items) and items is not True:
+            if isinstance(items, m.JsonSchema):
+                target.items = recurse(items)
+            else:
+                target.items = [recurse(i) for i in items]
+        if matches(target):
+            return replacement
+        return target
+
+    return recurse
 
 
 @dataclass
@@ -324,6 +345,7 @@ _WINDOW_TRANSFORM = "WindowTransform"
 _WINDOW_OPTIONS = "WindowOptions"
 _AGGREGATE_TRANSFORM = "AggregateTransform"
 _AGGREGATE_OPTIONS = "AggregateOptions"
+_ARG = "Arg"
 
 
 # TODO @dangotbanned: [HIGH PRIORITY] Stop (manually) managing references
@@ -356,7 +378,17 @@ class TransformSplit(RootSplit):
 
     def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
         root = schema.pop(self.root_name)
-        definitions = {self.root_name: root}
+        arg_def = m.JsonSchema(
+            description="A transform argument.",
+            any_of=[
+                m.JsonSchema(type="string"),
+                m.JsonSchema(type="number"),
+                m.JsonSchema(type="boolean"),
+                m.JsonSchema(ref="params.json#/definitions/ParamRef"),
+            ],
+        )
+        definitions = {self.root_name: root, _ARG: arg_def}
+        self._replace_arg = _replace_annotation_with_ref(_ARG, arg_def)
 
         # `ColumnTransform | AggregateTransform | WindowTransform`
         for name, member in schema.iter_members_defs(root):
@@ -390,7 +422,6 @@ class TransformSplit(RootSplit):
             common.update(definitions[name_opts].properties)
             for name, member in schema.iter_members_defs(definitions[name_union]):
                 member.remove_properties(common)
-
                 member.x_template = m.SingleTemplate(bases=name_opts, keywords="closed=True")
                 self._simplify_arg(member)
                 definitions[name] = schema.pop(name)
@@ -406,22 +437,9 @@ class TransformSplit(RootSplit):
         definitions["IntervalTransform"] = interval_tf
         return definitions
 
-    # TODO @dangotbanned: Traverse deeply into properties, searching for this guy.
     def _simplify_arg(self, member: m.JsonSchema) -> None:
-        """TODO @dangotbanned: Traverse deeply into properties, searching for this guy.
-
-        ```py
-        JsonSchema(
-            description="A transform argument.",
-            any_of=[
-                JsonSchema(type="string"),
-                JsonSchema(type="number"),
-                JsonSchema(type="boolean"),
-                JsonSchema(ref="#/definitions/ParamRef"),
-            ],
-        )
-        ```
-        """
+        for prop_name in member.required:
+            self._replace_arg(member.properties[prop_name])
 
 
 def materialize_supertype(

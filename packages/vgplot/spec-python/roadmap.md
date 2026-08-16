@@ -76,16 +76,17 @@ a single file. To mitigate this, here are some potential modules/subpackages to 
 - [x] `spec.py`
   - [x] Use the original class names and don't re-export to top-level, e.g.
     - `import mosaic_spec as ms; ms.spec.Plot(...)`
-- [x] `transforms.py`
+- [x] `transform.py`
   - [x] split
   - [ ] cleanup
 - [ ] typing (aliases)
   - [ ] `PlotTypes.ts` (14 KB) and **isolated**
   - [ ] A large gain will come from naming duplicated inline types, e.g.
-    - 60x of `str | float | bool | ParamRef`
-    - 28x of
-      `Literal["CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"]`
-    - **Many** `OneOrSeq[T]` cases ([altair/vegalite/v6/schema/_typing.py#L100-L114])
+    - [x] 60x of `str | float | bool | ParamRef`
+      - -> (`transform.Arg`)
+    - [x] 28x of`Literal["CURRENT ROW", "GROUP", "TIES",... "group", "ties", "no others"]`
+      - -> (`WindowOptions.exclude`)
+    - [ ] **Many** `OneOrSeq[T]` cases ([altair/vegalite/v6/schema/_typing.py#L100-L114])
 - [x] `css_styles.py`
   - Has **508** fields
   - Next 2 highest have **215** fields

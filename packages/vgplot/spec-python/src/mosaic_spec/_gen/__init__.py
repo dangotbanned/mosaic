@@ -187,6 +187,7 @@ from mosaic_spec._gen.params import (
 from mosaic_spec._gen.transform import (
     AggregateOptions,
     AggregateTransform,
+    Arg,
     Argmax,
     Argmin,
     Avg,
@@ -250,6 +251,7 @@ __all__ = [
     "Area",
     "AreaX",
     "AreaY",
+    "Arg",
     "Argmax",
     "Argmin",
     "Arrow",

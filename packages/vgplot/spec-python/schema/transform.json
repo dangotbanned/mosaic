@@ -73,6 +73,23 @@
       ],
       "description": "An aggregate transform that combines multiple values."
     },
+    "Arg": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "params.json#/definitions/ParamRef"
+        }
+      ],
+      "description": "A transform argument."
+    },
     "Argmax": {
       "additionalProperties": false,
       "description": "An argmax aggregate transform.",
@@ -80,21 +97,7 @@
         "argmax": {
           "description": "Find a value of the first column that maximizes the second column.",
           "items": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              },
-              {
-                "type": "boolean"
-              },
-              {
-                "$ref": "params.json#/definitions/ParamRef"
-              }
-            ],
-            "description": "A transform argument."
+            "$ref": "#/definitions/Arg"
           },
           "maxItems": 2,
           "minItems": 2,
@@ -118,21 +121,7 @@
         "argmin": {
           "description": "Find a value of the first column that minimizes the second column.",
           "items": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              },
-              {
-                "type": "boolean"
-              },
-              {
-                "$ref": "params.json#/definitions/ParamRef"
-              }
-            ],
-            "description": "A transform argument."
+            "$ref": "#/definitions/Arg"
           },
           "maxItems": 2,
           "minItems": 2,
@@ -156,39 +145,11 @@
         "avg": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -215,39 +176,11 @@
         "bin": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -309,39 +242,11 @@
         "centroid": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -363,39 +268,11 @@
         "centroidX": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -417,39 +294,11 @@
         "centroidY": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -471,39 +320,11 @@
         "column": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -571,39 +392,11 @@
             {
               "anyOf": [
                 {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "boolean"
-                    },
-                    {
-                      "$ref": "params.json#/definitions/ParamRef"
-                    }
-                  ],
-                  "description": "A transform argument."
+                  "$ref": "#/definitions/Arg"
                 },
                 {
                   "items": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "number"
-                      },
-                      {
-                        "type": "boolean"
-                      },
-                      {
-                        "$ref": "params.json#/definitions/ParamRef"
-                      }
-                    ],
-                    "description": "A transform argument."
+                    "$ref": "#/definitions/Arg"
                   },
                   "maxItems": 1,
                   "minItems": 1,
@@ -660,39 +453,11 @@
         "dateDay": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -714,39 +479,11 @@
         "dateMonth": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -768,39 +505,11 @@
         "dateMonthDay": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -863,39 +572,11 @@
         "first": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -922,39 +603,11 @@
         "first_value": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -994,39 +647,11 @@
         "geojson": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -1091,39 +716,11 @@
         "lag": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 3,
               "minItems": 1,
@@ -1150,39 +747,11 @@
         "last": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -1209,39 +778,11 @@
         "last_value": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -1268,39 +809,11 @@
         "lead": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 3,
               "minItems": 1,
@@ -1327,39 +840,11 @@
         "max": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -1386,39 +871,11 @@
         "median": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -1473,39 +930,11 @@
         "min": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -1546,39 +975,11 @@
         "mode": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -1619,39 +1020,11 @@
         "ntile": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -1678,39 +1051,11 @@
         "nth_value": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 2,
               "minItems": 1,
@@ -1764,39 +1109,11 @@
         "product": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -1823,21 +1140,7 @@
         "quantile": {
           "description": "Compute the quantile value of the given column at the provided probability threshold. For example, 0.5 is the median.",
           "items": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              },
-              {
-                "type": "boolean"
-              },
-              {
-                "$ref": "params.json#/definitions/ParamRef"
-              }
-            ],
-            "description": "A transform argument."
+            "$ref": "#/definitions/Arg"
           },
           "maxItems": 2,
           "minItems": 2,
@@ -1929,39 +1232,11 @@
         "stddev": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -1988,39 +1263,11 @@
         "stddevPop": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -2047,39 +1294,11 @@
         "sum": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -2131,39 +1350,11 @@
         "varPop": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,
@@ -2190,39 +1381,11 @@
         "variance": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
+              "$ref": "#/definitions/Arg"
             },
             {
               "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
+                "$ref": "#/definitions/Arg"
               },
               "maxItems": 1,
               "minItems": 1,

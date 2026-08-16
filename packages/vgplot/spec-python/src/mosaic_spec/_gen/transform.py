@@ -31,24 +31,28 @@ class AggregateOptions(WindowOptions, total=False):
     distinct: bool
 
 
+Arg = TypeAliasType("Arg", str | float | bool | ParamRef)
+"""A transform argument."""
+
+
 class Argmax(AggregateOptions, closed=True):
     """An argmax aggregate transform."""
 
-    argmax: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
+    argmax: Required[tuple[Arg, Arg]]
     """Find a value of the first column that maximizes the second column."""
 
 
 class Argmin(AggregateOptions, closed=True):
     """An argmin aggregate transform."""
 
-    argmin: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
+    argmin: Required[tuple[Arg, Arg]]
     """Find a value of the first column that minimizes the second column."""
 
 
 class Avg(AggregateOptions, closed=True):
     """An avg (average, or mean) aggregate transform."""
 
-    avg: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    avg: Required[Arg | tuple[Arg]]
     """Compute the average (mean) value of the given column."""
 
 
@@ -62,37 +66,35 @@ BinInterval = TypeAliasType(
 class Centroid(TypedDict, total=False, closed=True):
     """A centroid transform."""
 
-    centroid: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    centroid: Required[Arg | tuple[Arg]]
     """Compute the 2D centroid of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
 
 
 class CentroidX(TypedDict, total=False, closed=True):
     """A centroidX transform."""
 
-    centroid_x: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    centroid_x: Required[Arg | tuple[Arg]]
     """Compute the centroid x-coordinate of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
 
 
 class CentroidY(TypedDict, total=False, closed=True):
     """A centroidY transform."""
 
-    centroid_y: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    centroid_y: Required[Arg | tuple[Arg]]
     """Compute the centroid y-coordinate of geometry-typed data. This transform requires the DuckDB `spatial` extension."""
 
 
 class Column(TypedDict, total=False, closed=True):
     """A column transform."""
 
-    column: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    column: Required[Arg | tuple[Arg]]
     """Interpret a string or param-value as a column reference."""
 
 
 class Count(AggregateOptions, closed=True):
     """A count aggregate transform."""
 
-    count: Required[
-        Sequence[Any] | str | float | bool | ParamRef | tuple[str | float | bool | ParamRef] | None
-    ]
+    count: Required[Sequence[Any] | Arg | tuple[Arg] | None]
     """Compute the count of records in an aggregation group."""
 
 
@@ -106,21 +108,21 @@ class CumeDist(WindowOptions, closed=True):
 class DateDay(TypedDict, total=False, closed=True):
     """A dateDay transform."""
 
-    date_day: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    date_day: Required[Arg | tuple[Arg]]
     """Transform a Date value to a day of the month for cyclic comparison. Year and month values are collapsed to enable comparison over days only."""
 
 
 class DateMonth(TypedDict, total=False, closed=True):
     """A dateMonth transform."""
 
-    date_month: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    date_month: Required[Arg | tuple[Arg]]
     """Transform a Date value to a month boundary for cyclic comparison. Year values are collapsed to enable comparison over months only."""
 
 
 class DateMonthDay(TypedDict, total=False, closed=True):
     """A dateMonthDay transform."""
 
-    date_month_day: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    date_month_day: Required[Arg | tuple[Arg]]
     """Transform a Date value to a month and day boundary for cyclic comparison. Year values are collapsed to enable comparison over months and days only."""
 
 
@@ -141,21 +143,21 @@ class DenseRank(WindowOptions, closed=True):
 class First(AggregateOptions, closed=True):
     """A first aggregate transform."""
 
-    first: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    first: Required[Arg | tuple[Arg]]
     """Return the first column value found in an aggregation group."""
 
 
 class FirstValue(WindowOptions, closed=True):
     """A first_value window transform."""
 
-    first_value: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    first_value: Required[Arg | tuple[Arg]]
     """Get the first value of the given column in the current window frame."""
 
 
 class GeoJSON(TypedDict, total=False, closed=True):
     """A geojson transform."""
 
-    geojson: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    geojson: Required[Arg | tuple[Arg]]
     """Compute a GeoJSON-formatted string from geometry-typed data. This transform requires the DuckDB `spatial` extension."""
 
 
@@ -169,42 +171,42 @@ class Hours(TypedDict, total=False, closed=True):
 class Lag(WindowOptions, closed=True):
     """A lag window transform."""
 
-    lag: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    lag: Required[Arg | Sequence[Arg]]
     """Compute lagging values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows before the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."""
 
 
 class Last(AggregateOptions, closed=True):
     """A last aggregate transform."""
 
-    last: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    last: Required[Arg | tuple[Arg]]
     """Return the last column value found in an aggregation group."""
 
 
 class LastValue(WindowOptions, closed=True):
     """A last_value window transform."""
 
-    last_value: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    last_value: Required[Arg | tuple[Arg]]
     """Get the last value of the given column in the current window frame."""
 
 
 class Lead(WindowOptions, closed=True):
     """A lead window transform."""
 
-    lead: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    lead: Required[Arg | Sequence[Arg]]
     """Compute leading values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows after the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."""
 
 
 class Max(AggregateOptions, closed=True):
     """A max aggregate transform."""
 
-    max: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    max: Required[Arg | tuple[Arg]]
     """Compute the maximum value of the given column."""
 
 
 class Median(AggregateOptions, closed=True):
     """A median aggregate transform."""
 
-    median: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    median: Required[Arg | tuple[Arg]]
     """Compute the median value of the given column."""
 
 
@@ -225,7 +227,7 @@ class Milliseconds(TypedDict, total=False, closed=True):
 class Min(AggregateOptions, closed=True):
     """A min aggregate transform."""
 
-    min: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    min: Required[Arg | tuple[Arg]]
     """Compute the minimum value of the given column."""
 
 
@@ -239,7 +241,7 @@ class Minutes(TypedDict, total=False, closed=True):
 class Mode(AggregateOptions, closed=True):
     """A mode aggregate transform."""
 
-    mode: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    mode: Required[Arg | tuple[Arg]]
     """Compute the mode value of the given column."""
 
 
@@ -253,14 +255,14 @@ class Months(TypedDict, total=False, closed=True):
 class NTile(WindowOptions, closed=True):
     """An ntile window transform."""
 
-    ntile: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    ntile: Required[Arg | tuple[Arg]]
     """Compute an n-tile integer ranging from 1 to the provided argument (num_buckets), dividing the partition as equally as possible."""
 
 
 class NthValue(WindowOptions, closed=True):
     """An nth_value window transform."""
 
-    nth_value: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    nth_value: Required[Arg | Sequence[Arg]]
     """Get the nth value of the given column in the current window frame, counting from one. The second argument is the offset for the nth row."""
 
 
@@ -274,14 +276,14 @@ class PercentRank(WindowOptions, closed=True):
 class Product(AggregateOptions, closed=True):
     """A product aggregate transform."""
 
-    product: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    product: Required[Arg | tuple[Arg]]
     """Compute the product of the given column."""
 
 
 class Quantile(AggregateOptions, closed=True):
     """A quantile aggregate transform."""
 
-    quantile: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
+    quantile: Required[tuple[Arg, Arg]]
     """Compute the quantile value of the given column at the provided probability threshold. For example, 0.5 is the median."""
 
 
@@ -309,21 +311,21 @@ class Seconds(TypedDict, total=False, closed=True):
 class Stddev(AggregateOptions, closed=True):
     """A sample standard deviation aggregate transform."""
 
-    stddev: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    stddev: Required[Arg | tuple[Arg]]
     """Compute the sum of the given column."""
 
 
 class StddevPop(AggregateOptions, closed=True):
     """A population standard deviation aggregate transform."""
 
-    stddev_pop: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    stddev_pop: Required[Arg | tuple[Arg]]
     """Compute the sum of the given column."""
 
 
 class Sum(AggregateOptions, closed=True):
     """A sum aggregate transform."""
 
-    sum: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    sum: Required[Arg | tuple[Arg]]
     """Compute the sum of the given column."""
 
 
@@ -334,14 +336,14 @@ TransformField = TypeAliasType("TransformField", str | ParamRef)
 class VarPop(AggregateOptions, closed=True):
     """A population variance aggregate transform."""
 
-    var_pop: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    var_pop: Required[Arg | tuple[Arg]]
     """Compute the population variance of the given column."""
 
 
 class Variance(AggregateOptions, closed=True):
     """A sample variance aggregate transform."""
 
-    variance: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    variance: Required[Arg | tuple[Arg]]
     """Compute the sample variance of the given column."""
 
 
@@ -395,7 +397,7 @@ AggregateTransform = TypeAliasType(
 class Bin(TypedDict, total=False, closed=True):
     """A bin transform."""
 
-    bin: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    bin: Required[Arg | tuple[Arg]]
     """Bin a continuous variable into discrete intervals. The bin argument specifies a data column or expression to bin. Both numerical and temporal (date/time) values are supported."""
     interval: BinInterval
     """The interval bin unit to use, typically used to indicate a date/time unit for binning temporal values, such as `hour`, `day`, or `month`. If `date`, the extent of data values is used to automatically select an interval for temporal data. The value `number` enforces normal numerical binning, even over temporal data. If unspecified, defaults to `number` for numerical data and `date` for temporal data."""
