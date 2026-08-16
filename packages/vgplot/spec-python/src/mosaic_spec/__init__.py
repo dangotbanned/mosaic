@@ -3,6 +3,7 @@ from __future__ import annotations
 from mosaic_spec import spec
 from mosaic_spec._gen import (
     AggregateExpression,
+    AggregateOptions,
     AggregateTransform,
     Area,
     AreaX,
@@ -229,6 +230,7 @@ from mosaic_spec._gen import (
     VSpace,
     WaffleX,
     WaffleY,
+    WindowOptions,
     WindowTransform,
     Years,
 )
@@ -236,6 +238,7 @@ from mosaic_spec.spec import Spec
 
 __all__ = (
     "AggregateExpression",
+    "AggregateOptions",
     "AggregateTransform",
     "Area",
     "AreaX",
@@ -463,6 +466,7 @@ __all__ = (
     "VoronoiMesh",
     "WaffleX",
     "WaffleY",
+    "WindowOptions",
     "WindowTransform",
     "Years",
     "spec",

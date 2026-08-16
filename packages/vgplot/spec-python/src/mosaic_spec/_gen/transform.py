@@ -11,6 +11,47 @@ from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+
+class WindowOptions(TypedDict, total=False):
+    """Window transform options."""
+
+    exclude: Literal[
+        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
+    ]
+    groups: tuple[FrameValue, FrameValue] | ParamRef
+    orderby: TransformField | Sequence[TransformField]
+    partitionby: TransformField | Sequence[TransformField]
+    range: tuple[FrameValue, FrameValue] | ParamRef
+    rows: tuple[FrameValue, FrameValue] | ParamRef
+
+
+class AggregateOptions(WindowOptions, total=False):
+    """Aggregate transform options."""
+
+    distinct: bool
+
+
+class Argmax(AggregateOptions, closed=True):
+    """An argmax aggregate transform."""
+
+    argmax: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
+    """Find a value of the first column that maximizes the second column."""
+
+
+class Argmin(AggregateOptions, closed=True):
+    """An argmin aggregate transform."""
+
+    argmin: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
+    """Find a value of the first column that minimizes the second column."""
+
+
+class Avg(AggregateOptions, closed=True):
+    """An avg (average, or mean) aggregate transform."""
+
+    avg: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the average (mean) value of the given column."""
+
+
 BinInterval = TypeAliasType(
     "BinInterval",
     Literal["date", "number", "millisecond", "second", "minute", "hour", "day", "month", "year"],
@@ -46,6 +87,22 @@ class Column(TypedDict, total=False, closed=True):
     """Interpret a string or param-value as a column reference."""
 
 
+class Count(AggregateOptions, closed=True):
+    """A count aggregate transform."""
+
+    count: Required[
+        Sequence[Any] | str | float | bool | ParamRef | tuple[str | float | bool | ParamRef] | None
+    ]
+    """Compute the count of records in an aggregation group."""
+
+
+class CumeDist(WindowOptions, closed=True):
+    """A cume_dist window transform."""
+
+    cume_dist: Required[Sequence[Any] | None]
+    """Compute the cumulative distribution value over an ordered window partition. Equals the number of partition rows preceding or peer with the current row, divided by the total number of partition rows."""
+
+
 class DateDay(TypedDict, total=False, closed=True):
     """A dateDay transform."""
 
@@ -74,6 +131,27 @@ class Days(TypedDict, total=False, closed=True):
     """A date/time interval in units of days."""
 
 
+class DenseRank(WindowOptions, closed=True):
+    """A dense_rank window transform."""
+
+    dense_rank: Required[Sequence[Any] | None]
+    """Compute the dense row rank (no gaps) over an ordered window partition. Sorting ties do not result in gaps in the rank numbers ([1, 1, 2, ...])."""
+
+
+class First(AggregateOptions, closed=True):
+    """A first aggregate transform."""
+
+    first: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Return the first column value found in an aggregation group."""
+
+
+class FirstValue(WindowOptions, closed=True):
+    """A first_value window transform."""
+
+    first_value: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Get the first value of the given column in the current window frame."""
+
+
 class GeoJSON(TypedDict, total=False, closed=True):
     """A geojson transform."""
 
@@ -86,6 +164,48 @@ class Hours(TypedDict, total=False, closed=True):
 
     hours: Required[float]
     """A date/time interval in units of hours."""
+
+
+class Lag(WindowOptions, closed=True):
+    """A lag window transform."""
+
+    lag: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    """Compute lagging values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows before the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."""
+
+
+class Last(AggregateOptions, closed=True):
+    """A last aggregate transform."""
+
+    last: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Return the last column value found in an aggregation group."""
+
+
+class LastValue(WindowOptions, closed=True):
+    """A last_value window transform."""
+
+    last_value: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Get the last value of the given column in the current window frame."""
+
+
+class Lead(WindowOptions, closed=True):
+    """A lead window transform."""
+
+    lead: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    """Compute leading values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows after the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."""
+
+
+class Max(AggregateOptions, closed=True):
+    """A max aggregate transform."""
+
+    max: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the maximum value of the given column."""
+
+
+class Median(AggregateOptions, closed=True):
+    """A median aggregate transform."""
+
+    median: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the median value of the given column."""
 
 
 class Microseconds(TypedDict, total=False, closed=True):
@@ -102,11 +222,25 @@ class Milliseconds(TypedDict, total=False, closed=True):
     """A date/time interval in units of milliseconds."""
 
 
+class Min(AggregateOptions, closed=True):
+    """A min aggregate transform."""
+
+    min: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the minimum value of the given column."""
+
+
 class Minutes(TypedDict, total=False, closed=True):
     """A date/time interval in units of minutes."""
 
     minutes: Required[float]
     """A date/time interval in units of minutes."""
+
+
+class Mode(AggregateOptions, closed=True):
+    """A mode aggregate transform."""
+
+    mode: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the mode value of the given column."""
 
 
 class Months(TypedDict, total=False, closed=True):
@@ -116,6 +250,55 @@ class Months(TypedDict, total=False, closed=True):
     """A date/time interval in units of months."""
 
 
+class NTile(WindowOptions, closed=True):
+    """An ntile window transform."""
+
+    ntile: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute an n-tile integer ranging from 1 to the provided argument (num_buckets), dividing the partition as equally as possible."""
+
+
+class NthValue(WindowOptions, closed=True):
+    """An nth_value window transform."""
+
+    nth_value: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
+    """Get the nth value of the given column in the current window frame, counting from one. The second argument is the offset for the nth row."""
+
+
+class PercentRank(WindowOptions, closed=True):
+    """A percent_rank window transform."""
+
+    percent_rank: Required[Sequence[Any] | None]
+    """Compute the percentage rank over an ordered window partition."""
+
+
+class Product(AggregateOptions, closed=True):
+    """A product aggregate transform."""
+
+    product: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the product of the given column."""
+
+
+class Quantile(AggregateOptions, closed=True):
+    """A quantile aggregate transform."""
+
+    quantile: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
+    """Compute the quantile value of the given column at the provided probability threshold. For example, 0.5 is the median."""
+
+
+class Rank(WindowOptions, closed=True):
+    """A rank window transform."""
+
+    rank: Required[Sequence[Any] | None]
+    """Compute the row rank over an ordered window partition. Sorting ties result in gaps in the rank numbers ([1, 1, 3, ...])."""
+
+
+class RowNumber(WindowOptions, closed=True):
+    """A row_number window transform."""
+
+    row_number: Required[Sequence[Any] | None]
+    """Compute the 1-based row number over an ordered window partition."""
+
+
 class Seconds(TypedDict, total=False, closed=True):
     """A date/time interval in units of seconds."""
 
@@ -123,8 +306,60 @@ class Seconds(TypedDict, total=False, closed=True):
     """A date/time interval in units of seconds."""
 
 
+class Stddev(AggregateOptions, closed=True):
+    """A sample standard deviation aggregate transform."""
+
+    stddev: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the sum of the given column."""
+
+
+class StddevPop(AggregateOptions, closed=True):
+    """A population standard deviation aggregate transform."""
+
+    stddev_pop: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the sum of the given column."""
+
+
+class Sum(AggregateOptions, closed=True):
+    """A sum aggregate transform."""
+
+    sum: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the sum of the given column."""
+
+
 TransformField = TypeAliasType("TransformField", str | ParamRef)
 """A field argument to a data transform."""
+
+
+class VarPop(AggregateOptions, closed=True):
+    """A population variance aggregate transform."""
+
+    var_pop: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the population variance of the given column."""
+
+
+class Variance(AggregateOptions, closed=True):
+    """A sample variance aggregate transform."""
+
+    variance: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
+    """Compute the sample variance of the given column."""
+
+
+WindowTransform = TypeAliasType(
+    "WindowTransform",
+    RowNumber
+    | Rank
+    | DenseRank
+    | PercentRank
+    | CumeDist
+    | NTile
+    | Lag
+    | Lead
+    | FirstValue
+    | LastValue
+    | NthValue,
+)
+"""A window transform that operates over a sorted domain."""
 
 
 class Years(TypedDict, total=False, closed=True):
@@ -132,6 +367,29 @@ class Years(TypedDict, total=False, closed=True):
 
     years: Required[float]
     """A date/time interval in units of years."""
+
+
+AggregateTransform = TypeAliasType(
+    "AggregateTransform",
+    Argmax
+    | Argmin
+    | Avg
+    | Count
+    | Max
+    | Min
+    | First
+    | Last
+    | Median
+    | Mode
+    | Product
+    | Quantile
+    | Stddev
+    | StddevPop
+    | Sum
+    | Variance
+    | VarPop,
+)
+"""An aggregate transform that combines multiple values."""
 
 
 class Bin(TypedDict, total=False, closed=True):
@@ -167,487 +425,8 @@ IntervalTransform = TypeAliasType(
 """Date/time interval."""
 
 
-FrameValue = TypeAliasType("FrameValue", float | IntervalTransform | None)
-
-
-class Lag(TypedDict, total=False, closed=True):
-    """A lag window transform."""
-
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    lag: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
-    """Compute lagging values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows before the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."""
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Last(TypedDict, total=False, closed=True):
-    """A last aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    last: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Return the last column value found in an aggregation group."""
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class LastValue(TypedDict, total=False, closed=True):
-    """A last_value window transform."""
-
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    last_value: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Get the last value of the given column in the current window frame."""
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Lead(TypedDict, total=False, closed=True):
-    """A lead window transform."""
-
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    lead: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
-    """Compute leading values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows after the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."""
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Max(TypedDict, total=False, closed=True):
-    """A max aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    max: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the maximum value of the given column."""
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Median(TypedDict, total=False, closed=True):
-    """A median aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    median: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the median value of the given column."""
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Min(TypedDict, total=False, closed=True):
-    """A min aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    min: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the minimum value of the given column."""
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Mode(TypedDict, total=False, closed=True):
-    """A mode aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    mode: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the mode value of the given column."""
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class NTile(TypedDict, total=False, closed=True):
-    """An ntile window transform."""
-
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    ntile: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute an n-tile integer ranging from 1 to the provided argument (num_buckets), dividing the partition as equally as possible."""
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class NthValue(TypedDict, total=False, closed=True):
-    """An nth_value window transform."""
-
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    nth_value: Required[str | float | bool | ParamRef | Sequence[str | float | bool | ParamRef]]
-    """Get the nth value of the given column in the current window frame, counting from one. The second argument is the offset for the nth row."""
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class PercentRank(TypedDict, total=False, closed=True):
-    """A percent_rank window transform."""
-
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    percent_rank: Required[Sequence[Any] | None]
-    """Compute the percentage rank over an ordered window partition."""
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Product(TypedDict, total=False, closed=True):
-    """A product aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    product: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the product of the given column."""
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Quantile(TypedDict, total=False, closed=True):
-    """A quantile aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    quantile: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
-    """Compute the quantile value of the given column at the provided probability threshold. For example, 0.5 is the median."""
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Rank(TypedDict, total=False, closed=True):
-    """A rank window transform."""
-
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rank: Required[Sequence[Any] | None]
-    """Compute the row rank over an ordered window partition. Sorting ties result in gaps in the rank numbers ([1, 1, 3, ...])."""
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class RowNumber(TypedDict, total=False, closed=True):
-    """A row_number window transform."""
-
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    row_number: Required[Sequence[Any] | None]
-    """Compute the 1-based row number over an ordered window partition."""
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Stddev(TypedDict, total=False, closed=True):
-    """A sample standard deviation aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-    stddev: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the sum of the given column."""
-
-
-class StddevPop(TypedDict, total=False, closed=True):
-    """A population standard deviation aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-    stddev_pop: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the sum of the given column."""
-
-
-class Sum(TypedDict, total=False, closed=True):
-    """A sum aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-    sum: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the sum of the given column."""
-
-
-class VarPop(TypedDict, total=False, closed=True):
-    """A population variance aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-    var_pop: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the population variance of the given column."""
-
-
-class Variance(TypedDict, total=False, closed=True):
-    """A sample variance aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-    variance: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the sample variance of the given column."""
-
-
-class Argmax(TypedDict, total=False, closed=True):
-    """An argmax aggregate transform."""
-
-    argmax: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
-    """Find a value of the first column that maximizes the second column."""
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Argmin(TypedDict, total=False, closed=True):
-    """An argmin aggregate transform."""
-
-    argmin: Required[tuple[str | float | bool | ParamRef, str | float | bool | ParamRef]]
-    """Find a value of the first column that minimizes the second column."""
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Avg(TypedDict, total=False, closed=True):
-    """An avg (average, or mean) aggregate transform."""
-
-    avg: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Compute the average (mean) value of the given column."""
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class Count(TypedDict, total=False, closed=True):
-    """A count aggregate transform."""
-
-    count: Required[
-        Sequence[Any] | str | float | bool | ParamRef | tuple[str | float | bool | ParamRef] | None
-    ]
-    """Compute the count of records in an aggregation group."""
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class CumeDist(TypedDict, total=False, closed=True):
-    """A cume_dist window transform."""
-
-    cume_dist: Required[Sequence[Any] | None]
-    """Compute the cumulative distribution value over an ordered window partition. Equals the number of partition rows preceding or peer with the current row, divided by the total number of partition rows."""
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class DenseRank(TypedDict, total=False, closed=True):
-    """A dense_rank window transform."""
-
-    dense_rank: Required[Sequence[Any] | None]
-    """Compute the dense row rank (no gaps) over an ordered window partition. Sorting ties do not result in gaps in the rank numbers ([1, 1, 2, ...])."""
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class First(TypedDict, total=False, closed=True):
-    """A first aggregate transform."""
-
-    distinct: bool
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    first: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Return the first column value found in an aggregation group."""
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-class FirstValue(TypedDict, total=False, closed=True):
-    """A first_value window transform."""
-
-    exclude: Literal[
-        "CURRENT ROW", "GROUP", "TIES", "NO OTHERS", "current row", "group", "ties", "no others"
-    ]
-    first_value: Required[str | float | bool | ParamRef | tuple[str | float | bool | ParamRef]]
-    """Get the first value of the given column in the current window frame."""
-    groups: tuple[FrameValue, FrameValue] | ParamRef
-    orderby: TransformField | Sequence[TransformField]
-    partitionby: TransformField | Sequence[TransformField]
-    range: tuple[FrameValue, FrameValue] | ParamRef
-    rows: tuple[FrameValue, FrameValue] | ParamRef
-
-
-WindowTransform = TypeAliasType(
-    "WindowTransform",
-    RowNumber
-    | Rank
-    | DenseRank
-    | PercentRank
-    | CumeDist
-    | NTile
-    | Lag
-    | Lead
-    | FirstValue
-    | LastValue
-    | NthValue,
-)
-"""A window transform that operates over a sorted domain."""
-
-
-AggregateTransform = TypeAliasType(
-    "AggregateTransform",
-    Argmax
-    | Argmin
-    | Avg
-    | Count
-    | Max
-    | Min
-    | First
-    | Last
-    | Median
-    | Mode
-    | Product
-    | Quantile
-    | Stddev
-    | StddevPop
-    | Sum
-    | Variance
-    | VarPop,
-)
-"""An aggregate transform that combines multiple values."""
-
-
 Transform = TypeAliasType("Transform", ColumnTransform | AggregateTransform | WindowTransform)
 """A data transform."""
+
+
+FrameValue = TypeAliasType("FrameValue", float | IntervalTransform | None)

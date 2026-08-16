@@ -321,6 +321,12 @@ class PlotTypesSplit(RootSplit):
         print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
 
 
+_WINDOW_TRANSFORM = "WindowTransform"
+_WINDOW_OPTIONS = "WindowOptions"
+_AGGREGATE_TRANSFORM = "AggregateTransform"
+_AGGREGATE_OPTIONS = "AggregateOptions"
+
+
 # TODO @dangotbanned: [HIGH PRIORITY] Stop (manually) managing references
 # - Map out where each definition needs to visit to find all `$ref`s
 #   - Probably use a graph
@@ -349,7 +355,7 @@ class TransformSplit(RootSplit):
         # HACK @dangotbanned: Handling the reference update in `SpecDeduplicate`
         yield from ()
 
-    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+    def _extract_definitions_old(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
         root = schema.pop(self.root_name)
         definitions = {self.root_name: root}
 
@@ -371,6 +377,103 @@ class TransformSplit(RootSplit):
             definitions[member_name] = schema.pop(member_name)
         definitions["IntervalTransform"] = interval_tf
         return definitions
+
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+        root = schema.pop(self.root_name)
+        definitions = {self.root_name: root}
+
+        # `ColumnTransform | AggregateTransform | WindowTransform`
+        for name, member in schema.iter_members_defs(root):
+            definitions[name] = schema.pop(name)
+            if name == "ColumnTransform":
+                for sub_member_ref in member.iter_members():
+                    sub_member_name = sub_member_ref.def_name
+                    sub_member_def = schema.pop(sub_member_name)
+                    self._simplify_arg(sub_member_def)
+                    definitions[sub_member_name] = sub_member_def
+
+        # NOTE: needs structure
+        definitions[_WINDOW_OPTIONS] = materialize_supertype(
+            definitions[_WINDOW_TRANSFORM], schema, "Window transform options."
+        )
+        definitions[_AGGREGATE_OPTIONS] = m.JsonSchema(
+            description="Aggregate transform options.",
+            type="object",
+            properties={"distinct": m.JsonSchema(type="boolean")},
+            additional_properties=False,
+            x_template=m.SingleTemplate(bases=_WINDOW_OPTIONS),
+        )
+
+        # NOTE: aggregate inherits everything from window, so it needs to go 2nd
+        common = set[str]()
+        for name_union, name_opts in zip(
+            (_WINDOW_TRANSFORM, _AGGREGATE_TRANSFORM),
+            (_WINDOW_OPTIONS, _AGGREGATE_OPTIONS),
+            strict=False,
+        ):
+            common.update(definitions[name_opts].properties)
+            for name, member in schema.iter_members_defs(definitions[name_union]):
+                member.remove_properties(common)
+
+                member.x_template = m.SingleTemplate(bases=name_opts, keywords="closed=True")
+                self._simplify_arg(member)
+                definitions[name] = schema.pop(name)
+
+        only_transform = "BinInterval", "FrameValue", "TransformField"
+        for def_name in only_transform:
+            definitions[def_name] = schema.pop(def_name)
+
+        interval_tf = schema.pop("IntervalTransform")
+        for member_ref in interval_tf.iter_members():
+            member_name = member_ref.def_name
+            definitions[member_name] = schema.pop(member_name)
+        definitions["IntervalTransform"] = interval_tf
+        return definitions
+
+    # TODO @dangotbanned: Traverse deeply into properties, searching for this guy.
+    def _simplify_arg(self, member: m.JsonSchema) -> None:
+        """TODO @dangotbanned: Traverse deeply into properties, searching for this guy.
+
+        ```py
+        JsonSchema(
+            description="A transform argument.",
+            any_of=[
+                JsonSchema(type="string"),
+                JsonSchema(type="number"),
+                JsonSchema(type="boolean"),
+                JsonSchema(ref="#/definitions/ParamRef"),
+            ],
+        )
+        ```
+        """
+
+
+def materialize_supertype(
+    union: m.JsonSchema, schema: m.InputSchema, description: str
+) -> m.JsonSchema:
+    """Approximate a base class that all members of `union` can inherit from.
+
+    ## Notes
+    - `union` must be a union of refs, where each points to exactly 1 object type
+    - This operation only makes sense if the common properties are non-generic
+    """
+    it = schema.iter_members_defs(union)
+    _, first = next(it)
+    owned_props = deepcopy(first.properties)
+    common = set(owned_props)
+    for _, member in it:
+        common.intersection_update(member.properties)
+
+    if not common:
+        msg = f"The members of `union` have 0 common properties, got:\n{union!r}"
+        raise TypeError(msg)
+    return m.JsonSchema(
+        description=description,
+        type="object",
+        properties={k: v for k, v in owned_props.items() if k in common},
+        additional_properties=False,
+        x_template=m.SingleTemplate(),
+    )
 
 
 _PLOT_ATTRS = "PlotAttributes"
@@ -563,7 +666,8 @@ def main() -> None:
         if fp.stem != "__init__" and fp.suffix == ".py"
     )
     print(f"Generated modules at:\n{'\n'.join(module_names)}")
-    fix_mark_options_order(fs.MOSAIC_SPEC_GEN / "marks.py")
+    codemod.move.move_class_to_top(fs.MOSAIC_SPEC_GEN / "marks.py", _MARK_OPTIONS)
+    codemod.move.move_class_to_top(fs.MOSAIC_SPEC_GEN / "transform.py", _WINDOW_OPTIONS)
     artifacts.generate_spec_module(fs.MOSAIC_SPEC_INTERSECTION)
 
 

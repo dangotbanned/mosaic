@@ -2,6 +2,21 @@
   "$id": "transform.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
+    "AggregateOptions": {
+      "additionalProperties": false,
+      "description": "Aggregate transform options.",
+      "properties": {
+        "distinct": {
+          "type": "boolean"
+        }
+      },
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "total=False",
+        "tag": "Single"
+      }
+    },
     "AggregateTransform": {
       "anyOf": [
         {
@@ -84,99 +99,17 @@
           "maxItems": 2,
           "minItems": 2,
           "type": "array"
-        },
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "argmax"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Argmin": {
       "additionalProperties": false,
@@ -204,99 +137,17 @@
           "maxItems": 2,
           "minItems": 2,
           "type": "array"
-        },
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "argmin"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Avg": {
       "additionalProperties": false,
@@ -345,99 +196,17 @@
             }
           ],
           "description": "Compute the average (mean) value of the given column."
-        },
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "avg"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Bin": {
       "additionalProperties": false,
@@ -845,99 +614,17 @@
             }
           ],
           "description": "Compute the count of records in an aggregation group."
-        },
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "count"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "CumeDist": {
       "additionalProperties": false,
@@ -954,96 +641,17 @@
             }
           ],
           "description": "Compute the cumulative distribution value over an ordered window partition. Equals the number of partition rows preceding or peer with the current row, divided by the total number of partition rows."
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "cume_dist"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "DateDay": {
       "additionalProperties": false,
@@ -1236,117 +844,22 @@
             }
           ],
           "description": "Compute the dense row rank (no gaps) over an ordered window partition. Sorting ties do not result in gaps in the rank numbers ([1, 1, 2, ...])."
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "dense_rank"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "First": {
       "additionalProperties": false,
       "description": "A first aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
         "first": {
           "anyOf": [
             {
@@ -1390,101 +903,22 @@
             }
           ],
           "description": "Return the first column value found in an aggregation group."
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "first"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "FirstValue": {
       "additionalProperties": false,
       "description": "A first_value window transform.",
       "properties": {
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
         "first_value": {
           "anyOf": [
             {
@@ -1528,83 +962,17 @@
             }
           ],
           "description": "Get the first value of the given column in the current window frame."
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "first_value"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "FrameValue": {
       "anyOf": [
@@ -1720,34 +1088,6 @@
       "additionalProperties": false,
       "description": "A lag window transform.",
       "properties": {
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "lag": {
           "anyOf": [
             {
@@ -1791,104 +1131,22 @@
             }
           ],
           "description": "Compute lagging values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows before the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "lag"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Last": {
       "additionalProperties": false,
       "description": "A last aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "last": {
           "anyOf": [
             {
@@ -1932,101 +1190,22 @@
             }
           ],
           "description": "Return the last column value found in an aggregation group."
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "last"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "LastValue": {
       "additionalProperties": false,
       "description": "A last_value window transform.",
       "properties": {
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "last_value": {
           "anyOf": [
             {
@@ -2070,101 +1249,22 @@
             }
           ],
           "description": "Get the last value of the given column in the current window frame."
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "last_value"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Lead": {
       "additionalProperties": false,
       "description": "A lead window transform.",
       "properties": {
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "lead": {
           "anyOf": [
             {
@@ -2208,104 +1308,22 @@
             }
           ],
           "description": "Compute leading values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows after the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "lead"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Max": {
       "additionalProperties": false,
       "description": "A max aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "max": {
           "anyOf": [
             {
@@ -2349,104 +1367,22 @@
             }
           ],
           "description": "Compute the maximum value of the given column."
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "max"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Median": {
       "additionalProperties": false,
       "description": "A median aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "median": {
           "anyOf": [
             {
@@ -2490,68 +1426,17 @@
             }
           ],
           "description": "Compute the median value of the given column."
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "median"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Microseconds": {
       "additionalProperties": false,
@@ -2585,37 +1470,6 @@
       "additionalProperties": false,
       "description": "A min aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "min": {
           "anyOf": [
             {
@@ -2659,68 +1513,17 @@
             }
           ],
           "description": "Compute the minimum value of the given column."
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "min"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Minutes": {
       "additionalProperties": false,
@@ -2740,37 +1543,6 @@
       "additionalProperties": false,
       "description": "A mode aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "mode": {
           "anyOf": [
             {
@@ -2814,68 +1586,17 @@
             }
           ],
           "description": "Compute the mode value of the given column."
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "mode"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Months": {
       "additionalProperties": false,
@@ -2895,34 +1616,6 @@
       "additionalProperties": false,
       "description": "An ntile window transform.",
       "properties": {
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "ntile": {
           "anyOf": [
             {
@@ -2966,101 +1659,22 @@
             }
           ],
           "description": "Compute an n-tile integer ranging from 1 to the provided argument (num_buckets), dividing the partition as equally as possible."
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "ntile"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "NthValue": {
       "additionalProperties": false,
       "description": "An nth_value window transform.",
       "properties": {
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "nth_value": {
           "anyOf": [
             {
@@ -3104,127 +1718,22 @@
             }
           ],
           "description": "Get the nth value of the given column in the current window frame, counting from one. The second argument is the offset for the nth row."
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "nth_value"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "PercentRank": {
       "additionalProperties": false,
       "description": "A percent_rank window transform.",
       "properties": {
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
         "percent_rank": {
           "anyOf": [
             {
@@ -3236,104 +1745,22 @@
             }
           ],
           "description": "Compute the percentage rank over an ordered window partition."
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "percent_rank"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Product": {
       "additionalProperties": false,
       "description": "A product aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
         "product": {
           "anyOf": [
             {
@@ -3377,104 +1804,22 @@
             }
           ],
           "description": "Compute the product of the given column."
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "product"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Quantile": {
       "additionalProperties": false,
       "description": "A quantile aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
         "quantile": {
           "description": "Compute the quantile value of the given column at the provided probability threshold. For example, 0.5 is the median.",
           "items": {
@@ -3497,116 +1842,22 @@
           "maxItems": 2,
           "minItems": 2,
           "type": "array"
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "quantile"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Rank": {
       "additionalProperties": false,
       "description": "A rank window transform.",
       "properties": {
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "rank": {
           "anyOf": [
             {
@@ -3618,101 +1869,22 @@
             }
           ],
           "description": "Compute the row rank over an ordered window partition. Sorting ties result in gaps in the rank numbers ([1, 1, 3, ...])."
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "rank"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "RowNumber": {
       "additionalProperties": false,
       "description": "A row_number window transform.",
       "properties": {
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "row_number": {
           "anyOf": [
             {
@@ -3724,27 +1896,17 @@
             }
           ],
           "description": "Compute the 1-based row number over an ordered window partition."
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
         }
       },
       "required": [
         "row_number"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "WindowOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Seconds": {
       "additionalProperties": false,
@@ -3764,93 +1926,6 @@
       "additionalProperties": false,
       "description": "A sample standard deviation aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "stddev": {
           "anyOf": [
             {
@@ -3899,99 +1974,17 @@
       "required": [
         "stddev"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "StddevPop": {
       "additionalProperties": false,
       "description": "A population standard deviation aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "stddevPop": {
           "anyOf": [
             {
@@ -4040,99 +2033,17 @@
       "required": [
         "stddevPop"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Sum": {
       "additionalProperties": false,
       "description": "A sum aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "sum": {
           "anyOf": [
             {
@@ -4181,7 +2092,12 @@
       "required": [
         "sum"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Transform": {
       "anyOf": [
@@ -4212,93 +2128,6 @@
       "additionalProperties": false,
       "description": "A population variance aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
-        "exclude": {
-          "enum": [
-            "CURRENT ROW",
-            "GROUP",
-            "TIES",
-            "NO OTHERS",
-            "current row",
-            "group",
-            "ties",
-            "no others"
-          ],
-          "type": "string"
-        },
-        "groups": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "orderby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "partitionby": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/TransformField"
-            },
-            {
-              "items": {
-                "$ref": "#/definitions/TransformField"
-              },
-              "type": "array"
-            }
-          ]
-        },
-        "range": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "items": {
-                "$ref": "#/definitions/FrameValue"
-              },
-              "maxItems": 2,
-              "minItems": 2,
-              "type": "array"
-            },
-            {
-              "$ref": "params.json#/definitions/ParamRef"
-            }
-          ]
-        },
         "varPop": {
           "anyOf": [
             {
@@ -4347,15 +2176,76 @@
       "required": [
         "varPop"
       ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
     },
     "Variance": {
       "additionalProperties": false,
       "description": "A sample variance aggregate transform.",
       "properties": {
-        "distinct": {
-          "type": "boolean"
-        },
+        "variance": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "$ref": "params.json#/definitions/ParamRef"
+                }
+              ],
+              "description": "A transform argument."
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "$ref": "params.json#/definitions/ParamRef"
+                  }
+                ],
+                "description": "A transform argument."
+              },
+              "maxItems": 1,
+              "minItems": 1,
+              "type": "array"
+            }
+          ],
+          "description": "Compute the sample variance of the given column."
+        }
+      },
+      "required": [
+        "variance"
+      ],
+      "type": "object",
+      "x-template": {
+        "bases": "AggregateOptions",
+        "keywords": "closed=True",
+        "tag": "Single"
+      }
+    },
+    "WindowOptions": {
+      "additionalProperties": false,
+      "description": "Window transform options.",
+      "properties": {
         "exclude": {
           "enum": [
             "CURRENT ROW",
@@ -4439,56 +2329,14 @@
               "$ref": "params.json#/definitions/ParamRef"
             }
           ]
-        },
-        "variance": {
-          "anyOf": [
-            {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "$ref": "params.json#/definitions/ParamRef"
-                }
-              ],
-              "description": "A transform argument."
-            },
-            {
-              "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "$ref": "params.json#/definitions/ParamRef"
-                  }
-                ],
-                "description": "A transform argument."
-              },
-              "maxItems": 1,
-              "minItems": 1,
-              "type": "array"
-            }
-          ],
-          "description": "Compute the sample variance of the given column."
         }
       },
-      "required": [
-        "variance"
-      ],
-      "type": "object"
+      "type": "object",
+      "x-template": {
+        "bases": "TypedDict",
+        "keywords": "total=False",
+        "tag": "Single"
+      }
     },
     "WindowTransform": {
       "anyOf": [

@@ -185,6 +185,7 @@ from mosaic_spec._gen.params import (
     Selection,
 )
 from mosaic_spec._gen.transform import (
+    AggregateOptions,
     AggregateTransform,
     Argmax,
     Argmin,
@@ -236,6 +237,7 @@ from mosaic_spec._gen.transform import (
     TransformField,
     Variance,
     VarPop,
+    WindowOptions,
     WindowTransform,
     Years,
 )
@@ -243,6 +245,7 @@ from mosaic_spec._gen.typing import ColorScheme, Interval, TimeIntervalName
 
 __all__ = [
     "AggregateExpression",
+    "AggregateOptions",
     "AggregateTransform",
     "Area",
     "AreaX",
@@ -469,6 +472,7 @@ __all__ = [
     "VoronoiMesh",
     "WaffleX",
     "WaffleY",
+    "WindowOptions",
     "WindowTransform",
     "Years",
 ]

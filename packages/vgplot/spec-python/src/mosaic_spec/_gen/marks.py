@@ -958,45 +958,6 @@ ChannelDomainValueSpec = TypeAliasType(
 """How to derive a scale's domain from a channel's values."""
 
 
-class ChannelDomainSort(TypedDict, total=False, closed=True):
-    """How to impute scale domains from channel values."""
-
-    color: ChannelDomainValueSpec
-    fx: ChannelDomainValueSpec
-    fy: ChannelDomainValueSpec
-    length: ChannelDomainValueSpec
-    limit: float | tuple[float, float]
-    """
-    If a positive number, limit the domain to the first *n* sorted values. If a negative number, limit the domain to the last *-n* sorted values. Hence, a positive **limit** with **reverse** true will return the top *n* values in descending order.
-
-    If an array [*lo*, *hi*], slices the sorted domain from *lo* (inclusive) to
-    *hi* (exclusive). As with [*array*.slice][1], if either *lo* or *hi* are negative, it indicates an offset from the end of the array; if *lo* is undefined it defaults to 0, and if *hi* is undefined it defaults to Infinity.
-
-    Note: limiting the imputed domain of one scale, say *x*, does not affect the imputed domain of another scale, say *y*; each scale domain is imputed independently.
-
-    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
-    """
-    opacity: ChannelDomainValueSpec
-    order: Literal["ascending", "descending"] | None
-    """How to order reduced values."""
-    r: ChannelDomainValueSpec
-    reduce: Reducer | bool | None
-    """
-    How to produce a singular value (for subsequent sorting) from aggregated channel values; one of:
-
-    - true (default) - alias for *max*
-    - false or null - disabled; don't impute the scale domain
-    - a named reducer implementation such as *count* or *sum*
-    - a function that takes an array of values and returns the reduced value
-    - an object that implements the *reduceIndex* method
-    """
-    reverse: bool
-    """If true, reverse the order after sorting."""
-    symbol: ChannelDomainValueSpec
-    x: ChannelDomainValueSpec
-    y: ChannelDomainValueSpec
-
-
 ChannelValue = TypeAliasType(
     "ChannelValue",
     Sequence[Any] | str | float | bool | Transform | SQLExpression | AggregateExpression | None,
@@ -5342,6 +5303,45 @@ class _CellYOpen(MarkOptions, total=False):
 
 
 class CellY(_CellYOpen, total=False, closed=True): ...
+
+
+class ChannelDomainSort(TypedDict, total=False, closed=True):
+    """How to impute scale domains from channel values."""
+
+    color: ChannelDomainValueSpec
+    fx: ChannelDomainValueSpec
+    fy: ChannelDomainValueSpec
+    length: ChannelDomainValueSpec
+    limit: float | tuple[float, float]
+    """
+    If a positive number, limit the domain to the first *n* sorted values. If a negative number, limit the domain to the last *-n* sorted values. Hence, a positive **limit** with **reverse** true will return the top *n* values in descending order.
+
+    If an array [*lo*, *hi*], slices the sorted domain from *lo* (inclusive) to
+    *hi* (exclusive). As with [*array*.slice][1], if either *lo* or *hi* are negative, it indicates an offset from the end of the array; if *lo* is undefined it defaults to 0, and if *hi* is undefined it defaults to Infinity.
+
+    Note: limiting the imputed domain of one scale, say *x*, does not affect the imputed domain of another scale, say *y*; each scale domain is imputed independently.
+
+    [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
+    """
+    opacity: ChannelDomainValueSpec
+    order: Literal["ascending", "descending"] | None
+    """How to order reduced values."""
+    r: ChannelDomainValueSpec
+    reduce: Reducer | bool | None
+    """
+    How to produce a singular value (for subsequent sorting) from aggregated channel values; one of:
+
+    - true (default) - alias for *max*
+    - false or null - disabled; don't impute the scale domain
+    - a named reducer implementation such as *count* or *sum*
+    - a function that takes an array of values and returns the reduced value
+    - an object that implements the *reduceIndex* method
+    """
+    reverse: bool
+    """If true, reverse the order after sorting."""
+    symbol: ChannelDomainValueSpec
+    x: ChannelDomainValueSpec
+    y: ChannelDomainValueSpec
 
 
 ChannelValueIntervalSpec = TypeAliasType(
