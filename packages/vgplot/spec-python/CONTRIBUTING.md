@@ -94,6 +94,14 @@ cd packages/vgplot/spec-python
 pnpm typecheck
 ```
 
+To run using a single type checker, use one of:
+
+```sh
+pnpm typecheck:ty
+pnpm typecheck:pyright
+pnpm typecheck:pyrefly
+```
+
 > [!NOTE]
 > `typecheck` is the final step of [`generate`]
 

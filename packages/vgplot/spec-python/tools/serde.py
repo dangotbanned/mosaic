@@ -32,6 +32,7 @@ def deserialize_json[T](buf: Buffer | str, tp: type[T], /) -> T:
 def deserialize_yaml[T](buf: Buffer | str, tp: type[T] | TypeForm[T], /) -> T:
     """Deserialize an object from YAML into `T`."""
     # NOTE: msgspec overloads "forget" to use `Buffer` after the first one
+    # pyrefly: ignore[no-matching-overload]
     return msgspec.yaml.decode(buf, type=tp, dec_hook=_decoder_hook)  # ty: ignore[no-matching-overload] # pyright: ignore[reportCallIssue,reportArgumentType]
 
 
@@ -111,7 +112,9 @@ def _decoder_hook(tp: type[Any], obj: Any, /) -> Any:
     raise NotImplementedError(msg)
 
 
-@_decoder_hook.register(deque)
+# TODO @dangotbanned: This one is a real bug, see fix in:
+# https://github.com/dangotbanned/mosaic/commit/bd9094f49de844f1862a6c635dfba3dffe85f3c5
+@_decoder_hook.register(deque)  # pyrefly: ignore[bad-singledispatch-register]
 def _use_constructor[T, R](cb: Callable[[T], R], obj: T, /) -> R:
     return cb(obj)
 

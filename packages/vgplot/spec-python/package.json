@@ -7,7 +7,11 @@
     "generate": "uv run --module scripts.schema_mod && pnpm run lint && uv run --module scripts.export_all && pnpm run lint && pnpm typecheck",
     "generate:examples": "uv run --module scripts.prepare_examples && pnpm run lint && uv run ty check tests/test_examples --add-ignore && uv run pyright tests/test_examples",
     "lint": "uv run ruff check && uv run ruff format",
-    "typecheck": "uv run ty check && uv run pyright",
+    "typecheck:ty": "uv run ty check",
+    "typecheck:pyright": "uv run pyright",
+    "typecheck:pyrefly": "uv run pyrefly check",
+    "typecheck": "pnpm typecheck:ty && pnpm typecheck:pyrefly && pnpm typecheck:pyright",
+    "typecheck:perf": "uv run ty check --verbose && uv run pyrefly check --summary && uv run pyright --stats --verbose",
     "test": "uv run pytest --numprocesses=1"
   },
   "version": "0.30.0"

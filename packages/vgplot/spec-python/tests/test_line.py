@@ -41,11 +41,11 @@ def test_typed_dict(file: str, where: str, mark: L["lineY"]) -> None:
 
 
 def test_invalid(file: str, where: str, mark: L["lineY"]) -> None:
-    _spec: ms.spec.Plot = {  # pyright: ignore[reportAssignmentType]
+    _spec: ms.spec.Plot = {  # pyright: ignore[reportAssignmentType] # pyrefly: ignore [bad-typed-dict-key]
         "data": {
             "aapl": {"type": "parquet", "file": file, "where": where},
             "plot": [{"mark": mark, "data": {"source": "aapl"}, "x": bytes(1), "y": "Close"}],
-            "width": 680,
-            "height": 200,
+            "width": 680,  # pyrefly: ignore [bad-assignment]
+            "height": 200,  # pyrefly: ignore [bad-assignment]
         }  # ty: ignore[invalid-argument-type]
     }  # ty: ignore[missing-typed-dict-key]

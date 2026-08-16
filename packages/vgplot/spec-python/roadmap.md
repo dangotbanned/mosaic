@@ -24,7 +24,7 @@ Here's a big list of things to do/known issues. Current priorities are deduplica
   - [x] Use `_typing_compat.py` imports for codegen
 - [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between
       `TypedDict` defs
-- [ ] Configure [`pyrefly`] and run it during `typecheck`
+- [x] Configure [`pyrefly`] and run it during `typecheck`
 - [ ] Add some tests once the top-level namespace starts stabilizing
   - [x] Add codegen for [`tests/test_examples/`]
   - [ ] Add a `tests/test_peps/` suite

@@ -34,6 +34,7 @@ tests  = [
   "pytest-xdist>=3.8.0",
 ]
 typing = [
+  "pyrefly>=1.2.0",
   "pyright",
   "ty>=0.0.63",
   "types-pyyaml>=6.0.12.20260724",
@@ -102,6 +103,23 @@ dev-mode-dirs = [".", "src", "scripts", "tools"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["mosaic_spec"]
+
+[tool.pyrefly]
+search-path      = [".", "src", "scripts", "tools", "tests"]
+project-includes = [
+  "src",
+  "scripts",
+  "tools",
+  "*.py",
+  "*.ipynb",
+  "tests",
+]
+
+project-excludes     = [
+  "tools/codegen/typed_dict.py",  # https://github.com/facebook/pyrefly/issues/4556
+]
+infer-with-first-use = false
+# treat-all-caps-as-final = true (requires 1.3.0-dev.1 https://github.com/facebook/pyrefly/issues/3678)
 
 [tool.pyright]
 extends               = "../../../pyproject.toml"
