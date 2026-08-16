@@ -354,29 +354,6 @@ class TransformSplit(RootSplit):
         # HACK @dangotbanned: Handling the reference update in `SpecDeduplicate`
         yield from ()
 
-    def _extract_definitions_old(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
-        root = schema.pop(self.root_name)
-        definitions = {self.root_name: root}
-
-        for kind in root.iter_members():
-            kind_name = kind.def_name
-            for member_ref in schema.get(kind_name).iter_members():
-                member_name = member_ref.def_name
-                definitions[member_name] = schema.pop(member_name)
-
-            definitions[kind_name] = schema.pop(kind_name)
-
-        only_transform = "BinInterval", "FrameValue", "TransformField"
-        for def_name in only_transform:
-            definitions[def_name] = schema.pop(def_name)
-
-        interval_tf = schema.pop("IntervalTransform")
-        for member_ref in interval_tf.iter_members():
-            member_name = member_ref.def_name
-            definitions[member_name] = schema.pop(member_name)
-        definitions["IntervalTransform"] = interval_tf
-        return definitions
-
     def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
         root = schema.pop(self.root_name)
         definitions = {self.root_name: root}
