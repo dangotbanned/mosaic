@@ -11,7 +11,6 @@ from __future__ import annotations
 from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass
-from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated as A, ClassVar, Final, Literal as L, Protocol
 
@@ -669,43 +668,6 @@ def main() -> None:
     codemod.move.move_class_to_top(fs.MOSAIC_SPEC_GEN / "marks.py", _MARK_OPTIONS)
     codemod.move.move_class_to_top(fs.MOSAIC_SPEC_GEN / "transform.py", _WINDOW_OPTIONS)
     artifacts.generate_spec_module(fs.MOSAIC_SPEC_INTERSECTION)
-
-
-def fix_mark_options_order(target: Path) -> None:
-    """Multiple hacks, stacked on top of eachother.
-
-    ## Notes
-    - Giving up on trying to fix this is a reasonable way
-        - `MarkOptions` gets defined almost at the bottom of the module
-        - it depends on lots of symbols defined in `marks.py`,
-          so I don't want to move it to another module just to work around `dcg`
-    - ast is enough to find things
-        - but it transforms attribute "docstrings" into regular strings
-        - so using unparse would be destructive
-    - so use the line numbers and then manipulate the lines
-    """
-    import ast
-
-    from tools.codemod.common import parse_module
-
-    fp_marks = target
-    marks_module = parse_module(fp_marks)
-    start, end = 0, 0
-
-    for node in reversed(marks_module.body):
-        if isinstance(node, ast.ClassDef) and node.name == "MarkOptions":
-            start = node.lineno - 1
-            if node.end_lineno is None:
-                raise NotImplementedError
-            end = node.end_lineno
-            break
-
-    move_to = next(node.lineno - 1 for node in marks_module.body if isinstance(node, ast.ClassDef))
-    marks_lines = fp_marks.read_text("utf8").splitlines()
-    lines_reordered = chain(
-        marks_lines[:move_to], marks_lines[start:end], marks_lines[move_to:start], marks_lines[end:]
-    )
-    fs.write_lines(fp_marks, lines_reordered, "Fixed MarkOptions order")
 
 
 if __name__ == "__main__":
