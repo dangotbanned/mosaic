@@ -51,6 +51,7 @@ Root(
 """
 
 from collections.abc import Iterable, Iterator
+from itertools import chain
 from typing import TYPE_CHECKING, Annotated as A, Any, ClassVar, Literal as L, Self, final, overload
 
 import msgspec
@@ -321,3 +322,13 @@ class Root(base.Struct):
         """
         msg = f"TODO: {self.describe.__qualname__}()"
         raise NotImplementedError(msg)
+
+
+def to_polars(models: Iterable[msgspec.Struct]) -> pl.DataFrame:
+    import polars as pl
+
+    models = iter(models)
+    first = next(models)
+    names = first.__struct_fields__
+    convert = msgspec.structs.astuple
+    return pl.DataFrame((convert(model) for model in chain((first,), models)), names, orient="row")
