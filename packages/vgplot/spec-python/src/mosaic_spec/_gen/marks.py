@@ -269,6 +269,16 @@ class MarkOptions(TypedDict, total=False):
     """
 
 
+class MarkDataOptional(MarkOptions, total=False):
+    data: PlotMarkData
+    """The data source for the mark."""
+
+
+class MarkData(MarkOptions, total=False):
+    data: Required[PlotMarkData]
+    """The data source for the mark."""
+
+
 class AggregateExpression(TypedDict, total=False, closed=True):
     """A custom SQL aggregate expression."""
 
@@ -990,11 +1000,9 @@ ChannelValueSpec = TypeAliasType("ChannelValueSpec", ChannelValue | ChannelValue
 """When specifying a mark channel's value, you can provide a {value, scale} object to override the scale that would normally be associated with the channel."""
 
 
-class _CircleOpen(MarkOptions, total=False):
+class _CircleOpen(MarkData, total=False):
     """The circle mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
@@ -1026,13 +1034,11 @@ class _CircleOpen(MarkOptions, total=False):
 class Circle(_CircleOpen, total=False, closed=True): ...
 
 
-class _ContourOpen(MarkOptions, total=False):
+class _ContourOpen(MarkData, total=False):
     """The contour mark."""
 
     bandwidth: float | ParamRef
     """The kernel density bandwidth for smoothing, in pixels."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     height: float | ParamRef
     """The height (number of rows) of the grid, in actual pixels."""
     interpolate: GridInterpolate | ParamRef | None
@@ -1069,7 +1075,7 @@ class _ContourOpen(MarkOptions, total=False):
 class Contour(_ContourOpen, total=False, closed=True): ...
 
 
-class _DelaunayLinkOpen(MarkOptions, total=False):
+class _DelaunayLinkOpen(MarkData, total=False):
     """The delaunayLink mark."""
 
     curve: Curve | ParamRef
@@ -1097,8 +1103,6 @@ class _DelaunayLinkOpen(MarkOptions, total=False):
     - *step-after* - a piecewise constant function where *y* changes after *x*
     - *step-before* - a piecewise constant function where *x* changes after *y*
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["delaunayLink"]]
     """
     A mark that draws links for each edge of the Delaunay triangulation of points given by the **x** and **y** channels. Like the link mark, except that **x1**, **y1**, **x2**, and **y2** are derived automatically from **x** and **y**. When an aesthetic channel is specified (such as
@@ -1161,7 +1165,7 @@ class _DelaunayLinkOpen(MarkOptions, total=False):
 class DelaunayLink(_DelaunayLinkOpen, total=False, closed=True): ...
 
 
-class _DelaunayMeshOpen(MarkOptions, total=False):
+class _DelaunayMeshOpen(MarkData, total=False):
     """The delaunayMesh mark."""
 
     curve: Curve | ParamRef
@@ -1189,8 +1193,6 @@ class _DelaunayMeshOpen(MarkOptions, total=False):
     - *step-after* - a piecewise constant function where *y* changes after *x*
     - *step-before* - a piecewise constant function where *x* changes after *y*
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["delaunayMesh"]]
     """
     A mark that draws a mesh of the Delaunay triangulation of the points given by the **x** and **y** channels. The **stroke** option defaults to _currentColor_, and the **strokeOpacity** defaults to 0.2; the **fill** option is not supported. When an aesthetic channel is specified (such as
@@ -1253,13 +1255,11 @@ class _DelaunayMeshOpen(MarkOptions, total=False):
 class DelaunayMesh(_DelaunayMeshOpen, total=False, closed=True): ...
 
 
-class _DenseLineOpen(MarkOptions, total=False):
+class _DenseLineOpen(MarkData, total=False):
     """The denseLine mark."""
 
     bandwidth: float | ParamRef
     """The kernel density bandwidth for smoothing, in pixels."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     height: float | ParamRef
     """The height (number of rows) of the grid, in actual pixels."""
     image_rendering: str | ParamRef
@@ -1299,13 +1299,11 @@ class _DenseLineOpen(MarkOptions, total=False):
 class DenseLine(_DenseLineOpen, total=False, closed=True): ...
 
 
-class _DensityOpen(MarkOptions, total=False):
+class _DensityOpen(MarkData, total=False):
     """The density mark for 2D densities."""
 
     bandwidth: float | ParamRef
     """The kernel density bandwidth for smoothing, in pixels."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     font_family: str | ParamRef
     """
     The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
@@ -1433,7 +1431,7 @@ class _DensityOpen(MarkOptions, total=False):
 class Density(_DensityOpen, total=False, closed=True): ...
 
 
-class _DensityX1Open(MarkOptions, total=False):
+class _DensityX1Open(MarkData, total=False):
     """The densityX mark."""
 
     bandwidth: float | ParamRef
@@ -1465,8 +1463,6 @@ class _DensityX1Open(MarkOptions, total=False):
     - *step-after* - a piecewise constant function where *y* changes after *x*
     - *step-before* - a piecewise constant function where *x* changes after *y*
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["densityX"]]
     """
     A densityX mark that visualizes smoothed point cloud densities along the
@@ -1513,7 +1509,7 @@ class _DensityX1Open(MarkOptions, total=False):
 class DensityX1(_DensityX1Open, total=False, closed=True): ...
 
 
-class _DensityX2Open(MarkOptions, total=False):
+class _DensityX2Open(MarkData, total=False):
     """The densityX mark."""
 
     bandwidth: float | ParamRef
@@ -1548,8 +1544,6 @@ class _DensityX2Open(MarkOptions, total=False):
 
     The *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics.
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["densityX"]]
     """
     A densityX mark that visualizes smoothed point cloud densities along the
@@ -1617,15 +1611,13 @@ class _DensityX2Open(MarkOptions, total=False):
 class DensityX2(_DensityX2Open, total=False, closed=True): ...
 
 
-class _DensityX3Open(MarkOptions, total=False):
+class _DensityX3Open(MarkData, total=False):
     """The densityX mark."""
 
     bandwidth: float | ParamRef
     """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
     bins: float | ParamRef
     """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
@@ -1664,15 +1656,13 @@ class _DensityX3Open(MarkOptions, total=False):
 class DensityX3(_DensityX3Open, total=False, closed=True): ...
 
 
-class _DensityX4Open(MarkOptions, total=False):
+class _DensityX4Open(MarkData, total=False):
     """The densityX mark."""
 
     bandwidth: float | ParamRef
     """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
     bins: float | ParamRef
     """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     font_family: str | ParamRef
     """
     The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
@@ -1780,7 +1770,7 @@ class _DensityX4Open(MarkOptions, total=False):
 class DensityX4(_DensityX4Open, total=False, closed=True): ...
 
 
-class _DensityY1Open(MarkOptions, total=False):
+class _DensityY1Open(MarkData, total=False):
     """The densityY mark."""
 
     bandwidth: float | ParamRef
@@ -1812,8 +1802,6 @@ class _DensityY1Open(MarkOptions, total=False):
     - *step-after* - a piecewise constant function where *y* changes after *x*
     - *step-before* - a piecewise constant function where *x* changes after *y*
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["densityY"]]
     """
     A densityY mark that visualizes smoothed point cloud densities along the
@@ -1860,7 +1848,7 @@ class _DensityY1Open(MarkOptions, total=False):
 class DensityY1(_DensityY1Open, total=False, closed=True): ...
 
 
-class _DensityY2Open(MarkOptions, total=False):
+class _DensityY2Open(MarkData, total=False):
     """The densityY mark."""
 
     bandwidth: float | ParamRef
@@ -1895,8 +1883,6 @@ class _DensityY2Open(MarkOptions, total=False):
 
     The *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics.
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["densityY"]]
     """
     A densityY mark that visualizes smoothed point cloud densities along the
@@ -1964,15 +1950,13 @@ class _DensityY2Open(MarkOptions, total=False):
 class DensityY2(_DensityY2Open, total=False, closed=True): ...
 
 
-class _DensityY3Open(MarkOptions, total=False):
+class _DensityY3Open(MarkData, total=False):
     """The densityY mark."""
 
     bandwidth: float | ParamRef
     """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
     bins: float | ParamRef
     """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
@@ -2011,15 +1995,13 @@ class _DensityY3Open(MarkOptions, total=False):
 class DensityY3(_DensityY3Open, total=False, closed=True): ...
 
 
-class _DensityY4Open(MarkOptions, total=False):
+class _DensityY4Open(MarkData, total=False):
     """The densityY mark."""
 
     bandwidth: float | ParamRef
     """The kernel density bandwidth for smoothing, in pixels. Defaults to 20."""
     bins: float | ParamRef
     """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     font_family: str | ParamRef
     """
     The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
@@ -2127,11 +2109,9 @@ class _DensityY4Open(MarkOptions, total=False):
 class DensityY4(_DensityY4Open, total=False, closed=True): ...
 
 
-class _DotOpen(MarkOptions, total=False):
+class _DotOpen(MarkData, total=False):
     """The dot mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
@@ -2171,13 +2151,11 @@ class _DotOpen(MarkOptions, total=False):
 class Dot(_DotOpen, total=False, closed=True): ...
 
 
-class _ErrorBarXOpen(MarkOptions, total=False):
+class _ErrorBarXOpen(MarkData, total=False):
     """The errorbarX mark."""
 
     ci: float | ParamRef
     """The confidence interval in (0, 1); defaults to 0.95."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["errorbarX"]]
     """
     A mark that draws error bars for a calculated parametric confidence interval for a dependent variable (*x*), potentially grouped by an independent variable (*y*).
@@ -2239,13 +2217,11 @@ class _ErrorBarXOpen(MarkOptions, total=False):
 class ErrorBarX(_ErrorBarXOpen, total=False, closed=True): ...
 
 
-class _ErrorBarYOpen(MarkOptions, total=False):
+class _ErrorBarYOpen(MarkData, total=False):
     """The errorbarY mark."""
 
     ci: float | ParamRef
     """The confidence interval in (0, 1); defaults to 0.95."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["errorbarY"]]
     """
     A mark that draws error bars for a calculated parametric confidence interval for a dependent variable (*y*), potentially grouped by an independent variable (*x*).
@@ -2307,11 +2283,9 @@ class _ErrorBarYOpen(MarkOptions, total=False):
 class ErrorBarY(_ErrorBarYOpen, total=False, closed=True): ...
 
 
-class _GeoOpen(MarkOptions, total=False):
+class _GeoOpen(MarkData, total=False):
     """The geo mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     geometry: ChannelValue
     """A required channel for the geometry to render; defaults to identity, assuming *data* is a GeoJSON object or an iterable of GeoJSON objects."""
     mark: Required[Literal["geo"]]
@@ -2333,13 +2307,11 @@ class _GeoOpen(MarkOptions, total=False):
 class Geo(_GeoOpen, total=False, closed=True): ...
 
 
-class _HeatmapOpen(MarkOptions, total=False):
+class _HeatmapOpen(MarkData, total=False):
     """The heatmap mark."""
 
     bandwidth: float | ParamRef
     """The kernel density bandwidth for smoothing, in pixels."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     height: float | ParamRef
     """The height (number of rows) of the grid, in actual pixels."""
     image_rendering: str | ParamRef
@@ -2378,11 +2350,9 @@ class _HeatmapOpen(MarkOptions, total=False):
 class Heatmap(_HeatmapOpen, total=False, closed=True): ...
 
 
-class _HexagonOpen(MarkOptions, total=False):
+class _HexagonOpen(MarkData, total=False):
     """The hexagon mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
@@ -2414,13 +2384,11 @@ class _HexagonOpen(MarkOptions, total=False):
 class Hexagon(_HexagonOpen, total=False, closed=True): ...
 
 
-class _HexbinOpen(MarkOptions, total=False):
+class _HexbinOpen(MarkData, total=False):
     """The hexbin mark."""
 
     bin_width: float | ParamRef
     """The distance between centers of neighboring hexagons, in pixels; defaults to 20. If also using a hexgrid mark, use matching **binWidth** values."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     font_family: str | ParamRef
     """
     The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
@@ -2526,7 +2494,7 @@ class _HexbinOpen(MarkOptions, total=False):
 class Hexbin(_HexbinOpen, total=False, closed=True): ...
 
 
-class _HullOpen(MarkOptions, total=False):
+class _HullOpen(MarkData, total=False):
     """The hull mark."""
 
     curve: Curve | ParamRef
@@ -2554,8 +2522,6 @@ class _HullOpen(MarkOptions, total=False):
     - *step-after* - a piecewise constant function where *y* changes after *x*
     - *step-before* - a piecewise constant function where *x* changes after *y*
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["hull"]]
     """
     A mark that draws a convex hull around the points given by the **x** and
@@ -2619,15 +2585,13 @@ class _HullOpen(MarkOptions, total=False):
 class Hull(_HullOpen, total=False, closed=True): ...
 
 
-class _ImageOpen(MarkOptions, total=False):
+class _ImageOpen(MarkData, total=False):
     cross_origin: str | ParamRef
     """
     The [cross-origin][1] behavior. See the [Plot.image notebook][2] for details.
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/crossorigin [2]: https://observablehq.com/@observablehq/plot-image
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
@@ -2670,7 +2634,7 @@ class _ImageOpen(MarkOptions, total=False):
 class Image(_ImageOpen, total=False, closed=True): ...
 
 
-class _LineOpen(MarkOptions, total=False):
+class _LineOpen(MarkData, total=False):
     """The line mark."""
 
     curve: Curve | Literal["auto"] | ParamRef
@@ -2701,8 +2665,6 @@ class _LineOpen(MarkOptions, total=False):
 
     The *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics.
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["line"]]
     """
     A line mark that connects control points.
@@ -2772,7 +2734,7 @@ class _LineOpen(MarkOptions, total=False):
 class Line(_LineOpen, total=False, closed=True): ...
 
 
-class _LineXOpen(MarkOptions, total=False):
+class _LineXOpen(MarkData, total=False):
     """The lineX mark."""
 
     curve: Curve | Literal["auto"] | ParamRef
@@ -2803,8 +2765,6 @@ class _LineXOpen(MarkOptions, total=False):
 
     The *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics.
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["lineX"]]
     """Like line, except that **x** defaults to the identity function assuming that *data* = [*x₀*, *x₁*, *x₂*, …] and **y** defaults to the zero-based index [0, 1, 2, …]."""
     marker: MarkerName | Literal["none"] | bool | ParamRef | None
@@ -2865,7 +2825,7 @@ class _LineXOpen(MarkOptions, total=False):
 class LineX(_LineXOpen, total=False, closed=True): ...
 
 
-class _LineYOpen(MarkOptions, total=False):
+class _LineYOpen(MarkData, total=False):
     """The lineY mark."""
 
     curve: Curve | Literal["auto"] | ParamRef
@@ -2896,8 +2856,6 @@ class _LineYOpen(MarkOptions, total=False):
 
     The *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics.
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["lineY"]]
     """Like line, except **y** defaults to the identity function and assumes that *data* = [*y₀*, *y₁*, *y₂*, …] and **x** defaults to the zero-based index [0, 1, 2, …]."""
     marker: MarkerName | Literal["none"] | bool | ParamRef | None
@@ -2958,7 +2916,7 @@ class _LineYOpen(MarkOptions, total=False):
 class LineY(_LineYOpen, total=False, closed=True): ...
 
 
-class _LinkOpen(MarkOptions, total=False):
+class _LinkOpen(MarkData, total=False):
     """The link mark."""
 
     curve: Curve | Literal["auto"] | ParamRef
@@ -2971,8 +2929,6 @@ class _LinkOpen(MarkOptions, total=False):
     If the plot uses a spherical **projection**, the default *auto* **curve** will render links as geodesics; to draw a straight line instead, use the
     *linear* **curve**.
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["link"]]
     """
     A link mark, drawing line segments (curves) connecting pairs of points.
@@ -3041,13 +2997,11 @@ class _LinkOpen(MarkOptions, total=False):
 class Link(_LinkOpen, total=False, closed=True): ...
 
 
-class _RasterOpen(MarkOptions, total=False):
+class _RasterOpen(MarkData, total=False):
     """The raster mark."""
 
     bandwidth: float | ParamRef
     """The kernel density bandwidth for smoothing, in pixels."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     height: float | ParamRef
     """The height (number of rows) of the grid, in actual pixels."""
     image_rendering: str | ParamRef
@@ -3089,13 +3043,11 @@ class _RasterOpen(MarkOptions, total=False):
 class Raster(_RasterOpen, total=False, closed=True): ...
 
 
-class _RasterTileOpen(MarkOptions, total=False):
+class _RasterTileOpen(MarkData, total=False):
     """The rasterTile mark."""
 
     bandwidth: float | ParamRef
     """The kernel density bandwidth for smoothing, in pixels."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     height: float | ParamRef
     """The height (number of rows) of the grid, in actual pixels."""
     image_rendering: str | ParamRef
@@ -3133,13 +3085,11 @@ class _RasterTileOpen(MarkOptions, total=False):
 class RasterTile(_RasterTileOpen, total=False, closed=True): ...
 
 
-class _RegressionYOpen(MarkOptions, total=False):
+class _RegressionYOpen(MarkData, total=False):
     """The regressionY mark."""
 
     ci: float | ParamRef
     """The confidence interval in (0, 1), or 0 to hide bands; defaults to 0.95."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["regressionY"]]
     """
     A mark that draws [linear regression][1] lines with confidence bands, representing the estimated relation of a dependent variable (*y*) on an independent variable (*x*).
@@ -3189,7 +3139,7 @@ SortOrder = TypeAliasType("SortOrder", ChannelValue | SortOrder1 | SortOrder2)
 - a {channel, order} object for sorting the named channel's values"""
 
 
-class _SpikeOpen(MarkOptions, total=False):
+class _SpikeOpen(MarkData, total=False):
     """The spike mark."""
 
     anchor: Literal["start", "middle", "end"] | ParamRef
@@ -3202,8 +3152,6 @@ class _SpikeOpen(MarkOptions, total=False):
 
     where [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels.
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The vector's frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
@@ -3229,11 +3177,9 @@ class _SpikeOpen(MarkOptions, total=False):
 class Spike(_SpikeOpen, total=False, closed=True): ...
 
 
-class _TextOpen(MarkOptions, total=False):
+class _TextOpen(MarkDataOptional, total=False):
     """The text mark."""
 
-    data: PlotMarkData
-    """The data source for the mark."""
     font_family: str | ParamRef
     """
     The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
@@ -3340,11 +3286,9 @@ class _TextOpen(MarkOptions, total=False):
 class Text(_TextOpen, total=False, closed=True): ...
 
 
-class _TickXOpen(MarkOptions, total=False):
+class _TickXOpen(MarkData, total=False):
     """The tickX mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -3410,11 +3354,9 @@ class _TickXOpen(MarkOptions, total=False):
 class TickX(_TickXOpen, total=False, closed=True): ...
 
 
-class _TickYOpen(MarkOptions, total=False):
+class _TickYOpen(MarkData, total=False):
     """The tickY mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -3589,7 +3531,7 @@ class Tip(TypedDict, total=False, closed=True):
     """The ending vertical position channel specifying the tip's anchor, typically bound to the *y* scale."""
 
 
-class _VectorOpen(MarkOptions, total=False):
+class _VectorOpen(MarkData, total=False):
     """The vector mark."""
 
     anchor: Literal["start", "middle", "end"] | ParamRef
@@ -3602,8 +3544,6 @@ class _VectorOpen(MarkOptions, total=False):
 
     where [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels.
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The vector's frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
@@ -3635,7 +3575,7 @@ class _VectorOpen(MarkOptions, total=False):
 class Vector(_VectorOpen, total=False, closed=True): ...
 
 
-class _VectorXOpen(MarkOptions, total=False):
+class _VectorXOpen(MarkData, total=False):
     """The vectorX mark."""
 
     anchor: Literal["start", "middle", "end"] | ParamRef
@@ -3648,8 +3588,6 @@ class _VectorXOpen(MarkOptions, total=False):
 
     where [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels.
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The vector's frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
@@ -3678,7 +3616,7 @@ class _VectorXOpen(MarkOptions, total=False):
 class VectorX(_VectorXOpen, total=False, closed=True): ...
 
 
-class _VectorYOpen(MarkOptions, total=False):
+class _VectorYOpen(MarkData, total=False):
     """The vectorY mark."""
 
     anchor: Literal["start", "middle", "end"] | ParamRef
@@ -3691,8 +3629,6 @@ class _VectorYOpen(MarkOptions, total=False):
 
     where [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels.
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The vector's frame anchor, to default **x** and **y** relative to the frame; a constant representing one of the frame corners (*top-left*,
@@ -3721,7 +3657,7 @@ class _VectorYOpen(MarkOptions, total=False):
 class VectorY(_VectorYOpen, total=False, closed=True): ...
 
 
-class _VoronoiOpen(MarkOptions, total=False):
+class _VoronoiOpen(MarkData, total=False):
     """The voronoi mark."""
 
     curve: Curve | ParamRef
@@ -3749,8 +3685,6 @@ class _VoronoiOpen(MarkOptions, total=False):
     - *step-after* - a piecewise constant function where *y* changes after *x*
     - *step-before* - a piecewise constant function where *x* changes after *y*
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["voronoi"]]
     """
     A mark that draws polygons for each cell of the Voronoi tesselation of the points given by the **x** and **y** channels.
@@ -3812,7 +3746,7 @@ class _VoronoiOpen(MarkOptions, total=False):
 class Voronoi(_VoronoiOpen, total=False, closed=True): ...
 
 
-class _VoronoiMeshOpen(MarkOptions, total=False):
+class _VoronoiMeshOpen(MarkData, total=False):
     """The voronoiMesh mark."""
 
     curve: Curve | ParamRef
@@ -3840,8 +3774,6 @@ class _VoronoiMeshOpen(MarkOptions, total=False):
     - *step-after* - a piecewise constant function where *y* changes after *x*
     - *step-before* - a piecewise constant function where *x* changes after *y*
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["voronoiMesh"]]
     """
     A mark that draws a mesh for the cell boundaries of the Voronoi tesselation of the points given by the **x** and **y** channels. The
@@ -3904,7 +3836,7 @@ class _VoronoiMeshOpen(MarkOptions, total=False):
 class VoronoiMesh(_VoronoiMeshOpen, total=False, closed=True): ...
 
 
-class _AreaOpen(MarkOptions, total=False):
+class _AreaOpen(MarkData, total=False):
     """The area mark."""
 
     curve: Curve | ParamRef
@@ -3932,8 +3864,6 @@ class _AreaOpen(MarkOptions, total=False):
     - *step-after* - a piecewise constant function where *y* changes after *x*
     - *step-before* - a piecewise constant function where *x* changes after *y*
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["area"]]
     """An area mark. The area mark is rarely used directly; it is only needed when the baseline and topline have neither *x* nor *y* values in common. Use areaY for a horizontal orientation where the baseline and topline share *x* values, or areaX for a vertical orientation where the baseline and topline share *y* values."""
     offset: StackOffset | ParamRef | None
@@ -3975,7 +3905,7 @@ class _AreaOpen(MarkOptions, total=False):
 class Area(_AreaOpen, total=False, closed=True): ...
 
 
-class _AreaXOpen(MarkOptions, total=False):
+class _AreaXOpen(MarkData, total=False):
     """The areaX mark."""
 
     curve: Curve | ParamRef
@@ -4003,8 +3933,6 @@ class _AreaXOpen(MarkOptions, total=False):
     - *step-after* - a piecewise constant function where *y* changes after *x*
     - *step-before* - a piecewise constant function where *x* changes after *y*
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["areaX"]]
     """
     A vertically-oriented area mark, where the baseline and topline share
@@ -4060,7 +3988,7 @@ class _AreaXOpen(MarkOptions, total=False):
 class AreaX(_AreaXOpen, total=False, closed=True): ...
 
 
-class _AreaYOpen(MarkOptions, total=False):
+class _AreaYOpen(MarkData, total=False):
     """The areaY mark."""
 
     curve: Curve | ParamRef
@@ -4088,8 +4016,6 @@ class _AreaYOpen(MarkOptions, total=False):
     - *step-after* - a piecewise constant function where *y* changes after *x*
     - *step-before* - a piecewise constant function where *x* changes after *y*
     """
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     mark: Required[Literal["areaY"]]
     """
     A horizontally-oriented area mark, where the baseline and topline share
@@ -4145,13 +4071,11 @@ class _AreaYOpen(MarkOptions, total=False):
 class AreaY(_AreaYOpen, total=False, closed=True): ...
 
 
-class _ArrowOpen(MarkOptions, total=False):
+class _ArrowOpen(MarkData, total=False):
     """The arrow mark."""
 
     bend: float | bool | ParamRef
     """The angle, a constant in degrees, between the straight line intersecting the arrow's two control points and the outgoing tangent direction of the arrow from the start point. The angle must be within ±90°; a positive angle will produce a clockwise curve, while a negative angle will produce a counterclockwise curve; zero (the default) will produce a straight line. Use true for 22.5°."""
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     head_angle: float | ParamRef
     """How pointy the arrowhead is, in degrees; a constant typically between 0° and 180°, and defaults to 60°."""
     head_length: float | ParamRef
@@ -5145,11 +5069,9 @@ class _AxisYOpen(MarkOptions, total=False):
 class AxisY(_AxisYOpen, total=False, closed=True): ...
 
 
-class _CellOpen(MarkOptions, total=False):
+class _CellOpen(MarkData, total=False):
     """The cell mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -5201,11 +5123,9 @@ class _CellOpen(MarkOptions, total=False):
 class Cell(_CellOpen, total=False, closed=True): ...
 
 
-class _CellXOpen(MarkOptions, total=False):
+class _CellXOpen(MarkData, total=False):
     """The cellX mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -5253,11 +5173,9 @@ class _CellXOpen(MarkOptions, total=False):
 class CellX(_CellXOpen, total=False, closed=True): ...
 
 
-class _CellYOpen(MarkOptions, total=False):
+class _CellYOpen(MarkData, total=False):
     """The cellY mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -5358,11 +5276,9 @@ DensityY = TypeAliasType("DensityY", DensityY1 | DensityY2 | DensityY3 | Density
 """The densityY mark."""
 
 
-class _DotXOpen(MarkOptions, total=False):
+class _DotXOpen(MarkData, total=False):
     """The dotX mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
@@ -5401,11 +5317,9 @@ class _DotXOpen(MarkOptions, total=False):
 class DotX(_DotXOpen, total=False, closed=True): ...
 
 
-class _DotYOpen(MarkOptions, total=False):
+class _DotYOpen(MarkData, total=False):
     """The dotY mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     frame_anchor: FrameAnchor | ParamRef
     """
     The frame anchor specifies defaults for **x** and **y** based on the plot's frame; it may be one of the four sides (*top*, *right*, *bottom*, *left*), one of the four corners (*top-left*, *top-right*, *bottom-right*,
@@ -5854,11 +5768,9 @@ class _GridYOpen(MarkOptions, total=False):
 class GridY(_GridYOpen, total=False, closed=True): ...
 
 
-class _RectOpen(MarkOptions, total=False):
+class _RectOpen(MarkData, total=False):
     """The rect mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -5977,11 +5889,9 @@ class _RectOpen(MarkOptions, total=False):
 class Rect(_RectOpen, total=False, closed=True): ...
 
 
-class _RectXOpen(MarkOptions, total=False):
+class _RectXOpen(MarkData, total=False):
     """The rectX mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -6086,11 +5996,9 @@ class _RectXOpen(MarkOptions, total=False):
 class RectX(_RectXOpen, total=False, closed=True): ...
 
 
-class _RectYOpen(MarkOptions, total=False):
+class _RectYOpen(MarkData, total=False):
     """The rectY mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -6195,11 +6103,9 @@ class _RectYOpen(MarkOptions, total=False):
 class RectY(_RectYOpen, total=False, closed=True): ...
 
 
-class _RuleXOpen(MarkOptions, total=False):
+class _RuleXOpen(MarkDataOptional, total=False):
     """The ruleX mark."""
 
-    data: PlotMarkData
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -6281,11 +6187,9 @@ class _RuleXOpen(MarkOptions, total=False):
 class RuleX(_RuleXOpen, total=False, closed=True): ...
 
 
-class _RuleYOpen(MarkOptions, total=False):
+class _RuleYOpen(MarkDataOptional, total=False):
     """The ruleY mark."""
 
-    data: PlotMarkData
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -6367,11 +6271,9 @@ class _RuleYOpen(MarkOptions, total=False):
 class RuleY(_RuleYOpen, total=False, closed=True): ...
 
 
-class _TextXOpen(MarkOptions, total=False):
+class _TextXOpen(MarkDataOptional, total=False):
     """The textX mark."""
 
-    data: PlotMarkData
-    """The data source for the mark."""
     font_family: str | ParamRef
     """
     The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
@@ -6481,11 +6383,9 @@ class _TextXOpen(MarkOptions, total=False):
 class TextX(_TextXOpen, total=False, closed=True): ...
 
 
-class _TextYOpen(MarkOptions, total=False):
+class _TextYOpen(MarkDataOptional, total=False):
     """The textY mark."""
 
-    data: PlotMarkData
-    """The data source for the mark."""
     font_family: str | ParamRef
     """
     The [font-family][1]; a constant; defaults to the plot's font family, which is typically [*system-ui*][2].
@@ -6595,11 +6495,9 @@ class _TextYOpen(MarkOptions, total=False):
 class TextY(_TextYOpen, total=False, closed=True): ...
 
 
-class _WaffleXOpen(MarkOptions, total=False):
+class _WaffleXOpen(MarkData, total=False):
     """The waffleX mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     gap: float | ParamRef
     """The gap in pixels between cells; defaults to 1."""
     inset: float | ParamRef
@@ -6700,11 +6598,9 @@ class _WaffleXOpen(MarkOptions, total=False):
 class WaffleX(_WaffleXOpen, total=False, closed=True): ...
 
 
-class _WaffleYOpen(MarkOptions, total=False):
+class _WaffleYOpen(MarkData, total=False):
     """The waffleY mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     gap: float | ParamRef
     """The gap in pixels between cells; defaults to 1."""
     inset: float | ParamRef
@@ -6805,11 +6701,9 @@ class _WaffleYOpen(MarkOptions, total=False):
 class WaffleY(_WaffleYOpen, total=False, closed=True): ...
 
 
-class _BarXOpen(MarkOptions, total=False):
+class _BarXOpen(MarkData, total=False):
     """The barX mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,
@@ -6904,11 +6798,9 @@ class _BarXOpen(MarkOptions, total=False):
 class BarX(_BarXOpen, total=False, closed=True): ...
 
 
-class _BarYOpen(MarkOptions, total=False):
+class _BarYOpen(MarkData, total=False):
     """The barY mark."""
 
-    data: Required[PlotMarkData]
-    """The data source for the mark."""
     inset: float | ParamRef
     """
     Shorthand to set the same default for all four insets: **insetTop**,

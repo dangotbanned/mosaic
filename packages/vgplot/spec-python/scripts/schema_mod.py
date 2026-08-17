@@ -102,7 +102,11 @@ class Artifacts:
                     and name != "PlotAttributes"
                 ):
                     base_open_name = template.base
-                    base_spec = SPEC_HEAD_NO_DATA if "data" in schema.properties else SPEC_HEAD
+                    base_spec = (
+                        SPEC_HEAD_NO_DATA
+                        if (template.root in {_MARK_DATA, _MARK_DATA_OPTIONAL})
+                        else SPEC_HEAD
+                    )
                     yield name, base_open_name, base_spec, path
 
     def generate_spec_module(self, target: Path) -> None:
@@ -472,7 +476,8 @@ def materialize_supertype(
 
 _PLOT_ATTRS = "PlotAttributes"
 _PLOT = "Plot"
-
+_MARK_DATA = "MarkData"
+_MARK_DATA_OPTIONAL = "MarkDataOptional"
 _COMPONENT = "Component"
 _PLOT_MARK = "PlotMark"
 _MARK_OPTIONS = "MarkOptions"
@@ -607,12 +612,22 @@ class SpecDeduplicate(SchemaMod):
             additional_properties=False,
             x_template=m.SingleTemplate(),
         )
+        definitions[_MARK_DATA_OPTIONAL] = m.JsonSchema(
+            type="object",
+            properties={
+                "data": m.JsonSchema(
+                    ref="#/definitions/PlotMarkData", description="The data source for the mark."
+                )
+            },
+            additional_properties=False,
+            x_template=m.SingleTemplate(bases=_MARK_OPTIONS),
+        )
+        definitions[_MARK_DATA] = definitions[_MARK_DATA_OPTIONAL].__replace__(required=["data"])
 
         common = tuple(mark_common)
         for name, member in previously_insert_base:
             member.remove_properties(common)
-            member.x_template = m.ExtraTemplate.from_name(name, _MARK_OPTIONS)
-            definitions[name] = member
+            definitions[name] = self._mark_with_base(name, member)
 
         for member in reversed(schema.get(_COMPONENT).any_of):
             # NOTE: Traversing a very large union to replace a single reference, needs early exit
@@ -620,6 +635,21 @@ class SpecDeduplicate(SchemaMod):
                 member.map_refs(self.map_plot_mark)
                 break
         return definitions
+
+    def _mark_with_base(self, name: str, mark: m.JsonSchema) -> m.JsonSchema:
+        if "data" in mark.properties:
+            if "data" in mark.required:
+                required = list(mark.required)
+                required.remove("data")
+                mark.required = required
+                root = _MARK_DATA
+            else:
+                root = _MARK_DATA_OPTIONAL
+            del mark.properties["data"]
+        else:
+            root = _MARK_OPTIONS
+        mark.x_template = m.ExtraTemplate.from_name(name, root)
+        return mark
 
     def _extract_tip_def(self, tip_property: m.JsonSchema) -> m.JsonSchema:
         """Fix a mangled inline intersection, with an anonymous object, inside an inline union.
@@ -659,8 +689,10 @@ def main() -> None:
         if fp.stem != "__init__" and fp.suffix == ".py"
     )
     print(f"Generated modules at:\n{'\n'.join(module_names)}")
-    codemod.move.move_class_to_top(fs.MOSAIC_SPEC_GEN / "marks.py", _MARK_OPTIONS)
-    codemod.move.move_class_to_top(fs.MOSAIC_SPEC_GEN / "transform.py", _WINDOW_OPTIONS)
+    codemod.move.move_class_defs_to_top(
+        fs.MOSAIC_SPEC_GEN / "marks.py", _MARK_OPTIONS, _MARK_DATA, _MARK_DATA_OPTIONAL
+    )
+    codemod.move.move_class_defs_to_top(fs.MOSAIC_SPEC_GEN / "transform.py", _WINDOW_OPTIONS)
     artifacts.generate_spec_module(fs.MOSAIC_SPEC_INTERSECTION)
 
 

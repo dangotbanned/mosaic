@@ -35,10 +35,6 @@
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*"
         },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "mark": {
           "const": "area",
           "description": "An area mark. The area mark is rarely used directly; it is only needed when the baseline and topline have neither *x* nor *y* values in common. Use areaY for a horizontal orientation where the baseline and topline share *x* values, or areaX for a vertical orientation where the baseline and topline share *y* values.",
@@ -105,13 +101,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_AreaOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -129,10 +124,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*"
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "areaX",
@@ -200,13 +191,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_AreaXOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -224,10 +214,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*"
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "areaY",
@@ -295,13 +281,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_AreaYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -322,10 +307,6 @@
             }
           ],
           "description": "The angle, a constant in degrees, between the straight line intersecting the arrow's two control points and the outgoing tangent direction of the arrow from the start point. The angle must be within ±90°; a positive angle will produce a clockwise curve, while a negative angle will produce a counterclockwise curve; zero (the default) will produce a straight line. Use true for 22.5°."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "headAngle": {
           "anyOf": [
@@ -440,13 +421,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_ArrowOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -2782,10 +2762,6 @@
       "additionalProperties": false,
       "description": "The barX mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -2935,13 +2911,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_BarXOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -2949,10 +2924,6 @@
       "additionalProperties": false,
       "description": "The barY mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -3102,13 +3073,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_BarYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -3116,10 +3086,6 @@
       "additionalProperties": false,
       "description": "The cell mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -3218,13 +3184,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_CellOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -3232,10 +3197,6 @@
       "additionalProperties": false,
       "description": "The cellX mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -3334,13 +3295,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_CellXOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -3348,10 +3308,6 @@
       "additionalProperties": false,
       "description": "The cellY mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -3450,13 +3406,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_CellYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -3906,10 +3861,6 @@
       "additionalProperties": false,
       "description": "The circle mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "frameAnchor": {
           "anyOf": [
             {
@@ -3982,13 +3933,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_CircleOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -4006,10 +3956,6 @@
             }
           ],
           "description": "The kernel density bandwidth for smoothing, in pixels."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "height": {
           "anyOf": [
@@ -4101,13 +4047,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_ContourOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -4151,10 +4096,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*"
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "delaunayLink",
@@ -4270,13 +4211,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_DelaunayLinkOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -4294,10 +4234,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*"
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "delaunayMesh",
@@ -4413,13 +4349,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_DelaunayMeshOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -4437,10 +4372,6 @@
             }
           ],
           "description": "The kernel density bandwidth for smoothing, in pixels."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "height": {
           "anyOf": [
@@ -4541,13 +4472,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_DenseLineOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -4565,10 +4495,6 @@
             }
           ],
           "description": "The kernel density bandwidth for smoothing, in pixels."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "fontFamily": {
           "anyOf": [
@@ -4878,13 +4804,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_DensityOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -4941,10 +4866,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*"
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "densityX",
@@ -5039,14 +4960,13 @@
         }
       },
       "required": [
-        "data",
         "mark",
         "type"
       ],
       "type": "object",
       "x-template": {
         "base": "_DensityX1Open",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -5090,10 +5010,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*\n- *auto* (default) - like *linear*, but use the (possibly spherical) projection, if any\n\nThe *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "densityX",
@@ -5233,14 +5149,13 @@
         }
       },
       "required": [
-        "data",
         "mark",
         "type"
       ],
       "type": "object",
       "x-template": {
         "base": "_DensityX2Open",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -5269,10 +5184,6 @@
             }
           ],
           "description": "The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "frameAnchor": {
           "anyOf": [
@@ -5370,14 +5281,13 @@
         }
       },
       "required": [
-        "data",
         "mark",
         "type"
       ],
       "type": "object",
       "x-template": {
         "base": "_DensityX3Open",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -5406,10 +5316,6 @@
             }
           ],
           "description": "The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "fontFamily": {
           "anyOf": [
@@ -5650,14 +5556,13 @@
         }
       },
       "required": [
-        "data",
         "mark",
         "type"
       ],
       "type": "object",
       "x-template": {
         "base": "_DensityX4Open",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -5714,10 +5619,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*"
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "densityY",
@@ -5812,13 +5713,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_DensityY1Open",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -5862,10 +5762,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*\n- *auto* (default) - like *linear*, but use the (possibly spherical) projection, if any\n\nThe *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "densityY",
@@ -6005,14 +5901,13 @@
         }
       },
       "required": [
-        "data",
         "mark",
         "type"
       ],
       "type": "object",
       "x-template": {
         "base": "_DensityY2Open",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -6041,10 +5936,6 @@
             }
           ],
           "description": "The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "frameAnchor": {
           "anyOf": [
@@ -6147,14 +6038,13 @@
         }
       },
       "required": [
-        "data",
         "mark",
         "type"
       ],
       "type": "object",
       "x-template": {
         "base": "_DensityY3Open",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -6183,10 +6073,6 @@
             }
           ],
           "description": "The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "fontFamily": {
           "anyOf": [
@@ -6430,14 +6316,13 @@
         }
       },
       "required": [
-        "data",
         "mark",
         "type"
       ],
       "type": "object",
       "x-template": {
         "base": "_DensityY4Open",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -6445,10 +6330,6 @@
       "additionalProperties": false,
       "description": "The dot mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "frameAnchor": {
           "anyOf": [
             {
@@ -6521,13 +6402,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_DotOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -6535,10 +6415,6 @@
       "additionalProperties": false,
       "description": "The dotX mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "frameAnchor": {
           "anyOf": [
             {
@@ -6622,13 +6498,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_DotXOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -6636,10 +6511,6 @@
       "additionalProperties": false,
       "description": "The dotY mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "frameAnchor": {
           "anyOf": [
             {
@@ -6723,13 +6594,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_DotYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -6747,10 +6617,6 @@
             }
           ],
           "description": "The confidence interval in (0, 1); defaults to 0.95."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "errorbarX",
@@ -6855,14 +6721,13 @@
         }
       },
       "required": [
-        "data",
         "mark",
         "x"
       ],
       "type": "object",
       "x-template": {
         "base": "_ErrorBarXOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -6880,10 +6745,6 @@
             }
           ],
           "description": "The confidence interval in (0, 1); defaults to 0.95."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "errorbarY",
@@ -6988,14 +6849,13 @@
         }
       },
       "required": [
-        "data",
         "mark",
         "y"
       ],
       "type": "object",
       "x-template": {
         "base": "_ErrorBarYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -7148,10 +7008,6 @@
       "additionalProperties": false,
       "description": "The geo mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "geometry": {
           "$ref": "#/definitions/ChannelValue",
           "description": "A required channel for the geometry to render; defaults to identity, assuming *data* is a GeoJSON object or an iterable of GeoJSON objects."
@@ -7174,13 +7030,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_GeoOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -8142,10 +7997,6 @@
           ],
           "description": "The kernel density bandwidth for smoothing, in pixels."
         },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "height": {
           "anyOf": [
             {
@@ -8230,13 +8081,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_HeatmapOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -8244,10 +8094,6 @@
       "additionalProperties": false,
       "description": "The hexagon mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "frameAnchor": {
           "anyOf": [
             {
@@ -8320,13 +8166,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_HexagonOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -8344,10 +8189,6 @@
             }
           ],
           "description": "The distance between centers of neighboring hexagons, in pixels; defaults to 20. If also using a hexgrid mark, use matching **binWidth** values."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "fontFamily": {
           "anyOf": [
@@ -8595,13 +8436,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_HexbinOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -8650,10 +8490,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*"
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "hull",
@@ -8769,13 +8605,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_HullOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -8792,10 +8627,6 @@
             }
           ],
           "description": "The [cross-origin][1] behavior. See the [Plot.image notebook][2] for details.\n\n[1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/crossorigin [2]: https://observablehq.com/@observablehq/plot-image"
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "frameAnchor": {
           "anyOf": [
@@ -8900,13 +8731,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_ImageOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -8928,10 +8758,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*\n- *auto* (default) - like *linear*, but use the (possibly spherical) projection, if any\n\nThe *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "line",
@@ -9047,13 +8873,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_LineOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -9075,10 +8900,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*\n- *auto* (default) - like *linear*, but use the (possibly spherical) projection, if any\n\nThe *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "lineX",
@@ -9194,13 +9015,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_LineXOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -9222,10 +9042,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*\n- *auto* (default) - like *linear*, but use the (possibly spherical) projection, if any\n\nThe *auto* curve is typically used in conjunction with a spherical projection to interpolate along geodesics."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "lineY",
@@ -9341,13 +9157,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_LineYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -9377,10 +9192,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points.\n\nSince a link has exactly two points, only the following curves (or a custom curve) are recommended: *linear*, *step*, *step-after*, *step-before*,\n*bump-x*, or *bump-y*. Note that the *linear* curve is incapable of showing a fill since a straight line has zero area. For a curved link, use an arrow mark with the **bend** option.\n\nIf the plot uses a spherical **projection**, the default *auto* **curve** will render links as geodesics; to draw a straight line instead, use the\n*linear* **curve**."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "link",
@@ -9508,14 +9319,46 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_LinkOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
+      }
+    },
+    "MarkData": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/PlotMarkData",
+          "description": "The data source for the mark."
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "type": "object",
+      "x-template": {
+        "bases": "MarkOptions",
+        "keywords": "total=False",
+        "tag": "Single"
+      }
+    },
+    "MarkDataOptional": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/PlotMarkData",
+          "description": "The data source for the mark."
+        }
+      },
+      "type": "object",
+      "x-template": {
+        "bases": "MarkOptions",
+        "keywords": "total=False",
+        "tag": "Single"
       }
     },
     "MarkOptions": {
@@ -10265,10 +10108,6 @@
           ],
           "description": "The kernel density bandwidth for smoothing, in pixels."
         },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "height": {
           "anyOf": [
             {
@@ -10353,13 +10192,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_RasterOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -10377,10 +10215,6 @@
             }
           ],
           "description": "The kernel density bandwidth for smoothing, in pixels."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "height": {
           "anyOf": [
@@ -10482,13 +10316,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_RasterTileOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -10496,10 +10329,6 @@
       "additionalProperties": false,
       "description": "The rect mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -10657,13 +10486,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_RectOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -10671,10 +10499,6 @@
       "additionalProperties": false,
       "description": "The rectX mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -10832,13 +10656,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_RectXOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -10846,10 +10669,6 @@
       "additionalProperties": false,
       "description": "The rectY mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -11007,13 +10826,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_RectYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -11213,10 +11031,6 @@
           ],
           "description": "The confidence interval in (0, 1), or 0 to hide bands; defaults to 0.95."
         },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "mark": {
           "const": "regressionY",
           "description": "A mark that draws [linear regression][1] lines with confidence bands, representing the estimated relation of a dependent variable (*y*) on an independent variable (*x*).\n\nThe linear regression line is fit using the [least squares][2] approach. See Torben Jansen's [“Linear regression with confidence bands”][3] and [this StatExchange question][4] for details on the confidence interval calculation.\n\nMultiple regressions can be produced by specifying a **z**, **fill**, or\n**stroke** channel.\n\n[1]: https://en.wikipedia.org/wiki/Linear_regression [2]: https://en.wikipedia.org/wiki/Least_squares [3]: https://observablehq.com/@toja/linear-regression-with-confidence-bands [4]: https://stats.stackexchange.com/questions/101318/understanding-shape-and-calculation-of-confidence-bands-in-linear-regression",
@@ -11247,13 +11061,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_RegressionYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -11261,10 +11074,6 @@
       "additionalProperties": false,
       "description": "The ruleX mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -11421,7 +11230,7 @@
       "type": "object",
       "x-template": {
         "base": "_RuleXOpen",
-        "root": "MarkOptions",
+        "root": "MarkDataOptional",
         "tag": "Extra"
       }
     },
@@ -11429,10 +11238,6 @@
       "additionalProperties": false,
       "description": "The ruleY mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -11589,7 +11394,7 @@
       "type": "object",
       "x-template": {
         "base": "_RuleYOpen",
-        "root": "MarkOptions",
+        "root": "MarkDataOptional",
         "tag": "Extra"
       }
     },
@@ -11849,10 +11654,6 @@
           ],
           "description": "The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:\n\n- *start* - from [*x*, *y*] to [*x*, *y* - *l*]\n- *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]\n- *end* - from [*x*, *y* + *l*] to [*x*, *y*]\n\nwhere [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels."
         },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "frameAnchor": {
           "anyOf": [
             {
@@ -11909,13 +11710,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_SpikeOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -12008,10 +11808,6 @@
       "additionalProperties": false,
       "description": "The text mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "fontFamily": {
           "anyOf": [
             {
@@ -12232,7 +12028,7 @@
       "type": "object",
       "x-template": {
         "base": "_TextOpen",
-        "root": "MarkOptions",
+        "root": "MarkDataOptional",
         "tag": "Extra"
       }
     },
@@ -12240,10 +12036,6 @@
       "additionalProperties": false,
       "description": "The textX mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "fontFamily": {
           "anyOf": [
             {
@@ -12475,7 +12267,7 @@
       "type": "object",
       "x-template": {
         "base": "_TextXOpen",
-        "root": "MarkOptions",
+        "root": "MarkDataOptional",
         "tag": "Extra"
       }
     },
@@ -12483,10 +12275,6 @@
       "additionalProperties": false,
       "description": "The textY mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "fontFamily": {
           "anyOf": [
             {
@@ -12711,7 +12499,7 @@
       "type": "object",
       "x-template": {
         "base": "_TextYOpen",
-        "root": "MarkOptions",
+        "root": "MarkDataOptional",
         "tag": "Extra"
       }
     },
@@ -12719,10 +12507,6 @@
       "additionalProperties": false,
       "description": "The tickX mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -12855,13 +12639,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_TickXOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -12869,10 +12652,6 @@
       "additionalProperties": false,
       "description": "The tickY mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "inset": {
           "anyOf": [
             {
@@ -13005,13 +12784,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_TickYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -13698,10 +13476,6 @@
           ],
           "description": "The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:\n\n- *start* - from [*x*, *y*] to [*x*, *y* - *l*]\n- *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]\n- *end* - from [*x*, *y* + *l*] to [*x*, *y*]\n\nwhere [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels."
         },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "frameAnchor": {
           "anyOf": [
             {
@@ -13758,13 +13532,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_VectorOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -13799,10 +13572,6 @@
             }
           ],
           "description": "The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:\n\n- *start* - from [*x*, *y*] to [*x*, *y* - *l*]\n- *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]\n- *end* - from [*x*, *y* + *l*] to [*x*, *y*]\n\nwhere [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "frameAnchor": {
           "anyOf": [
@@ -13860,13 +13629,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_VectorXOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -13893,10 +13661,6 @@
             }
           ],
           "description": "The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:\n\n- *start* - from [*x*, *y*] to [*x*, *y* - *l*]\n- *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]\n- *end* - from [*x*, *y* + *l*] to [*x*, *y*]\n\nwhere [*x*, *y*] is the vector's anchor point and *l* is the vector's (possibly scaled) length in pixels."
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "frameAnchor": {
           "anyOf": [
@@ -13954,13 +13718,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_VectorYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -13978,10 +13741,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*"
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "voronoi",
@@ -14097,13 +13856,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_VoronoiOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -14121,10 +13879,6 @@
             }
           ],
           "description": "The curve (interpolation) method for connecting adjacent points. One of:\n\n- *basis* - a cubic basis spline (repeating the end points)\n- *basis-open* - an open cubic basis spline\n- *basis-closed* - a closed cubic basis spline\n- *bump-x* - a Bézier curve with horizontal tangents\n- *bump-y* - a Bézier curve with vertical tangents\n- *bundle* - a straightened cubic basis spline (suitable for lines only, not areas)\n- *cardinal* - a cubic cardinal spline (with one-sided differences at the ends)\n- *cardinal-open* - an open cubic cardinal spline\n- *cardinal-closed* - an closed cubic cardinal spline\n- *catmull-rom* - a cubic Catmull-Rom spline (with one-sided differences at the ends)\n- *catmull-rom-open* - an open cubic Catmull-Rom spline\n- *catmull-rom-closed* - a closed cubic Catmull-Rom spline\n- *linear* - a piecewise linear curve (*i.e.*, straight line segments)\n- *linear-closed* - a closed piecewise linear curve (*i.e.*, straight line segments)\n- *monotone-x* - a cubic spline that preserves monotonicity in *x*\n- *monotone-y* - a cubic spline that preserves monotonicity in *y*\n- *natural* - a natural cubic spline\n- *step* - a piecewise constant function where *y* changes at the midpoint of *x*\n- *step-after* - a piecewise constant function where *y* changes after *x*\n- *step-before* - a piecewise constant function where *x* changes after *y*"
-        },
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
         },
         "mark": {
           "const": "voronoiMesh",
@@ -14240,13 +13994,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_VoronoiMeshOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -14254,10 +14007,6 @@
       "additionalProperties": false,
       "description": "The waffleX mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "gap": {
           "anyOf": [
             {
@@ -14451,13 +14200,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_WaffleXOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     },
@@ -14465,10 +14213,6 @@
       "additionalProperties": false,
       "description": "The waffleY mark.",
       "properties": {
-        "data": {
-          "$ref": "#/definitions/PlotMarkData",
-          "description": "The data source for the mark."
-        },
         "gap": {
           "anyOf": [
             {
@@ -14662,13 +14406,12 @@
         }
       },
       "required": [
-        "data",
         "mark"
       ],
       "type": "object",
       "x-template": {
         "base": "_WaffleYOpen",
-        "root": "MarkOptions",
+        "root": "MarkData",
         "tag": "Extra"
       }
     }
