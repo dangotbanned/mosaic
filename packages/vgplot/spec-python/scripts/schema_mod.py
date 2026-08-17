@@ -476,7 +476,7 @@ _PLOT = "Plot"
 _COMPONENT = "Component"
 _PLOT_MARK = "PlotMark"
 _MARK_OPTIONS = "MarkOptions"
-_POUND_DEFS = "#/definitions/"
+_CHANNEL_VALUE = "ChannelValue"
 
 
 # TODO @dangotbanned: Simplify `SpecDeduplicate._plot_mark`
@@ -486,8 +486,35 @@ class SpecDeduplicate(SchemaMod):
     _SCHEMA_DIR: ClassVar[Path] = fs.SCHEMA
     extracted: m.InputSchema
 
+    _MOVE_TO_MARKS = (
+        "TipPointer",
+        "SelectFilter",
+        "ChannelDomainValueSpec",
+        "ChannelDomainValue",
+        "ChannelDomainSort",
+        "ChannelName",
+        "ChannelValueSpec",
+        "ChannelValueIntervalSpec",
+        "SortOrder",
+        "ScaleName",  # (PlotTypes)
+        "SQLExpression",
+        "AggregateExpression",
+        "ReducerPercentile",  # (PlotTypes)
+        "Reducer",  # (PlotTypes)
+        "FrameAnchor",  # (PlotTypes)
+        "StackOrder",
+        "StackOrderName",
+        "MarkerName",
+        "SymbolType",
+        "GridInterpolate",
+        "PlotFrom",
+        "PlotDataInline",
+        "PlotMarkData",
+    )
+
     def __init__(self, filename: str) -> None:
         self.filename: str = filename
+        self.map_plot_mark = m.ref_mapper({_PLOT_MARK: self.filename})
 
     @property
     def path(self) -> Path:
@@ -503,83 +530,41 @@ class SpecDeduplicate(SchemaMod):
                 else:
                     self.insert_base(name, member, schema)
             elif name == _PLOT_MARK:
-                self._plot_mark(member, schema)
+                self.extracted = schema.__replace__(
+                    id=self.filename, definitions=self._extract_marks(member, schema)
+                )
+                serde.write_json(self.path, self.extracted, pretty=True)
+                print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
             else:
                 msg = f"Found unexpected union {name!r} in {_COMPONENT!r}, got:\n{member!r}"
                 raise NotImplementedError(msg)
 
     def _plot(self, plot: m.JsonSchema) -> None:
         prop = plot.properties.pop("plot")
-        # NOTE: ref cleanup
-        for member in prop.items_schema().iter_members():
-            if member.ref == f"{_POUND_DEFS}{_PLOT_MARK}":
-                member.ref = f"{self.filename}{member.ref}"
-                break
-
+        prop.map_refs(self.map_plot_mark)
         # Plot extends PlotAttributes, adding a single `plot` required property
         plot.properties = {"plot": prop}
         plot.x_template = m.ExtraTemplate.from_open_root(_PLOT, _PLOT_ATTRS)
 
-    def _plot_mark(self, plot_mark: m.JsonSchema, schema: m.InputSchema) -> None:  # ruff: ignore[complex-structure, too-many-branches, too-many-locals, too-many-statements]
+    def _extract_marks(
+        self, plot_mark: m.JsonSchema, schema: m.InputSchema
+    ) -> dict[m.DefName, m.JsonSchema]:
         definitions: dict[m.DefName, m.JsonSchema] = {}
-        steal = (
-            "TipPointer",
-            "SelectFilter",
-            "ChannelDomainValueSpec",
-            "ChannelDomainValue",
-            "ChannelDomainSort",
-            "ChannelName",
-            "ChannelValueSpec",
-            "ChannelValueIntervalSpec",
-            "SortOrder",
-            "ScaleName",  # (PlotTypes)
-            "SQLExpression",
-            "AggregateExpression",
-            "ReducerPercentile",  # (PlotTypes)
-            "Reducer",  # (PlotTypes)
-            "FrameAnchor",  # (PlotTypes)
-            "StackOrder",
-            "StackOrderName",
-            "MarkerName",
-            "SymbolType",
-            "GridInterpolate",
-            "PlotFrom",
-            "PlotDataInline",
-            "PlotMarkData",
-        )
         pop = schema.pop
-        for name in steal:
+        for name in self._MOVE_TO_MARKS:
             definitions[name] = pop(name)
+        definitions[_CHANNEL_VALUE] = pop(_CHANNEL_VALUE)
+        definitions[_CHANNEL_VALUE].map_refs(m.ref_mapper({"Transform": "transform.json"}))
 
         # NOTE: Removes indirection, these are identical besides minor doc phrasing
         pop("StackOffset")
         pop("VectorShape")
         definitions["StackOffset"] = pop("StackOffsetName")
         definitions["VectorShape"] = pop("VectorShapeName")
-
         definitions["Curve"] = pop("CurveName").__replace__(description=pop("Curve").description)
 
-        channel_value = definitions["ChannelValue"] = pop("ChannelValue")
-        transform_ref = f"{_POUND_DEFS}Transform"
-        # NOTE: ref cleanup
-        for member in channel_value.iter_members():
-            if member.ref == transform_ref:
-                member.ref = f"transform.json{transform_ref}"
-                break
-
         owned_props = deepcopy(schema.get(plot_mark.any_of[0].def_name).properties)
-        tip_property = owned_props["tip"]
-
-        for idx, member in enumerate(tip_property.iter_members()):
-            if member.type == "object":
-                tip_def = deepcopy(member)
-                tip_def.additional_properties = False
-                tip_def.description = tip_property.description
-                definitions["Tip"] = tip_def
-                _any_of = list(tip_property.any_of)
-                _any_of[idx] = m.JsonSchema.new_ref("Tip")
-                tip_property.any_of = _any_of
-                break
+        definitions["Tip"] = self._extract_tip_def(owned_props["tip"])
 
         mark_common = set(owned_props)
         previously_insert_base: list[tuple[m.DefName, m.JsonSchema]] = []
@@ -629,15 +614,29 @@ class SpecDeduplicate(SchemaMod):
             member.x_template = m.ExtraTemplate.from_name(name, _MARK_OPTIONS)
             definitions[name] = member
 
-        # NOTE: ref cleanup
         for member in reversed(schema.get(_COMPONENT).any_of):
+            # NOTE: Traversing a very large union to replace a single reference, needs early exit
             if member.ref.endswith(_PLOT_MARK):
-                member.ref = f"{self.filename}{member.ref}"
+                member.map_refs(self.map_plot_mark)
                 break
+        return definitions
 
-        self.extracted = schema.__replace__(id=self.filename, definitions=definitions)
-        serde.write_json(self.path, self.extracted, pretty=True)
-        print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
+    def _extract_tip_def(self, tip_property: m.JsonSchema) -> m.JsonSchema:
+        """Fix a mangled inline intersection, with an anonymous object, inside an inline union.
+
+        https://github.com/dangotbanned/mosaic/blob/824e919b14f833578feed5c36edcd032d6fa6184/packages/vgplot/spec/src/spec/marks/Marks.ts#L428-L434
+        """
+        for idx, member in enumerate(tip_property.iter_members()):
+            if member.type == "object":
+                tip_def = deepcopy(member)
+                tip_def.additional_properties = False
+                tip_def.description = tip_property.description
+                any_of = list(tip_property.any_of)
+                any_of[idx] = m.JsonSchema.new_ref("Tip")
+                tip_property.any_of = any_of
+                return tip_def
+        msg = f"Did not find inline `Tip` in: {tip_property!r}"
+        raise NotImplementedError(msg)
 
     def insert_base(self, name: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema) -> None:
         """Mark `name` to generate an extra TypedDict that is [open](https://typing.python.org/en/latest/spec/typeddict.html#openness).
