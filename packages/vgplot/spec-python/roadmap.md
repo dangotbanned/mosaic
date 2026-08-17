@@ -64,15 +64,19 @@ Pylance is non-functional as it isn't able to do the kind of incremental magic t
 a single file. To mitigate this, here are some potential modules/subpackages to lighten the load:
 
 - [x] `interactors.py`
-- [x] `marks.py` (**136 KB**)
-- [ ] data (6 KB)
-- [ ] inputs (7 KB)
-- [ ] interval (2 KB)
+- [x] `marks.py` (`.ts` **136 KB**)
+  - [x] Reduce to (`.py` 365 KB)
+  - [ ] Reduce from (`.py` 365 KB) ‼️
+    - [ ] ...
+    - [ ] ...
+- [ ] data (`.ts` 6 KB)
+- [ ] inputs (`.ts` 7 KB)
+- [ ] interval (`.ts` 2 KB)
 - [x] `params.py`
 - [ ] plot
   - [x] Share **215** fields between `Plot` & `PlotAttributes`
   - [ ] Move to another module (*maybe difficult, due what it depends on*)
-    - `PlotAttribute.ts` (**63 KB**)
+    - `PlotAttribute.ts` (`.ts` **63 KB**)
 - [x] `spec.py`
   - [x] Use the original class names and don't re-export to top-level, e.g.
     - `import mosaic_spec as ms; ms.spec.Plot(...)`
@@ -80,7 +84,7 @@ a single file. To mitigate this, here are some potential modules/subpackages to 
   - [x] split
   - [ ] cleanup
 - [ ] typing (aliases)
-  - [ ] `PlotTypes.ts` (14 KB) and **isolated**
+  - [ ] `PlotTypes.ts` (`.ts` 14 KB) and **isolated**
   - [ ] A large gain will come from naming duplicated inline types, e.g.
     - [x] 60x of `str | float | bool | ParamRef`
       - -> (`transform.Arg`)
