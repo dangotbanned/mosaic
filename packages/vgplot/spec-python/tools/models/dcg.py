@@ -254,6 +254,18 @@ class Module(base.Struct):
                 typed_dicts[typed_dict.name] = typed_dict
         return Module(name, typed_dicts, type_aliases)
 
+    def iter_typed_dicts(self) -> Iterator[TypedDict]:
+        yield from self.typed_dicts.values()
+
+    def iter_fields(self) -> Iterator[Field]:
+        for td in self.iter_typed_dicts():
+            yield from td.fields
+
+    def iter_field_types(self) -> Iterator[TypeExpr]:
+        for td in self.iter_typed_dicts():
+            for fld in td.fields:
+                yield fld.type_expr
+
 
 if TYPE_CHECKING:
     import polars as pl
@@ -286,17 +298,16 @@ class Root(base.Struct):
         yield from self.modules.values()
 
     def iter_typed_dicts(self) -> Iterator[TypedDict]:
-        for mod in self.modules.values():
-            yield from mod.typed_dicts.values()
+        for mod in self.iter_modules():
+            yield from mod.iter_typed_dicts()
 
     def iter_fields(self) -> Iterator[Field]:
-        for td in self.iter_typed_dicts():
-            yield from td.fields
+        for mod in self.iter_modules():
+            yield from mod.iter_fields()
 
     def iter_field_types(self) -> Iterator[TypeExpr]:
-        for td in self.iter_typed_dicts():
-            for fld in td.fields:
-                yield fld.type_expr
+        for mod in self.iter_modules():
+            yield from mod.iter_field_types()
 
     # TODO @dangotbanned: Port over some EDA bits from notebook
     def describe(self) -> pl.DataFrame:
