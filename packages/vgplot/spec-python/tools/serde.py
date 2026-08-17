@@ -18,6 +18,18 @@ if TYPE_CHECKING:
 
 __all__ = ("convert_json", "deserialize_json", "read_json", "serialize_json", "write_json")
 
+type _SerializableNative = Any
+"""A type natively supported by `msgspec`."""
+
+type _Extension = Any
+"""A type that requires conversion for use with `msgspec`."""
+
+type _IntoExtension = Callable[[type[_Extension], _SerializableNative], _Extension]
+"""A [converter] from native msgspec -> extension.
+
+[converter]: https://msgspec.dev/extending#mapping-to-from-native-types
+"""
+
 
 def serialize_json(obj: Any, /, *, order: L["deterministic", "sorted"] | None = None) -> bytes:
     """Serialize an object as JSON."""
@@ -99,24 +111,25 @@ def _encoder_json(order: L["deterministic", "sorted"] | None = None, /) -> msgsp
 
 
 @functools.singledispatch
-def _encoder_hook(obj: Any, /) -> Any:
+def _encoder_hook(obj: _Extension, /) -> _SerializableNative:
     tp = type(obj)
     msg = f"Objects of type '{tp.__module__}.{tp.__name__}' cannot be serialized by msgspec, got: {obj!r}"
     raise NotImplementedError(msg)
 
 
-@functools.singledispatch
-def _decoder_hook(tp: type[Any], obj: Any, /) -> Any:
-    tp = type(obj)
-    msg = f"Objects of type '{tp.__module__}.{tp.__name__}' cannot be deserialized by msgspec, got: {obj!r}"
+def _decoder_hook(field_type_expr: type[_Extension], obj: _SerializableNative, /) -> _Extension:
+    # NOTE: `@functools.singledispatch` cannot be used here,
+    # as `tp: type[Any]` gets converted to `type[type[Any]]`
+    if converter := _DECODER_DISPATCH.get(field_type_expr):
+        return converter(field_type_expr, obj)
+    field_type_expr = type(obj)
+    msg = f"Objects of type '{field_type_expr.__module__}.{field_type_expr.__name__}' cannot be deserialized by msgspec, got: {obj!r}"
     raise NotImplementedError(msg)
 
 
-# TODO @dangotbanned: This one is a real bug, see fix in:
-# https://github.com/dangotbanned/mosaic/commit/bd9094f49de844f1862a6c635dfba3dffe85f3c5
-@_decoder_hook.register(deque)  # pyrefly: ignore[bad-singledispatch-register]
 def _use_constructor[T, R](cb: Callable[[T], R], obj: T, /) -> R:
     return cb(obj)
 
 
 _encoder_hook.register(deque, list)
+_DECODER_DISPATCH: Mapping[type[_Extension], _IntoExtension] = {deque: _use_constructor}
