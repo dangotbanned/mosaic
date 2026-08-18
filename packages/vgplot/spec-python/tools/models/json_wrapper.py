@@ -61,6 +61,14 @@ class JsonWrapper(_Tagged, kw_only=True):
         msg = f"{cls.from_schema.__qualname__}() is not yet implemented"
         raise NotImplementedError(msg)
 
+    def iter_refs(self) -> Iterator[Reference]:
+        """Yield all references owned by the current node.
+
+        - If the node is a reference, it will yield itself.
+        - References are not resolved.
+        """
+        yield from ()
+
 
 @final
 class Unknown(JsonWrapper):
@@ -108,6 +116,9 @@ class Reference(JsonWrapper):
     def from_schema(cls, schema: JsonSchema) -> Reference:
         return Reference(ref=schema.ref, schema=schema)
 
+    def iter_refs(self) -> Iterator[Reference]:
+        yield self
+
 
 @final
 class Union(JsonWrapper):
@@ -118,6 +129,10 @@ class Union(JsonWrapper):
     @classmethod
     def from_schema(cls, schema: JsonSchema) -> Union:
         return Union(members=[_from_schema(m) for m in schema.any_of], schema=schema)
+
+    def iter_refs(self) -> Iterator[Reference]:
+        for member in self.members:
+            yield from member.iter_refs()
 
 
 @final
@@ -199,6 +214,10 @@ class NamedSequence(JsonWrapper):
             raise _temporary_bad_static_error(items, cls)
         return NamedSequence(fields={el.title: _from_schema(el) for el in items}, schema=schema)
 
+    def iter_refs(self) -> Iterator[Reference]:
+        for field_type in self.fields.values():
+            yield from field_type.iter_refs()
+
 
 @final
 class Sequence(JsonWrapper):
@@ -217,6 +236,9 @@ class Sequence(JsonWrapper):
             items=_from_schema(items), min=schema.min_items, max=schema.max_items, schema=schema
         )
 
+    def iter_refs(self) -> Iterator[Reference]:
+        yield from self.items.iter_refs()
+
 
 type Closed = L["closed"]
 """Until msgspec gets literal bool support"""
@@ -226,7 +248,7 @@ type Closed = L["closed"]
 class Object(JsonWrapper):
     """`"type": "object"` AKA a class."""
 
-    properties: dict[str, JsonWrapper]
+    fields: dict[str, JsonWrapper]
     required: cabc.Sequence[str]
     closed: Closed | None
     extra_items: JsonWrapper | None
@@ -243,12 +265,18 @@ class Object(JsonWrapper):
         else:
             extra_items = Unknown()
         return Object(
-            properties={k: _from_schema(v) for k, v in schema.properties.items()},
+            fields={k: _from_schema(v) for k, v in schema.properties.items()},
             required=schema.required,
             closed=closed,
             extra_items=extra_items,
             schema=schema,
         )
+
+    def iter_refs(self) -> Iterator[Reference]:
+        for field_type in self.fields.values():
+            yield from field_type.iter_refs()
+        if self.extra_items:
+            yield from self.extra_items.iter_refs()
 
 
 @final
