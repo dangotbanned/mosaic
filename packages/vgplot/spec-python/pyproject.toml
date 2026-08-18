@@ -111,7 +111,6 @@ project-includes = [
   "scripts",
   "tools",
   "*.py",
-  "*.ipynb",
   "tests",
 ]
 
