@@ -52,24 +52,11 @@ Root(
 
 from collections.abc import Iterable, Iterator
 from itertools import chain
-from typing import TYPE_CHECKING, Annotated as A, Any, ClassVar, Literal as L, Self, final, overload
+from typing import TYPE_CHECKING, Annotated as A, Literal as L, Self, final, overload
 
 import msgspec
 
 from tools.models import base
-
-
-class _FrozenStruct(msgspec.Struct, frozen=True, omit_defaults=True, repr_omit_defaults=True):
-    """`frozen=True, omit_defaults=True, repr_omit_defaults=True`."""
-
-    # NOTE: > "Frozen dataclass cannot inherit from non-frozen dataclass"
-    if TYPE_CHECKING:
-        __slots__ = ()
-        __struct_defaults__: ClassVar[tuple[Any, ...]]
-        __struct_encode_fields__: ClassVar[tuple[str, ...]]
-
-        def __copy__(self) -> Self: ...
-
 
 type ModuleName = L["css_styles", "interactors", "marks", "mosaic", "params", "transform", "typing"]
 """The stem of the module name that it was generated into."""
@@ -82,7 +69,7 @@ type TypeExpr = str
 """
 
 
-class EmitField(_FrozenStruct, frozen=True, kw_only=True, cache_hash=True):
+class EmitField(base.FrozenStruct, frozen=True, kw_only=True, cache_hash=True):
     name: str = ""
     alias: str = ""
     original_name: str | None = None
@@ -92,7 +79,7 @@ class EmitField(_FrozenStruct, frozen=True, kw_only=True, cache_hash=True):
     required: bool = False
 
 
-class EmitModel(_FrozenStruct, frozen=True, kw_only=True):
+class EmitModel(base.FrozenStruct, frozen=True, kw_only=True):
     name: str
     """Name of the TypedDict."""
 
@@ -171,7 +158,7 @@ class EmitMetadataV1(base.Struct):
 
 
 @final
-class Field(_FrozenStruct, frozen=True, kw_only=True, cache_hash=True):
+class Field(base.FrozenStruct, frozen=True, kw_only=True, cache_hash=True):
     """5360 fields."""
 
     name: str

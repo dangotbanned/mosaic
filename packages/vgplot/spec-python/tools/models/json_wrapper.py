@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 import collections.abc as cabc
-from collections import deque
 from collections.abc import Callable, Iterator
 from typing import TYPE_CHECKING, Any, Final, Literal as L, Self, final, overload
 
@@ -19,6 +18,8 @@ from tools.serde import convert_json
 
 if TYPE_CHECKING:
     from typing import TypeIs
+
+    from tools.models import mlir
 
 
 type Scalar = L["boolean", "integer", "number", "string", "null"]
@@ -135,6 +136,9 @@ class Union(JsonWrapper):
         for member in self.members:
             yield from member.iter_refs()
 
+    def __iter__(self) -> Iterator[JsonWrapper]:
+        yield from self.members.__iter__()
+
 
 @final
 class Const(JsonWrapper):
@@ -148,6 +152,9 @@ class Const(JsonWrapper):
             raise _temporary_bad_static_error(schema.type, cls)
         return Const(value=schema.const, schema=schema)
 
+    def iter_values(self) -> Iterator[Lit | LitBool]:
+        yield self.value
+
 
 @final
 class Enum(JsonWrapper):
@@ -158,6 +165,9 @@ class Enum(JsonWrapper):
     @classmethod
     def from_schema(cls, schema: JsonSchema) -> Enum:
         return Enum(values=schema.enum, schema=schema)
+
+    def iter_values(self) -> Iterator[Lit | LitBool | None]:
+        yield from self.values
 
 
 @final
@@ -171,6 +181,9 @@ class Primitive(JsonWrapper):
         if not _is_scalar(schema.type):
             raise _temporary_bad_static_error(schema.type, cls)
         return Primitive(type=schema.type, schema=schema)
+
+    def iter_types(self) -> Iterator[Scalar]:
+        yield self.type
 
 
 @final
@@ -192,7 +205,11 @@ class PrimitiveUnion(JsonWrapper):
         msg = f"Unexpected primitive union type: {types!r}, in {schema!r}"
         raise TypeError(msg)
 
+    def iter_types(self) -> Iterator[Scalar]:
+        yield from self.types
 
+
+# NOTE: `tuple[()]`, not `Sequence[Any]`
 @final
 class EmptySequence(JsonWrapper):
     """`{"maxItems": 0, "minItems": 0, "type": "array"}`."""
@@ -279,6 +296,7 @@ class Object(JsonWrapper):
         if self.extra_items:
             yield from self.extra_items.iter_refs()
 
+
 type JW = JsonWrapper
 type _Guard[T: JW] = Callable[[JW], TypeIs[T]]
 
@@ -304,9 +322,11 @@ class Root(base.Struct, kw_only=True):
     @overload
     def iter_defs[T: JW = JW](self, predicate: _Guard[T], /) -> Iterator[tuple[DefName, T]]: ...
     @overload
-    def iter_defs(self, predicate: None = None, /) -> Iterator[tuple[DefName, JW]]: ...
+    def iter_defs(
+        self, predicate: Callable[[JW], bool] | None = None, /
+    ) -> Iterator[tuple[DefName, JW]]: ...
     def iter_defs[T: JW = JW](
-        self, predicate: _Guard[T] | None = None, /
+        self, predicate: _Guard[T] | Callable[[JW], bool] | None = None, /
     ) -> Iterator[tuple[DefName, T | JW]]:
         if predicate is None:
             yield from self.definitions.items()
@@ -323,6 +343,11 @@ class Root(base.Struct, kw_only=True):
 
     def get_union(self, name: DefName, /) -> Union:
         return _ensure_type(self[name], Union)
+
+    def to_mlir(self) -> mlir.Root:
+        from tools.models import mlir
+
+        return mlir.Root.from_json_wrapper(self)
 
 
 def _ensure_type[T: JsonWrapper](value: JsonWrapper, tp: type[T], /) -> T:
