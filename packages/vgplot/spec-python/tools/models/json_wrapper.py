@@ -4,14 +4,21 @@
 - Then lower into the next IR
 """
 
+from __future__ import annotations
+
 import collections.abc as cabc
-from typing import Any, Final, Literal as L, Self, TypeIs, final
+from collections.abc import Callable, Iterable, Iterator
+from typing import TYPE_CHECKING, Any, Final, Literal as L, Self, final
 
 import msgspec
 
 from tools.models import base
-from tools.models.mosaic import DefName, JsonSchema
+from tools.models.mosaic import DefName, InputSchema, JsonSchema
 from tools.serde import convert_json
+
+if TYPE_CHECKING:
+    from typing import TypeIs
+
 
 type Scalar = L["boolean", "integer", "number", "string", "null"]
 """Primitive Json schema types, excluding `"array"` and `"object"`."""
@@ -244,6 +251,51 @@ class Object(JsonWrapper):
         )
 
 
+@final
+class Root(base.Struct, kw_only=True):
+    """Top-level context for `mosaic-schema.json`."""
+
+    id: str = msgspec.field(name="$id", default="")
+    definitions: dict[DefName, JsonWrapper]
+    ref: str = msgspec.field(name="$ref", default="")
+    schema: str = msgspec.field(name="$schema")
+
+    @classmethod
+    def from_input_schema(cls, source: InputSchema) -> Root:
+        return Root(
+            id=source.id,
+            definitions={k: _from_schema(v) for k, v in source.definitions.items()},
+            ref=source.ref,
+            schema=source.schema,
+        )
+
+    def iter_defs(
+        self, predicate: Callable[[JsonWrapper], bool] | None = None, /
+    ) -> Iterator[tuple[DefName, JsonWrapper]]:
+        it: Iterable[tuple[DefName, JsonWrapper]]
+        if predicate is None:
+            it = self.definitions.items()
+        else:
+            it = ((name, schema) for name, schema in self.definitions.items() if predicate(schema))
+        yield from it
+
+    def __getitem__(self, name: DefName, /) -> JsonWrapper:
+        return self.definitions.__getitem__(name)
+
+    def get_object(self, name: DefName, /) -> Object:
+        return _ensure_type(self[name], Object)
+
+    def get_union(self, name: DefName, /) -> Union:
+        return _ensure_type(self[name], Union)
+
+
+def _ensure_type[T: JsonWrapper](value: JsonWrapper, tp: type[T], /) -> T:
+    if not isinstance(value, tp):
+        msg = f"Expected a value of type {tp.__name__!r}, got:\n{value!r}"
+        raise TypeError(msg)
+    return value
+
+
 def _from_schema(schema: JsonSchema) -> JsonWrapper:
     if schema.ref:
         tp = Reference
@@ -286,7 +338,3 @@ def _from_schema_array(schema: JsonSchema) -> Sequence | NamedSequence | EmptySe
     else:
         tp = Sequence if isinstance(items, JsonSchema) else NamedSequence
     return tp.from_schema(schema)
-
-
-def from_definitions(definitions: dict[DefName, JsonSchema]) -> dict[DefName, JsonWrapper]:
-    return {k: _from_schema(v) for k, v in definitions.items()}
