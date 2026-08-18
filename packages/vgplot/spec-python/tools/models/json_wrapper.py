@@ -5,13 +5,33 @@
 """
 
 import collections.abc as cabc
-from typing import Any, Literal as L, Self, final
+from typing import Any, Final, Literal as L, Self, TypeIs, final
 
 import msgspec
 
 from tools.models import base
 from tools.models.mosaic import DefName, JsonSchema
 from tools.serde import convert_json
+
+type Scalar = L["boolean", "integer", "number", "string", "null"]
+"""Primitive Json schema types, excluding `"array"` and `"object"`."""
+
+_SCALAR_NAMES: Final = frozenset(("boolean", "integer", "number", "string", "null"))
+
+
+type Lit = str
+"""A schema-static literal string."""
+
+type LitBool = bool
+"""A schema-static literal boolean."""
+
+
+def _is_scalar(obj: Any) -> TypeIs[Scalar]:
+    return isinstance(obj, str) and obj in _SCALAR_NAMES
+
+
+def _is_scalar_subset(obj: cabc.Sequence[Any]) -> TypeIs[cabc.Sequence[Scalar]]:
+    return _SCALAR_NAMES.issuperset(obj)
 
 
 class _Tagged(base.Struct, tag=True, tag_field="tag"): ...
@@ -33,19 +53,6 @@ class JsonWrapper(_Tagged, kw_only=True):
         """Wrap a json schema, making this layer a tagged union."""
         msg = f"{cls.from_schema.__qualname__}() is not yet implemented"
         raise NotImplementedError(msg)
-
-
-class _DirectWrapper(JsonWrapper):
-    """Doesn't collect any fields yet.
-
-    ## Important
-    As soon as a subclass does anything beyond being a tag,
-    they should switch to `JsonWrapper` and implement `from_schema` properly.
-    """
-
-    @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Self:
-        return cls(schema=schema)
 
 
 @final
@@ -107,28 +114,69 @@ class Union(JsonWrapper):
 
 
 @final
-class Enum(_DirectWrapper):
-    """`Literal[...]`."""
-
-
-@final
-class Const(_DirectWrapper):
+class Const(JsonWrapper):
     """`Literal[<one>]`."""
 
+    value: Lit | LitBool
+
+    @classmethod
+    def from_schema(cls, schema: JsonSchema) -> Const:
+        if not isinstance(schema.const, (str, bool)):
+            raise _temporary_bad_static_error(schema.type, cls)
+        return Const(value=schema.const, schema=schema)
+
 
 @final
-class Primitive(_DirectWrapper):
+class Enum(JsonWrapper):
+    """`Literal[...]`."""
+
+    values: cabc.Sequence[Lit | LitBool | None]
+
+    @classmethod
+    def from_schema(cls, schema: JsonSchema) -> Enum:
+        return Enum(values=schema.enum, schema=schema)
+
+
+@final
+class Primitive(JsonWrapper):
     """`"type": ~("array" | "object")`."""
 
+    type: Scalar
+
+    @classmethod
+    def from_schema(cls, schema: JsonSchema) -> Primitive:
+        if not _is_scalar(schema.type):
+            raise _temporary_bad_static_error(schema.type, cls)
+        return Primitive(type=schema.type, schema=schema)
+
 
 @final
-class PrimitiveUnion(_DirectWrapper):
-    """`"type": ["null", "string", "number", "boolean"]`."""
+class PrimitiveUnion(JsonWrapper):
+    """`"type": ["null", "string", "number", "boolean"]`.
+
+    Will be lowered into a union later.
+    """
+
+    types: cabc.Sequence[Scalar]
+
+    @classmethod
+    def from_schema(cls, schema: JsonSchema) -> PrimitiveUnion:
+        types = schema.type
+        if isinstance(types, (str, type(None))):
+            raise _temporary_bad_static_error(types, cls)
+        if _is_scalar_subset(types):
+            return PrimitiveUnion(types=types, schema=schema)
+        msg = f"Unexpected primitive union type: {types!r}, in {schema!r}"
+        raise TypeError(msg)
 
 
 @final
-class EmptySequence(_DirectWrapper):
+class EmptySequence(JsonWrapper):
     """`{"maxItems": 0, "minItems": 0, "type": "array"}`."""
+
+    @classmethod
+    def from_schema(cls, schema: JsonSchema) -> EmptySequence:
+        return EmptySequence(schema=schema)
 
 
 @final
@@ -141,8 +189,7 @@ class NamedSequence(JsonWrapper):
     def from_schema(cls, schema: JsonSchema) -> NamedSequence:
         items = schema.items
         if isinstance(items, (JsonSchema, bool)):
-            msg = "Use `_from_schema` instead"
-            raise TypeError(msg)
+            raise _temporary_bad_static_error(items, cls)
         return NamedSequence(fields={el.title: _from_schema(el) for el in items}, schema=schema)
 
 
@@ -158,8 +205,7 @@ class Sequence(JsonWrapper):
     def from_schema(cls, schema: JsonSchema) -> Sequence:
         items = schema.items
         if not isinstance(items, JsonSchema):
-            msg = "Use `_from_schema` instead"
-            raise TypeError(msg)
+            raise _temporary_bad_static_error(items, cls)
         return Sequence(
             items=_from_schema(items), min=schema.min_items, max=schema.max_items, schema=schema
         )
@@ -219,6 +265,15 @@ def _from_schema(schema: JsonSchema) -> JsonWrapper:
     else:
         tp = Unknown
     return tp.from_schema(schema)
+
+
+def _temporary_bad_static_error(obj: Any, from_type: type[JsonWrapper]) -> TypeError:
+    """Return a placeholder error for union narrowing performed in the wrong order.
+
+    None of these should appear, but need to design things differently to avoid the check.
+    """
+    msg = f"Use `_from_schema` instead. Failed in {from_type.__name__!r}, got {obj!r}"
+    return TypeError(msg)
 
 
 def _from_schema_array(schema: JsonSchema) -> Sequence | NamedSequence | EmptySequence:
