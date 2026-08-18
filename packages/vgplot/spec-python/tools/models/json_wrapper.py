@@ -7,8 +7,9 @@
 from __future__ import annotations
 
 import collections.abc as cabc
-from collections.abc import Callable, Iterable, Iterator
-from typing import TYPE_CHECKING, Any, Final, Literal as L, Self, final
+from collections import deque
+from collections.abc import Callable, Iterator
+from typing import TYPE_CHECKING, Any, Final, Literal as L, Self, final, overload
 
 import msgspec
 
@@ -278,6 +279,9 @@ class Object(JsonWrapper):
         if self.extra_items:
             yield from self.extra_items.iter_refs()
 
+type JW = JsonWrapper
+type _Guard[T: JW] = Callable[[JW], TypeIs[T]]
+
 
 @final
 class Root(base.Struct, kw_only=True):
@@ -297,15 +301,19 @@ class Root(base.Struct, kw_only=True):
             schema=source.schema,
         )
 
-    def iter_defs(
-        self, predicate: Callable[[JsonWrapper], bool] | None = None, /
-    ) -> Iterator[tuple[DefName, JsonWrapper]]:
-        it: Iterable[tuple[DefName, JsonWrapper]]
+    @overload
+    def iter_defs[T: JW = JW](self, predicate: _Guard[T], /) -> Iterator[tuple[DefName, T]]: ...
+    @overload
+    def iter_defs(self, predicate: None = None, /) -> Iterator[tuple[DefName, JW]]: ...
+    def iter_defs[T: JW = JW](
+        self, predicate: _Guard[T] | None = None, /
+    ) -> Iterator[tuple[DefName, T | JW]]:
         if predicate is None:
-            it = self.definitions.items()
-        else:
-            it = ((name, schema) for name, schema in self.definitions.items() if predicate(schema))
-        yield from it
+            yield from self.definitions.items()
+            return
+        yield from (
+            (name, schema) for name, schema in self.definitions.items() if predicate(schema)
+        )
 
     def __getitem__(self, name: DefName, /) -> JsonWrapper:
         return self.definitions.__getitem__(name)
@@ -322,6 +330,38 @@ def _ensure_type[T: JsonWrapper](value: JsonWrapper, tp: type[T], /) -> T:
         msg = f"Expected a value of type {tp.__name__!r}, got:\n{value!r}"
         raise TypeError(msg)
     return value
+
+
+def is_object(obj: Any) -> TypeIs[Object]:
+    return isinstance(obj, Object)
+
+
+def is_union(obj: Any) -> TypeIs[Union]:
+    return isinstance(obj, Union)
+
+
+def is_ref(obj: Any) -> TypeIs[Reference]:
+    return isinstance(obj, Reference)
+
+
+def is_seq(obj: Any) -> TypeIs[Sequence]:
+    return isinstance(obj, Sequence)
+
+
+def is_seq_any(obj: Any) -> TypeIs[Sequence | NamedSequence]:
+    return isinstance(obj, (Sequence, NamedSequence, EmptySequence))
+
+
+def is_seq_named(obj: Any) -> TypeIs[NamedSequence]:
+    return isinstance(obj, NamedSequence)
+
+
+def is_const(obj: Any) -> TypeIs[Const]:
+    return isinstance(obj, Const)
+
+
+def is_enum(obj: Any) -> TypeIs[Enum]:
+    return isinstance(obj, Enum)
 
 
 def _from_schema(schema: JsonSchema) -> JsonWrapper:
