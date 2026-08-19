@@ -94,13 +94,7 @@ class EmptyTuple(MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
-@final
-class Tuple[Items: tuple[MLIR, ...]](MLIR, frozen=True, kw_only=True):
-    name: str
-    items: Items
-    doc: str = ""
-
-
+_SEQ_TYPE_SUFFIX: Final = "<type>"
 _EXTRA_ITEMS_SUFFIX: Final = "<extra_items>"
 _FIELD_TYPE_SEP: Final = "-"
 """Every type must have a name.
@@ -142,11 +136,25 @@ class NamedTuple(MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
-@final
-class Sequence[T: MLIR](MLIR, frozen=True, kw_only=True):
+class _SeqBase[T: MLIR](MLIR, frozen=True, kw_only=True):
     name: str
     type: Final[T]
     doc: str = ""
+
+
+@final
+class HomogeneousTuple[T: MLIR, N: int](_SeqBase[T], frozen=True, kw_only=True):
+    """A sequence with a fixed-length, where all elements are the same type.
+
+    ## Notes
+    Python's tuple is *heterogeneous*, but in `mosaic-schema.json` there are no cases of them
+    """
+
+    length: N
+
+
+@final
+class Sequence[T: MLIR](_SeqBase[T], frozen=True): ...
 
 
 @final
@@ -239,12 +247,25 @@ def _(obj: jw.Primitive | jw.PrimitiveUnion, name: DefName, /) -> Builtins:
     )
 
 
-# TODO @dangotbanned: Convert sequence
-# - varied min/max (if exists) will need to be converted into a union
+# TODO @dangotbanned: varied min/max (if exists) will need to be converted into a union
 @from_json.register(jw.Sequence)
-def _(obj: jw.Sequence, name: DefName, /) -> Tuple[Incomplete] | Sequence[Incomplete] | Union:
-    msg = f"todo: {obj.__class__.__name__!r}"
-    raise NotImplementedError(msg)
+def _(obj: jw.Sequence, name: DefName, /) -> HomogeneousTuple[MLIR, int] | Sequence[MLIR] | Union:
+    doc = obj.description
+    match (obj.min, obj.max):
+        case (0, None):
+            return Sequence(
+                name=name, type=from_json(obj.items, f"{name}{_SEQ_TYPE_SUFFIX}"), doc=doc
+            )
+        case (minimum, maximum) if minimum == maximum:
+            return HomogeneousTuple(
+                name=name,
+                type=from_json(obj.items, f"{name}{_SEQ_TYPE_SUFFIX}"),
+                length=minimum,
+                doc=doc,
+            )
+        case _:
+            msg = f"TODO: Sequence w/ inequal min/max, got: {name!r}\n{obj!r}"
+            raise NotImplementedError(msg)
 
 
 @from_json.register(jw.NamedSequence)
