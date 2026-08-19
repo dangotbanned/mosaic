@@ -37,8 +37,10 @@ _JSON_PY_SCALAR: Mapping[jw.Scalar, Scalar] = {
 }
 
 
-class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag"):
+class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=True):
     """Mid-level IR, representing something that's not quite JSON or Python."""
+
+    doc: str
 
 
 @final
@@ -64,7 +66,7 @@ class Any(MLIR, frozen=True, kw_only=True):
 
 
 @final
-class Unknown(MLIR, frozen=True):
+class Unknown(MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
@@ -76,40 +78,40 @@ class Builtins(MLIR, frozen=True, kw_only=True):
 
 
 @final
-class Literal(MLIR, frozen=True):
+class Literal(MLIR, frozen=True, kw_only=True):
     name: str
     members: frozenset[jw.Lit | jw.LitBool | None]
     doc: str = ""
 
 
 @final
-class EmptyTuple(MLIR, frozen=True):
+class EmptyTuple(MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
 @final
-class Tuple[Items: tuple[MLIR, ...]](MLIR, frozen=True):
+class Tuple[Items: tuple[MLIR, ...]](MLIR, frozen=True, kw_only=True):
     name: str
     items: Items
     doc: str = ""
 
 
 @final
-class Field(MLIR, frozen=True):
+class Field(MLIR, frozen=True, kw_only=True):
     name: str
     type: MLIR
     doc: str = ""
 
 
 @final
-class NamedTuple(MLIR, frozen=True):
+class NamedTuple(MLIR, frozen=True, kw_only=True):
     name: str
     fields: tuple[Field, ...]
     doc: str = ""
 
 
 @final
-class Sequence[T: MLIR](MLIR, frozen=True):
+class Sequence[T: MLIR](MLIR, frozen=True, kw_only=True):
     name: str
     type: Final[T]
     doc: str = ""
@@ -143,7 +145,7 @@ class ExtraDict(MLIR, frozen=True, kw_only=True):
 
 
 @final
-class Union(MLIR, frozen=True):
+class Union(MLIR, frozen=True, kw_only=True):
     name: str
     members: frozenset[MLIR]
     doc: str = ""
@@ -204,7 +206,7 @@ def _(obj: jw.Reference, _name: DefName, /) -> Reference | ExtReference:
 @from_json.register(jw.Const)
 @from_json.register(jw.Enum)
 def _(obj: jw.Const | jw.Enum, name: DefName, /) -> Literal:
-    return Literal(name, frozenset(obj.iter_values()), obj.description)
+    return Literal(name=name, members=frozenset(obj.iter_values()), doc=obj.description)
 
 
 @from_json.register(jw.Primitive)
