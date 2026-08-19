@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import collections.abc as cabc
 from collections.abc import Callable, Iterator
-from typing import TYPE_CHECKING, Any, Final, Literal as L, Self, final, overload
+from typing import TYPE_CHECKING, Annotated as A, Any, Final, Literal as L, Self, final, overload
 
 import msgspec
 
@@ -33,6 +33,8 @@ type Lit = str
 
 type LitBool = bool
 """A schema-static literal boolean."""
+
+type camelCase = A[str, L["camelCase"]]  # ruff: ignore[mixed-case-variable-in-global-scope, snake-case-type-alias]
 
 
 def _is_scalar(obj: Any) -> TypeIs[Scalar]:
@@ -223,7 +225,7 @@ class EmptySequence(JsonWrapper):
 class NamedSequence(JsonWrapper):
     """Like a `NamedTuple`, but will used `Annotated` on a regular tuple instead."""
 
-    fields: dict[str, JsonWrapper]
+    fields: dict[camelCase, JsonWrapper]
 
     @classmethod
     def from_schema(cls, schema: JsonSchema) -> NamedSequence:
@@ -266,8 +268,8 @@ type Closed = L["closed"]
 class Object(JsonWrapper):
     """`"type": "object"` AKA a class."""
 
-    fields: dict[str, JsonWrapper]
-    required: cabc.Sequence[str]
+    fields: dict[camelCase, JsonWrapper]
+    required: cabc.Sequence[camelCase]
     closed: Closed | None
     extra_items: JsonWrapper | None
 

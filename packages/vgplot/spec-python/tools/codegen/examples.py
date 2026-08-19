@@ -17,12 +17,11 @@
 from __future__ import annotations
 
 import functools
-import re
 from typing import TYPE_CHECKING, Any, Final, LiteralString as LS, Self
 
 from typing_extensions import TypedDict
 
-from tools.codegen.convert import KEYS_REPLACE
+from tools.codegen.convert import KEYS_REPLACE, pascal_to_snake_case
 from tools.codegen.docstrings import doc
 from tools.models.mosaic import _fix_ambiguous_unicode_characters
 from tools.serde import read_yaml_untyped
@@ -53,30 +52,12 @@ class YamlSpec(TypedDict, total=False, extra_items=JsonIn):
     plotDefaults: dict[str, JsonIn]
 
 
-_GROUP_1 = r"\g<1>"
-_GROUP_2 = r"\g<2>"
-_REPL_SNAKE = rf"{_GROUP_1}_{_GROUP_2}"
-_PATTERN_UPPER_LOWER = re.compile(r"([A-Z]+)([A-Z][a-z])")
-_PATTERN_LOWER_UPPER = re.compile(r"([a-z])([A-Z])")
-
-
-def _pascal_to_snake_case(s: str) -> str:
-    """Convert a PascalCase string to snake_case.
-
-    Adapted from https://github.com/pydantic/pydantic/blob/f7a9b73517afecf25bf898e3b5f591dffe669778/pydantic/alias_generators.py#L43-L62
-    """
-    # Handle the sequence of uppercase letters followed by a lowercase letter
-    snake = _PATTERN_UPPER_LOWER.sub(_REPL_SNAKE, s)
-    # Insert an underscore between a lowercase letter and an uppercase letter
-    return _PATTERN_LOWER_UPPER.sub(_REPL_SNAKE, snake).lower()
-
-
 _GET_KEY = KEYS_REPLACE.get
 
 
 @functools.cache
 def _py_name(s: str, /) -> str:
-    return _GET_KEY(s) or _pascal_to_snake_case(s)
+    return _GET_KEY(s) or pascal_to_snake_case(s)
 
 
 _LIST_AS_TUPLE: Final = frozenset(

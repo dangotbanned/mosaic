@@ -14,13 +14,18 @@
 
 from __future__ import annotations
 
+# ruff: file-ignore[builtin-argument-shadowing]
 import functools
 import typing
 from collections.abc import Mapping
 from typing import Final, Literal as L, final
 
+from tools.codegen.convert import pascal_to_snake_case
 from tools.models import base, json_wrapper as jw
 from tools.models.mosaic import DefName  # ruff: ignore[typing-only-first-party-import]
+
+if typing.TYPE_CHECKING:
+    from tools.common import snake_case
 
 # NOTE: Use this instead of importing `Any`, since we have one defined here
 type Incomplete = typing.Any
@@ -96,11 +101,33 @@ class Tuple[Items: tuple[MLIR, ...]](MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
+_FIELD_TYPE_SEP: Final = "-"
+"""Every type must have a name.
+
+`Field.type` derives one via:
+
+```py
+f"{DefName}-{Field.name}"
+```
+"""
+
+
 @final
 class Field(MLIR, frozen=True, kw_only=True):
-    name: str
+    """An entry in a `*Dict` or `NamedTuple`."""
+
+    name: snake_case
     type: MLIR
+    required: bool
     doc: str = ""
+
+    @classmethod
+    def from_json(
+        cls, owner: DefName, name: jw.camelCase, type: jw.JsonWrapper, *, required: bool
+    ) -> Field:
+        out_name = pascal_to_snake_case(name)
+        out_type = from_json(type, f"{owner}{_FIELD_TYPE_SEP}{out_name}")
+        return Field(name=out_name, type=out_type, required=required, doc=out_type.doc)
 
 
 @final
@@ -227,11 +254,13 @@ def _(obj: jw.Sequence, name: DefName, /) -> Tuple[Incomplete] | Sequence[Incomp
     raise NotImplementedError(msg)
 
 
-# TODO @dangotbanned: Convert named sequence
 @from_json.register(jw.NamedSequence)
 def _(obj: jw.NamedSequence, name: DefName, /) -> NamedTuple:
-    msg = f"todo: {obj.__class__.__name__!r}"
-    raise NotImplementedError(msg)
+    fields = tuple(
+        Field.from_json(name, f_name, f_type, required=True)
+        for f_name, f_type in obj.fields.items()
+    )
+    return NamedTuple(name=name, fields=fields, doc=obj.description)
 
 
 # TODO @dangotbanned: Convert object
