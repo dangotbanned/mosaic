@@ -133,7 +133,8 @@ class Field(MLIR, frozen=True, kw_only=True):
     ) -> Field:
         out_name = pascal_to_snake_case(name)
         out_type = from_json(type, Fmt.fields.format(owner=owner, name=out_name))
-        return Field(name=out_name, type=out_type, required=required, doc=out_type.doc)
+        doc = out_type.doc
+        return Field(name=out_name, type=out_type.__replace__(doc=""), required=required, doc=doc)
 
 
 @final
