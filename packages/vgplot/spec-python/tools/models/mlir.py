@@ -42,13 +42,24 @@ class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag"):
 
 
 @final
-class Reference(MLIR, frozen=True):
+class Reference(MLIR, frozen=True, kw_only=True):
+    """A reference to a symbol defined in the same file."""
+
     ref: str
     doc: str = ""
 
 
 @final
-class Any(MLIR, frozen=True):
+class ExtReference(MLIR, frozen=True, kw_only=True):
+    """A reference to a symbol defined externally."""
+
+    ref: str
+    ext: str
+    doc: str = ""
+
+
+@final
+class Any(MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
@@ -178,9 +189,16 @@ def _(obj: jw.Unknown, _name: DefName, /) -> Unknown:
     return Unknown(doc=obj.description)
 
 
+_POUND_DEFS = "#/definitions/"
+
+
 @from_json.register(jw.Reference)
-def _(obj: jw.Reference, _name: DefName, /) -> Reference:
-    return Reference(ref=obj.ref, doc=obj.description)
+def _(obj: jw.Reference, _name: DefName, /) -> Reference | ExtReference:
+    ref = obj.ref
+    if ref.startswith(_POUND_DEFS):
+        return Reference(ref=ref.removeprefix(_POUND_DEFS), doc=obj.description)
+    ext, ref = ref.split(_POUND_DEFS)
+    return ExtReference(ref=ref, ext=ext, doc=obj.description)
 
 
 @from_json.register(jw.Const)
