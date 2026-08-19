@@ -5,7 +5,7 @@ from __future__ import annotations
 import functools
 from collections import deque
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Literal as L
+from typing import TYPE_CHECKING, Any, Final, Literal as L
 
 import msgspec
 
@@ -30,10 +30,12 @@ type _IntoExtension = Callable[[type[_Extension], _SerializableNative], _Extensi
 [converter]: https://msgspec.dev/extending#mapping-to-from-native-types
 """
 
+_SORT_TO_ORDER: Final[Mapping[bool, L["sorted"] | None]] = {True: "sorted", False: None}
 
-def serialize_json(obj: Any, /, *, order: L["deterministic", "sorted"] | None = None) -> bytes:
+
+def serialize_json(obj: Any, /, *, sort: bool = False) -> bytes:
     """Serialize an object as JSON."""
-    return _encoder_json(order).encode(obj)
+    return _encoder_json(_SORT_TO_ORDER[sort]).encode(obj)
 
 
 def deserialize_json[T](buf: Buffer | str, tp: type[T], /) -> T:
@@ -67,16 +69,16 @@ def read_json[T](path: IntoPath, tp: type[T], /) -> T:
         return deserialize_json(fd.read(), tp)
 
 
-def write_json(path: IntoPath, obj: Any, *, pretty: bool = False) -> None:
+def write_json(path: IntoPath, obj: Any, *, pretty: bool = False, sort: bool = True) -> None:
     """Serialize an object to a JSON file."""
-    bstring = serialize_json(obj, order="sorted")
+    bstring = serialize_json(obj, sort=sort)
     bstring = msgspec.json.format(bstring) if pretty else bstring
     _write_bytes_as_str(path, bstring)
 
 
-def write_toml(path: IntoPath, obj: Any) -> None:
+def write_toml(path: IntoPath, obj: Any, *, sort: bool = True) -> None:
     """Serialize an object to a TOML file."""
-    _write_bytes_as_str(path, msgspec.toml.encode(obj, order="sorted"))
+    _write_bytes_as_str(path, msgspec.toml.encode(obj, order=_SORT_TO_ORDER[sort]))
 
 
 def read_yaml[T](path: IntoPath, tp: type[T] | TypeForm[T], /) -> T:
