@@ -8,11 +8,23 @@ from __future__ import annotations
 
 import collections.abc as cabc
 from collections.abc import Callable, Iterator
-from typing import TYPE_CHECKING, Annotated as A, Any, Final, Literal as L, Self, final, overload
+from itertools import chain
+from typing import (
+    TYPE_CHECKING,
+    Annotated as A,
+    Any,
+    Final,
+    Literal as L,
+    Self,
+    assert_never,
+    final,
+    overload,
+)
 
 import msgspec
 
 from tools.models import base
+from tools.models.config import ConvertConfig, ReferenceUnwrap
 from tools.models.mosaic import DefName, InputSchema, JsonSchema
 from tools.serde import convert_json
 
@@ -58,6 +70,10 @@ class JsonWrapper(_Tagged, kw_only=True):
     @property
     def description(self) -> str:
         return self.schema.description
+
+    @description.setter
+    def description(self, value: str) -> None:
+        self.schema.description = value
 
     @classmethod
     def from_schema(cls, schema: JsonSchema) -> Self:
@@ -110,6 +126,9 @@ class Unknown(JsonWrapper):
         raise NotImplementedError(msg)
 
 
+_POUND_DEFS: Final = "#/definitions/"
+
+
 @final
 class Reference(JsonWrapper):
     """`$ref`."""
@@ -122,6 +141,11 @@ class Reference(JsonWrapper):
 
     def iter_refs(self) -> Iterator[Reference]:
         yield self
+
+    @property
+    def def_name(self) -> DefName:
+        """Return the name that this reference points to."""
+        return self.ref.removeprefix(_POUND_DEFS)
 
 
 @final
@@ -300,7 +324,7 @@ class Object(JsonWrapper):
 
 
 type JW = JsonWrapper
-type _Guard[T: JW] = Callable[[JW], TypeIs[T]]
+type _Guard[T: JW] = Callable[[Any], TypeIs[T]]
 
 
 @final
@@ -311,25 +335,28 @@ class Root(base.Struct, kw_only=True):
     definitions: dict[DefName, JsonWrapper]
     ref: str = msgspec.field(name="$ref", default="")
     schema: str = msgspec.field(name="$schema")
+    config: ConvertConfig = msgspec.field(default_factory=ConvertConfig)
 
     @classmethod
-    def from_input_schema(cls, source: InputSchema) -> Root:
+    def from_input_schema(cls, source: InputSchema, config: ConvertConfig | None = None) -> Root:
         return Root(
             id=source.id,
             definitions={k: _from_schema(v) for k, v in source.definitions.items()},
             ref=source.ref,
             schema=source.schema,
+            config=config or ConvertConfig(),
         )
 
     @overload
     def iter_defs[T: JW = JW](self, predicate: _Guard[T], /) -> Iterator[tuple[DefName, T]]: ...
     @overload
     def iter_defs(
-        self, predicate: Callable[[JW], bool] | None = None, /
+        self, predicate: Callable[[Any], bool] | None = None, /
     ) -> Iterator[tuple[DefName, JW]]: ...
     def iter_defs[T: JW = JW](
-        self, predicate: _Guard[T] | Callable[[JW], bool] | None = None, /
+        self, predicate: _Guard[T] | Callable[[Any], bool] | None = None, /
     ) -> Iterator[tuple[DefName, T | JW]]:
+        """Iterate over the definitions in the schema, optionally filtered via `predicate`."""
         if predicate is None:
             yield from self.definitions.items()
             return
@@ -337,8 +364,16 @@ class Root(base.Struct, kw_only=True):
             (name, schema) for name, schema in self.definitions.items() if predicate(schema)
         )
 
+    def iter_refs(self) -> Iterator[Reference]:
+        """Yield all references within the entire schema."""
+        for schema in self.definitions.values():
+            yield from schema.iter_refs()
+
     def __getitem__(self, name: DefName, /) -> JsonWrapper:
         return self.definitions.__getitem__(name)
+
+    def pop(self, name: DefName, /) -> JsonWrapper:
+        return self.definitions.pop(name)
 
     def get_object(self, name: DefName, /) -> Object:
         return _ensure_type(self[name], Object)
@@ -350,6 +385,65 @@ class Root(base.Struct, kw_only=True):
         from tools.models import mlir
 
         return mlir.Root.from_json_wrapper(self)
+
+    def ref_unwrap(self) -> None:
+        """Rewrite top-level references.
+
+        ## Notes
+        - Used for 4 reference/(union/literal) pairs:
+            - Curve/CurveName
+            - Interval/LiteralTimeInterval
+            - StackOffset/StackOffsetName
+            - VectorShape/VectorShapeName
+        - Want to remove the nesting, pick 1 description (they often have 2), update everywhere they are ref'd
+        """
+        cfg = self.config.to_mlir.ref_unwrap
+        ref_unwrap_default = ReferenceUnwrap()
+        modified = {}
+        to_replace = {}
+        for outer_name, outer in self.iter_defs(is_ref):
+            inner_name = outer.def_name
+            inner = self[inner_name]
+            policy = cfg.get(outer_name, ref_unwrap_default)
+            if policy.name == "outer":
+                final_name = outer_name
+            else:
+                final_name = _unwrap_pick(policy.name, outer_name, inner_name)
+
+            outer_desc = outer.description
+            if policy.description == "outer":
+                inner.description = outer_desc
+            else:
+                inner.description = _unwrap_pick(policy.description, outer_desc, inner.description)
+            modified[final_name] = inner
+            to_replace[(outer_name, inner_name)] = final_name
+
+        if not to_replace:
+            return
+        for old in set(chain.from_iterable(to_replace)):
+            self.definitions.pop(old)
+        self.definitions.update(modified)
+
+        defs = _POUND_DEFS
+        repl_table: dict[str, str] = {}
+        for (key1, key2), new_name in to_replace.items():
+            repl_table[f"{defs}{key1}"] = repl_table[f"{defs}{key2}"] = f"{defs}{new_name}"
+        replacement_fn = repl_table.get
+        for ref in self.iter_refs():
+            if match := replacement_fn(ref.ref):
+                ref.ref = match
+
+
+def _unwrap_pick(policy: L["inner", "longest", "shortest"], outer: str, inner: str) -> str:
+    match policy:
+        case "inner":
+            return inner
+        case "longest":
+            return max(outer, inner)
+        case "shortest":
+            return min(outer, inner)
+        case _:
+            assert_never(policy)
 
 
 def _ensure_type[T: JsonWrapper](value: JsonWrapper, tp: type[T], /) -> T:

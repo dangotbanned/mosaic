@@ -187,22 +187,13 @@ class Root(base.Struct, kw_only=True):
 
     @classmethod
     def from_json_wrapper(cls, source: jw.Root, /) -> Root:
-        """See for special cases.
-
-        - A `Reference` in `definitions` needs to be unwrapped
-            - Curve/CurveName
-            - Interval/LiteralTimeInterval
-            - StackOffset/StackOffsetName
-            - VectorShape/VectorShapeName
-        """
-        definitions = {}
-        for name, schema in source.definitions.items():
-            if isinstance(schema, jw.Reference):
-                # NOTE: All other (nested) refs can use use singledispatch version
-                msg = f"TODO: reference unwrapping + update at end of conversion, got: {name!r}, {schema!r}"
-                raise NotImplementedError(msg)
-            definitions[name] = from_json(schema, name)
-        return Root(id=source.id, definitions=definitions)
+        source.ref_unwrap()
+        return Root(
+            id=source.id,
+            definitions={
+                name: from_json(schema, name) for name, schema in source.definitions.items()
+            },
+        )
 
 
 @functools.singledispatch
