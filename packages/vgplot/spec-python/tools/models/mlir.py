@@ -42,6 +42,30 @@ _JSON_PY_SCALAR: Mapping[jw.Scalar, Scalar] = {
 }
 
 
+@final
+class Fmt:
+    """Format-string namespace for generating type names.
+
+    It must be *possible* to name every type encountered.
+    The names that are generated are **intentionally** invalid python identifiers
+    and are approximately the path to reach the type.
+
+    Tip:
+        Use [`is_def_name`][] to check if a name *was not* generated using `Fmt`
+    """
+
+    __slots__ = ()
+    members: Final = "{owner}/{idx}"
+    type: Final = "{owner}/type"
+    fields: Final = "{owner}/fields/{name}"
+    extra_items: Final = "{owner}/extra_items"
+
+
+@functools.lru_cache(maxsize=1024)
+def is_def_name(s: str, /) -> bool:
+    return "/" not in s
+
+
 class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=True):
     """Mid-level IR, representing something that's not quite JSON or Python."""
 
@@ -94,23 +118,6 @@ class EmptyTuple(MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
-_SEQ_TYPE_SUFFIX: Final = "<type>"
-_EXTRA_ITEMS_SUFFIX: Final = "<extra_items>"
-_FIELD_TYPE_SEP: Final = "-"
-"""Every type must have a name.
-
-`Field.type` derives one via:
-
-```py
-f"{DefName}-{Field.name}"
-```
-
-## Important
-This deliberately makes the type name an invalid python identifier.
-Synthesized names should never reach generated code *silently*.
-"""
-
-
 @final
 class Field(MLIR, frozen=True, kw_only=True):
     """An entry in a `*Dict` or `NamedTuple`."""
@@ -125,7 +132,7 @@ class Field(MLIR, frozen=True, kw_only=True):
         cls, owner: DefName, name: jw.camelCase, type: jw.JsonWrapper, *, required: bool
     ) -> Field:
         out_name = pascal_to_snake_case(name)
-        out_type = from_json(type, f"{owner}{_FIELD_TYPE_SEP}{out_name}")
+        out_type = from_json(type, Fmt.fields.format(owner=owner, name=out_name))
         return Field(name=out_name, type=out_type, required=required, doc=out_type.doc)
 
 
@@ -263,8 +270,7 @@ def _(
     obj: jw.Sequence, name: DefName, /
 ) -> Sequence[MLIR] | HomogeneousTuple[MLIR, int] | VariantHomogeneousTuple[MLIR, tuple[int, ...]]:
     doc = obj.description
-    type_name = f"{name}{_SEQ_TYPE_SUFFIX}"
-    type = from_json(obj.items, type_name)
+    type = from_json(obj.items, Fmt.type.format(owner=name))
     match (obj.min, obj.max):
         case (0, None):
             return Sequence(name=name, type=type, doc=doc)
@@ -306,7 +312,7 @@ def _(obj: jw.Object, name: DefName, /) -> OpenDict | ClosedDict | ExtraDict:
         case ("closed", None):
             return ClosedDict(name=name, fields=fields, doc=doc)
         case (None, extra):
-            extra_items = from_json(extra, f"{name}{_EXTRA_ITEMS_SUFFIX}")
+            extra_items = from_json(extra, Fmt.extra_items.format(owner=name))
             return ExtraDict(name=name, fields=fields, extra_items=extra_items, doc=doc)
         case _:
             msg = f"Cannot combine closed={obj.closed!r} and extra_items={obj.extra_items!r}"
@@ -317,9 +323,8 @@ def _(obj: jw.Object, name: DefName, /) -> OpenDict | ClosedDict | ExtraDict:
 # - currently missing out on de-duplication via frozenset comprehension
 @from_json.register(jw.Union)
 def _(obj: jw.Union, name: DefName, /) -> Union:
-    fmt = f"{name}<{{0}}>".format
-    return Union(
-        name=name,
-        members=frozenset(from_json(member, fmt(idx)) for idx, member in enumerate(obj.members, 1)),
-        doc=obj.description,
+    fmt = Fmt.members.format
+    members = frozenset(
+        from_json(member, fmt(owner=name, idx=idx)) for idx, member in enumerate(obj.members)
     )
+    return Union(name=name, members=members, doc=obj.description)
