@@ -101,6 +101,7 @@ class Tuple[Items: tuple[MLIR, ...]](MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
+_EXTRA_ITEMS_SUFFIX: Final = "<extra_items>"
 _FIELD_TYPE_SEP: Final = "-"
 """Every type must have a name.
 
@@ -109,6 +110,10 @@ _FIELD_TYPE_SEP: Final = "-"
 ```py
 f"{DefName}-{Field.name}"
 ```
+
+## Important
+This deliberately makes the type name an invalid python identifier.
+Synthesized names should never reach generated code *silently*.
 """
 
 
@@ -146,11 +151,10 @@ class Sequence[T: MLIR](MLIR, frozen=True, kw_only=True):
 
 @final
 class OpenDict(MLIR, frozen=True, kw_only=True):
-    """`bases` will be in the next IR."""
+    """`bases`, `total` will be in the next IR."""
 
     name: str
     fields: tuple[Field, ...]
-    total: bool = False
     doc: str = ""
 
 
@@ -158,7 +162,6 @@ class OpenDict(MLIR, frozen=True, kw_only=True):
 class ClosedDict(MLIR, frozen=True, kw_only=True):
     name: str
     fields: tuple[Field, ...]
-    total: bool = False
     doc: str = ""
 
 
@@ -166,7 +169,6 @@ class ClosedDict(MLIR, frozen=True, kw_only=True):
 class ExtraDict(MLIR, frozen=True, kw_only=True):
     name: str
     fields: tuple[Field, ...]
-    total: bool = False
     extra_items: MLIR
     doc: str = ""
 
@@ -263,14 +265,26 @@ def _(obj: jw.NamedSequence, name: DefName, /) -> NamedTuple:
     return NamedTuple(name=name, fields=fields, doc=obj.description)
 
 
-# TODO @dangotbanned: Convert object
-# - pairing required with fields
-# - doing something with anonymous field types?
-# - branching here on `closed`, `extra_items`
 @from_json.register(jw.Object)
 def _(obj: jw.Object, name: DefName, /) -> OpenDict | ClosedDict | ExtraDict:
-    msg = f"todo: {obj.__class__.__name__!r}"
-    raise NotImplementedError(msg)
+    # Having `required` paired with each field removes a surface to sync
+    is_required = frozenset(obj.required).__contains__
+    fields = tuple(
+        Field.from_json(name, f_name, f_type, required=is_required(f_name))
+        for f_name, f_type in obj.fields.items()
+    )
+    doc = obj.description
+    match obj.closed, obj.extra_items:
+        case (None, None):
+            return OpenDict(name=name, fields=fields, doc=doc)
+        case ("closed", None):
+            return ClosedDict(name=name, fields=fields, doc=doc)
+        case (None, extra):
+            extra_items = from_json(extra, f"{name}{_EXTRA_ITEMS_SUFFIX}")
+            return ExtraDict(name=name, fields=fields, extra_items=extra_items, doc=doc)
+        case _:
+            msg = f"Cannot combine closed={obj.closed!r} and extra_items={obj.extra_items!r}"
+            raise TypeError(msg)
 
 
 # TODO @dangotbanned: Convert union
