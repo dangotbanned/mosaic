@@ -117,7 +117,7 @@ class Field(MLIR, frozen=True, kw_only=True):
 
     name: snake_case
     type: MLIR
-    required: bool
+    required: bool = False
     doc: str = ""
 
     @classmethod
