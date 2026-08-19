@@ -144,13 +144,24 @@ class _SeqBase[T: MLIR](MLIR, frozen=True, kw_only=True):
 
 @final
 class HomogeneousTuple[T: MLIR, N: int](_SeqBase[T], frozen=True, kw_only=True):
-    """A sequence with a fixed-length, where all elements are the same type.
+    """A sequence where all elements are the same type and has a fixed-length.
 
     ## Notes
     Python's tuple is *heterogeneous*, but in `mosaic-schema.json` there are no cases of them
     """
 
     length: N
+
+
+@final
+class VariantHomogeneousTuple[T: MLIR, Ns: tuple[int, ...]](_SeqBase[T], frozen=True, kw_only=True):
+    """A sequence where all elements are the same type and has one of the lengths specified in `Ns`.
+
+    ## Notes
+    Represents `min: int, max: int`, which in Python means `tuple[T, T] | tuple[T, T, T] | ...`
+    """
+
+    lengths: Ns
 
 
 @final
@@ -247,24 +258,27 @@ def _(obj: jw.Primitive | jw.PrimitiveUnion, name: DefName, /) -> Builtins:
     )
 
 
-# TODO @dangotbanned: varied min/max (if exists) will need to be converted into a union
 @from_json.register(jw.Sequence)
-def _(obj: jw.Sequence, name: DefName, /) -> HomogeneousTuple[MLIR, int] | Sequence[MLIR] | Union:
+def _(
+    obj: jw.Sequence, name: DefName, /
+) -> Sequence[MLIR] | HomogeneousTuple[MLIR, int] | VariantHomogeneousTuple[MLIR, tuple[int, ...]]:
     doc = obj.description
+    type_name = f"{name}{_SEQ_TYPE_SUFFIX}"
+    type = from_json(obj.items, type_name)
     match (obj.min, obj.max):
         case (0, None):
-            return Sequence(
-                name=name, type=from_json(obj.items, f"{name}{_SEQ_TYPE_SUFFIX}"), doc=doc
-            )
+            return Sequence(name=name, type=type, doc=doc)
         case (minimum, maximum) if minimum == maximum:
-            return HomogeneousTuple(
-                name=name,
-                type=from_json(obj.items, f"{name}{_SEQ_TYPE_SUFFIX}"),
-                length=minimum,
-                doc=doc,
+            return HomogeneousTuple(name=name, type=type, length=minimum, doc=doc)
+        case (minimum, int() as maximum):
+            # NOTE: `Lag.lag` should be min 1, max 3 and datamodel-code-generator gets that wrong
+            return VariantHomogeneousTuple(
+                name=name, type=type, lengths=tuple(range(minimum, maximum + 1)), doc=doc
             )
         case _:
-            msg = f"TODO: Sequence w/ inequal min/max, got: {name!r}\n{obj!r}"
+            # NOTE: could be representable in python as `tuple[T, Min, *tuple[T, ...]]`
+            # We don't have any cases like it yet though
+            msg = f"Didn't expect to see ({(obj.min, obj.max)!r}) in {name!r}\n\n{obj!r}"
             raise NotImplementedError(msg)
 
 
