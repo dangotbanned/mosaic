@@ -313,8 +313,13 @@ def _(obj: jw.Object, name: DefName, /) -> OpenDict | ClosedDict | ExtraDict:
             raise TypeError(msg)
 
 
-# TODO @dangotbanned: Convert union
+# TODO @dangotbanned: Decide if assigning an index should be deferred
+# - currently missing out on de-duplication via frozenset comprehension
 @from_json.register(jw.Union)
 def _(obj: jw.Union, name: DefName, /) -> Union:
-    msg = f"todo: {obj.__class__.__name__!r}"
-    raise NotImplementedError(msg)
+    fmt = f"{name}<{{0}}>".format
+    return Union(
+        name=name,
+        members=frozenset(from_json(member, fmt(idx)) for idx, member in enumerate(obj.members, 1)),
+        doc=obj.description,
+    )
