@@ -17,6 +17,7 @@ from __future__ import annotations
 # ruff: file-ignore[builtin-argument-shadowing]
 import functools
 import typing
+from collections import deque
 from collections.abc import Mapping
 from typing import Final, Literal as L, final
 
@@ -325,7 +326,24 @@ def _(obj: jw.Object, name: DefName, /) -> OpenDict | ClosedDict | ExtraDict:
 @from_json.register(jw.Union)
 def _(obj: jw.Union, name: DefName, /) -> Union:
     fmt = Fmt.members.format
-    members = frozenset(
-        from_json(member, fmt(owner=name, idx=idx)) for idx, member in enumerate(obj.members)
-    )
-    return Union(name=name, members=members, doc=obj.description)
+    merge_builtins = set()
+    merge_literals = set()
+    first_name_builtins: str = ""
+    first_name_literals: str = ""
+    members = deque[MLIR]()
+    for idx, member in enumerate(obj.members):
+        converted = from_json(member, fmt(owner=name, idx=idx))
+        if (not converted.doc) and isinstance(converted, (Builtins, Literal)):
+            if isinstance(converted, Builtins):
+                merge_builtins.update(converted.types)
+                first_name_builtins = first_name_builtins or converted.name
+            else:
+                merge_literals.update(converted.members)
+                first_name_literals = first_name_builtins or converted.name
+        else:
+            members.append(converted)
+    if merge_builtins:
+        members.append(Builtins(name=first_name_builtins, types=frozenset(merge_builtins)))
+    if merge_literals:
+        members.append(Literal(name=first_name_literals, members=frozenset(merge_literals)))
+    return Union(name=name, members=frozenset(members), doc=obj.description)
