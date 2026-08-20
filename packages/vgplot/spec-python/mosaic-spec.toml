@@ -1,0 +1,5 @@
+#:schema file://./mosaic-spec-toml-schema.json
+
+[convert]
+[convert.to_mlir]
+ref_unwrap = { Curve = { description = "outer" } }

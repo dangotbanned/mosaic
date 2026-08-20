@@ -25,7 +25,7 @@ import msgspec
 
 from tools.models import base
 from tools.models.base import DefName
-from tools.models.config import ConvertConfig, ReferenceUnwrap
+from tools.models.config import ConvertConfig, MosaicSpecToml, ReferenceUnwrap
 from tools.models.mosaic import InputSchema, JsonSchema
 from tools.serde import convert_json
 
@@ -338,7 +338,9 @@ class Root(base.Root[JsonWrapper], kw_only=True):
             definitions={k: _from_schema(v) for k, v in source.definitions.items()},
             ref=source.ref,
             schema=source.schema,
-            config=config or ConvertConfig(),
+            # NOTE: At some point this should be less eager and cache based on file info
+            # Changing things a lot for now so not worried about perf
+            config=config or MosaicSpecToml.discover_config().convert,
         )
 
     def iter_refs(self) -> Iterator[Reference]:

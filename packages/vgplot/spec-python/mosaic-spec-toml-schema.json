@@ -1,0 +1,67 @@
+{
+  "$defs": {
+    "ConvertConfig": {
+      "description": "Top-level config for translation/codegen.",
+      "properties": {
+        "to_mlir": {
+          "$ref": "#/$defs/JsonWrapperToMLIR"
+        }
+      },
+      "required": [],
+      "title": "ConvertConfig",
+      "type": "object"
+    },
+    "JsonWrapperToMLIR": {
+      "description": "Configure converting from json schema.\n\nRepresents the first conversion stage.",
+      "properties": {
+        "ref_unwrap": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ReferenceUnwrap"
+          },
+          "default": {},
+          "type": "object"
+        }
+      },
+      "required": [],
+      "title": "JsonWrapperToMLIR",
+      "type": "object"
+    },
+    "MosaicSpecToml": {
+      "properties": {
+        "convert": {
+          "$ref": "#/$defs/ConvertConfig"
+        }
+      },
+      "required": [],
+      "title": "MosaicSpecToml",
+      "type": "object"
+    },
+    "ReferenceUnwrap": {
+      "description": "Override how each attribute is chosen when unwraping a ref.\n\n## Notes\nBoth `name` and `description` are resolved independently. Here they are referred to as **value**.\n\n- *\"longest\"*: pick the longest value\n- *\"shortest\"*: pick the shortest value\n    - **note**: The default description is `\"\"`\n- *\"outer\"*: use the value of the definition with a `\"$ref\"` field\n- *\"inner\"*: use the value of the definition without a `\"$ref\"` field\n\n## Examples\n`\"Curve\"` does not add much value to `\"CurveName\"`, but it has a different name and description:\n\n```py\nschema = {\n    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n    \"definitions\": {\n        \"Curve\": {\n            \"$ref\": \"#/definitions/CurveName\",\n            \"description\": \"How to interpolate between control points.\",\n        },\n        \"CurveName\": {\n            \"description\": \"The built-in curve implementations.\",\n            \"enum\": [\"basis\", \"basis-closed\", \"basis-open\"],\n            \"type\": \"string\",\n        },\n    },\n}\n```\n\nBy default, `schema` will be simplified using the `\"outer\"` name (`\"Curve\"`)\nand the `\"longest\"` description (`\"CurveName\"`)\n\n```py\nschema = {\n    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n    \"definitions\": {\n        \"Curve\": {\n            \"description\": \"How to interpolate between control points.\",\n            \"enum\": [\"basis\", \"basis-closed\", \"basis-open\"],\n            \"type\": \"string\",\n        }\n    },\n}\n```",
+      "properties": {
+        "description": {
+          "default": "longest",
+          "enum": [
+            "inner",
+            "longest",
+            "outer",
+            "shortest"
+          ]
+        },
+        "name": {
+          "default": "outer",
+          "enum": [
+            "inner",
+            "longest",
+            "outer",
+            "shortest"
+          ]
+        }
+      },
+      "required": [],
+      "title": "ReferenceUnwrap",
+      "type": "object"
+    }
+  },
+  "$ref": "#/$defs/MosaicSpecToml"
+}

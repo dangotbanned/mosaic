@@ -1,7 +1,7 @@
 """Configuration via toml."""
 
 from collections.abc import Mapping
-from typing import Literal as L
+from typing import Literal as L, final
 
 import msgspec
 
@@ -65,6 +65,11 @@ class ReferenceUnwrap(base.FrozenStruct, frozen=True):
 
 
 class JsonWrapperToMLIR(base.FrozenStruct, frozen=True):
+    """Configure converting from json schema.
+
+    Represents the first conversion stage.
+    """
+
     ref_unwrap: Mapping[DefName, ReferenceUnwrap] = msgspec.field(default_factory=dict)
     """Mapping from the outer ("$ref"-defining) definition name to a policy table."""
 
@@ -73,7 +78,21 @@ class ConvertConfig(base.FrozenStruct, frozen=True):
     """Top-level config for translation/codegen."""
 
     to_mlir: JsonWrapperToMLIR = msgspec.field(default_factory=JsonWrapperToMLIR)
-    """Configure converting from json schema.
 
-    Represents the first conversion stage.
-    """
+
+@final
+class MosaicSpecToml(base.FrozenStruct, frozen=True):
+    convert: ConvertConfig = msgspec.field(default_factory=ConvertConfig)
+
+    @classmethod
+    def generate_config_schema(cls) -> None:
+        from tools import fs, serde
+
+        schema = msgspec.json.schema(cls)
+        serde.write_json(fs.MOSAIC_SPEC_TOML_SCHEMA, schema, pretty=True)
+
+    @classmethod
+    def discover_config(cls) -> MosaicSpecToml:
+        from tools import fs, serde
+
+        return serde.read_toml(fs.MOSAIC_SPEC_TOML, cls)

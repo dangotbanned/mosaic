@@ -83,6 +83,9 @@ WIDGET = VGPLOT_PACKAGE / "widget"
 SPEC_PYTHON = _HERE.parent.parent
 """`mosaic/packages/vgplot/spec-python`"""
 
+MOSAIC_SPEC_TOML = SPEC_PYTHON / "mosaic-spec.toml"
+MOSAIC_SPEC_TOML_SCHEMA = SPEC_PYTHON / "mosaic-spec-toml-schema.json"
+
 SCHEMA: Final = SPEC_PYTHON / "schema"
 """`mosaic/packages/vgplot/spec-python/schema`.
 

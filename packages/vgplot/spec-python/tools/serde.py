@@ -43,6 +43,11 @@ def deserialize_json[T](buf: Buffer | str, tp: type[T], /) -> T:
     return _decoder_json(tp).decode(buf)
 
 
+def deserialize_toml[T](buf: Buffer | str, tp: type[T], /) -> T:
+    """Deserialize an object from TOML into `T`."""
+    return msgspec.toml.decode(buf, type=tp, dec_hook=_decoder_hook)
+
+
 def deserialize_yaml[T](buf: Buffer | str, tp: type[T] | TypeForm[T], /) -> T:
     """Deserialize an object from YAML into `T`."""
     # NOTE: msgspec overloads "forget" to use `Buffer` after the first one
@@ -74,6 +79,11 @@ def write_json(path: IntoPath, obj: Any, *, pretty: bool = False, sort: bool = T
     bstring = serialize_json(obj, sort=sort)
     bstring = msgspec.json.format(bstring) if pretty else bstring
     _write_bytes_as_str(path, bstring)
+
+
+def read_toml[T](path: IntoPath, tp: type[T], /) -> T:
+    with Path(path).open(encoding="utf8") as fd:
+        return deserialize_toml(fd.read(), tp)
 
 
 def write_toml(path: IntoPath, obj: Any, *, sort: bool = True) -> None:
