@@ -43,30 +43,6 @@ _JSON_PY_SCALAR: Mapping[jw.Scalar, Scalar] = {
 }
 
 
-@final
-class Fmt:
-    """Format-string namespace for generating type names.
-
-    It must be *possible* to name every type encountered.
-    The names that are generated are **intentionally** invalid python identifiers
-    and are approximately the path to reach the type.
-
-    Tip:
-        Use [`is_def_name`][] to check if a name *was not* generated using `Fmt`
-    """
-
-    __slots__ = ()
-    members: Final = "{owner}/{idx}"
-    type: Final = "{owner}/type"
-    fields: Final = "{owner}/fields/{name}"
-    extra_items: Final = "{owner}/extra_items"
-
-
-@functools.lru_cache(maxsize=1024)
-def is_def_name(s: str, /) -> bool:
-    return "/" not in s
-
-
 class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=True):
     """Mid-level IR, representing something that's not quite JSON or Python."""
 
@@ -102,14 +78,12 @@ class Unknown(MLIR, frozen=True, kw_only=True):
 
 @final
 class Builtins(MLIR, frozen=True, kw_only=True):
-    name: str = ""
     types: frozenset[Scalar]
     doc: str = ""
 
 
 @final
 class Literal(MLIR, frozen=True, kw_only=True):
-    name: str
     members: frozenset[jw.Lit | jw.LitBool | None]
     doc: str = ""
 
@@ -124,6 +98,7 @@ class Field(MLIR, frozen=True, kw_only=True):
     """An entry in a `*Dict` or `NamedTuple`."""
 
     name: snake_case
+    """The name of the field."""
     type: MLIR
     required: bool = False
     doc: str = ""
@@ -133,20 +108,18 @@ class Field(MLIR, frozen=True, kw_only=True):
         cls, owner: DefName, name: jw.camelCase, type: jw.JsonWrapper, *, required: bool
     ) -> Field:
         out_name = pascal_to_snake_case(name)
-        out_type = from_json(type, Fmt.fields.format(owner=owner, name=out_name))
+        out_type = from_json(type, owner)
         doc = out_type.doc
         return Field(name=out_name, type=out_type.__replace__(doc=""), required=required, doc=doc)
 
 
 @final
 class NamedTuple(MLIR, frozen=True, kw_only=True):
-    name: str
     fields: tuple[Field, ...]
     doc: str = ""
 
 
 class _SeqBase[T: MLIR](MLIR, frozen=True, kw_only=True):
-    name: str
     type: Final[T]
     doc: str = ""
 
@@ -181,21 +154,18 @@ class Sequence[T: MLIR](_SeqBase[T], frozen=True): ...
 class OpenDict(MLIR, frozen=True, kw_only=True):
     """`bases`, `total` will be in the next IR."""
 
-    name: str
     fields: tuple[Field, ...]
     doc: str = ""
 
 
 @final
 class ClosedDict(MLIR, frozen=True, kw_only=True):
-    name: str
     fields: tuple[Field, ...]
     doc: str = ""
 
 
 @final
 class ExtraDict(MLIR, frozen=True, kw_only=True):
-    name: str
     fields: tuple[Field, ...]
     extra_items: MLIR
     doc: str = ""
@@ -203,7 +173,6 @@ class ExtraDict(MLIR, frozen=True, kw_only=True):
 
 @final
 class Union(MLIR, frozen=True, kw_only=True):
-    name: str
     members: frozenset[MLIR]
     doc: str = ""
 
@@ -216,31 +185,44 @@ class Root(base.Root[MLIR]):
         return Root(
             id=source.id,
             definitions={
-                name: from_json(schema, name) for name, schema in source.definitions.items()
+                name: _from_json_dispatch(schema, name)
+                for name, schema in source.definitions.items()
             },
         )
 
 
+def from_json(obj: jw.JsonWrapper, owner: DefName, /) -> MLIR:
+    """Convert a `JsonWrapper` to a `MLIR`.
+
+    Args:
+        obj: The object to convert.
+        owner: The definition that we originated from.
+            Used for error messages.
+    """
+    return _from_json_dispatch(obj, owner)
+
+
 @functools.singledispatch
-def from_json(obj: jw.JsonWrapper, name: DefName, /) -> MLIR:
-    raise NotImplementedError(obj.__class__)
+def _from_json_dispatch(obj: jw.JsonWrapper, owner: DefName, /) -> MLIR:
+    msg = f"Converting {obj.__class__.__name__!r} is not yet implemented, in {owner!r}\n\n{obj!r}"
+    raise NotImplementedError(msg)
 
 
-@from_json.register(jw.EmptySequence)
-def _(obj: jw.EmptySequence, _name: DefName, /) -> EmptyTuple:
+@_from_json_dispatch.register(jw.EmptySequence)
+def _(obj: jw.EmptySequence, _owner: DefName, /) -> EmptyTuple:
     return EmptyTuple(doc=obj.description)
 
 
-@from_json.register(jw.Unknown)
-def _(obj: jw.Unknown, _name: DefName, /) -> Unknown:
+@_from_json_dispatch.register(jw.Unknown)
+def _(obj: jw.Unknown, _owner: DefName, /) -> Unknown:
     return Unknown(doc=obj.description)
 
 
 _POUND_DEFS = "#/definitions/"
 
 
-@from_json.register(jw.Reference)
-def _(obj: jw.Reference, _name: DefName, /) -> Reference | ExtReference:
+@_from_json_dispatch.register(jw.Reference)
+def _(obj: jw.Reference, _owner: DefName, /) -> Reference | ExtReference:
     ref = obj.ref
     if ref.startswith(_POUND_DEFS):
         return Reference(ref=ref.removeprefix(_POUND_DEFS), doc=obj.description)
@@ -248,99 +230,89 @@ def _(obj: jw.Reference, _name: DefName, /) -> Reference | ExtReference:
     return ExtReference(ref=ref, ext=ext, doc=obj.description)
 
 
-@from_json.register(jw.Const)
-@from_json.register(jw.Enum)
-def _(obj: jw.Const | jw.Enum, name: DefName, /) -> Literal:
-    return Literal(name=name, members=frozenset(obj.iter_values()), doc=obj.description)
+@_from_json_dispatch.register(jw.Const)
+@_from_json_dispatch.register(jw.Enum)
+def _(obj: jw.Const | jw.Enum, _owner: DefName, /) -> Literal:
+    return Literal(members=frozenset(obj.iter_values()), doc=obj.description)
 
 
-@from_json.register(jw.Primitive)
-@from_json.register(jw.PrimitiveUnion)
-def _(obj: jw.Primitive | jw.PrimitiveUnion, name: DefName, /) -> Builtins:
+@_from_json_dispatch.register(jw.Primitive)
+@_from_json_dispatch.register(jw.PrimitiveUnion)
+def _(obj: jw.Primitive | jw.PrimitiveUnion, _owner: DefName, /) -> Builtins:
     return Builtins(
-        name=name,
-        types=frozenset(_JSON_PY_SCALAR[t] for t in obj.iter_types()),
-        doc=obj.description,
+        types=frozenset(_JSON_PY_SCALAR[t] for t in obj.iter_types()), doc=obj.description
     )
 
 
-@from_json.register(jw.Sequence)
+@_from_json_dispatch.register(jw.Sequence)
 def _(
-    obj: jw.Sequence, name: DefName, /
+    obj: jw.Sequence, owner: DefName, /
 ) -> Sequence[MLIR] | HomogeneousTuple[MLIR, int] | VariantHomogeneousTuple[MLIR, tuple[int, ...]]:
     doc = obj.description
-    type = from_json(obj.items, Fmt.type.format(owner=name))
+    type = from_json(obj.items, owner)
     match (obj.min, obj.max):
         case (0, None):
-            return Sequence(name=name, type=type, doc=doc)
+            return Sequence(type=type, doc=doc)
         case (minimum, maximum) if minimum == maximum:
-            return HomogeneousTuple(name=name, type=type, length=minimum, doc=doc)
+            return HomogeneousTuple(type=type, length=minimum, doc=doc)
         case (minimum, int() as maximum):
             # NOTE: `Lag.lag` should be min 1, max 3 and datamodel-code-generator gets that wrong
             return VariantHomogeneousTuple(
-                name=name, type=type, lengths=tuple(range(minimum, maximum + 1)), doc=doc
+                type=type, lengths=tuple(range(minimum, maximum + 1)), doc=doc
             )
         case _:
             # NOTE: could be representable in python as `tuple[T, Min, *tuple[T, ...]]`
             # We don't have any cases like it yet though
-            msg = f"Didn't expect to see ({(obj.min, obj.max)!r}) in {name!r}\n\n{obj!r}"
+            msg = f"Didn't expect to see ({(obj.min, obj.max)!r}) in {owner!r}\n\n{obj!r}"
             raise NotImplementedError(msg)
 
 
-@from_json.register(jw.NamedSequence)
-def _(obj: jw.NamedSequence, name: DefName, /) -> NamedTuple:
+@_from_json_dispatch.register(jw.NamedSequence)
+def _(obj: jw.NamedSequence, owner: DefName, /) -> NamedTuple:
     fields = tuple(
-        Field.from_json(name, f_name, f_type, required=True)
+        Field.from_json(owner, f_name, f_type, required=True)
         for f_name, f_type in obj.fields.items()
     )
-    return NamedTuple(name=name, fields=fields, doc=obj.description)
+    return NamedTuple(fields=fields, doc=obj.description)
 
 
-@from_json.register(jw.Object)
-def _(obj: jw.Object, name: DefName, /) -> OpenDict | ClosedDict | ExtraDict:
+@_from_json_dispatch.register(jw.Object)
+def _(obj: jw.Object, owner: DefName, /) -> OpenDict | ClosedDict | ExtraDict:
     # Having `required` paired with each field removes a surface to sync
     is_required = frozenset(obj.required).__contains__
     fields = tuple(
-        Field.from_json(name, f_name, f_type, required=is_required(f_name))
+        Field.from_json(owner, f_name, f_type, required=is_required(f_name))
         for f_name, f_type in obj.fields.items()
     )
     doc = obj.description
     match obj.closed, obj.extra_items:
         case (None, None):
-            return OpenDict(name=name, fields=fields, doc=doc)
+            return OpenDict(fields=fields, doc=doc)
         case ("closed", None):
-            return ClosedDict(name=name, fields=fields, doc=doc)
+            return ClosedDict(fields=fields, doc=doc)
         case (None, extra):
-            extra_items = from_json(extra, Fmt.extra_items.format(owner=name))
-            return ExtraDict(name=name, fields=fields, extra_items=extra_items, doc=doc)
+            return ExtraDict(fields=fields, extra_items=from_json(extra, owner), doc=doc)
         case _:
-            msg = f"Cannot combine closed={obj.closed!r} and extra_items={obj.extra_items!r}"
+            msg = f"Cannot combine closed={obj.closed!r} and extra_items={obj.extra_items!r} in {owner!r}\n\n{obj!r}"
             raise TypeError(msg)
 
 
-# TODO @dangotbanned: Decide if assigning an index should be deferred
-# - currently missing out on de-duplication via frozenset comprehension
-@from_json.register(jw.Union)
-def _(obj: jw.Union, name: DefName, /) -> Union:
-    fmt = Fmt.members.format
+@_from_json_dispatch.register(jw.Union)
+def _(obj: jw.Union, owner: DefName, /) -> Union:
     merge_builtins = set()
     merge_literals = set()
-    first_name_builtins: str = ""
-    first_name_literals: str = ""
     members = deque[MLIR]()
-    for idx, member in enumerate(obj.members):
-        converted = from_json(member, fmt(owner=name, idx=idx))
+    for member in obj.members:
+        converted = from_json(member, owner)
         if (not converted.doc) and isinstance(converted, (Builtins, Literal)):
             if isinstance(converted, Builtins):
                 merge_builtins.update(converted.types)
-                first_name_builtins = first_name_builtins or converted.name
             else:
                 merge_literals.update(converted.members)
-                first_name_literals = first_name_builtins or converted.name
         else:
             members.append(converted)
     if merge_builtins:
-        members.append(Builtins(name=first_name_builtins, types=frozenset(merge_builtins)))
+        members.append(Builtins(types=frozenset(merge_builtins)))
     if merge_literals:
-        members.append(Literal(name=first_name_literals, members=frozenset(merge_literals)))
-    return Union(name=name, members=frozenset(members), doc=obj.description)
+        members.append(Literal(members=frozenset(merge_literals)))
+    return Union(members=frozenset(members), doc=obj.description)
