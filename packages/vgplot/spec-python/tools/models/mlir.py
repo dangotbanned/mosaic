@@ -61,7 +61,7 @@ class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=Tr
 
 
 @final
-class Reference(MLIR, frozen=True, kw_only=True):
+class Reference(MLIR, frozen=True, kw_only=True, cache_hash=True):
     """A reference to a symbol defined in the same file."""
 
     ref: str
@@ -72,7 +72,7 @@ class Reference(MLIR, frozen=True, kw_only=True):
 
 
 @final
-class ExtReference(MLIR, frozen=True, kw_only=True):
+class ExtReference(MLIR, frozen=True, kw_only=True, cache_hash=True):
     """A reference to a symbol defined externally."""
 
     ref: str
@@ -324,17 +324,69 @@ class ConversionCtx:
 
 
 @final
-class Root(base.Root[MLIR]):
+class DefInfo(base.Struct):
+    """The mutable thing stored next to each top-level def.
+
+    ## Notes
+    - Definition
+        - Each definition is a graph of immutable nodes
+        - A definition is stored in a mutable structure (dict)
+        - That dict provides the name and is stored in a mutable struct (Root)
+    - All of this can be respected with changes triggering a replacement of the definition with a new one
+    - Making sense of that means storing details about references
+        - To allow moving node `A` to file x, we need to check for references **to** and **from** `A`
+        - This can be computed for the full `definitions` dict on creation
+        - Then subsequent changes are incremental
+    """
+
+    refs: set[Reference]
+    ext_refs: set[ExtReference]
+
+    @classmethod
+    def from_def(cls, defn: MLIR, /) -> DefInfo:
+        return DefInfo(refs=set(defn.iter_refs()), ext_refs=set(defn.iter_ext_refs()))
+
+    def has_references(self) -> bool:
+        return bool(self.refs or self.ext_refs)
+
+
+@final
+class Root(base.Root[MLIR], kw_only=True):
+    def_infos: dict[str, DefInfo]
+
+    def pop(self, name: DefName, /) -> MLIR:
+        result = super().pop(name)
+        del self.def_infos[name]
+        return result
+
+    def replace(self, name: DefName, defn: MLIR, /) -> None:
+        """Replace an existing definition with an updated version.
+
+        *Unconditionally* recomputes reference information based on the new version.
+        """
+        self.def_infos[name] = DefInfo.from_def(defn)
+        self.definitions[name] = defn
+
+    def replace_naive(self, name: DefName, defn: MLIR, /) -> None:
+        """Replace an existing definition with an updated version.
+
+        *Naive* as we assume that because the definition didn't start with references, it never will.
+        """
+        current_info = self.def_infos[name]
+        if current_info.has_references():
+            self.def_infos[name] = DefInfo.from_def(defn)
+        self.definitions[name] = defn
+
     @classmethod
     def from_json_wrapper(cls, source: jw.Root, /) -> tuple[Root, ConversionCtx]:
         source.ref_unwrap()
         ctx = ConversionCtx()
-        root = Root(
-            id=source.id,
-            definitions={
-                name: from_json(schema, name, ctx) for name, schema in source.definitions.items()
-            },
-        )
+        definitions: dict[DefName, MLIR] = {}
+        def_infos: dict[str, DefInfo] = {}
+        for name, schema in source.definitions.items():
+            defn = definitions[name] = from_json(schema, name, ctx)
+            def_infos[name] = DefInfo.from_def(defn)
+        root = Root(id=source.id, definitions=definitions, def_infos=def_infos)
         return root, ctx
 
 
