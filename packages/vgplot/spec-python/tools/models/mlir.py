@@ -17,8 +17,11 @@ from __future__ import annotations
 # ruff: file-ignore[builtin-argument-shadowing]
 import functools
 import typing
-from collections.abc import Mapping
-from typing import Final, Literal as L, final
+from collections import defaultdict, deque
+from collections.abc import Iterator, Mapping
+from typing import Final, Literal as L, NewType, final
+
+import msgspec
 
 from tools.codegen.convert import pascal_to_snake_case
 from tools.models import base, json_wrapper as jw
@@ -104,12 +107,22 @@ class Field(MLIR, frozen=True, kw_only=True):
 
     @classmethod
     def from_json(
-        cls, owner: DefName, name: jw.camelCase, type: jw.JsonWrapper, *, required: bool
+        cls,
+        owner: DefName,
+        name: jw.camelCase,
+        type: jw.JsonWrapper,
+        ctx: ConversionCtx,
+        *,
+        required: bool,
     ) -> Field:
         out_name = pascal_to_snake_case(name)
-        out_type = from_json(type, owner)
+        out_type = _I_KNOW_WHAT_IM_DOING(type, owner, ctx)
         doc = out_type.doc
-        return Field(name=out_name, type=out_type.__replace__(doc=""), required=required, doc=doc)
+        out_type = out_type.__replace__(doc="")
+        ctx.add(out_type, owner)
+        result = Field(name=out_name, type=out_type, required=required, doc=doc)
+        ctx.add(result, owner)
+        return result
 
 
 @final
@@ -176,44 +189,113 @@ class Union(MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
+Idx = NewType("Idx", int)
+
+
+class ConversionCtx(base.Struct):
+    """A history of what happened during `JsonWrapper` to `MLIR` conversion.
+
+    ## Notes
+    - Everything is traced, and serves as a descriptive tool to start with
+    - Need to build things differently to take advantage of this
+        - Making aliases for common types and replacing the duplication with references
+        - Identifying when to synthesize base classes and or intersections
+    """
+
+    seen: defaultdict[type[MLIR], list[MLIR]] = msgspec.field(
+        default_factory=lambda: defaultdict(list)
+    )
+    """Per-MLIR-type to instances, ordered by creation time.
+
+    Can answer questions like:
+    - How frequently does each `type[MLIR]` appear?
+    - What does each instance look like?
+    - Do we have runs of similar/duplicated instances?
+    """
+
+    positions: defaultdict[DefName, deque[tuple[type[MLIR], Idx]]] = msgspec.field(
+        default_factory=lambda: defaultdict(deque)
+    )
+    """Per-top-level definition to keys into `seen`.
+
+    Can answer questions like:
+    - What does each definition produce?
+    - Do we have more patterns in `seen` that are repeated across definitions?
+    """
+
+    def add(self, result: MLIR, owner: DefName, /) -> None:
+        seen_key = type(result)
+        seen_list = self.seen[seen_key]
+        seen_list.append(result)
+        idx = Idx(seen_list.__len__() - 1)
+        self.positions[owner].append((seen_key, idx))
+
+    def get_instances_of[M: MLIR](self, tp: type[M], /) -> list[M]:
+        return typing.cast("list[M]", self.seen[tp])
+
+    def get_instances_owned(self, owner: DefName, /) -> Iterator[MLIR]:
+        seen_get = self.seen.__getitem__
+        for tp, idx in self.positions[owner]:
+            yield seen_get(tp)[idx]
+
+
 @final
 class Root(base.Root[MLIR]):
     @classmethod
-    def from_json_wrapper(cls, source: jw.Root, /) -> Root:
+    def from_json_wrapper(cls, source: jw.Root, /) -> tuple[Root, ConversionCtx]:
         source.ref_unwrap()
-        return Root(
+        ctx = ConversionCtx()
+        root = Root(
             id=source.id,
             definitions={
-                name: _from_json_dispatch(schema, name)
-                for name, schema in source.definitions.items()
+                name: from_json(schema, name, ctx) for name, schema in source.definitions.items()
             },
         )
+        return root, ctx
 
 
-def from_json(obj: jw.JsonWrapper, owner: DefName, /) -> MLIR:
+def from_json(obj: jw.JsonWrapper, owner: DefName, ctx: ConversionCtx, /) -> MLIR:
     """Convert a `JsonWrapper` to a `MLIR`.
 
     Args:
         obj: The object to convert.
         owner: The definition that we originated from.
             Used for error messages.
+        ctx: Mutable state that records the conversion process.
     """
-    return _from_json_dispatch(obj, owner)
+    result = _from_json_dispatch(obj, owner, ctx)
+    ctx.add(result, owner)
+    return result
 
 
 @functools.singledispatch
-def _from_json_dispatch(obj: jw.JsonWrapper, owner: DefName, /) -> MLIR:
+def _from_json_dispatch(obj: jw.JsonWrapper, owner: DefName, ctx: ConversionCtx, /) -> MLIR:
+    """Impl for `from_json`.
+
+    Use this for registration only.
+    """
     msg = f"Converting {obj.__class__.__name__!r} is not yet implemented, in {owner!r}\n\n{obj!r}"
     raise NotImplementedError(msg)
 
 
+_I_KNOW_WHAT_IM_DOING: Final = _from_json_dispatch
+"""A marker for rewrites inside of `from_json`.
+
+The caller is responsible for recording the result in `ctx`, which allows things like:
+
+- Replacing parts of the result
+- De-duplicating members of a union
+- Skipping things entirely
+"""
+
+
 @_from_json_dispatch.register(jw.EmptySequence)
-def _(obj: jw.EmptySequence, _owner: DefName, /) -> EmptyTuple:
+def _(obj: jw.EmptySequence, _owner: DefName, _ctx: ConversionCtx, /) -> EmptyTuple:
     return EmptyTuple(doc=obj.description)
 
 
 @_from_json_dispatch.register(jw.Unknown)
-def _(obj: jw.Unknown, _owner: DefName, /) -> Unknown:
+def _(obj: jw.Unknown, _owner: DefName, _ctx: ConversionCtx, /) -> Unknown:
     return Unknown(doc=obj.description)
 
 
@@ -221,7 +303,7 @@ _POUND_DEFS = "#/definitions/"
 
 
 @_from_json_dispatch.register(jw.Reference)
-def _(obj: jw.Reference, _owner: DefName, /) -> Reference | ExtReference:
+def _(obj: jw.Reference, _owner: DefName, _ctx: ConversionCtx, /) -> Reference | ExtReference:
     ref = obj.ref
     if ref.startswith(_POUND_DEFS):
         return Reference(ref=ref.removeprefix(_POUND_DEFS), doc=obj.description)
@@ -231,30 +313,30 @@ def _(obj: jw.Reference, _owner: DefName, /) -> Reference | ExtReference:
 
 @_from_json_dispatch.register(jw.Const)
 @_from_json_dispatch.register(jw.Enum)
-def _(obj: jw.Const | jw.Enum, _owner: DefName, /) -> Literal:
+def _(obj: jw.Const | jw.Enum, _owner: DefName, _ctx: ConversionCtx, /) -> Literal:
     return Literal(members=tuple(obj.iter_values()), doc=obj.description)
 
 
 @_from_json_dispatch.register(jw.Primitive)
 @_from_json_dispatch.register(jw.PrimitiveUnion)
-def _(obj: jw.Primitive | jw.PrimitiveUnion, _owner: DefName, /) -> Builtins:
+def _(obj: jw.Primitive | jw.PrimitiveUnion, _owner: DefName, _ctx: ConversionCtx, /) -> Builtins:
     return Builtins(types=tuple(_JSON_PY_SCALAR[t] for t in obj.iter_types()), doc=obj.description)
 
 
 @_from_json_dispatch.register(jw.Sequence)
 def _(
-    obj: jw.Sequence, owner: DefName, /
+    obj: jw.Sequence, owner: DefName, ctx: ConversionCtx, /
 ) -> Sequence[MLIR] | HomogeneousTuple[MLIR, int] | VariantHomogeneousTuple[MLIR, tuple[int, ...]]:
     doc = obj.description
-    type = from_json(obj.items, owner)
+    type = from_json(obj.items, owner, ctx)
     match (obj.min, obj.max):
         case (0, None):
-            return Sequence(type=type, doc=doc)
+            result = Sequence(type=type, doc=doc)
         case (minimum, maximum) if minimum == maximum:
-            return HomogeneousTuple(type=type, length=minimum, doc=doc)
+            result = HomogeneousTuple(type=type, length=minimum, doc=doc)
         case (minimum, int() as maximum):
             # NOTE: `Lag.lag` should be min 1, max 3 and datamodel-code-generator gets that wrong
-            return VariantHomogeneousTuple(
+            result = VariantHomogeneousTuple(
                 type=type, lengths=tuple(range(minimum, maximum + 1)), doc=doc
             )
         case _:
@@ -262,45 +344,47 @@ def _(
             # We don't have any cases like it yet though
             msg = f"Didn't expect to see ({(obj.min, obj.max)!r}) in {owner!r}\n\n{obj!r}"
             raise NotImplementedError(msg)
+    return result
 
 
 @_from_json_dispatch.register(jw.NamedSequence)
-def _(obj: jw.NamedSequence, owner: DefName, /) -> NamedTuple:
+def _(obj: jw.NamedSequence, owner: DefName, ctx: ConversionCtx, /) -> NamedTuple:
     fields = tuple(
-        Field.from_json(owner, f_name, f_type, required=True)
+        Field.from_json(owner, f_name, f_type, ctx, required=True)
         for f_name, f_type in obj.fields.items()
     )
     return NamedTuple(fields=fields, doc=obj.description)
 
 
 @_from_json_dispatch.register(jw.Object)
-def _(obj: jw.Object, owner: DefName, /) -> OpenDict | ClosedDict | ExtraDict:
+def _(obj: jw.Object, owner: DefName, ctx: ConversionCtx, /) -> OpenDict | ClosedDict | ExtraDict:
     # Having `required` paired with each field removes a surface to sync
     is_required = frozenset(obj.required).__contains__
     fields = tuple(
-        Field.from_json(owner, f_name, f_type, required=is_required(f_name))
+        Field.from_json(owner, f_name, f_type, ctx, required=is_required(f_name))
         for f_name, f_type in obj.fields.items()
     )
     doc = obj.description
     match obj.closed, obj.extra_items:
         case (None, None):
-            return OpenDict(fields=fields, doc=doc)
+            result = OpenDict(fields=fields, doc=doc)
         case ("closed", None):
-            return ClosedDict(fields=fields, doc=doc)
+            result = ClosedDict(fields=fields, doc=doc)
         case (None, extra):
-            return ExtraDict(fields=fields, extra_items=from_json(extra, owner), doc=doc)
+            result = ExtraDict(fields=fields, extra_items=from_json(extra, owner, ctx), doc=doc)
         case _:
             msg = f"Cannot combine closed={obj.closed!r} and extra_items={obj.extra_items!r} in {owner!r}\n\n{obj!r}"
             raise TypeError(msg)
+    return result
 
 
 @_from_json_dispatch.register(jw.Union)
-def _(obj: jw.Union, owner: DefName, /) -> Union:
+def _(obj: jw.Union, owner: DefName, ctx: ConversionCtx, /) -> Union:
     merge_builtins = set()
     merge_literals = set()
     members = set[MLIR]()
     for member in obj.members:
-        converted = from_json(member, owner)
+        converted = _I_KNOW_WHAT_IM_DOING(member, owner, ctx)
         if (not converted.doc) and isinstance(converted, (Builtins, Literal)):
             if isinstance(converted, Builtins):
                 merge_builtins.update(converted.types)
@@ -312,4 +396,7 @@ def _(obj: jw.Union, owner: DefName, /) -> Union:
         members.add(Builtins(types=tuple(merge_builtins)))
     if merge_literals:
         members.add(Literal(members=tuple(merge_literals)))
-    return Union(members=tuple(members), doc=obj.description)
+    members_final = tuple(members)
+    for member in members_final:
+        ctx.add(member, owner)
+    return Union(members=members_final, doc=obj.description)

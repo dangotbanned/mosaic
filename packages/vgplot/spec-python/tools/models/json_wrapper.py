@@ -352,7 +352,7 @@ class Root(base.Root[JsonWrapper], kw_only=True):
     def get_union(self, name: DefName, /) -> Union:
         return self.get_typed(name, Union)
 
-    def to_mlir(self) -> mlir.Root:
+    def to_mlir(self) -> tuple[mlir.Root, mlir.ConversionCtx]:
         from tools.models import mlir
 
         return mlir.Root.from_json_wrapper(self)
