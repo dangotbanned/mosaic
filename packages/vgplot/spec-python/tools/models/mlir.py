@@ -46,11 +46,18 @@ class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=Tr
     def iter_descendants(self) -> Iterator[MLIR]:
         # `ast.walk`-ish
         yield self
-        for child in self.iter_children():
-            yield from child.iter_descendants()
 
+    def iter_refs(self) -> Iterator[Reference]:
+        """Yield all references owned by the current node.
 
-## Non-parent
+        - If the node is a reference, it will yield itself.
+        - References are not resolved.
+        """
+        yield from ()
+
+    def iter_ext_refs(self) -> Iterator[ExtReference]:
+        """Yield all external references owned by the current node."""
+        yield from ()
 
 
 @final
@@ -60,6 +67,9 @@ class Reference(MLIR, frozen=True, kw_only=True):
     ref: str
     doc: str = ""
 
+    def iter_refs(self) -> Iterator[Reference]:
+        yield self
+
 
 @final
 class ExtReference(MLIR, frozen=True, kw_only=True):
@@ -68,6 +78,9 @@ class ExtReference(MLIR, frozen=True, kw_only=True):
     ref: str
     ext: str
     doc: str = ""
+
+    def iter_ext_refs(self) -> Iterator[ExtReference]:
+        yield self
 
 
 @final
@@ -131,21 +144,37 @@ class EmptyTuple(MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
-## Parent
+class _HasChildren(MLIR, frozen=True, kw_only=True):
+    def iter_descendants(self) -> Iterator[MLIR]:
+        # `ast.walk`-ish
+        yield self
+        for child in self.iter_children():
+            yield from child.iter_descendants()
+
+    def iter_refs(self) -> Iterator[Reference]:
+        for child in self.iter_children():
+            yield from child.iter_refs()
+
+    def iter_ext_refs(self) -> Iterator[ExtReference]:
+        for child in self.iter_children():
+            yield from child.iter_ext_refs()
 
 
-@final
-class Field(MLIR, frozen=True, kw_only=True):
-    """An entry in a `*Dict` or `NamedTuple`."""
-
-    name: snake_case
-    """The name of the field."""
-    type: MLIR
-    required: bool = False
+class _BaseType[T: MLIR](_HasChildren, frozen=True, kw_only=True):
+    type: Final[T]
     doc: str = ""
 
     def iter_children(self) -> Iterator[MLIR]:
         yield self.type
+
+
+@final
+class Field[T: MLIR = MLIR](_BaseType[T], frozen=True):
+    """An entry in a `*Dict` or `NamedTuple`."""
+
+    name: snake_case
+    """The name of the field."""
+    required: bool = False
 
     @classmethod
     def from_json(
@@ -167,15 +196,10 @@ class Field(MLIR, frozen=True, kw_only=True):
         return result
 
 
-class _BaseSeq[T: MLIR](MLIR, frozen=True, kw_only=True):
-    type: Final[T]
-    doc: str = ""
-
-    def iter_children(self) -> Iterator[MLIR]:
-        yield self.type
+class _BaseSeq[T: MLIR](_BaseType[T], frozen=True): ...
 
 
-class _BaseFields(MLIR, frozen=True, kw_only=True):
+class _BaseFields(_HasChildren, frozen=True, kw_only=True):
     fields: tuple[Field, ...]
     doc: str = ""
 
@@ -240,7 +264,7 @@ class ExtraDict(_BaseFields, frozen=True):
 
 
 @final
-class Union(MLIR, frozen=True, kw_only=True):
+class Union(_HasChildren, frozen=True, kw_only=True):
     members: tuple[MLIR, ...]
     doc: str = ""
 
