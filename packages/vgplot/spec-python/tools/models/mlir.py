@@ -17,7 +17,6 @@ from __future__ import annotations
 # ruff: file-ignore[builtin-argument-shadowing]
 import functools
 import typing
-from collections import deque
 from collections.abc import Mapping
 from typing import Final, Literal as L, final
 
@@ -78,13 +77,13 @@ class Unknown(MLIR, frozen=True, kw_only=True):
 
 @final
 class Builtins(MLIR, frozen=True, kw_only=True):
-    types: frozenset[Scalar]
+    types: tuple[Scalar, ...]
     doc: str = ""
 
 
 @final
 class Literal(MLIR, frozen=True, kw_only=True):
-    members: frozenset[jw.Lit | jw.LitBool | None]
+    members: tuple[jw.Lit | jw.LitBool | None, ...]
     doc: str = ""
 
 
@@ -173,7 +172,7 @@ class ExtraDict(MLIR, frozen=True, kw_only=True):
 
 @final
 class Union(MLIR, frozen=True, kw_only=True):
-    members: frozenset[MLIR]
+    members: tuple[MLIR, ...]
     doc: str = ""
 
 
@@ -233,15 +232,13 @@ def _(obj: jw.Reference, _owner: DefName, /) -> Reference | ExtReference:
 @_from_json_dispatch.register(jw.Const)
 @_from_json_dispatch.register(jw.Enum)
 def _(obj: jw.Const | jw.Enum, _owner: DefName, /) -> Literal:
-    return Literal(members=frozenset(obj.iter_values()), doc=obj.description)
+    return Literal(members=tuple(obj.iter_values()), doc=obj.description)
 
 
 @_from_json_dispatch.register(jw.Primitive)
 @_from_json_dispatch.register(jw.PrimitiveUnion)
 def _(obj: jw.Primitive | jw.PrimitiveUnion, _owner: DefName, /) -> Builtins:
-    return Builtins(
-        types=frozenset(_JSON_PY_SCALAR[t] for t in obj.iter_types()), doc=obj.description
-    )
+    return Builtins(types=tuple(_JSON_PY_SCALAR[t] for t in obj.iter_types()), doc=obj.description)
 
 
 @_from_json_dispatch.register(jw.Sequence)
@@ -301,7 +298,7 @@ def _(obj: jw.Object, owner: DefName, /) -> OpenDict | ClosedDict | ExtraDict:
 def _(obj: jw.Union, owner: DefName, /) -> Union:
     merge_builtins = set()
     merge_literals = set()
-    members = deque[MLIR]()
+    members = set[MLIR]()
     for member in obj.members:
         converted = from_json(member, owner)
         if (not converted.doc) and isinstance(converted, (Builtins, Literal)):
@@ -310,9 +307,9 @@ def _(obj: jw.Union, owner: DefName, /) -> Union:
             else:
                 merge_literals.update(converted.members)
         else:
-            members.append(converted)
+            members.add(converted)
     if merge_builtins:
-        members.append(Builtins(types=frozenset(merge_builtins)))
+        members.add(Builtins(types=tuple(merge_builtins)))
     if merge_literals:
-        members.append(Literal(members=frozenset(merge_literals)))
-    return Union(members=frozenset(members), doc=obj.description)
+        members.add(Literal(members=tuple(merge_literals)))
+    return Union(members=tuple(members), doc=obj.description)
