@@ -21,7 +21,7 @@ import functools
 import typing
 from collections import defaultdict, deque
 from collections.abc import Iterator, Mapping
-from typing import Final, Literal as L, NewType, final
+from typing import Final, NewType, final
 
 from tools.codegen.convert import pascal_to_snake_case
 from tools.models import base, json_wrapper as jw
@@ -32,17 +32,6 @@ if typing.TYPE_CHECKING:
 
 # NOTE: Use this instead of importing `Any`, since we have one defined here
 type Incomplete = typing.Any
-
-
-type Scalar = L["bool", "int", "float", "str", "None"]
-
-_JSON_PY_SCALAR: Mapping[jw.Scalar, Scalar] = {
-    "boolean": "bool",
-    "integer": "int",
-    "number": "float",
-    "string": "str",
-    "null": "None",
-}
 
 
 class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=True):
@@ -78,10 +67,44 @@ class Unknown(MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
-@final
-class Builtins(MLIR, frozen=True, kw_only=True):
-    types: tuple[Scalar, ...]
+class PyBuiltin(MLIR, frozen=True, kw_only=True):
     doc: str = ""
+
+
+@final
+class PyStr(PyBuiltin, frozen=True): ...
+
+
+@final
+class PyInt(PyBuiltin, frozen=True): ...
+
+
+@final
+class PyFloat(PyBuiltin, frozen=True): ...
+
+
+@final
+class PyBool(PyBuiltin, frozen=True): ...
+
+
+@final
+class PyNone(PyBuiltin, frozen=True): ...
+
+
+_JSON_PY_INST: Final[Mapping[jw.Scalar, PyBuiltin]] = {
+    "boolean": PyBool(),
+    "integer": PyInt(),
+    "number": PyFloat(),
+    "string": PyStr(),
+    "null": PyNone(),
+}
+_JSON_PY_TYPE: Final[Mapping[jw.Scalar, type[PyBuiltin]]] = {
+    "boolean": PyBool,
+    "integer": PyInt,
+    "number": PyFloat,
+    "string": PyStr,
+    "null": PyNone,
+}
 
 
 @final
@@ -319,9 +342,15 @@ def _(obj: jw.Const | jw.Enum, _owner: DefName, _ctx: ConversionCtx, /) -> Liter
 
 
 @_from_json_dispatch.register(jw.Primitive)
+def _(obj: jw.Primitive, _owner: DefName, _ctx: ConversionCtx, /) -> PyBuiltin:
+    if doc := obj.description:
+        return _JSON_PY_TYPE[obj.type](doc=doc)
+    return _JSON_PY_INST[obj.type]
+
+
 @_from_json_dispatch.register(jw.PrimitiveUnion)
-def _(obj: jw.Primitive | jw.PrimitiveUnion, _owner: DefName, _ctx: ConversionCtx, /) -> Builtins:
-    return Builtins(types=tuple(_JSON_PY_SCALAR[t] for t in obj.iter_types()), doc=obj.description)
+def _(obj: jw.PrimitiveUnion, _owner: DefName, _ctx: ConversionCtx, /) -> Union:
+    return Union(members=tuple(_JSON_PY_INST[t] for t in obj.types), doc=obj.description)
 
 
 @_from_json_dispatch.register(jw.Sequence)
@@ -381,20 +410,14 @@ def _(obj: jw.Object, owner: DefName, ctx: ConversionCtx, /) -> OpenDict | Close
 
 @_from_json_dispatch.register(jw.Union)
 def _(obj: jw.Union, owner: DefName, ctx: ConversionCtx, /) -> Union:
-    merge_builtins = set()
     merge_literals = set()
     members = set[MLIR]()
     for member in obj.members:
         converted = _I_KNOW_WHAT_IM_DOING(member, owner, ctx)
-        if (not converted.doc) and isinstance(converted, (Builtins, Literal)):
-            if isinstance(converted, Builtins):
-                merge_builtins.update(converted.types)
-            else:
-                merge_literals.update(converted.members)
+        if (not converted.doc) and isinstance(converted, Literal):
+            merge_literals.update(converted.members)
         else:
             members.add(converted)
-    if merge_builtins:
-        members.add(Builtins(types=tuple(merge_builtins)))
     if merge_literals:
         members.add(Literal(members=tuple(merge_literals)))
     members_final = tuple(members)
