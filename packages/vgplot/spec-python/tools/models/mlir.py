@@ -14,14 +14,14 @@
 
 from __future__ import annotations
 
+import dataclasses
+
 # ruff: file-ignore[builtin-argument-shadowing]
 import functools
 import typing
 from collections import defaultdict, deque
 from collections.abc import Iterator, Mapping
 from typing import Final, Literal as L, NewType, final
-
-import msgspec
 
 from tools.codegen.convert import pascal_to_snake_case
 from tools.models import base, json_wrapper as jw
@@ -192,7 +192,8 @@ class Union(MLIR, frozen=True, kw_only=True):
 Idx = NewType("Idx", int)
 
 
-class ConversionCtx(base.Struct):
+@dataclasses.dataclass
+class ConversionCtx:
     """A history of what happened during `JsonWrapper` to `MLIR` conversion.
 
     ## Notes
@@ -202,7 +203,7 @@ class ConversionCtx(base.Struct):
         - Identifying when to synthesize base classes and or intersections
     """
 
-    seen: defaultdict[type[MLIR], list[MLIR]] = msgspec.field(
+    seen: defaultdict[type[MLIR], list[MLIR]] = dataclasses.field(
         default_factory=lambda: defaultdict(list)
     )
     """Per-MLIR-type to instances, ordered by creation time.
@@ -213,7 +214,7 @@ class ConversionCtx(base.Struct):
     - Do we have runs of similar/duplicated instances?
     """
 
-    positions: defaultdict[DefName, deque[tuple[type[MLIR], Idx]]] = msgspec.field(
+    positions: defaultdict[DefName, deque[tuple[type[MLIR], Idx]]] = dataclasses.field(
         default_factory=lambda: defaultdict(deque)
     )
     """Per-top-level definition to keys into `seen`.
