@@ -39,6 +39,19 @@ class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=Tr
 
     doc: str
 
+    def iter_children(self) -> Iterator[MLIR]:
+        # `ast.iter_child_nodes`
+        yield from ()
+
+    def iter_descendants(self) -> Iterator[MLIR]:
+        # `ast.walk`-ish
+        yield self
+        for child in self.iter_children():
+            yield from child.iter_descendants()
+
+
+## Non-parent
+
 
 @final
 class Reference(MLIR, frozen=True, kw_only=True):
@@ -118,6 +131,9 @@ class EmptyTuple(MLIR, frozen=True, kw_only=True):
     doc: str = ""
 
 
+## Parent
+
+
 @final
 class Field(MLIR, frozen=True, kw_only=True):
     """An entry in a `*Dict` or `NamedTuple`."""
@@ -127,6 +143,9 @@ class Field(MLIR, frozen=True, kw_only=True):
     type: MLIR
     required: bool = False
     doc: str = ""
+
+    def iter_children(self) -> Iterator[MLIR]:
+        yield self.type
 
     @classmethod
     def from_json(
@@ -148,19 +167,29 @@ class Field(MLIR, frozen=True, kw_only=True):
         return result
 
 
-@final
-class NamedTuple(MLIR, frozen=True, kw_only=True):
-    fields: tuple[Field, ...]
-    doc: str = ""
-
-
-class _SeqBase[T: MLIR](MLIR, frozen=True, kw_only=True):
+class _BaseSeq[T: MLIR](MLIR, frozen=True, kw_only=True):
     type: Final[T]
     doc: str = ""
 
+    def iter_children(self) -> Iterator[MLIR]:
+        yield self.type
+
+
+class _BaseFields(MLIR, frozen=True, kw_only=True):
+    fields: tuple[Field, ...]
+    doc: str = ""
+
+    def iter_children(self) -> Iterator[MLIR]:
+        yield from self.fields
+
 
 @final
-class HomogeneousTuple[T: MLIR, N: int](_SeqBase[T], frozen=True, kw_only=True):
+class Sequence[T: MLIR](_BaseSeq[T], frozen=True):
+    """A sequence where all elements are the same type."""
+
+
+@final
+class HomogeneousTuple[T: MLIR, N: int](_BaseSeq[T], frozen=True, kw_only=True):
     """A sequence where all elements are the same type and has a fixed-length.
 
     ## Notes
@@ -171,7 +200,7 @@ class HomogeneousTuple[T: MLIR, N: int](_SeqBase[T], frozen=True, kw_only=True):
 
 
 @final
-class VariantHomogeneousTuple[T: MLIR, Ns: tuple[int, ...]](_SeqBase[T], frozen=True, kw_only=True):
+class VariantHomogeneousTuple[T: MLIR, Ns: tuple[int, ...]](_BaseSeq[T], frozen=True, kw_only=True):
     """A sequence where all elements are the same type and has one of the lengths specified in `Ns`.
 
     ## Notes
@@ -182,34 +211,41 @@ class VariantHomogeneousTuple[T: MLIR, Ns: tuple[int, ...]](_SeqBase[T], frozen=
 
 
 @final
-class Sequence[T: MLIR](_SeqBase[T], frozen=True): ...
+class NamedTuple(_BaseFields, frozen=True):
+    """A tuple with `Annotated` field names."""
 
 
 @final
-class OpenDict(MLIR, frozen=True, kw_only=True):
-    """`bases`, `total` will be in the next IR."""
+class OpenDict(_BaseFields, frozen=True):
+    """A `TypedDict` with the default configuration.
 
-    fields: tuple[Field, ...]
-    doc: str = ""
-
-
-@final
-class ClosedDict(MLIR, frozen=True, kw_only=True):
-    fields: tuple[Field, ...]
-    doc: str = ""
+    `bases`, `total` will be in the next IR.
+    """
 
 
 @final
-class ExtraDict(MLIR, frozen=True, kw_only=True):
-    fields: tuple[Field, ...]
+class ClosedDict(_BaseFields, frozen=True):
+    """A `TypedDict` with `closed=True`."""
+
+
+@final
+class ExtraDict(_BaseFields, frozen=True):
+    """A `TypedDict` with `extra_items`."""
+
     extra_items: MLIR
-    doc: str = ""
+
+    def iter_children(self) -> Iterator[MLIR]:
+        yield from super().iter_children()
+        yield self.extra_items
 
 
 @final
 class Union(MLIR, frozen=True, kw_only=True):
     members: tuple[MLIR, ...]
     doc: str = ""
+
+    def iter_children(self) -> Iterator[MLIR]:
+        yield from self.members
 
 
 Idx = NewType("Idx", int)
