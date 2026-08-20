@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 import collections.abc as cabc
-from collections.abc import Callable, Iterator
+from collections.abc import Iterator
 from itertools import chain
 from typing import (
     TYPE_CHECKING,
@@ -16,21 +16,20 @@ from typing import (
     Final,
     Literal as L,
     Self,
+    TypeIs,
     assert_never,
     final,
-    overload,
 )
 
 import msgspec
 
 from tools.models import base
+from tools.models.base import DefName
 from tools.models.config import ConvertConfig, ReferenceUnwrap
-from tools.models.mosaic import DefName, InputSchema, JsonSchema
+from tools.models.mosaic import InputSchema, JsonSchema
 from tools.serde import convert_json
 
 if TYPE_CHECKING:
-    from typing import TypeIs
-
     from tools.models import mlir
 
 
@@ -323,16 +322,11 @@ class Object(JsonWrapper):
             yield from self.extra_items.iter_refs()
 
 
-type JW = JsonWrapper
-type _Guard[T: JW] = Callable[[Any], TypeIs[T]]
-
-
 @final
-class Root(base.Struct, kw_only=True):
+class Root(base.Root[JsonWrapper], kw_only=True):
     """Top-level context for `mosaic-schema.json`."""
 
     id: str = msgspec.field(name="$id", default="")
-    definitions: dict[DefName, JsonWrapper]
     ref: str = msgspec.field(name="$ref", default="")
     schema: str = msgspec.field(name="$schema")
     config: ConvertConfig = msgspec.field(default_factory=ConvertConfig)
@@ -347,39 +341,16 @@ class Root(base.Struct, kw_only=True):
             config=config or ConvertConfig(),
         )
 
-    @overload
-    def iter_defs[T: JW = JW](self, predicate: _Guard[T], /) -> Iterator[tuple[DefName, T]]: ...
-    @overload
-    def iter_defs(
-        self, predicate: Callable[[Any], bool] | None = None, /
-    ) -> Iterator[tuple[DefName, JW]]: ...
-    def iter_defs[T: JW = JW](
-        self, predicate: _Guard[T] | Callable[[Any], bool] | None = None, /
-    ) -> Iterator[tuple[DefName, T | JW]]:
-        """Iterate over the definitions in the schema, optionally filtered via `predicate`."""
-        if predicate is None:
-            yield from self.definitions.items()
-            return
-        yield from (
-            (name, schema) for name, schema in self.definitions.items() if predicate(schema)
-        )
-
     def iter_refs(self) -> Iterator[Reference]:
         """Yield all references within the entire schema."""
         for schema in self.definitions.values():
             yield from schema.iter_refs()
 
-    def __getitem__(self, name: DefName, /) -> JsonWrapper:
-        return self.definitions.__getitem__(name)
-
-    def pop(self, name: DefName, /) -> JsonWrapper:
-        return self.definitions.pop(name)
-
     def get_object(self, name: DefName, /) -> Object:
-        return _ensure_type(self[name], Object)
+        return self.get_typed(name, Object)
 
     def get_union(self, name: DefName, /) -> Union:
-        return _ensure_type(self[name], Union)
+        return self.get_typed(name, Union)
 
     def to_mlir(self) -> mlir.Root:
         from tools.models import mlir
@@ -444,13 +415,6 @@ def _unwrap_pick(policy: L["inner", "longest", "shortest"], outer: str, inner: s
             return min(outer, inner)
         case _:
             assert_never(policy)
-
-
-def _ensure_type[T: JsonWrapper](value: JsonWrapper, tp: type[T], /) -> T:
-    if not isinstance(value, tp):
-        msg = f"Expected a value of type {tp.__name__!r}, got:\n{value!r}"
-        raise TypeError(msg)
-    return value
 
 
 def is_object(obj: Any) -> TypeIs[Object]:

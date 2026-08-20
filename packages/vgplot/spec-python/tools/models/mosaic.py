@@ -62,9 +62,7 @@ from typing import Annotated as A, Final, Literal as L, final
 from msgspec import field
 
 from tools.models import base
-
-type DefName = str
-"""The name that keys the schema in `{"definitions": {<here>: ...}}`"""
+from tools.models.base import DefName
 
 type FileName = str
 """The name of a file, as defined by [`pathlib.Path.name`][]."""
@@ -249,7 +247,7 @@ class JsonSchema(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
 
 
 @final
-class InputSchema(base.Struct, kw_only=True):
+class InputSchema(base.Root[Resolved[JsonSchema]], kw_only=True):
     """Top level schema for `mosaic-schema.json`."""
 
     # TODO @dangotbanned: I want to migrate to 2020-12 (2 jumps from draft-07)
@@ -258,19 +256,10 @@ class InputSchema(base.Struct, kw_only=True):
     # - $id is used frequently
     # - items -> prefixItems
     #   - for this use case, that's not a big deal
+    # - `"definitions"` -> `"$defs"`
     schema: str = field(name="$schema")
     id: str = field(name="$id", default="")
     ref: Ref = field(name="$ref", default="")
-    # NOTE: @dangotbanned: would be `"$defs"`
-    definitions: dict[DefName, Resolved[JsonSchema]]
-
-    def get(self, target: DefName, /) -> Resolved[JsonSchema]:
-        """Get a top-level definition from the schema."""
-        return self.definitions[target]
-
-    def pop(self, target: DefName, /) -> Resolved[JsonSchema]:
-        """Remove a top-level definition from the schema."""
-        return self.definitions.pop(target)
 
     def insert(self, name: DefName, schema: Resolved[JsonSchema]) -> None:
         """Add a new top-level definition to the schema."""
@@ -287,17 +276,7 @@ class InputSchema(base.Struct, kw_only=True):
         """
         for member_ref in union.iter_members():
             name = member_ref.def_name
-            yield name, self.get(name)
-
-    def iter_defs(
-        self, predicate: Callable[[JsonSchema], bool] | None = None, /
-    ) -> Iterator[tuple[DefName, Resolved[JsonSchema]]]:
-        it: Iterable[tuple[DefName, Resolved[JsonSchema]]]
-        if predicate is None:
-            it = self.definitions.items()
-        else:
-            it = ((name, schema) for name, schema in self.definitions.items() if predicate(schema))
-        yield from it
+            yield name, self[name]
 
     def map_refs(self, ctx: Mapping[DefName, A[FileName, L["json"]]], /) -> None:
         function = ref_mapper(ctx)

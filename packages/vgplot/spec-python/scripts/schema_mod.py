@@ -22,6 +22,8 @@ from tools.models import mosaic as m
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable, Iterator
 
+    from tools.models.base import DefName
+
 GENERATED_MODULE_NAME = "mosaic"
 SCHEMA_IN = fs.SPEC / "dist/mosaic-schema.json"
 SCHEMA_OUT = fs.SCHEMA / f"{GENERATED_MODULE_NAME}.json"
@@ -65,7 +67,7 @@ def _recursive_replace(schema: m.JsonSchema) -> m.JsonSchema:
 
 
 def _replace_annotation_with_ref(
-    def_name: m.DefName, source: m.JsonSchema
+    def_name: DefName, source: m.JsonSchema
 ) -> Callable[[m.JsonSchema], m.JsonSchema]:
     replacement = source.new_ref(def_name)
     matches = source.__eq__
@@ -91,7 +93,7 @@ class Artifacts:
     marks: m.InputSchema
     spec_description: str
 
-    def iter_components(self) -> Iterator[tuple[m.DefName, str, L["_SpecHead", "SpecHead"], Path]]:
+    def iter_components(self) -> Iterator[tuple[DefName, str, L["_SpecHead", "SpecHead"], Path]]:
         paths = GENERATED_MODULE_MAIN, fs.MOSAIC_SPEC_GEN / "marks.py"
         all_defs = self.mosaic.definitions, self.marks.definitions
         for path, defs in zip(paths, all_defs, strict=False):
@@ -211,7 +213,7 @@ class SchemaSplit(SchemaMod):
         msg = f"'{self.update_refs.__qualname__}()' is not yet implemented"
         raise NotImplementedError(msg)
 
-    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[DefName, m.JsonSchema]:
         """Return the contents of the `filename`'s `"definitions"`."""
         msg = f"'{self._extract_definitions.__qualname__}()' is not yet implemented"
         raise NotImplementedError(msg)
@@ -223,8 +225,8 @@ class SchemaSplit(SchemaMod):
 class RootSplit(SchemaSplit):
     """Generate a new schema, starting at a single root type."""
 
-    def __init__(self, root_name: m.DefName, filename: str) -> None:
-        self.root_name: m.DefName = root_name
+    def __init__(self, root_name: DefName, filename: str) -> None:
+        self.root_name: DefName = root_name
         self.filename: str = filename
 
     def update_refs(self, schema: m.InputSchema) -> None:
@@ -252,18 +254,18 @@ class CSSStylesSplit(RootSplit):
     # NOTE: Has 500 fields
     def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
         for def_name in ("PlotAttributes",):
-            yield schema.get(def_name).properties["style"].iter_members()
+            yield schema[def_name].properties["style"].iter_members()
 
-    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[DefName, m.JsonSchema]:
         return {self.root_name: schema.pop(self.root_name)}
 
 
 class InteractorsSplit(RootSplit):
     def _referenced_by(self, schema: m.InputSchema) -> Iterable[Iterable[m.JsonSchema]]:
-        it = schema.get("Plot").properties["plot"].items_schema().iter_members()
+        it = schema["Plot"].properties["plot"].items_schema().iter_members()
         yield from (it,)
 
-    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[DefName, m.JsonSchema]:
         root = schema.pop(self.root_name)
         definitions = {self.root_name: root}
         for member_ref in root.iter_members():
@@ -276,7 +278,7 @@ class InteractorsSplit(RootSplit):
 class ParamDefinitionSplit(RootSplit):
     def run(self, schema: m.InputSchema) -> None:
         extracted = self.extract(schema)
-        obj = schema.get("Params").additional_properties
+        obj = schema["Params"].additional_properties
         if isinstance(obj, bool):
             raise NotImplementedError
         obj.ref = f"{self.filename}{obj.ref}"
@@ -284,7 +286,7 @@ class ParamDefinitionSplit(RootSplit):
         serde.write_json(self.path, extracted, pretty=True)
         print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
 
-    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[DefName, m.JsonSchema]:
         root = schema.pop(self.root_name)
         return {
             self.root_name: root,
@@ -380,7 +382,7 @@ class TransformSplit(RootSplit):
         # HACK @dangotbanned: Handling the reference update in `SpecDeduplicate`
         yield from ()
 
-    def _extract_definitions(self, schema: m.InputSchema) -> dict[m.DefName, m.JsonSchema]:
+    def _extract_definitions(self, schema: m.InputSchema) -> dict[DefName, m.JsonSchema]:
         root = schema.pop(self.root_name)
         arg_def = m.JsonSchema(
             description="A transform argument.",
@@ -528,7 +530,7 @@ class SpecDeduplicate(SchemaMod):
     def run(self, schema: m.InputSchema) -> None:
         self.insert_base(_PLOT_ATTRS, schema.pop(_PLOT_ATTRS), schema)
 
-        for name, member in schema.iter_members_defs(schema.get(_COMPONENT)):
+        for name, member in schema.iter_members_defs(schema[_COMPONENT]):
             if not member.is_union():
                 if name == _PLOT:
                     self._plot(member)
@@ -553,8 +555,8 @@ class SpecDeduplicate(SchemaMod):
 
     def _extract_marks(
         self, plot_mark: m.JsonSchema, schema: m.InputSchema
-    ) -> dict[m.DefName, m.JsonSchema]:
-        definitions: dict[m.DefName, m.JsonSchema] = {}
+    ) -> dict[DefName, m.JsonSchema]:
+        definitions: dict[DefName, m.JsonSchema] = {}
         pop = schema.pop
         for name in self._MOVE_TO_MARKS:
             definitions[name] = pop(name)
@@ -568,11 +570,11 @@ class SpecDeduplicate(SchemaMod):
         definitions["VectorShape"] = pop("VectorShapeName")
         definitions["Curve"] = pop("CurveName").__replace__(description=pop("Curve").description)
 
-        owned_props = deepcopy(schema.get(plot_mark.any_of[0].def_name).properties)
+        owned_props = deepcopy(schema[plot_mark.any_of[0].def_name].properties)
         definitions["Tip"] = self._extract_tip_def(owned_props["tip"])
 
         mark_common = set(owned_props)
-        previously_insert_base: list[tuple[m.DefName, m.JsonSchema]] = []
+        previously_insert_base: list[tuple[DefName, m.JsonSchema]] = []
         """Need a another base class `MarkOptions`, but can't get that until visiting them all.
         Will hack around for now.
         """
@@ -629,7 +631,7 @@ class SpecDeduplicate(SchemaMod):
             member.remove_properties(common)
             definitions[name] = self._mark_with_base(name, member)
 
-        for member in reversed(schema.get(_COMPONENT).any_of):
+        for member in reversed(schema[_COMPONENT].any_of):
             # NOTE: Traversing a very large union to replace a single reference, needs early exit
             if member.ref.endswith(_PLOT_MARK):
                 member.map_refs(self.map_plot_mark)
@@ -668,7 +670,7 @@ class SpecDeduplicate(SchemaMod):
         msg = f"Did not find inline `Tip` in: {tip_property!r}"
         raise NotImplementedError(msg)
 
-    def insert_base(self, name: m.DefName, def_schema: m.JsonSchema, schema: m.InputSchema) -> None:
+    def insert_base(self, name: DefName, def_schema: m.JsonSchema, schema: m.InputSchema) -> None:
         """Mark `name` to generate an extra TypedDict that is [open](https://typing.python.org/en/latest/spec/typeddict.html#openness).
 
         The extra version becomes a shared base class for `name` and the version in `spec` (if a component).

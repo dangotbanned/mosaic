@@ -23,7 +23,7 @@ from typing import Final, Literal as L, final
 
 from tools.codegen.convert import pascal_to_snake_case
 from tools.models import base, json_wrapper as jw
-from tools.models.mosaic import DefName  # ruff: ignore[typing-only-first-party-import]
+from tools.models.base import DefName
 
 if typing.TYPE_CHECKING:
     from tools.common import snake_case
@@ -209,10 +209,7 @@ class Union(MLIR, frozen=True, kw_only=True):
 
 
 @final
-class Root(base.Struct, kw_only=True):
-    id: str = ""
-    definitions: dict[DefName, MLIR]
-
+class Root(base.Root[MLIR]):
     @classmethod
     def from_json_wrapper(cls, source: jw.Root, /) -> Root:
         source.ref_unwrap()
