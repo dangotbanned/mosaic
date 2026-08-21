@@ -6,6 +6,7 @@
     "fmt": "uv run ruff format",
     "generate": "uv run --module scripts.schema_mod && pnpm run lint && uv run --module scripts.export_all && pnpm run lint && pnpm typecheck",
     "generate:examples": "uv run --module scripts.prepare_examples && pnpm run lint && uv run ty check tests/test_examples --add-ignore && uv run pyright tests/test_examples",
+    "generate:config": "uv run --module scripts.generate_config_schema",
     "lint": "uv run ruff check && uv run ruff format",
     "typecheck:ty": "uv run ty check",
     "typecheck:pyright": "uv run pyright",

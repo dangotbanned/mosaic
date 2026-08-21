@@ -86,13 +86,6 @@ class MosaicSpecToml(base.FrozenStruct, frozen=True, forbid_unknown_fields=True)
     convert: ConvertConfig = field(default_factory=ConvertConfig)
 
     @classmethod
-    def generate_config_schema(cls) -> None:
-        from tools import fs, serde
-
-        schema = msgspec.json.schema(cls)
-        serde.write_json(fs.MOSAIC_SPEC_TOML_SCHEMA, schema, pretty=True)
-
-    @classmethod
     def discover_config(cls) -> MosaicSpecToml:
         from tools import fs, serde
 

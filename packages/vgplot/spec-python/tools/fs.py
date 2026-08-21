@@ -84,7 +84,13 @@ SPEC_PYTHON = _HERE.parent.parent
 """`mosaic/packages/vgplot/spec-python`"""
 
 MOSAIC_SPEC_TOML = SPEC_PYTHON / "mosaic-spec.toml"
+"""`mosaic/packages/vgplot/spec-python/mosaic-spec.toml`.
+
+One day, this file will configure everything.
+"""
+
 MOSAIC_SPEC_TOML_SCHEMA = SPEC_PYTHON / "mosaic-spec-toml-schema.json"
+"""`mosaic/packages/vgplot/spec-python/mosaic-spec-toml-schema.json`."""
 
 SCHEMA: Final = SPEC_PYTHON / "schema"
 """`mosaic/packages/vgplot/spec-python/schema`.
