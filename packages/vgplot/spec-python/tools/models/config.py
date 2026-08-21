@@ -1,12 +1,44 @@
 """Configuration via toml."""
 
-from collections.abc import Mapping
+import typing
+from collections.abc import Mapping, Sequence
 from typing import Literal as L, final
 
 import msgspec
 from msgspec import field
 
 from tools.models import base
+
+type IdName = str
+"""The unique name for a `Root`."""
+
+type MLIRType = L[
+    "ClosedDict",
+    "EmptyTuple",
+    "ExtReference",
+    "ExtraDict",
+    "Field",
+    "HomogeneousTuple",
+    "Literal",
+    "NamedTuple",
+    "OpenDict",
+    "PyBool",
+    "PyFloat",
+    "PyInt",
+    "PyNone",
+    "PyStr",
+    "Reference",
+    "Sequence",
+    "Union",
+    "Unknown",
+    "VariantHomogeneousTuple",
+]
+
+type Todo = typing.Any
+"""Defining this type requires a refactor to prevent forward refs.
+
+Doing that is a good idea, so this marker is a reminder.
+"""
 
 type UnwrapPolicy = L["longest", "shortest", "inner", "outer"]
 type DefName = str
@@ -65,6 +97,141 @@ class ReferenceUnwrap(base.FrozenStruct, frozen=True, forbid_unknown_fields=True
     description: UnwrapPolicy = "longest"
 
 
+class InclExcl[T](base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    """Define `include`/`exclude` filters to match a target."""
+
+    include: frozenset[T] | msgspec.UnsetType = msgspec.UNSET
+    exclude: frozenset[T] = field(default_factory=frozenset[T])
+
+
+class ParentScope(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+    """Limit the search from the full graph.
+
+    This scope filters the `definitions` table, where each entry is considered a *parent*.
+
+    Args:
+        definition: Match on the keys of `Root.definitions`.
+        node: Match of the type of an entry in `Root.definitions`.
+            Has a lower priority than `definition`.
+    """
+
+    definition: InclExcl[DefName] = field(default_factory=InclExcl[DefName])
+    node: InclExcl[MLIRType] = field(default_factory=InclExcl[MLIRType])
+
+
+class RefScope(InclExcl[DefName], frozen=True, forbid_unknown_fields=True):
+    """What to do when we encounter a `ref`.
+
+    Args:
+        follow_depth: Resolve references to a maximum of this depth, before stopping a search.
+            By default, refs are left unresolved.
+            Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.
+            This model chooses not to support an "unbounded" search.
+        include: _description_
+        exclude: _description_
+    """
+
+    follow_depth: L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] = 0
+
+
+class ChildScope(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+    """Limit the search from the full graph, after matching on a parent.
+
+    Args:
+        node: Match on the type of a definition's children.
+        ref: Match on references and decide how deep to resolve them.
+    """
+
+    node: InclExcl[MLIRType] = field(default_factory=InclExcl[MLIRType])
+    ref: RefScope = field(default_factory=RefScope)
+    descend: bool = False  # WIP, basically want a switch for "children means descendants"
+
+
+class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+    """A search space for an `Action`.
+
+    Args:
+        id: Match on `Root.id`.
+        parent: Match on `Root.definitions`.
+        children: Match on the children of `definitions`.
+    """
+
+    id: InclExcl[IdName] = field(default_factory=InclExcl[IdName])
+    parent: ParentScope = field(default_factory=ParentScope)
+    children: ChildScope = field(default_factory=ChildScope)
+
+
+class _BaseAction(
+    base.FrozenStruct,
+    frozen=True,
+    kw_only=True,
+    tag=True,
+    tag_field="action",
+    forbid_unknown_fields=True,
+):
+    """Combines a search space (`scope`) and what to do with it (`action`, ...)."""
+
+    scope: Scopes = field(default_factory=Scopes)
+
+
+@final
+class AsRefAction(
+    _BaseAction,
+    frozen=True,
+    kw_only=True,
+    tag="as-ref",
+    tag_field="action",
+    forbid_unknown_fields=True,
+):
+    """Replace all anonymous matches with a reference to this new definition.
+
+    Aiming to do the heavy lifting for de-duplicating anonymous unions.
+    """
+
+    name: DefName
+    """The name of the new definition."""
+    type: Todo
+    """The new definition itself.
+
+    Will appear as a new entry in `definitions`.
+    """
+    match_doc: bool = False
+    """Require `type.doc == candidate.doc` for a successful match.
+
+    By default, action can define a new `doc` and match anonymous types which never had one.
+
+    However, `True` may make sense when a `doc` exists due to obfuscation
+    (e.g. `--expose=export` in [ts-json-schema-generator][1]).
+
+    [1]: https://github.com/vega/ts-json-schema-generator#options
+    """
+
+
+@final
+class NewTreeAction(
+    _BaseAction,
+    frozen=True,
+    kw_only=True,
+    tag="new-tree",
+    tag_field="action",
+    forbid_unknown_fields=True,
+):
+    """Derive a new `Root` from another, taking ownership of related definitions.
+
+    This action could be considered taking a cutting from a tree and "re-planting" it.
+
+    ## Notes
+    - differs by not requiring 1 `root_name: DefName`, since multiple definitions can match
+    - creates a new `mlir.Root` per-action
+    """
+
+    id: IdName  # (currently) the stem of filename
+    """The name of the new `Root`."""
+
+
+type Action = AsRefAction | NewTreeAction
+
+
 class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """Configure converting from json schema.
 
@@ -73,6 +240,8 @@ class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=Tr
 
     ref_unwrap: Mapping[DefName, ReferenceUnwrap] = field(default_factory=dict)
     """Mapping from the outer ("$ref"-defining) definition name to a policy table."""
+
+    actions: Sequence[Action] = field(default_factory=list[Action])
 
 
 class ConvertConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
@@ -83,6 +252,8 @@ class ConvertConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
 
 @final
 class MosaicSpecToml(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    """Top-level config for everything!"""
+
     convert: ConvertConfig = field(default_factory=ConvertConfig)
 
     @classmethod

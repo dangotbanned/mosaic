@@ -3,3 +3,9 @@
 [convert]
 [convert.to_mlir]
 ref_unwrap = { Curve = { description = "outer" } }
+
+[[convert.to_mlir.actions]]
+action                          = "new-tree"
+id                              = "interactors"
+scope.parent.definition.include = ["PlotInteractor"]
+scope.children.ref              = { exclude = ["ParamRef"], follow_depth = 1 }

@@ -1,5 +1,53 @@
 {
   "$defs": {
+    "AsRefAction": {
+      "additionalProperties": false,
+      "description": "Replace all anonymous matches with a reference to this new definition.\n\nAiming to do the heavy lifting for de-duplicating anonymous unions.",
+      "properties": {
+        "action": {
+          "enum": [
+            "as-ref"
+          ]
+        },
+        "match_doc": {
+          "default": false,
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scopes"
+        },
+        "type": {}
+      },
+      "required": [
+        "action",
+        "name",
+        "type"
+      ],
+      "title": "AsRefAction",
+      "type": "object"
+    },
+    "ChildScope": {
+      "additionalProperties": false,
+      "description": "Limit the search from the full graph, after matching on a parent.\n\nArgs:\n    node: Match on the type of a definition's children.\n    ref: Match on references and decide how deep to resolve them.",
+      "properties": {
+        "descend": {
+          "default": false,
+          "type": "boolean"
+        },
+        "node": {
+          "$ref": "#/$defs/InclExcl_MLIRType_"
+        },
+        "ref": {
+          "$ref": "#/$defs/RefScope"
+        }
+      },
+      "required": [],
+      "title": "ChildScope",
+      "type": "object"
+    },
     "ConvertConfig": {
       "additionalProperties": false,
       "description": "Top-level config for translation/codegen.",
@@ -12,10 +60,139 @@
       "title": "ConvertConfig",
       "type": "object"
     },
+    "InclExcl_DefName_": {
+      "additionalProperties": false,
+      "description": "Define `include`/`exclude` filters to match a target.",
+      "properties": {
+        "exclude": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "include": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [],
+      "title": "InclExcl[DefName]",
+      "type": "object"
+    },
+    "InclExcl_IdName_": {
+      "additionalProperties": false,
+      "description": "Define `include`/`exclude` filters to match a target.",
+      "properties": {
+        "exclude": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "include": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [],
+      "title": "InclExcl[IdName]",
+      "type": "object"
+    },
+    "InclExcl_MLIRType_": {
+      "additionalProperties": false,
+      "description": "Define `include`/`exclude` filters to match a target.",
+      "properties": {
+        "exclude": {
+          "items": {
+            "enum": [
+              "ClosedDict",
+              "EmptyTuple",
+              "ExtReference",
+              "ExtraDict",
+              "Field",
+              "HomogeneousTuple",
+              "Literal",
+              "NamedTuple",
+              "OpenDict",
+              "PyBool",
+              "PyFloat",
+              "PyInt",
+              "PyNone",
+              "PyStr",
+              "Reference",
+              "Sequence",
+              "Union",
+              "Unknown",
+              "VariantHomogeneousTuple"
+            ]
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "include": {
+          "items": {
+            "enum": [
+              "ClosedDict",
+              "EmptyTuple",
+              "ExtReference",
+              "ExtraDict",
+              "Field",
+              "HomogeneousTuple",
+              "Literal",
+              "NamedTuple",
+              "OpenDict",
+              "PyBool",
+              "PyFloat",
+              "PyInt",
+              "PyNone",
+              "PyStr",
+              "Reference",
+              "Sequence",
+              "Union",
+              "Unknown",
+              "VariantHomogeneousTuple"
+            ]
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [],
+      "title": "InclExcl[MLIRType]",
+      "type": "object"
+    },
     "JsonWrapperToMLIR": {
       "additionalProperties": false,
       "description": "Configure converting from json schema.\n\nRepresents the first conversion stage.",
       "properties": {
+        "actions": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/AsRefAction"
+              },
+              {
+                "$ref": "#/$defs/NewTreeAction"
+              }
+            ],
+            "discriminator": {
+              "mapping": {
+                "as-ref": "#/$defs/AsRefAction",
+                "new-tree": "#/$defs/NewTreeAction"
+              },
+              "propertyName": "action"
+            }
+          },
+          "type": "array"
+        },
         "ref_unwrap": {
           "additionalProperties": {
             "$ref": "#/$defs/ReferenceUnwrap"
@@ -30,6 +207,7 @@
     },
     "MosaicSpecToml": {
       "additionalProperties": false,
+      "description": "Top-level config for everything!",
       "properties": {
         "convert": {
           "$ref": "#/$defs/ConvertConfig"
@@ -37,6 +215,83 @@
       },
       "required": [],
       "title": "MosaicSpecToml",
+      "type": "object"
+    },
+    "NewTreeAction": {
+      "additionalProperties": false,
+      "description": "Derive a new `Root` from another, taking ownership of related definitions.\n\nThis action could be considered taking a cutting from a tree and \"re-planting\" it.\n\n## Notes\n- differs by not requiring 1 `root_name: DefName`, since multiple definitions can match\n- creates a new `mlir.Root` per-action",
+      "properties": {
+        "action": {
+          "enum": [
+            "new-tree"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scopes"
+        }
+      },
+      "required": [
+        "action",
+        "id"
+      ],
+      "title": "NewTreeAction",
+      "type": "object"
+    },
+    "ParentScope": {
+      "additionalProperties": false,
+      "description": "Limit the search from the full graph.\n\nThis scope filters the `definitions` table, where each entry is considered a *parent*.\n\nArgs:\n    definition: Match on the keys of `Root.definitions`.\n    node: Match of the type of an entry in `Root.definitions`.\n        Has a lower priority than `definition`.",
+      "properties": {
+        "definition": {
+          "$ref": "#/$defs/InclExcl_DefName_"
+        },
+        "node": {
+          "$ref": "#/$defs/InclExcl_MLIRType_"
+        }
+      },
+      "required": [],
+      "title": "ParentScope",
+      "type": "object"
+    },
+    "RefScope": {
+      "additionalProperties": false,
+      "description": "What to do when we encounter a `ref`.\n\nArgs:\n    follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n    include: _description_\n    exclude: _description_",
+      "properties": {
+        "exclude": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "follow_depth": {
+          "default": 0,
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        "include": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [],
+      "title": "RefScope",
       "type": "object"
     },
     "ReferenceUnwrap": {
@@ -64,6 +319,24 @@
       },
       "required": [],
       "title": "ReferenceUnwrap",
+      "type": "object"
+    },
+    "Scopes": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\nArgs:\n    id: Match on `Root.id`.\n    parent: Match on `Root.definitions`.\n    children: Match on the children of `definitions`.",
+      "properties": {
+        "children": {
+          "$ref": "#/$defs/ChildScope"
+        },
+        "id": {
+          "$ref": "#/$defs/InclExcl_IdName_"
+        },
+        "parent": {
+          "$ref": "#/$defs/ParentScope"
+        }
+      },
+      "required": [],
+      "title": "Scopes",
       "type": "object"
     }
   },
