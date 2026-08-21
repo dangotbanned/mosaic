@@ -103,6 +103,9 @@ class InclExcl[T](base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     include: frozenset[T] | msgspec.UnsetType = msgspec.UNSET
     exclude: frozenset[T] = field(default_factory=frozenset[T])
 
+    def __bool__(self) -> bool:
+        return bool(self.include or self.exclude)
+
 
 class ParentScope(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
     """Limit the search from the full graph.
@@ -117,6 +120,9 @@ class ParentScope(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_f
 
     definition: InclExcl[DefName] = field(default_factory=InclExcl[DefName])
     node: InclExcl[MLIRType] = field(default_factory=InclExcl[MLIRType])
+
+    def __bool__(self) -> bool:
+        return bool(self.definition or self.node)
 
 
 class RefScope(InclExcl[DefName], frozen=True, forbid_unknown_fields=True):
@@ -133,6 +139,9 @@ class RefScope(InclExcl[DefName], frozen=True, forbid_unknown_fields=True):
 
     follow_depth: L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] = 0
 
+    def __bool__(self) -> bool:
+        return bool(self.follow_depth or super().__bool__())
+
 
 class ChildScope(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
     """Limit the search from the full graph, after matching on a parent.
@@ -145,6 +154,9 @@ class ChildScope(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fi
     node: InclExcl[MLIRType] = field(default_factory=InclExcl[MLIRType])
     ref: RefScope = field(default_factory=RefScope)
     descend: bool = False  # WIP, basically want a switch for "children means descendants"
+
+    def __bool__(self) -> bool:
+        return bool(self.descend or self.node or self.ref)
 
 
 class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
@@ -159,6 +171,9 @@ class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
     id: InclExcl[IdName] = field(default_factory=InclExcl[IdName])
     parent: ParentScope = field(default_factory=ParentScope)
     children: ChildScope = field(default_factory=ChildScope)
+
+    def __bool__(self) -> bool:
+        return bool(self.id or self.parent or self.children)
 
 
 class _BaseAction(
