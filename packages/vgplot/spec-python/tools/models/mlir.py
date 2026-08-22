@@ -64,7 +64,7 @@ class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=Tr
 class Reference(MLIR, frozen=True, kw_only=True, cache_hash=True):
     """A reference to a symbol defined in the same file."""
 
-    ref: str
+    ref: DefName
     doc: str = ""
 
     def iter_refs(self) -> Iterator[Reference]:
@@ -75,8 +75,8 @@ class Reference(MLIR, frozen=True, kw_only=True, cache_hash=True):
 class ExtReference(MLIR, frozen=True, kw_only=True, cache_hash=True):
     """A reference to a symbol defined externally."""
 
-    ref: str
     ext: str
+    ref: DefName
     doc: str = ""
 
     def iter_ext_refs(self) -> Iterator[ExtReference]:
@@ -133,9 +133,14 @@ _JSON_PY_TYPE: Final[Mapping[jw.Scalar, type[PyBuiltin]]] = {
 }
 
 
+# TODO @dangotbanned: `None` should be `PyNone`
+# TODO @dangotbanned: `LitBool` should be `PyTrue`, `PyFalse`
+type _LiteralMember = jw.Lit | jw.LitBool | None
+
+
 @final
 class Literal(MLIR, frozen=True, kw_only=True):
-    members: tuple[jw.Lit | jw.LitBool | None, ...]
+    members: tuple[_LiteralMember, ...]
     doc: str = ""
 
 
