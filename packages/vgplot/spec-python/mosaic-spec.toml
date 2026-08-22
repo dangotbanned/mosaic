@@ -6,15 +6,32 @@ ref_unwrap = { Curve = { description = "outer" } }
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
-id                             = "interactors"
-scope.include.definition.names = ["PlotInteractor"]
-scope.exclude.ref.names        = ["ParamRef"]
-scope.ref_follow_depth         = 1
-
-[[convert.to_mlir.actions]]
-action                         = "new-tree"
 id                             = "params"
 scope.include.definition.names = ["ParamDefinition"]
 scope.descend                  = true
 # purely eyeballing the depth, perhaps this need a different way to spell it?
 scope.ref_follow_depth         = 5
+
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
+id                             = "typing"
+# `ColorScheme` has some surgery
+scope.include.definition.names = ["Interval", "TimeIntervalName", "ColorScheme"]
+
+# TODO: `SpecDeduplicate`
+
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
+id                             = "css_styles"
+scope.include.definition.names = ["CSSStyles"]
+
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
+id                             = "interactors"
+scope.include.definition.names = ["PlotInteractor"]
+scope.exclude.ref.names        = ["ParamRef"]
+scope.ref_follow_depth         = 1
+
+# TODO: `TransformSplit`
+# TODO: `_recursive_replace` -> `KEYS_REPLACE`
+# - Should be handled in a later stage, where identifiers need to be valid python
