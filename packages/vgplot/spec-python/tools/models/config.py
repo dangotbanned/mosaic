@@ -1,10 +1,9 @@
 """Configuration via toml."""
 
 import typing
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from typing import Literal as L, final
 
-import msgspec
 from msgspec import field
 
 from tools.models import base
@@ -149,6 +148,16 @@ class Filter(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
     def __bool__(self) -> bool:
         return bool(self.id or self.definition or self.child or self.ref)
 
+    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+        if self.id:
+            yield "id", self.id
+        if self.definition:
+            yield "definition", self.definition
+        if self.child:
+            yield "child", self.child
+        if self.ref:
+            yield "ref", self.ref
+
 
 class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
     """A search space for an `Action`.
@@ -186,6 +195,16 @@ class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
 
     def __bool__(self) -> bool:
         return bool(self.descend or self.ref_follow_depth or self.include or self.exclude)
+
+    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+        if self.include:
+            yield "include", self.include
+        if self.exclude:
+            yield "exclude", self.exclude
+        if self.descend:
+            yield "descend", self.descend
+        if self.ref_follow_depth:
+            yield "ref_follow_depth", self.ref_follow_depth
 
 
 class _BaseAction(
