@@ -60,7 +60,7 @@ def _into_defs_matcher(include: Filter, exclude: Filter) -> DefsMatcherFn:
     """
     incl_defs = include.definition
     excl_defs = exclude.definition
-    # NOTE: frozenset` does not implement `__bool__`, and instead falls back to `__len__`.
+    # NOTE: `frozenset` does not implement `__bool__`, and instead falls back to `__len__`.
     # So we skip straight to it
     len_incl_names, len_incl_nodes, len_excl_names, len_excl_nodes = (
         len(obj) for obj in (incl_defs.names, incl_defs.nodes, excl_defs.names, excl_defs.nodes)
