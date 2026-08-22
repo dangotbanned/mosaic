@@ -97,83 +97,95 @@ class ReferenceUnwrap(base.FrozenStruct, frozen=True, forbid_unknown_fields=True
     description: UnwrapPolicy = "longest"
 
 
-class InclExcl[T](base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
-    """Define `include`/`exclude` filters to match a target."""
+class Nodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+    """Match on the type of a node."""
 
-    include: frozenset[T] | msgspec.UnsetType = msgspec.UNSET
-    exclude: frozenset[T] = field(default_factory=frozenset[T])
+    nodes: frozenset[MLIRType] = field(default_factory=frozenset[MLIRType])
 
     def __bool__(self) -> bool:
-        return bool(self.include or self.exclude)
+        return bool(self.nodes)
 
 
-class ParentScope(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
-    """Limit the search from the full graph.
+class Names(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+    """Match on the name of a definition."""
 
-    This scope filters the `definitions` table, where each entry is considered a *parent*.
+    names: frozenset[DefName] = field(default_factory=frozenset[DefName])
+
+    def __bool__(self) -> bool:
+        return bool(self.names)
+
+
+class NamesNodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+    """Match on the name or type of a definition."""
+
+    names: frozenset[DefName] = field(default_factory=frozenset[DefName])
+    nodes: frozenset[MLIRType] = field(default_factory=frozenset[MLIRType])
+
+    def __bool__(self) -> bool:
+        return bool(self.names or self.nodes)
+
+
+class Filter(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+    """A specification for matching against a graph.
+
+    Each parameter constrains the search in the priority order of:
+
+    ```
+    id -> definition -> child -> ref
+    ```
 
     Args:
-        definition: Match on the keys of `Root.definitions`.
-        node: Match of the type of an entry in `Root.definitions`.
-            Has a lower priority than `definition`.
+        id: Match on the name of a module (`Root.id`).
+        definition: Match on a named symbol within a module (`Root.definitions`).
+        child: Match on an anonymous symbol within a definition.
+        ref: Match on the subset of `child`, which is a reference to named definition.
     """
 
-    definition: InclExcl[DefName] = field(default_factory=InclExcl[DefName])
-    node: InclExcl[MLIRType] = field(default_factory=InclExcl[MLIRType])
+    id: frozenset[IdName] = field(default_factory=frozenset[IdName])
+    definition: NamesNodes = field(default_factory=NamesNodes)
+    child: Nodes = field(default_factory=Nodes)
+    ref: Names = field(default_factory=Names)
 
     def __bool__(self) -> bool:
-        return bool(self.definition or self.node)
-
-
-class RefScope(InclExcl[DefName], frozen=True, forbid_unknown_fields=True):
-    """What to do when we encounter a `ref`.
-
-    Args:
-        follow_depth: Resolve references to a maximum of this depth, before stopping a search.
-            By default, refs are left unresolved.
-            Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.
-            This model chooses not to support an "unbounded" search.
-        include: _description_
-        exclude: _description_
-    """
-
-    follow_depth: L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] = 0
-
-    def __bool__(self) -> bool:
-        return bool(self.follow_depth or super().__bool__())
-
-
-class ChildScope(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
-    """Limit the search from the full graph, after matching on a parent.
-
-    Args:
-        node: Match on the type of a definition's children.
-        ref: Match on references and decide how deep to resolve them.
-    """
-
-    node: InclExcl[MLIRType] = field(default_factory=InclExcl[MLIRType])
-    ref: RefScope = field(default_factory=RefScope)
-    descend: bool = False  # WIP, basically want a switch for "children means descendants"
-
-    def __bool__(self) -> bool:
-        return bool(self.descend or self.node or self.ref)
+        return bool(self.id or self.definition or self.child or self.ref)
 
 
 class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
     """A search space for an `Action`.
 
     Args:
-        id: Match on `Root.id`.
-        parent: Match on `Root.definitions`.
-        children: Match on the children of `definitions`.
+        include: Require matches to meet these constraints for inclusion.
+            By default, the search includes all roots, definitions and their children.
+        exclude: Reject candidates that meet these constraints.
+            By default, the search does not exclude.
+        descend: _todo_description_
+        ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.
+            By default, refs are left unresolved.
+            Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.
+            This model chooses not to support an "unbounded" search.
+
+    ## Notes
+    The algorithm for resolving `include` and `exclude` is *roughly*:
+
+    ```py
+    everything = set()
+    include = set()
+    exclude = set()
+
+    neither = everything
+    include_only = everything.intersection(include)
+    exclude_only = everything.difference(exclude)
+    include_exclude = everything.intersection(include).difference(exclude)
+    ```
     """
 
-    id: InclExcl[IdName] = field(default_factory=InclExcl[IdName])
-    parent: ParentScope = field(default_factory=ParentScope)
-    children: ChildScope = field(default_factory=ChildScope)
+    include: Filter | msgspec.UnsetType = msgspec.UNSET
+    exclude: Filter | msgspec.UnsetType = msgspec.UNSET
+    descend: bool = False  # WIP, basically want a switch for "children means descendants"
+    ref_follow_depth: L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] = 0
 
     def __bool__(self) -> bool:
-        return bool(self.id or self.parent or self.children)
+        return bool(self.descend or self.ref_follow_depth or self.include or self.exclude)
 
 
 class _BaseAction(

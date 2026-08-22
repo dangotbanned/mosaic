@@ -11,7 +11,7 @@ import typing
 from collections.abc import Callable
 from typing import Literal as L, Self
 
-from tools.models import config
+from tools.models.config import Filter, IdName, Scopes
 
 if typing.TYPE_CHECKING:
     from tools.models import mlir
@@ -23,18 +23,23 @@ type Predicate[T = object, R = bool] = Callable[[T], R]
 
 class Matcher:
     __slots__ = ("match_id", "todo_child", "todo_parent")
-    match_id: Predicate[config.IdName]
+    match_id: Predicate[IdName]
     todo_parent: Incomplete
     todo_child: Incomplete
 
     @classmethod
-    def from_scopes(cls, scopes: config.Scopes) -> Self:
+    def from_scopes(cls, scopes: Scopes) -> Self:
         self = cls.__new__(cls)
-        self.match_id = _convert_incl_excl(scopes.id)
-        # TODO @dangotbanned: `parent` needs to filter the keys of `definition`,
-        #  then the type of the value ( requires converting `MLIRType` string into a type for an `isinstance` check)
-        # - type of the value
+        # Makes sense to do this at the beginning
+        # It is cheap and can have the biggest perf win
+        if not scopes:
+            self.match_id = _always
+        elif (include := scopes.include) and (exclude := scopes.exclude):
+            self.match_id = _convert_incl_excl_id(include, exclude)
+        # TODO @dangotbanned: `definition` needs to filter the keys of `definitions`,
+        #  then the type of the values ( requires converting `MLIRType` string into a type for an `isinstance` check)
         # TODO @dangotbanned: `child``
+        # TODO @dangotbanned: `ref`
         return self
 
     def search_eager(self, root: mlir.Root) -> None:
@@ -43,13 +48,13 @@ class Matcher:
             raise NotImplementedError(msg)
 
 
-def _convert_incl_excl[T](filters: config.InclExcl[T], /) -> Predicate[T]:
-    if filters:
-        if include := filters.include:
-            if exclude := filters.exclude:
-                return _included_not_excluded(include, exclude)
-            return include.__contains__
-        return _not_excluded(filters.exclude)
+def _convert_incl_excl_id(include: Filter, exclude: Filter) -> Predicate[IdName]:
+    if incl_id := include.id:
+        if excl_id := exclude.id:
+            return _included_not_excluded(incl_id, excl_id)
+        return incl_id.__contains__
+    if excl_id := exclude.id:
+        return _not_excluded(excl_id)
     return _always
 
 

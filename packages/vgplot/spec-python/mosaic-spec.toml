@@ -5,15 +5,16 @@
 ref_unwrap = { Curve = { description = "outer" } }
 
 [[convert.to_mlir.actions]]
-action                          = "new-tree"
-id                              = "interactors"
-scope.parent.definition.include = ["PlotInteractor"]
-scope.children.ref              = { exclude = ["ParamRef"], follow_depth = 1 }
+action                         = "new-tree"
+id                             = "interactors"
+scope.include.definition.names = ["PlotInteractor"]
+scope.exclude.ref.names        = ["ParamRef"]
+scope.ref_follow_depth         = 1
 
 [[convert.to_mlir.actions]]
-action                          = "new-tree"
-id                              = "params"
-scope.parent.definition.include = ["ParamDefinition"]
-scope.children.descend          = true
+action                         = "new-tree"
+id                             = "params"
+scope.include.definition.names = ["ParamDefinition"]
+scope.descend                  = true
 # purely eyeballing the depth, perhaps this need a different way to spell it?
-scope.children.ref.follow_depth = 5
+scope.ref_follow_depth         = 5

@@ -29,25 +29,6 @@
       "title": "AsRefAction",
       "type": "object"
     },
-    "ChildScope": {
-      "additionalProperties": false,
-      "description": "Limit the search from the full graph, after matching on a parent.\n\nArgs:\n    node: Match on the type of a definition's children.\n    ref: Match on references and decide how deep to resolve them.",
-      "properties": {
-        "descend": {
-          "default": false,
-          "type": "boolean"
-        },
-        "node": {
-          "$ref": "#/$defs/InclExcl_MLIRType_"
-        },
-        "ref": {
-          "$ref": "#/$defs/RefScope"
-        }
-      },
-      "required": [],
-      "title": "ChildScope",
-      "type": "object"
-    },
     "ConvertConfig": {
       "additionalProperties": false,
       "description": "Top-level config for translation/codegen.",
@@ -60,113 +41,29 @@
       "title": "ConvertConfig",
       "type": "object"
     },
-    "InclExcl_DefName_": {
+    "Filter": {
       "additionalProperties": false,
-      "description": "Define `include`/`exclude` filters to match a target.",
+      "description": "A specification for matching against a graph.\n\nEach parameter constrains the search in the priority order of:\n\n```\nid -> definition -> child -> ref\n```\n\nArgs:\n    id: Match on the name of a module (`Root.id`).\n    definition: Match on a named symbol within a module (`Root.definitions`).\n    child: Match on an anonymous symbol within a definition.\n    ref: Match on the subset of `child`, which is a reference to named definition.",
       "properties": {
-        "exclude": {
+        "child": {
+          "$ref": "#/$defs/Nodes"
+        },
+        "definition": {
+          "$ref": "#/$defs/NamesNodes"
+        },
+        "id": {
           "items": {
             "type": "string"
           },
           "type": "array",
           "uniqueItems": true
         },
-        "include": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array",
-          "uniqueItems": true
+        "ref": {
+          "$ref": "#/$defs/Names"
         }
       },
       "required": [],
-      "title": "InclExcl[DefName]",
-      "type": "object"
-    },
-    "InclExcl_IdName_": {
-      "additionalProperties": false,
-      "description": "Define `include`/`exclude` filters to match a target.",
-      "properties": {
-        "exclude": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array",
-          "uniqueItems": true
-        },
-        "include": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array",
-          "uniqueItems": true
-        }
-      },
-      "required": [],
-      "title": "InclExcl[IdName]",
-      "type": "object"
-    },
-    "InclExcl_MLIRType_": {
-      "additionalProperties": false,
-      "description": "Define `include`/`exclude` filters to match a target.",
-      "properties": {
-        "exclude": {
-          "items": {
-            "enum": [
-              "ClosedDict",
-              "EmptyTuple",
-              "ExtReference",
-              "ExtraDict",
-              "Field",
-              "HomogeneousTuple",
-              "Literal",
-              "NamedTuple",
-              "OpenDict",
-              "PyBool",
-              "PyFloat",
-              "PyInt",
-              "PyNone",
-              "PyStr",
-              "Reference",
-              "Sequence",
-              "Union",
-              "Unknown",
-              "VariantHomogeneousTuple"
-            ]
-          },
-          "type": "array",
-          "uniqueItems": true
-        },
-        "include": {
-          "items": {
-            "enum": [
-              "ClosedDict",
-              "EmptyTuple",
-              "ExtReference",
-              "ExtraDict",
-              "Field",
-              "HomogeneousTuple",
-              "Literal",
-              "NamedTuple",
-              "OpenDict",
-              "PyBool",
-              "PyFloat",
-              "PyInt",
-              "PyNone",
-              "PyStr",
-              "Reference",
-              "Sequence",
-              "Union",
-              "Unknown",
-              "VariantHomogeneousTuple"
-            ]
-          },
-          "type": "array",
-          "uniqueItems": true
-        }
-      },
-      "required": [],
-      "title": "InclExcl[MLIRType]",
+      "title": "Filter",
       "type": "object"
     },
     "JsonWrapperToMLIR": {
@@ -217,6 +114,65 @@
       "title": "MosaicSpecToml",
       "type": "object"
     },
+    "Names": {
+      "additionalProperties": false,
+      "description": "Match on the name of a definition.",
+      "properties": {
+        "names": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [],
+      "title": "Names",
+      "type": "object"
+    },
+    "NamesNodes": {
+      "additionalProperties": false,
+      "description": "Match on the name or type of a definition.",
+      "properties": {
+        "names": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "nodes": {
+          "items": {
+            "enum": [
+              "ClosedDict",
+              "EmptyTuple",
+              "ExtReference",
+              "ExtraDict",
+              "Field",
+              "HomogeneousTuple",
+              "Literal",
+              "NamedTuple",
+              "OpenDict",
+              "PyBool",
+              "PyFloat",
+              "PyInt",
+              "PyNone",
+              "PyStr",
+              "Reference",
+              "Sequence",
+              "Union",
+              "Unknown",
+              "VariantHomogeneousTuple"
+            ]
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [],
+      "title": "NamesNodes",
+      "type": "object"
+    },
     "NewTreeAction": {
       "additionalProperties": false,
       "description": "Derive a new `Root` from another, taking ownership of related definitions.\n\nThis action could be considered taking a cutting from a tree and \"re-planting\" it.\n\n## Notes\n- differs by not requiring 1 `root_name: DefName`, since multiple definitions can match\n- creates a new `mlir.Root` per-action",
@@ -240,58 +196,40 @@
       "title": "NewTreeAction",
       "type": "object"
     },
-    "ParentScope": {
+    "Nodes": {
       "additionalProperties": false,
-      "description": "Limit the search from the full graph.\n\nThis scope filters the `definitions` table, where each entry is considered a *parent*.\n\nArgs:\n    definition: Match on the keys of `Root.definitions`.\n    node: Match of the type of an entry in `Root.definitions`.\n        Has a lower priority than `definition`.",
+      "description": "Match on the type of a node.",
       "properties": {
-        "definition": {
-          "$ref": "#/$defs/InclExcl_DefName_"
-        },
-        "node": {
-          "$ref": "#/$defs/InclExcl_MLIRType_"
-        }
-      },
-      "required": [],
-      "title": "ParentScope",
-      "type": "object"
-    },
-    "RefScope": {
-      "additionalProperties": false,
-      "description": "What to do when we encounter a `ref`.\n\nArgs:\n    follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n    include: _description_\n    exclude: _description_",
-      "properties": {
-        "exclude": {
+        "nodes": {
           "items": {
-            "type": "string"
-          },
-          "type": "array",
-          "uniqueItems": true
-        },
-        "follow_depth": {
-          "default": 0,
-          "enum": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10
-          ]
-        },
-        "include": {
-          "items": {
-            "type": "string"
+            "enum": [
+              "ClosedDict",
+              "EmptyTuple",
+              "ExtReference",
+              "ExtraDict",
+              "Field",
+              "HomogeneousTuple",
+              "Literal",
+              "NamedTuple",
+              "OpenDict",
+              "PyBool",
+              "PyFloat",
+              "PyInt",
+              "PyNone",
+              "PyStr",
+              "Reference",
+              "Sequence",
+              "Union",
+              "Unknown",
+              "VariantHomogeneousTuple"
+            ]
           },
           "type": "array",
           "uniqueItems": true
         }
       },
       "required": [],
-      "title": "RefScope",
+      "title": "Nodes",
       "type": "object"
     },
     "ReferenceUnwrap": {
@@ -323,16 +261,33 @@
     },
     "Scopes": {
       "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\nArgs:\n    id: Match on `Root.id`.\n    parent: Match on `Root.definitions`.\n    children: Match on the children of `definitions`.",
+      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    descend: _todo_description_\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
       "properties": {
-        "children": {
-          "$ref": "#/$defs/ChildScope"
+        "descend": {
+          "default": false,
+          "type": "boolean"
         },
-        "id": {
-          "$ref": "#/$defs/InclExcl_IdName_"
+        "exclude": {
+          "$ref": "#/$defs/Filter"
         },
-        "parent": {
-          "$ref": "#/$defs/ParentScope"
+        "include": {
+          "$ref": "#/$defs/Filter"
+        },
+        "ref_follow_depth": {
+          "default": 0,
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
         }
       },
       "required": [],
