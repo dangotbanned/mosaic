@@ -179,8 +179,8 @@ class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
     ```
     """
 
-    include: Filter | msgspec.UnsetType = msgspec.UNSET
-    exclude: Filter | msgspec.UnsetType = msgspec.UNSET
+    include: Filter = field(default_factory=Filter)
+    exclude: Filter = field(default_factory=Filter)
     descend: bool = False  # WIP, basically want a switch for "children means descendants"
     ref_follow_depth: L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] = 0
 
