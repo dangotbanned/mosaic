@@ -21,7 +21,7 @@ import functools
 import typing
 from collections import defaultdict, deque
 from collections.abc import Iterator, Mapping
-from typing import Final, NewType, final
+from typing import Final, NewType, Self, final
 
 from tools.codegen.convert import pascal_to_snake_case
 from tools.models import base, json_wrapper as jw
@@ -58,6 +58,10 @@ class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=Tr
     def iter_ext_refs(self) -> Iterator[ExtReference]:
         """Yield all external references owned by the current node."""
         yield from ()
+
+    def with_doc(self, doc: str, /) -> Self:
+        # NOTE: One day someone will resolve https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
+        return self.__replace__(doc=doc)  # ty: ignore[invalid-return-type]
 
 
 @final
@@ -194,7 +198,7 @@ class Field[T: MLIR = MLIR](_BaseType[T], frozen=True):
         out_name = pascal_to_snake_case(name)
         out_type = _I_KNOW_WHAT_IM_DOING(type, owner, ctx)
         doc = out_type.doc
-        out_type = out_type.__replace__(doc="")
+        out_type = out_type.with_doc("")
         ctx.add(out_type, owner)
         result = Field(name=out_name, type=out_type, required=required, doc=doc)
         ctx.add(result, owner)
