@@ -41,6 +41,7 @@ Doing that is a good idea, so this marker is a reminder.
 
 type UnwrapPolicy = L["longest", "shortest", "inner", "outer"]
 type DefName = str
+type Depth = L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 
 class ReferenceUnwrap(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
@@ -191,7 +192,7 @@ class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
     include: Filter = field(default_factory=Filter)
     exclude: Filter = field(default_factory=Filter)
     descend: bool = False  # WIP, basically want a switch for "children means descendants"
-    ref_follow_depth: L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] = 0
+    ref_follow_depth: Depth = 0
 
     def __bool__(self) -> bool:
         return bool(self.descend or self.ref_follow_depth or self.include or self.exclude)
