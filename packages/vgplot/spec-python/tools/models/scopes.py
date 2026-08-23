@@ -21,7 +21,7 @@ if typing.TYPE_CHECKING:
 type Unused = typing.Any
 type Incomplete = typing.Any
 type Predicate[T = object, R = bool] = Callable[[T], R]
-type DefsEntries = Iterable[Entry[mlir.MLIR]]
+type DefsEntries = Iterable[Entry[mlir.Definition[mlir.MLIR]]]
 type DefsMatcherFn = Callable[[mlir.Root], DefsEntries]
 
 
@@ -57,15 +57,15 @@ class Matcher:
             if self.descend:
                 for name, node in self.matching_definitions(root):
                     # yields `node` first
-                    node.iter_descendants()
-                    msg = f"TODO: successful match on defs (descend=True): {name!r}, {node!r}"
+                    node.inner.iter_descendants()
+                    msg = f"TODO: successful match on defs (descend=True): {name!r}, {node.inner!r}"
                     raise NotImplementedError(msg)
 
             else:
                 for name, node in self.matching_definitions(root):
                     # does not yield `node`
-                    node.iter_children()
-                    msg = f"TODO: successful match on defs: {name!r}, {node!r}"
+                    node.inner.iter_children()
+                    msg = f"TODO: successful match on defs: {name!r}, {node.inner!r}"
                     raise NotImplementedError(msg)
 
 
@@ -119,7 +119,9 @@ def _only_types(incl_defs: NamesNodes, excl_defs: NamesNodes, /) -> DefsMatcherF
     types = _convert_nodes(incl_defs, excl_defs)
 
     def _(root: mlir.Root) -> DefsEntries:
-        yield from ((name, node) for name, node in root.def_items() if isinstance(node, types))
+        yield from (
+            (name, node) for name, node in root.def_items() if isinstance(node.inner, types)
+        )
 
     return _
 
@@ -128,7 +130,6 @@ def _unoptimized(incl_defs: NamesNodes, excl_defs: NamesNodes, /) -> DefsMatcher
     types = _convert_nodes(incl_defs, excl_defs)
 
     def _(root: mlir.Root) -> DefsEntries:
-        # NOTE: Probably need to annotate with AbstractSet
         names = root.def_names()
         if incl_defs.names:
             names = names & incl_defs.names
@@ -136,7 +137,7 @@ def _unoptimized(incl_defs: NamesNodes, excl_defs: NamesNodes, /) -> DefsMatcher
             names = names - excl_defs.names
         include_name = names.__contains__
         for name, node in root.def_items():
-            if include_name(name) and isinstance(node, types):
+            if include_name(name) and isinstance(node.inner, types):
                 yield name, node
 
     return _

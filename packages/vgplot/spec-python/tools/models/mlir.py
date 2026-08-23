@@ -333,70 +333,65 @@ class ConversionCtx:
 
 
 @final
-class DefInfo(base.Struct):
-    """The mutable thing stored next to each top-level def.
+class Definition[T: MLIR](base.Struct, kw_only=True):
+    """A top-level (named) node, with pre-computed reference info.
 
     ## Notes
-    - Definition
-        - Each definition is a graph of immutable nodes
-        - A definition is stored in a mutable structure (dict)
-        - That dict provides the name and is stored in a mutable struct (Root)
-    - All of this can be respected with changes triggering a replacement of the definition with a new one
+    - Where are we?
+        - Each `Definition` is a graph of immutable nodes (`MLIR`), stored in a mutable structure (dict)
+        - That dict provides the `name` and is stored in a mutable struct (`Root`)
+    - When a `Definition` requires changes, it must be **replaced**
     - Making sense of that means storing details about references
         - To allow moving node `A` to file x, we need to check for references **to** and **from** `A`
         - This can be computed for the full `definitions` dict on creation
         - Then subsequent changes are incremental
     """
 
+    inner: Final[T]
     refs: set[Reference]
     ext_refs: set[ExtReference]
 
     @classmethod
-    def from_def(cls, defn: MLIR, /) -> DefInfo:
-        return DefInfo(refs=set(defn.iter_refs()), ext_refs=set(defn.iter_ext_refs()))
+    def from_mlir[M: MLIR](cls, defn: M, /) -> Definition[M]:
+        return Definition(
+            inner=defn, refs=set(defn.iter_refs()), ext_refs=set(defn.iter_ext_refs())
+        )
 
     def has_references(self) -> bool:
         return bool(self.refs or self.ext_refs)
 
 
 @final
-class Root(base.Root[MLIR], kw_only=True):
-    def_infos: dict[str, DefInfo]
+class Root(base.Root[Definition[MLIR]], kw_only=True):
+    @classmethod
+    def from_json_wrapper(cls, source: jw.Root, /) -> tuple[Root, ConversionCtx]:
+        source.ref_unwrap()
+        # Probably not gonna go too far into this idea
+        ctx = ConversionCtx()
+        definitions = {
+            name: Definition.from_mlir(from_json(schema, name, ctx))
+            for name, schema in source.def_items()
+        }
+        self = Root(id=source.id, definitions=definitions)
+        return self, ctx
 
-    def pop(self, name: DefName, /) -> MLIR:
-        result = super().pop(name)
-        del self.def_infos[name]
-        return result
-
-    def replace(self, name: DefName, defn: MLIR, /) -> None:
+    def replace(self, name: DefName, node: MLIR, /) -> None:
         """Replace an existing definition with an updated version.
 
         *Unconditionally* recomputes reference information based on the new version.
         """
-        self.def_infos[name] = DefInfo.from_def(defn)
-        self.definitions[name] = defn
+        self.definitions[name] = Definition.from_mlir(node)
 
-    def replace_naive(self, name: DefName, defn: MLIR, /) -> None:
+    def replace_naive(self, name: DefName, node: MLIR, /) -> None:
         """Replace an existing definition with an updated version.
 
         *Naive* as we assume that because the definition didn't start with references, it never will.
         """
-        current_info = self.def_infos[name]
-        if current_info.has_references():
-            self.def_infos[name] = DefInfo.from_def(defn)
-        self.definitions[name] = defn
-
-    @classmethod
-    def from_json_wrapper(cls, source: jw.Root, /) -> tuple[Root, ConversionCtx]:
-        source.ref_unwrap()
-        ctx = ConversionCtx()
-        definitions: dict[DefName, MLIR] = {}
-        def_infos: dict[str, DefInfo] = {}
-        for name, schema in source.definitions.items():
-            defn = definitions[name] = from_json(schema, name, ctx)
-            def_infos[name] = DefInfo.from_def(defn)
-        root = Root(id=source.id, definitions=definitions, def_infos=def_infos)
-        return root, ctx
+        current_defn = self[name]
+        if current_defn.has_references():
+            self.replace(name, node)
+        else:
+            self.definitions[name] = current_defn.__replace__(inner=node)
 
 
 def from_json(obj: jw.JsonWrapper, owner: DefName, ctx: ConversionCtx, /) -> MLIR:
