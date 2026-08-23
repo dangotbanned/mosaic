@@ -7,12 +7,13 @@ Here we convert that into something more optimized for the search itself.
 
 from __future__ import annotations
 
+import itertools
 import typing
 from collections.abc import Callable, Iterable
-from typing import Literal as L, Self
+from typing import Final, Literal as L, Self, final
 
 from tools.models.base import Entry
-from tools.models.config import DefName, Depth, Filter, IdName, NamesNodes, Scopes
+from tools.models.config import DefName, Filter, IdName, NamesNodes, Scopes
 
 if typing.TYPE_CHECKING:
     from tools.models import mlir
@@ -204,3 +205,73 @@ def _not_excluded[T](exclude: frozenset[T], /) -> Predicate[T]:
         return not in_exclude(obj)
 
     return matches
+
+
+type DepthOp = L[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+type DepthNoOp = L[0]
+"""This case **must** be narrowed from before starting iteration."""
+
+type Depth = DepthNoOp | DepthOp
+
+
+class _DepthExceeded(BaseException):
+    @staticmethod
+    def _from_ref_follower(obj: _RefFollower) -> _DepthExceeded:
+        msg = f"Reached depth limit {obj.depth_limit!r} for definition {obj._owner!r}"
+        return _DepthExceeded(msg)
+
+
+_NO_ERROR = None
+_RE_RAISE = False
+_SUPPRESS = True
+
+
+@final
+class _RefFollower:
+    """(Partial) Impl for `scopes.ref_follow_depth`.
+
+    ## Notes
+    - Context manager that nopes-out after going through `depth_limit` refs
+        - Non re-entrant
+        - One per-definition
+        - `depth_limit` is local to `Scopes`
+        - `depth_current` is local to here
+    - Needs (indirect) access to `Root.definitions`
+    """
+
+    # NOTE: https://docs.python.org/3/reference/compound_stmts.html#the-with-statement
+    __slots__ = ("_count_next", "_owner", "depth_current", "depth_limit")
+
+    depth_limit: Final[DepthOp]
+
+    def __init__(self, depth_limit: DepthOp, owner: DefName, /) -> None:
+        self.depth_limit = depth_limit
+        self._count_next: Callable[[], int] = itertools.count().__next__
+        self._owner: DefName = owner
+
+    def _increment(self) -> None:
+        # Call from the *actual* following method of this class
+        if self._count_next() > self.depth_limit:
+            # "Catch" in `__exit__`
+            raise _DepthExceeded._from_ref_follower(self)
+
+    def follow(self, *args: Incomplete) -> Incomplete:
+        self._increment()
+        msg = "TODO @dangotbanned: Figure out the iteration side, then come back to this part"
+        raise NotImplementedError(msg)
+
+    def __enter__(self) -> _RefFollower:
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: object,
+        /,
+    ) -> bool | None:
+        if exc_type is None:
+            return _NO_ERROR
+        if exc_type is not _DepthExceeded:
+            return _RE_RAISE
+        return _SUPPRESS
