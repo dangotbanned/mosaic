@@ -61,7 +61,7 @@ class MLIR(base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=Tr
 
     def with_doc(self, doc: str, /) -> Self:
         # NOTE: One day someone will resolve https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
-        return self.__replace__(doc=doc)  # ty: ignore[invalid-return-type]
+        return self.__replace__(doc=doc)  # ty: ignore[invalid-return-type] # pyrefly: ignore[bad-return]
 
 
 @final
@@ -507,6 +507,7 @@ def _(obj: jw.NamedSequence, owner: DefName, ctx: ConversionCtx, /) -> NamedTupl
     return NamedTuple(fields=fields, doc=obj.description)
 
 
+# TODO @dangotbanned: Report pyrefly bug for `None` case (failed to narrow after trying the cheap cases)
 @_from_json_dispatch.register(jw.Object)
 def _(obj: jw.Object, owner: DefName, ctx: ConversionCtx, /) -> OpenDict | ClosedDict | ExtraDict:
     # Having `required` paired with each field removes a surface to sync
@@ -522,7 +523,7 @@ def _(obj: jw.Object, owner: DefName, ctx: ConversionCtx, /) -> OpenDict | Close
         case ("closed", None):
             result = ClosedDict(fields=fields, doc=doc)
         case (None, extra):
-            result = ExtraDict(fields=fields, extra_items=from_json(extra, owner, ctx), doc=doc)
+            result = ExtraDict(fields=fields, extra_items=from_json(extra, owner, ctx), doc=doc)  # pyrefly: ignore[bad-argument-type]
         case _:
             msg = f"Cannot combine closed={obj.closed!r} and extra_items={obj.extra_items!r} in {owner!r}\n\n{obj!r}"
             raise TypeError(msg)
