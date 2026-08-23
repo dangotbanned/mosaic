@@ -47,5 +47,5 @@ def test_infer() -> None:
                 "color_scale": "diverging",
                 "color_domain": "Fixed",
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

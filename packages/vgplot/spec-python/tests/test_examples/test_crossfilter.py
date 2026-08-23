@@ -54,5 +54,5 @@ def test_infer() -> None:
                 "y_tick_format": "s",
                 "height": 200,
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

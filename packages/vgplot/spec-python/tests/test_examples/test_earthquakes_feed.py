@@ -39,7 +39,7 @@ def test_infer() -> None:
                 "href": "url",
                 "target": "_blank",
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
         "margin": 2,
         "projection_type": "equirectangular",
     }

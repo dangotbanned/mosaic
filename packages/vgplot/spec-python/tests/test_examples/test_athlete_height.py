@@ -83,5 +83,5 @@ def test_infer() -> None:
                     {"legend": "color", "plot": "heights"},
                 ]
             }
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

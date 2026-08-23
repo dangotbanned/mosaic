@@ -51,5 +51,5 @@ def test_infer() -> None:
                 ],
                 "bind": "$sign",
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

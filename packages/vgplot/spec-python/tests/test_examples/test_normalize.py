@@ -50,7 +50,7 @@ def test_infer() -> None:
                 "stroke": "Symbol",
             },
             {"select": "nearestX", "bind": "$point"},
-        ],  # ty: ignore[invalid-argument-type]
+        ],
         "y_scale": "log",
         "y_domain": [0.2, 6],
         "y_grid": True,

@@ -68,5 +68,5 @@ def test_infer() -> None:
                 "projection_type": "orthographic",
                 "projection_rotate": "$rotate",
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

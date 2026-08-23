@@ -76,5 +76,5 @@ def test_infer() -> None:
                     {"legend": "symbol", "plot": "filled", "columns": 1},
                 ]
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

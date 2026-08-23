@@ -52,5 +52,5 @@ def test_infer() -> None:
                 "bind": "$length",
                 "label": "Vector Length",
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

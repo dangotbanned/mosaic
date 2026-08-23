@@ -73,5 +73,5 @@ def test_infer() -> None:
                 "width": 600,
                 "height": 200,
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

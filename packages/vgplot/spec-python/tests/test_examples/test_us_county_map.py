@@ -44,7 +44,7 @@ def test_infer() -> None:
                 "tip": True,
                 "title": "name",
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
         "margin": 0,
         "projection_type": "albers",
     }

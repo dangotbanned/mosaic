@@ -120,5 +120,5 @@ def test_infer() -> None:
                 "margin_top": 20,
                 "margin_right": 1,
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

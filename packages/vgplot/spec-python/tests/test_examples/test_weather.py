@@ -87,5 +87,5 @@ def test_infer() -> None:
                 "color_range": "$colors",
                 "width": 680,
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

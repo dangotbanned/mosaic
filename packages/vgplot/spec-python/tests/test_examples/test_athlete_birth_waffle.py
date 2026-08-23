@@ -62,5 +62,5 @@ def test_infer() -> None:
                 "x_tick_size": 0,
                 "x_tick_format": "d",
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

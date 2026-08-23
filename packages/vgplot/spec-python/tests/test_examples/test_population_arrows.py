@@ -58,5 +58,5 @@ def test_infer() -> None:
                 "color_tick_format": "+f",
             },
             {"input": "menu", "label": "Bend Arrows?", "options": [True, False], "bind": "$bend"},
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

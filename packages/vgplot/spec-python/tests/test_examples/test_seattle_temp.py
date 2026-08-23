@@ -36,7 +36,7 @@ def test_infer() -> None:
                 "curve": "monotone-x",
             },
             {"mark": "ruleY", "data": [15], "stroke_opacity": 0.5, "stroke_dasharray": "5 5"},
-        ],  # ty: ignore[invalid-argument-type]
+        ],
         "x_tick_format": "%b",
         "y_label": "Temperature Range (°C)",
         "width": 680,

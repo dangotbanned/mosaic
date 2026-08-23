@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-import mosaic_spec as ms
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -60,20 +63,18 @@ def test_infer() -> None:
                         "fill_opacity": 0.2,
                     },
                     {"mark": "sphere", "stroke_width": 0.5},
-                    ms.Geo(
-                        mark="geo",
-                        data={"source": "feed"},
-                        channels={"id": "id"},
-                        # NOTE: Weird that `ty` gets tripped up by this?
-                        # r={"sql": "POW(10, mag)"},  # ty: ignore[invalid-argument-type, unused-ignore-comment]  # ruff: ignore[commented-out-code]
-                        r=ms.SQLExpression(sql="POW(10, mag)"),
-                        stroke="red",
-                        fill="red",
-                        fill_opacity=0.2,
-                        title="title",
-                        href="url",
-                        target="_blank",
-                    ),
+                    {
+                        "mark": "geo",
+                        "data": {"source": "feed"},
+                        "channels": {"id": "id"},
+                        "r": {"sql": "POW(10, mag)"},
+                        "stroke": "red",
+                        "fill": "red",
+                        "fill_opacity": 0.2,
+                        "title": "title",
+                        "href": "url",
+                        "target": "_blank",
+                    },
                     {"select": "region", "channels": ["id"], "bind": "$quakes"},
                     {"select": "highlight", "by": "$quakes"},
                 ],

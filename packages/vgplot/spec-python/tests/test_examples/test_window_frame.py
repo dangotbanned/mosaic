@@ -36,7 +36,7 @@ def test_infer() -> None:
                 "x": "Date",
                 "y": {"avg": "Close", "orderby": "Date", "range": ({"months": 3}, {"months": 3})},
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
         "y_label": "Close",
         "width": 680,
         "height": 200,

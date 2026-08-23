@@ -40,5 +40,5 @@ def test_infer() -> None:
                 "y_label_anchor": "top",
                 "margin_top": 15,
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }

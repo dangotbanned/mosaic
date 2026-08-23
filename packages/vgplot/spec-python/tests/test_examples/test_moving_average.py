@@ -57,5 +57,5 @@ def test_infer() -> None:
                     {"label": "Global average [-∞, +∞]", "value": [None, None]},
                 ],
             },
-        ],  # ty: ignore[invalid-argument-type]
+        ],
     }
