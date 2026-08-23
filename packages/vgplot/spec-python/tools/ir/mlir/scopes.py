@@ -12,17 +12,20 @@ import typing
 from collections.abc import Callable, Iterable
 from typing import Final, Literal as L, Self, final
 
+from tools.ir.mlir import nodes as mlir
+from tools.ir.mlir.nodes import MLIR
 from tools.models.base import Entry
-from tools.models.config import DefName, Filter, IdName, NamesNodes, Scopes
 
 if typing.TYPE_CHECKING:
-    from tools.models import mlir
+    from tools.ir.mlir.definition import Definition
+    from tools.ir.mlir.root import Root
+    from tools.models.config import DefName, Filter, IdName, NamesNodes, Scopes
 
 type Unused = typing.Any
 type Incomplete = typing.Any
 type Predicate[T = object, R = bool] = Callable[[T], R]
-type DefsEntries = Iterable[Entry[mlir.Definition[mlir.MLIR]]]
-type DefsMatcherFn = Callable[[mlir.Root], DefsEntries]
+type DefsEntries = Iterable[Entry[Definition[MLIR]]]
+type DefsMatcherFn = Callable[[Root], DefsEntries]
 
 
 class Matcher:
@@ -52,7 +55,7 @@ class Matcher:
         # TODO @dangotbanned: `ref`
         return self
 
-    def search_eager(self, root: mlir.Root) -> None:
+    def search_eager(self, root: Root) -> None:
         if self.matches_id(root.id):
             if self.descend:
                 for name, node in self.matching_definitions(root):
@@ -95,12 +98,12 @@ def _into_defs_matcher(include: Filter, exclude: Filter) -> DefsMatcherFn:
             return _unoptimized(incl_defs, excl_defs)
 
 
-def _no_predicate(root: mlir.Root, /) -> DefsEntries:
+def _no_predicate(root: Root, /) -> DefsEntries:
     return root.def_items()
 
 
 def _include_names(names: frozenset[DefName], /) -> DefsMatcherFn:
-    def _(root: mlir.Root) -> DefsEntries:
+    def _(root: Root) -> DefsEntries:
         return root.iter_defs_by_name(names)
 
     return _
@@ -109,7 +112,7 @@ def _include_names(names: frozenset[DefName], /) -> DefsMatcherFn:
 def _exclude_names(names: frozenset[DefName], /) -> DefsMatcherFn:
     in_exclude = names.__contains__
 
-    def _(root: mlir.Root) -> DefsEntries:
+    def _(root: Root) -> DefsEntries:
         yield from ((name, node) for name, node in root.def_items() if not in_exclude(name))
 
     return _
@@ -118,7 +121,7 @@ def _exclude_names(names: frozenset[DefName], /) -> DefsMatcherFn:
 def _only_types(incl_defs: NamesNodes, excl_defs: NamesNodes, /) -> DefsMatcherFn:
     types = _convert_nodes(incl_defs, excl_defs)
 
-    def _(root: mlir.Root) -> DefsEntries:
+    def _(root: Root) -> DefsEntries:
         yield from (
             (name, node) for name, node in root.def_items() if isinstance(node.inner, types)
         )
@@ -129,7 +132,7 @@ def _only_types(incl_defs: NamesNodes, excl_defs: NamesNodes, /) -> DefsMatcherF
 def _unoptimized(incl_defs: NamesNodes, excl_defs: NamesNodes, /) -> DefsMatcherFn:
     types = _convert_nodes(incl_defs, excl_defs)
 
-    def _(root: mlir.Root) -> DefsEntries:
+    def _(root: Root) -> DefsEntries:
         names = root.def_names()
         if incl_defs.names:
             names = names & incl_defs.names
@@ -168,11 +171,9 @@ _MLIR_TYPES = frozenset(
 )
 
 
-def _convert_nodes(incl_defs: NamesNodes, excl_defs: NamesNodes, /) -> tuple[type[mlir.MLIR], ...]:
-    from tools.models import mlir
-
+def _convert_nodes(incl_defs: NamesNodes, excl_defs: NamesNodes, /) -> tuple[type[MLIR], ...]:
     nodes = (incl_defs.nodes or _MLIR_TYPES).difference(excl_defs.nodes)
-    return tuple[type[mlir.MLIR], ...](getattr(mlir, name) for name in nodes)
+    return tuple[type[MLIR], ...](getattr(mlir, name) for name in nodes)
 
 
 def _into_id_matcher(include: Filter, exclude: Filter) -> Predicate[IdName]:

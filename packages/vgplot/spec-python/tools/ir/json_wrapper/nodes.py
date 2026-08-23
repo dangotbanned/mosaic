@@ -1,38 +1,20 @@
-"""Very-intermediate-representation for tagging from schema.
-
-- Iterating over `InputSchema.definitions` to assign these wrappers.
-- Then lower into the next IR
-"""
-
-from __future__ import annotations
-
+# ruff: file-ignore[missing-required-import,typing-only-first-party-import, typing-only-standard-library-import]
 import collections.abc as cabc
-from collections.abc import Iterator
-from itertools import chain
-from typing import (
-    TYPE_CHECKING,
-    Annotated as A,
-    Any,
-    Final,
-    Literal as L,
-    Self,
-    TypeIs,
-    assert_never,
-    final,
-)
+from typing import TYPE_CHECKING, Annotated as A, Any, Final, Literal as L, Self, TypeIs, final
 
 import msgspec
 
+from tools.common import POUND_DEFS
 from tools.models import base
 from tools.models.base import DefName
-from tools.models.config import ConvertConfig, MosaicSpecToml, ReferenceUnwrap
-from tools.models.mosaic import InputSchema, JsonSchema
+from tools.models.mosaic import JsonSchema
 from tools.serde import convert_json
 
 if TYPE_CHECKING:
-    from tools.models import mlir
+    from collections.abc import Iterator
 
 
+_EMPTY_SCHEMA = JsonSchema()
 type Scalar = L["boolean", "integer", "number", "string", "null"]
 """Primitive Json schema types, excluding `"array"` and `"object"`."""
 
@@ -48,18 +30,7 @@ type LitBool = bool
 type camelCase = A[str, L["camelCase"]]  # ruff: ignore[mixed-case-variable-in-global-scope, snake-case-type-alias]
 
 
-def _is_scalar(obj: Any) -> TypeIs[Scalar]:
-    return isinstance(obj, str) and obj in _SCALAR_NAMES
-
-
-def _is_scalar_subset(obj: cabc.Sequence[Any]) -> TypeIs[cabc.Sequence[Scalar]]:
-    return _SCALAR_NAMES.issuperset(obj)
-
-
 class _Tagged(base.Struct, tag=True, tag_field="tag"): ...
-
-
-_EMPTY_SCHEMA = JsonSchema()
 
 
 # NOTE: Use `schema` last in the constructor and it will show last in the repr
@@ -90,45 +61,6 @@ class JsonWrapper(_Tagged, kw_only=True):
 
 
 @final
-class Unknown(JsonWrapper):
-    """A schema that does not define validation constraints.
-
-    ## Examples
-
-    The elements in the array allow `Any`:
-    ```py
-    {"type": "array", "items": {}, "description": "An array of inline data values to visualize."}
-    ```
-
-    The object has `extra_items=Any`, in addition to the defined properties.
-    ```py
-    {
-        "type": "object",
-        "properties": {...},
-        "addditionalProperties": True,
-        "description": "Configuration options.",
-    }
-    ```
-    """
-
-    schema: JsonSchema = msgspec.field(default_factory=JsonSchema)
-
-    @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Unknown:
-        if schema == _EMPTY_SCHEMA:
-            return Unknown()
-        # quite a hassle to remove defaults, leaving just description
-        raw = convert_json(schema, dict[str, Any])
-        if raw.keys() == {"description"}:
-            return Unknown(schema=schema)
-        msg = f"Unexpected schema pattern found: {schema!r}\n{raw!r}"
-        raise NotImplementedError(msg)
-
-
-_POUND_DEFS: Final = "#/definitions/"
-
-
-@final
 class Reference(JsonWrapper):
     """`$ref`."""
 
@@ -144,25 +76,7 @@ class Reference(JsonWrapper):
     @property
     def def_name(self) -> DefName:
         """Return the name that this reference points to."""
-        return self.ref.removeprefix(_POUND_DEFS)
-
-
-@final
-class Union(JsonWrapper):
-    """`anyOf`."""
-
-    members: cabc.Sequence[JsonWrapper]
-
-    @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Union:
-        return Union(members=[_from_schema(m) for m in schema.any_of], schema=schema)
-
-    def iter_refs(self) -> Iterator[Reference]:
-        for member in self.members:
-            yield from member.iter_refs()
-
-    def __iter__(self) -> Iterator[JsonWrapper]:
-        yield from self.members.__iter__()
+        return self.ref.removeprefix(POUND_DEFS)
 
 
 @final
@@ -207,9 +121,6 @@ class Primitive(JsonWrapper):
             raise _temporary_bad_static_error(schema.type, cls)
         return Primitive(type=schema.type, schema=schema)
 
-    def iter_types(self) -> Iterator[Scalar]:
-        yield self.type
-
 
 @final
 class PrimitiveUnion(JsonWrapper):
@@ -230,8 +141,41 @@ class PrimitiveUnion(JsonWrapper):
         msg = f"Unexpected primitive union type: {types!r}, in {schema!r}"
         raise TypeError(msg)
 
-    def iter_types(self) -> Iterator[Scalar]:
-        yield from self.types
+
+@final
+class Unknown(JsonWrapper):
+    """A schema that does not define validation constraints.
+
+    ## Examples
+
+    The elements in the array allow `Any`:
+    ```py
+    {"type": "array", "items": {}, "description": "An array of inline data values to visualize."}
+    ```
+
+    The object has `extra_items=Any`, in addition to the defined properties.
+    ```py
+    {
+        "type": "object",
+        "properties": {...},
+        "addditionalProperties": True,
+        "description": "Configuration options.",
+    }
+    ```
+    """
+
+    schema: JsonSchema = msgspec.field(default_factory=JsonSchema)
+
+    @classmethod
+    def from_schema(cls, schema: JsonSchema) -> Unknown:
+        if schema == _EMPTY_SCHEMA:
+            return Unknown()
+        # quite a hassle to remove defaults, leaving just description
+        raw = convert_json(schema, dict[str, Any])
+        if raw.keys() == {"description"}:
+            return Unknown(schema=schema)
+        msg = f"Unexpected schema pattern found: {schema!r}\n{raw!r}"
+        raise NotImplementedError(msg)
 
 
 # NOTE: `tuple[()]`, not `Sequence[Any]`
@@ -323,132 +267,18 @@ class Object(JsonWrapper):
 
 
 @final
-class Root(base.Root[JsonWrapper], kw_only=True):
-    """Top-level context for `mosaic-schema.json`."""
+class Union(JsonWrapper):
+    """`anyOf`."""
 
-    id: str = msgspec.field(name="$id", default="")
-    ref: str = msgspec.field(name="$ref", default="")
-    schema: str = msgspec.field(name="$schema")
-    config: ConvertConfig = msgspec.field(default_factory=ConvertConfig)
+    members: cabc.Sequence[JsonWrapper]
 
     @classmethod
-    def from_input_schema(cls, source: InputSchema, config: ConvertConfig | None = None) -> Root:
-        return Root(
-            id=source.id,
-            definitions={k: _from_schema(v) for k, v in source.definitions.items()},
-            ref=source.ref,
-            schema=source.schema,
-            # NOTE: At some point this should be less eager and cache based on file info
-            # Changing things a lot for now so not worried about perf
-            config=config or MosaicSpecToml.discover_config().convert,
-        )
+    def from_schema(cls, schema: JsonSchema) -> Union:
+        return Union(members=[_from_schema(m) for m in schema.any_of], schema=schema)
 
     def iter_refs(self) -> Iterator[Reference]:
-        """Yield all references within the entire schema."""
-        for schema in self.definitions.values():
-            yield from schema.iter_refs()
-
-    def get_object(self, name: DefName, /) -> Object:
-        return self.get_typed(name, Object)
-
-    def get_union(self, name: DefName, /) -> Union:
-        return self.get_typed(name, Union)
-
-    def to_mlir(self) -> tuple[mlir.Root, mlir.ConversionCtx]:
-        from tools.models import mlir
-
-        return mlir.Root.from_json_wrapper(self)
-
-    def ref_unwrap(self) -> None:
-        """Rewrite top-level references.
-
-        ## Notes
-        - Used for 4 reference/(union/literal) pairs:
-            - Curve/CurveName
-            - Interval/LiteralTimeInterval
-            - StackOffset/StackOffsetName
-            - VectorShape/VectorShapeName
-        - Want to remove the nesting, pick 1 description (they often have 2), update everywhere they are ref'd
-        """
-        cfg = self.config.to_mlir.ref_unwrap
-        ref_unwrap_default = ReferenceUnwrap()
-        modified = {}
-        to_replace = {}
-        for outer_name, outer in self.iter_defs(is_ref):
-            inner_name = outer.def_name
-            inner = self[inner_name]
-            policy = cfg.get(outer_name, ref_unwrap_default)
-            if policy.name == "outer":
-                final_name = outer_name
-            else:
-                final_name = _unwrap_pick(policy.name, outer_name, inner_name)
-
-            outer_desc = outer.description
-            if policy.description == "outer":
-                inner.description = outer_desc
-            else:
-                inner.description = _unwrap_pick(policy.description, outer_desc, inner.description)
-            modified[final_name] = inner
-            to_replace[(outer_name, inner_name)] = final_name
-
-        if not to_replace:
-            return
-        for old in set(chain.from_iterable(to_replace)):
-            self.definitions.pop(old)
-        self.definitions.update(modified)
-
-        defs = _POUND_DEFS
-        repl_table: dict[str, str] = {}
-        for (key1, key2), new_name in to_replace.items():
-            repl_table[f"{defs}{key1}"] = repl_table[f"{defs}{key2}"] = f"{defs}{new_name}"
-        replacement_fn = repl_table.get
-        for ref in self.iter_refs():
-            if match := replacement_fn(ref.ref):
-                ref.ref = match
-
-
-def _unwrap_pick(policy: L["inner", "longest", "shortest"], outer: str, inner: str) -> str:
-    match policy:
-        case "inner":
-            return inner
-        case "longest":
-            return max(outer, inner)
-        case "shortest":
-            return min(outer, inner)
-        case _:
-            assert_never(policy)
-
-
-def is_object(obj: Any) -> TypeIs[Object]:
-    return isinstance(obj, Object)
-
-
-def is_union(obj: Any) -> TypeIs[Union]:
-    return isinstance(obj, Union)
-
-
-def is_ref(obj: Any) -> TypeIs[Reference]:
-    return isinstance(obj, Reference)
-
-
-def is_seq(obj: Any) -> TypeIs[Sequence]:
-    return isinstance(obj, Sequence)
-
-
-def is_seq_any(obj: Any) -> TypeIs[Sequence | NamedSequence]:
-    return isinstance(obj, (Sequence, NamedSequence, EmptySequence))
-
-
-def is_seq_named(obj: Any) -> TypeIs[NamedSequence]:
-    return isinstance(obj, NamedSequence)
-
-
-def is_const(obj: Any) -> TypeIs[Const]:
-    return isinstance(obj, Const)
-
-
-def is_enum(obj: Any) -> TypeIs[Enum]:
-    return isinstance(obj, Enum)
+        for member in self.members:
+            yield from member.iter_refs()
 
 
 def _from_schema(schema: JsonSchema) -> JsonWrapper:
@@ -474,15 +304,6 @@ def _from_schema(schema: JsonSchema) -> JsonWrapper:
     return tp.from_schema(schema)
 
 
-def _temporary_bad_static_error(obj: Any, from_type: type[JsonWrapper]) -> TypeError:
-    """Return a placeholder error for union narrowing performed in the wrong order.
-
-    None of these should appear, but need to design things differently to avoid the check.
-    """
-    msg = f"Use `_from_schema` instead. Failed in {from_type.__name__!r}, got {obj!r}"
-    return TypeError(msg)
-
-
 def _from_schema_array(schema: JsonSchema) -> Sequence | NamedSequence | EmptySequence:
     items = schema.items
     if isinstance(items, bool):
@@ -493,3 +314,20 @@ def _from_schema_array(schema: JsonSchema) -> Sequence | NamedSequence | EmptySe
     else:
         tp = Sequence if isinstance(items, JsonSchema) else NamedSequence
     return tp.from_schema(schema)
+
+
+def _temporary_bad_static_error(obj: Any, from_type: type[JsonWrapper]) -> TypeError:
+    """Return a placeholder error for union narrowing performed in the wrong order.
+
+    None of these should appear, but need to design things differently to avoid the check.
+    """
+    msg = f"Use `_from_schema` instead. Failed in {from_type.__name__!r}, got {obj!r}"
+    return TypeError(msg)
+
+
+def _is_scalar(obj: Any) -> TypeIs[Scalar]:
+    return isinstance(obj, str) and obj in _SCALAR_NAMES
+
+
+def _is_scalar_subset(obj: cabc.Sequence[Any]) -> TypeIs[cabc.Sequence[Scalar]]:
+    return _SCALAR_NAMES.issuperset(obj)

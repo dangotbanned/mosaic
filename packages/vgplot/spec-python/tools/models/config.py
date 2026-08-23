@@ -291,6 +291,10 @@ class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=Tr
 
     actions: Sequence[Action] = field(default_factory=list[Action])
 
+    @property
+    def ref_unwrap_default(self) -> ReferenceUnwrap:
+        return ReferenceUnwrap()
+
 
 class SourceConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """A schema source for conversion.
@@ -316,9 +320,3 @@ class MosaicSpecToml(base.FrozenStruct, frozen=True, forbid_unknown_fields=True)
     """Top-level config for everything!"""
 
     convert: ConvertConfig = field(default_factory=ConvertConfig)
-
-    @classmethod
-    def discover_config(cls) -> MosaicSpecToml:
-        from tools import fs, serde
-
-        return serde.read_toml(fs.MOSAIC_SPEC_TOML, cls, contains_paths=True)
