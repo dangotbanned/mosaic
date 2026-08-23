@@ -33,6 +33,12 @@
       "additionalProperties": false,
       "description": "Top-level config for translation/codegen.",
       "properties": {
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceConfig"
+          },
+          "type": "array"
+        },
         "to_mlir": {
           "$ref": "#/$defs/JsonWrapperToMLIR"
         }
@@ -293,7 +299,36 @@
       "required": [],
       "title": "Scopes",
       "type": "object"
+    },
+    "SourceConfig": {
+      "additionalProperties": false,
+      "description": "A schema source for conversion.\n\nArgs:\n    path: A relative path to the schema, resolved against the location of `mosaic-spec.toml`.\n    id: A unique identifier for the loaded result.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "path": {
+          "description": "A relative file path.",
+          "format": "uri-reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "id"
+      ],
+      "title": "SourceConfig",
+      "type": "object"
     }
   },
-  "$ref": "#/$defs/MosaicSpecToml"
+  "$ref": "#/$defs/MosaicSpecToml",
+  "x-tombi-string-formats": [
+    "uri-reference",
+    "date-time",
+    "date-time-local",
+    "date",
+    "time",
+    "time-local",
+    "regex"
+  ]
 }

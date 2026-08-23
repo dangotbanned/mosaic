@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import contextlib
 import functools
+import threading
 from collections import deque
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final, Literal as L
@@ -10,7 +12,7 @@ from typing import TYPE_CHECKING, Any, Final, Literal as L
 import msgspec
 
 if TYPE_CHECKING:
-    from collections.abc import Buffer, Callable, Mapping
+    from collections.abc import Buffer, Callable, Generator, Mapping
 
     from typing_extensions import TypeForm
 
@@ -81,9 +83,28 @@ def write_json(path: IntoPath, obj: Any, *, pretty: bool = False, sort: bool = T
     _write_bytes_as_str(path, bstring)
 
 
-def read_toml[T](path: IntoPath, tp: type[T], /) -> T:
-    with Path(path).open(encoding="utf8") as fd:
-        return deserialize_toml(fd.read(), tp)
+def read_toml[T](path: IntoPath, tp: type[T], /, *, contains_paths: bool = False) -> T:
+    """Deserialize a TOML file into `T`.
+
+    Args:
+        path: The file to read from.
+        tp: The type to decode into.
+        contains_paths: When True and `tp` contains `pathlib.Path` annotations;
+            any relative file paths will be resolved *against* `path`.
+
+    ## Notes
+    `contains_path=True` uses [thread-local] storage to resolve relative paths.
+    The implementation expects that a single TOML file will be read per-thread.
+
+    [thread-local]: https://py-free-threading.github.io/documentation-principles/#thread-local
+    """
+    if not contains_paths:
+        with Path(path).open(encoding="utf8") as fd:
+            return deserialize_toml(fd.read(), tp)
+    else:
+        path = Path(path)
+        with path.open(encoding="utf8") as fd, _deserialize_relative_path(path):
+            return deserialize_toml(fd.read(), tp)
 
 
 def write_toml(path: IntoPath, obj: Any, *, sort: bool = True) -> None:
@@ -103,6 +124,31 @@ def read_yaml_untyped(path: IntoPath) -> Any:
     Prefer [`read_yaml`][] if possible.
     """
     return read_yaml(path, Any)
+
+
+_local = threading.local()
+_local.path = Path()
+
+
+@contextlib.contextmanager
+def _deserialize_relative_path(path: Path, /) -> Generator[None]:
+    """Store the current file path for access during `_decoder_hook`."""
+    prev_path = _local.path
+    _local.path = path
+    try:
+        yield
+    finally:
+        _local.path = prev_path
+
+
+def _schema_hook(tp: type[Any], /) -> dict[str, Any]:
+    if issubclass(tp, Path):
+        return {"type": "string", "format": "uri-reference", "description": "A relative file path."}
+    raise NotImplementedError
+
+
+schema: Final = functools.partial(msgspec.json.schema, schema_hook=_schema_hook)
+"""Generate a JSON Schema for a given type."""
 
 
 def _write_bytes_as_str(path: IntoPath, b_string: bytes, /) -> None:
@@ -143,5 +189,13 @@ def _use_constructor[T, R](cb: Callable[[T], R], obj: T, /) -> R:
     return cb(obj)
 
 
+def _decode_into_path(_tp: type[Path], obj: str, /) -> Path:
+    reading_from: Path = _local.path
+    return (reading_from / obj).resolve(strict=True)
+
+
 _encoder_hook.register(deque, list)
-_DECODER_DISPATCH: Mapping[type[_Extension], _IntoExtension] = {deque: _use_constructor}
+_DECODER_DISPATCH: Mapping[type[_Extension], _IntoExtension] = {
+    deque: _use_constructor,
+    Path: _decode_into_path,
+}

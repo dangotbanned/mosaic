@@ -2,6 +2,7 @@
 
 import typing
 from collections.abc import Iterable, Mapping, Sequence
+from pathlib import Path
 from typing import Literal as L, final
 
 from msgspec import field
@@ -291,9 +292,22 @@ class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=Tr
     actions: Sequence[Action] = field(default_factory=list[Action])
 
 
+class SourceConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    """A schema source for conversion.
+
+    Args:
+        path: A relative path to the schema, resolved against the location of `mosaic-spec.toml`.
+        id: A unique identifier for the loaded result.
+    """
+
+    path: Path
+    id: IdName
+
+
 class ConvertConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """Top-level config for translation/codegen."""
 
+    sources: Sequence[SourceConfig] = field(default_factory=list[SourceConfig])
     to_mlir: JsonWrapperToMLIR = field(default_factory=JsonWrapperToMLIR)
 
 
@@ -307,4 +321,4 @@ class MosaicSpecToml(base.FrozenStruct, frozen=True, forbid_unknown_fields=True)
     def discover_config(cls) -> MosaicSpecToml:
         from tools import fs, serde
 
-        return serde.read_toml(fs.MOSAIC_SPEC_TOML, cls)
+        return serde.read_toml(fs.MOSAIC_SPEC_TOML, cls, contains_paths=True)

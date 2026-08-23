@@ -21,11 +21,21 @@ if TYPE_CHECKING:
 # - https://mkdocstrings.github.io/griffe/
 # - https://github.com/msgspec/msgspec/blob/f51f378335b01dc0026dc6553a0b9e1915a8edae/src/msgspec/_json_schema.py#L170-L183
 def main(target: Path, /) -> None:
-    import msgspec
-
     from tools import models, serde
 
-    schema = msgspec.json.schema(models.config.MosaicSpecToml)
+    schema = serde.schema(models.config.MosaicSpecToml)
+    # https://tombi-toml.github.io/tombi/docs/json-schema#x-tombi-string-formats
+    schema |= {
+        "x-tombi-string-formats": [
+            "uri-reference",
+            "date-time",
+            "date-time-local",
+            "date",
+            "time",
+            "time-local",
+            "regex",
+        ]
+    }
     serde.write_json(target, schema, pretty=True)
     print(f"Generated TOML schema at: {fs.repo_relative_str(target)}")
 
