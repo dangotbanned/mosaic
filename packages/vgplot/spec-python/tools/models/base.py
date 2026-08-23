@@ -56,6 +56,13 @@ class Root[D](Struct, kw_only=True):
     id: str = ""
     definitions: dict[DefName, D]
 
+    def __repr__(self) -> str:
+        # NOTE: Fallback used to keep bound method reprs small
+        tp = self.__class__
+        module_name = tp.__module__.removeprefix("tools.models.")
+        class_name = tp.__name__
+        return f"{module_name}.{class_name}<id: {self.id!r}, defs: {len(self.definitions)}>"
+
     @overload
     def iter_defs[R](self, predicate: Guard[R], /) -> Iterator[Entry[R]]: ...
     @overload
