@@ -1,10 +1,15 @@
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Collection, Iterator
 from typing import TYPE_CHECKING, Any, ClassVar, Self, TypeIs, overload
 
 import msgspec
 
 type DefName = str
 """The name that keys the schema in `{"definitions": {<here>: ...}}`."""
+
+
+if TYPE_CHECKING:
+    # https://github.com/python/typeshed/pull/12309
+    from _collections_abc import dict_items, dict_keys
 
 
 class Struct(msgspec.Struct, omit_defaults=True, repr_omit_defaults=True):
@@ -90,3 +95,24 @@ class Root[D](Struct, kw_only=True):
         If `name` is not found, raise a KeyError.
         """
         return self.definitions.pop(name)
+
+    def def_names(self) -> dict_keys[DefName, D]:
+        return self.definitions.keys()
+
+    def def_items(self) -> dict_items[DefName, D]:
+        return self.definitions.items()
+
+    def iter_defs_by_name(self, names: Collection[DefName], /) -> Iterator[Entry[D]]:
+        defs = self.definitions
+        if (len_names := len(names)) == 1:
+            for name in names:
+                yield name, defs[name]
+            return
+        elif (len_names / len(defs)) < 0.1:
+            get = defs.__getitem__
+            for name in names:
+                yield name, get(name)
+            return
+        for name, node in defs.items():
+            if name in names:
+                yield name, node
