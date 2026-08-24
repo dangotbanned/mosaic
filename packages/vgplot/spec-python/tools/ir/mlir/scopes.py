@@ -19,7 +19,7 @@ from tools.models.base import Entry, IdName
 if typing.TYPE_CHECKING:
     from tools.ir.mlir.definition import Definition
     from tools.ir.mlir.root import Root
-    from tools.models.config import DefName, Filter, NamesNodes, Scopes
+    from tools.models.config import DefName, Filter, IterOver, NamesNodes, Scopes
 
 type Unused = typing.Any
 type Incomplete = typing.Any
@@ -35,11 +35,11 @@ class Matcher:
     #   i. Possibly in combination with others, to decide what kind of "cleanup" would be needed
     # 3. Transform `Scopes` into a "compiled" representation
     #   i. Calling the compiled version will be a single call, instead of checking 19 different conditions
-    __slots__ = ("descend", "id", "matching_definitions", "ref_follow_depth", "todo_child")
+    __slots__ = ("id", "matching_definitions", "over", "ref_follow_depth", "todo_child")
     id: IdMatcher
     matching_definitions: DefsMatcherFn
     todo_child: Incomplete
-    descend: bool
+    over: IterOver
     ref_follow_depth: Depth
 
     @classmethod
@@ -52,7 +52,7 @@ class Matcher:
             self.id = IdInclude(incl_id - exclude.id) if exclude.id else IdInclude(incl_id)
 
         self.matching_definitions = _into_defs_matcher(include, exclude)
-        self.descend = scopes.descend
+        self.over = scopes.over
         self.ref_follow_depth = scopes.ref_follow_depth
 
         # TODO @dangotbanned: `child``
@@ -61,18 +61,22 @@ class Matcher:
 
     def search_eager(self, root: Root) -> None:
         if self.id.matches(root.id):
-            if self.descend:
+            if self.over == "descendants":
                 for name, node in self.matching_definitions(root):
                     # yields `node` first
                     node.inner.iter_descendants()
-                    msg = f"TODO: successful match on defs (descend=True): {name!r}, {node.inner!r}"
+                    msg = f"TODO: successful match on defs ({self.over=}): {name!r}, {node.inner!r}"
                     raise NotImplementedError(msg)
 
-            else:
+            elif self.over == "children":
                 for name, node in self.matching_definitions(root):
                     # does not yield `node`
                     node.inner.iter_children()
-                    msg = f"TODO: successful match on defs: {name!r}, {node.inner!r}"
+                    msg = f"TODO: successful match on defs ({self.over=}): {name!r}, {node.inner!r}"
+                    raise NotImplementedError(msg)
+            else:
+                for name, node in self.matching_definitions(root):
+                    msg = f"TODO: successful match on defs ({self.over=}): {name!r}, {node.inner!r}"
                     raise NotImplementedError(msg)
 
 

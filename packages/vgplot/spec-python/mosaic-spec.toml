@@ -10,7 +10,7 @@ ref_unwrap = { Curve = { description = "outer" } }
 action                         = "new-tree"
 id                             = "params"
 scope.include.definition.names = ["ParamDefinition"]
-scope.descend                  = true
+scope.over                     = "descendants"
 # purely eyeballing the depth, perhaps this need a different way to spell it?
 scope.ref_follow_depth         = 5
 
@@ -26,6 +26,7 @@ scope.include.definition.names = ["Interval", "TimeIntervalName", "ColorScheme"]
 action                         = "new-tree"
 id                             = "css_styles"
 scope.include.definition.names = ["CSSStyles"]
+scope.over                     = "definitions"
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"

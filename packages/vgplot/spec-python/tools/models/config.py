@@ -42,6 +42,15 @@ type DefName = str
 type Depth = L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 
+type IterOver = L["definitions", "children", "descendants"]
+"""The kind of traversal to perform.
+
+- *"definitions"*: Visit top-level definitions only.
+- *"children"*: Visit the children of top-level definitions.
+- *"descendants"*: Visit top-level definitions, then their children, recursively.
+"""
+
+
 class ReferenceUnwrap(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """Override how each attribute is chosen when unwraping a ref.
 
@@ -166,7 +175,7 @@ class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
             By default, the search includes all roots, definitions and their children.
         exclude: Reject candidates that meet these constraints.
             By default, the search does not exclude.
-        descend: _todo_description_
+        over: The kind of traversal to perform.
         ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.
             By default, refs are left unresolved.
             Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.
@@ -189,19 +198,18 @@ class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
 
     include: Filter = field(default_factory=Filter)
     exclude: Filter = field(default_factory=Filter)
-    descend: bool = False  # WIP, basically want a switch for "children means descendants"
+    over: IterOver = "children"
     ref_follow_depth: Depth = 0
 
     def __bool__(self) -> bool:
-        return bool(self.descend or self.ref_follow_depth or self.include or self.exclude)
+        return bool(self.ref_follow_depth or self.include or self.exclude)
 
     def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
         if self.include:
             yield "include", self.include
         if self.exclude:
             yield "exclude", self.exclude
-        if self.descend:
-            yield "descend", self.descend
+        yield "over", self.over
         if self.ref_follow_depth:
             yield "ref_follow_depth", self.ref_follow_depth
 

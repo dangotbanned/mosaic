@@ -267,17 +267,21 @@
     },
     "Scopes": {
       "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    descend: _todo_description_\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    over: The kind of traversal to perform.\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
       "properties": {
-        "descend": {
-          "default": false,
-          "type": "boolean"
-        },
         "exclude": {
           "$ref": "#/$defs/Filter"
         },
         "include": {
           "$ref": "#/$defs/Filter"
+        },
+        "over": {
+          "default": "children",
+          "enum": [
+            "children",
+            "definitions",
+            "descendants"
+          ]
         },
         "ref_follow_depth": {
           "default": 0,
