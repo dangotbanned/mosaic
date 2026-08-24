@@ -282,7 +282,19 @@ class NewTreeAction(
     """The name of the new `Root`."""
 
 
-type Action = AsRefAction | NewTreeAction
+@final
+class RemoveAction(
+    _BaseAction,
+    frozen=True,
+    kw_only=True,
+    tag="remove",
+    tag_field="action",
+    forbid_unknown_fields=True,
+):
+    """Remove matching definitions, without replacement."""
+
+
+type Action = AsRefAction | NewTreeAction | RemoveAction
 
 
 class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):

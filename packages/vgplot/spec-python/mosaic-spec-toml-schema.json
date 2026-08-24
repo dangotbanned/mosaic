@@ -84,12 +84,16 @@
               },
               {
                 "$ref": "#/$defs/NewTreeAction"
+              },
+              {
+                "$ref": "#/$defs/RemoveAction"
               }
             ],
             "discriminator": {
               "mapping": {
                 "as-ref": "#/$defs/AsRefAction",
-                "new-tree": "#/$defs/NewTreeAction"
+                "new-tree": "#/$defs/NewTreeAction",
+                "remove": "#/$defs/RemoveAction"
               },
               "propertyName": "action"
             }
@@ -263,6 +267,25 @@
       },
       "required": [],
       "title": "ReferenceUnwrap",
+      "type": "object"
+    },
+    "RemoveAction": {
+      "additionalProperties": false,
+      "description": "Remove matching definitions, without replacement.",
+      "properties": {
+        "action": {
+          "enum": [
+            "remove"
+          ]
+        },
+        "scope": {
+          "$ref": "#/$defs/Scopes"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "RemoveAction",
       "type": "object"
     },
     "Scopes": {

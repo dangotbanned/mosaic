@@ -7,6 +7,11 @@ sources = [{ id = "mosaic", path = "../../spec/dist/mosaic-schema.json" }]
 ref_unwrap = { Curve = { description = "outer" } }
 
 [[convert.to_mlir.actions]]
+action                         = "remove"
+scope.include.definition.names = ["Spec"]
+scope.over                     = "definitions"
+
+[[convert.to_mlir.actions]]
 action                         = "new-tree"
 id                             = "params"
 scope.include.definition.names = ["ParamDefinition"]
