@@ -58,6 +58,9 @@ class Reference(MLIR, frozen=True, kw_only=True, cache_hash=True):
     def iter_refs(self) -> Iterator[Reference]:
         yield self
 
+    def to_ext_ref(self, ext: IdName, /) -> ExtReference:
+        return ExtReference(ext=ext, ref=self.ref, doc=self.doc)
+
 
 @final
 class ExtReference(MLIR, frozen=True, kw_only=True, cache_hash=True):
@@ -69,6 +72,9 @@ class ExtReference(MLIR, frozen=True, kw_only=True, cache_hash=True):
 
     def iter_ext_refs(self) -> Iterator[ExtReference]:
         yield self
+
+    def to_ref(self) -> Reference:
+        return Reference(ref=self.ref, doc=self.doc)
 
 
 @final
