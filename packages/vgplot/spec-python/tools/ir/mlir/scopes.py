@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import itertools
 import typing
+import warnings
 from collections.abc import Callable, Iterable
 from typing import Final, Literal as L, Self, final
 
@@ -54,6 +55,17 @@ class Matcher:
         self.matching_definitions = _into_defs_matcher(include, exclude)
         self.over = scopes.over
         self.ref_follow_depth = scopes.ref_follow_depth
+
+        if include.child or include.ref:
+            msg = f"include.{('child' if include.child else 'ref')} is not yet implemented, got:\n{include!r}"
+            raise NotImplementedError(msg)
+        if exclude.child:
+            msg = f"exclude.child is not yet implemented, got:\n{exclude!r}"
+            raise NotImplementedError(msg)
+
+        if exclude.ref:
+            # NOTE: This is the only one I have configured so far, but it is last in the order anyway
+            warnings.warn(f"exclude.ref is not yet implemented, got: {exclude!r}", stacklevel=2)
 
         # TODO @dangotbanned: `child``
         # TODO @dangotbanned: `ref`
