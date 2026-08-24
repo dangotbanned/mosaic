@@ -9,9 +9,6 @@ from msgspec import field
 
 from tools.models import base
 
-type IdName = str
-"""The unique name for a `Root`."""
-
 type MLIRType = L[
     "ClosedDict",
     "EmptyTuple",
@@ -142,7 +139,7 @@ class Filter(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
         ref: Match on the subset of `child`, which is a reference to named definition.
     """
 
-    id: frozenset[IdName] = field(default_factory=frozenset[IdName])
+    id: frozenset[base.IdName] = field(default_factory=frozenset[base.IdName])
     definition: NamesNodes = field(default_factory=NamesNodes)
     child: Nodes = field(default_factory=Nodes)
     ref: Names = field(default_factory=Names)
@@ -273,7 +270,7 @@ class NewTreeAction(
     - creates a new `mlir.Root` per-action
     """
 
-    id: IdName  # (currently) the stem of filename
+    id: base.IdName
     """The name of the new `Root`."""
 
 
@@ -305,7 +302,7 @@ class SourceConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """
 
     path: Path
-    id: IdName
+    id: base.IdName
 
 
 class ConvertConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):

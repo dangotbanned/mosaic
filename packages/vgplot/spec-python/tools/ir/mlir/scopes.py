@@ -14,12 +14,12 @@ from typing import Final, Literal as L, Self, final
 
 from tools.ir.mlir import nodes as mlir
 from tools.ir.mlir.nodes import MLIR
-from tools.models.base import Entry
+from tools.models.base import Entry, IdName
 
 if typing.TYPE_CHECKING:
     from tools.ir.mlir.definition import Definition
     from tools.ir.mlir.root import Root
-    from tools.models.config import DefName, Filter, IdName, NamesNodes, Scopes
+    from tools.models.config import DefName, Filter, NamesNodes, Scopes
 
 type Unused = typing.Any
 type Incomplete = typing.Any

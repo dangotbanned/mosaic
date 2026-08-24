@@ -1,11 +1,13 @@
 from collections.abc import Callable, Collection, Iterator
-from typing import TYPE_CHECKING, Any, ClassVar, Self, TypeIs, overload
+from typing import TYPE_CHECKING, Any, ClassVar, NewType, Self, TypeIs, overload
 
 import msgspec
 
 type DefName = str
 """The name that keys the schema in `{"definitions": {<here>: ...}}`."""
 
+IdName = NewType("IdName", str)
+"""The unique name for a `Root`."""
 
 if TYPE_CHECKING:
     # https://github.com/python/typeshed/pull/12309
@@ -53,7 +55,7 @@ class Root[D](Struct, kw_only=True):
     Provides some common tools that any conversion stage can use for ergonomics.
     """
 
-    id: str = ""
+    id: IdName = IdName("")
     definitions: dict[DefName, D]
 
     def __repr__(self) -> str:

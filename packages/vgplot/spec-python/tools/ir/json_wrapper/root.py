@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class Root(base.Root[JsonWrapper], kw_only=True):
     """Top-level context for `mosaic-schema.json`."""
 
-    id: str = msgspec.field(name="$id", default="")
+    id: base.IdName = msgspec.field(name="$id", default=base.IdName(""))
     ref: str = msgspec.field(name="$ref", default="")
     schema: str = msgspec.field(name="$schema")
 

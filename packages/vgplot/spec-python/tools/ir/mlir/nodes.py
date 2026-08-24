@@ -10,7 +10,7 @@ if typing.TYPE_CHECKING:
     from collections.abc import Iterator
 
     from tools.common import snake_case
-    from tools.models.base import DefName
+    from tools.models.base import DefName, IdName
 
 # NOTE: Use this instead of importing `Any`, since we have one defined here
 type Incomplete = typing.Any
@@ -61,7 +61,7 @@ class Reference(MLIR, frozen=True, kw_only=True, cache_hash=True):
 class ExtReference(MLIR, frozen=True, kw_only=True, cache_hash=True):
     """A reference to a symbol defined externally."""
 
-    ext: str
+    ext: IdName
     ref: DefName
     doc: str = ""
 

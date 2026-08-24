@@ -258,7 +258,7 @@ class InputSchema(base.Root[Resolved[JsonSchema]], kw_only=True):
     #   - for this use case, that's not a big deal
     # - `"definitions"` -> `"$defs"`
     schema: str = field(name="$schema")
-    id: str = field(name="$id", default="")
+    id: base.IdName = field(name="$id", default=base.IdName(""))
     ref: Ref = field(name="$ref", default="")
 
     def insert(self, name: DefName, schema: Resolved[JsonSchema]) -> None:

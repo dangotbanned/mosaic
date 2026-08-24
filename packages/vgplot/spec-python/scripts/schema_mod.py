@@ -18,6 +18,7 @@ from tools import codemod, fs, serde
 from tools.codegen import convert, typed_dict
 from tools.codegen.docstrings import doc
 from tools.models import mosaic as m
+from tools.models.base import IdName
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable, Iterator
@@ -163,7 +164,7 @@ def generate_python_schema(source: str | Path, target: Path) -> Artifacts:
     schema = serde.read_json(source, m.InputSchema)
     spec_def = schema.pop("Spec")
     schema.ref = ""  # Removes `"$ref": "#/definitions/Spec"`
-    schema.id = target.name
+    schema.id = IdName(target.name)
 
     schema.definitions = {k: _recursive_replace(v) for k, v in schema.iter_defs()}
     ParamDefinitionSplit("ParamDefinition", "params.json").run(schema)
@@ -219,7 +220,9 @@ class SchemaSplit(SchemaMod):
         raise NotImplementedError(msg)
 
     def extract(self, schema: m.InputSchema) -> Extracted[m.InputSchema]:
-        return schema.__replace__(id=self.filename, definitions=self._extract_definitions(schema))
+        return schema.__replace__(
+            id=IdName(self.filename), definitions=self._extract_definitions(schema)
+        )
 
 
 class RootSplit(SchemaSplit):
@@ -341,7 +344,7 @@ class PlotTypesSplit(RootSplit):
             if s.enum:
                 definitions["ColorScheme"] = s.__replace__(description=color_scheme.description)
                 break
-        typing_schema = schema.__replace__(id=self.filename, definitions=definitions)
+        typing_schema = schema.__replace__(id=IdName(self.filename), definitions=definitions)
         schema.map_refs(dict.fromkeys(definitions, self.filename))
         serde.write_json(self.path, typing_schema, pretty=True)
         print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
@@ -538,7 +541,7 @@ class SpecDeduplicate(SchemaMod):
                     self.insert_base(name, member, schema)
             elif name == _PLOT_MARK:
                 self.extracted = schema.__replace__(
-                    id=self.filename, definitions=self._extract_marks(member, schema)
+                    id=IdName(self.filename), definitions=self._extract_marks(member, schema)
                 )
                 serde.write_json(self.path, self.extracted, pretty=True)
                 print(f"Generated schema at: {fs.repo_relative_str(self.path)}")
