@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import typing
 from typing import Final, Self, final
 
@@ -10,6 +11,7 @@ if typing.TYPE_CHECKING:
     from collections.abc import Iterator
 
     from tools.common import snake_case
+    from tools.ir.mlir.common import RefMap
     from tools.models.base import DefName, IdName
 
 # NOTE: Use this instead of importing `Any`, since we have one defined here
@@ -47,6 +49,9 @@ class MLIR(
         # NOTE: One day someone will resolve https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
         return self.__replace__(doc=doc)  # ty: ignore[invalid-return-type] # pyrefly: ignore[bad-return]
 
+    def with_ext_refs(self, ref_map: RefMap, /) -> Self | MLIR:
+        return self
+
 
 @final
 class Reference(MLIR, frozen=True, kw_only=True, cache_hash=True):
@@ -77,6 +82,11 @@ class Reference(MLIR, frozen=True, kw_only=True, cache_hash=True):
 
     def to_ext_ref(self, ext: IdName, /) -> ExtReference:
         return ExtReference(ext=ext, ref=self.ref, doc=self.doc)
+
+    def with_ext_refs(self, ref_map: RefMap, /) -> Reference | ExtReference:
+        if ext := ref_map(self.ref):
+            return self.to_ext_ref(ext)
+        return self
 
 
 @final
@@ -167,6 +177,13 @@ class _BaseType[T: MLIR](_HasChildren, frozen=True, kw_only=True, cache_hash=Tru
     def iter_children(self) -> Iterator[MLIR]:
         yield self.type
 
+    def with_ext_refs(self, ref_map: RefMap, /) -> Self:
+        current = self.type
+        maybe_changed = self.type.with_ext_refs(ref_map)
+        if current == maybe_changed:
+            return self
+        return copy.replace(self, type=maybe_changed)
+
 
 @final
 class Field[T: MLIR = MLIR](_BaseType[T], frozen=True, cache_hash=True):
@@ -186,6 +203,12 @@ class _BaseFields(_HasChildren, frozen=True, kw_only=True, cache_hash=True):
 
     def iter_children(self) -> Iterator[MLIR]:
         yield from self.fields
+
+    def with_ext_refs(self, ref_map: RefMap, /) -> Self:
+        new_fields = tuple(fld.with_ext_refs(ref_map) for fld in self.fields)
+        if self.fields == new_fields:
+            return self
+        return copy.replace(self, fields=new_fields)
 
 
 @final
@@ -245,6 +268,13 @@ class ExtraDict(_BaseFields, frozen=True, cache_hash=True):
         yield from super().iter_children()
         yield self.extra_items
 
+    def with_ext_refs(self, ref_map: RefMap, /) -> ExtraDict:
+        out = super().with_ext_refs(ref_map)
+        extra_items = self.extra_items.with_ext_refs(ref_map)
+        if self.extra_items == extra_items:
+            return out
+        return out.__replace__(extra_items=extra_items)
+
 
 @final
 class Union(_HasChildren, frozen=True, kw_only=True, cache_hash=True):
@@ -253,3 +283,9 @@ class Union(_HasChildren, frozen=True, kw_only=True, cache_hash=True):
 
     def iter_children(self) -> Iterator[MLIR]:
         yield from self.members
+
+    def with_ext_refs(self, ref_map: RefMap, /) -> Union:
+        new_members = tuple(member.with_ext_refs(ref_map) for member in self.members)
+        if self.members == new_members:
+            return self
+        return self.__replace__(members=new_members)
