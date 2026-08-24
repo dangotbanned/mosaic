@@ -50,7 +50,24 @@ class MLIR(
 
 @final
 class Reference(MLIR, frozen=True, kw_only=True, cache_hash=True):
-    """A reference to a symbol defined in the same file."""
+    """A reference to a symbol defined in the same file.
+
+    ## Differences from JSON Schema
+    - `ref` stores the same name that is a key in `definitions`
+    - A reference to an external symbol is **always** an `ExtReference`
+    - External references have an additional **required** field, which identifies the external document
+
+    ## Why?
+    - Resolving a `Reference` becomes a simple lookup operation
+    - Set operators can be used between a set of references and a `definitions` mapping
+        - Repeatedly transforming documents (and creating new ones) can quickly produce many stale references
+        - Checking for those cases are what this design is optimized for
+    - Dependencies between documents are distinct from references that are self-contained
+        - Same-document refs matter for python codegen *only* when they are used as a base class
+            - The base must be defined before the child
+        - External refs have the same constraint, but usage is primarily for typing-only imports
+            - Circular imports are the main technical concern
+    """
 
     ref: DefName
     doc: str = ""
