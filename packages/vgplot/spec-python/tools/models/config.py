@@ -8,6 +8,7 @@ from typing import Literal as L, final
 from msgspec import field
 
 from tools.models import base
+from tools.models.base import DefName
 
 type MLIRType = L[
     "ClosedDict",
@@ -38,7 +39,6 @@ Doing that is a good idea, so this marker is a reminder.
 """
 
 type UnwrapPolicy = L["longest", "shortest", "inner", "outer"]
-type DefName = str
 type Depth = L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 

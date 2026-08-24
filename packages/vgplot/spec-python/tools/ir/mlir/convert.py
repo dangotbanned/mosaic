@@ -12,12 +12,10 @@ from tools.common import POUND_DEFS
 from tools.ir.json_wrapper import nodes as jw
 from tools.ir.mlir import nodes as mlir
 from tools.ir.mlir.nodes import MLIR
-from tools.models.base import IdName
+from tools.models.base import DefName, IdName
 
 if typing.TYPE_CHECKING:
     from collections.abc import Iterator, Mapping
-
-    from tools.models.base import DefName
 
 
 Idx = NewType("Idx", int)
