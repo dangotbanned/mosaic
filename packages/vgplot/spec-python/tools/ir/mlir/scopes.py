@@ -23,9 +23,9 @@ if typing.TYPE_CHECKING:
 
 type Unused = typing.Any
 type Incomplete = typing.Any
-type Predicate[T = object, R = bool] = Callable[[T], R]
 type DefsEntries = Iterable[Entry[Definition[MLIR]]]
 type DefsMatcherFn = Callable[[Root], DefsEntries]
+type IdMatcher = IdAlways | IdInclude | IdNotExclude
 
 
 class Matcher:
@@ -35,8 +35,8 @@ class Matcher:
     #   i. Possibly in combination with others, to decide what kind of "cleanup" would be needed
     # 3. Transform `Scopes` into a "compiled" representation
     #   i. Calling the compiled version will be a single call, instead of checking 19 different conditions
-    __slots__ = ("descend", "matches_id", "matching_definitions", "ref_follow_depth", "todo_child")
-    matches_id: Predicate[IdName]
+    __slots__ = ("descend", "id", "matching_definitions", "ref_follow_depth", "todo_child")
+    id: IdMatcher
     matching_definitions: DefsMatcherFn
     todo_child: Incomplete
     descend: bool
@@ -46,7 +46,10 @@ class Matcher:
     def from_scopes(cls, scopes: Scopes) -> Self:
         self = cls.__new__(cls)
         include, exclude = scopes.include, scopes.exclude
-        self.matches_id = _into_id_matcher(include, exclude)
+        if not (incl_id := include.id):
+            self.id = IdNotExclude(exclude.id) if exclude.id else _ID_ALWAYS
+        self.id = IdInclude(incl_id - exclude.id) if exclude.id else IdInclude(incl_id)
+
         self.matching_definitions = _into_defs_matcher(include, exclude)
         self.descend = scopes.descend
         self.ref_follow_depth = scopes.ref_follow_depth
@@ -56,7 +59,7 @@ class Matcher:
         return self
 
     def search_eager(self, root: Root) -> None:
-        if self.matches_id(root.id):
+        if self.id.matches(root.id):
             if self.descend:
                 for name, node in self.matching_definitions(root):
                     # yields `node` first
@@ -176,37 +179,35 @@ def _convert_nodes(incl_defs: NamesNodes, excl_defs: NamesNodes, /) -> tuple[typ
     return tuple[type[MLIR], ...](getattr(mlir, name) for name in nodes)
 
 
-def _into_id_matcher(include: Filter, exclude: Filter) -> Predicate[IdName]:
-    if incl_id := include.id:
-        if excl_id := exclude.id:
-            return _included_not_excluded(incl_id, excl_id)
-        return incl_id.__contains__
-    if excl_id := exclude.id:
-        return _not_excluded(excl_id)
-    return _always
+class IdInclude:
+    __slots__ = ("names",)
+
+    def __init__(self, names: frozenset[IdName], /) -> None:
+        self.names: frozenset[IdName] = names
+
+    def matches(self, name: IdName, /) -> bool:
+        return self.names.__contains__(name)
 
 
-def _always(_: Unused, /) -> L[True]:
-    return True
+class IdNotExclude:
+    __slots__ = ("_in_exclude", "names")
+
+    def __init__(self, names: frozenset[IdName], /) -> None:
+        self.names: frozenset[IdName] = names
+        self._in_exclude: Callable[[IdName], bool] = self.names.__contains__
+
+    def matches(self, name: IdName, /) -> bool:
+        return not self._in_exclude(name)
 
 
-def _included_not_excluded[T](include: frozenset[T], exclude: frozenset[T], /) -> Predicate[T]:
-    in_include = include.__contains__
-    in_exclude = exclude.__contains__
+class IdAlways:
+    __slots__ = ()
 
-    def matches(obj: T, /) -> bool:
-        return in_include(obj) and not in_exclude(obj)
-
-    return matches
+    def matches(self, _: Unused, /) -> L[True]:
+        return True
 
 
-def _not_excluded[T](exclude: frozenset[T], /) -> Predicate[T]:
-    in_exclude = exclude.__contains__
-
-    def matches(obj: T, /) -> bool:
-        return not in_exclude(obj)
-
-    return matches
+_ID_ALWAYS: Final = IdAlways()
 
 
 type DepthOp = L[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
