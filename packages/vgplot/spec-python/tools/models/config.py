@@ -112,6 +112,10 @@ class Nodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=
     def __bool__(self) -> bool:
         return bool(self.nodes)
 
+    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+        if self.nodes:
+            yield "nodes", self.nodes
+
 
 class Names(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
     """Match on the name of a definition."""
@@ -120,6 +124,10 @@ class Names(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=
 
     def __bool__(self) -> bool:
         return bool(self.names)
+
+    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+        if self.names:
+            yield "names", self.names
 
 
 class NamesNodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
@@ -130,6 +138,12 @@ class NamesNodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fi
 
     def __bool__(self) -> bool:
         return bool(self.names or self.nodes)
+
+    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+        if self.names:
+            yield "names", self.names
+        if self.nodes:
+            yield "nodes", self.nodes
 
 
 class Filter(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):

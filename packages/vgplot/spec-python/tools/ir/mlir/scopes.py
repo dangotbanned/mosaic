@@ -187,6 +187,9 @@ def _convert_nodes(incl_defs: NamesNodes, excl_defs: NamesNodes, /) -> tuple[typ
 class IdInclude:
     __slots__ = ("names",)
 
+    def __repr__(self) -> str:
+        return f"id.is_in{tuple(sorted(self.names))!r}"
+
     def __init__(self, names: frozenset[IdName], /) -> None:
         self.names: frozenset[IdName] = names
 
@@ -196,6 +199,9 @@ class IdInclude:
 
 class IdNotExclude:
     __slots__ = ("_in_exclude", "names")
+
+    def __repr__(self) -> str:
+        return f"id.is_not_in{tuple(sorted(self.names))!r}"
 
     def __init__(self, names: frozenset[IdName], /) -> None:
         self.names: frozenset[IdName] = names
@@ -207,6 +213,9 @@ class IdNotExclude:
 
 class IdAlways:
     __slots__ = ()
+
+    def __repr__(self) -> str:
+        return "id.always()"
 
     def matches(self, _: Unused, /) -> L[True]:
         return True
