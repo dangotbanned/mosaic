@@ -48,7 +48,8 @@ class Matcher:
         include, exclude = scopes.include, scopes.exclude
         if not (incl_id := include.id):
             self.id = IdNotExclude(exclude.id) if exclude.id else _ID_ALWAYS
-        self.id = IdInclude(incl_id - exclude.id) if exclude.id else IdInclude(incl_id)
+        else:
+            self.id = IdInclude(incl_id - exclude.id) if exclude.id else IdInclude(incl_id)
 
         self.matching_definitions = _into_defs_matcher(include, exclude)
         self.descend = scopes.descend
