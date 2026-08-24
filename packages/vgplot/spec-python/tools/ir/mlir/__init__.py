@@ -14,9 +14,10 @@
 
 from __future__ import annotations
 
-from tools.ir.mlir import nodes
+from tools.ir.mlir import actions, nodes
+from tools.ir.mlir.actions import Action
 from tools.ir.mlir.definition import Definition
 from tools.ir.mlir.nodes import MLIR
 from tools.ir.mlir.root import Root
 
-__all__ = "MLIR", "Definition", "Root", "nodes"
+__all__ = "MLIR", "Action", "Definition", "Root", "actions", "nodes"

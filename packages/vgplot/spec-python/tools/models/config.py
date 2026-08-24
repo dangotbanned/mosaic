@@ -240,6 +240,7 @@ class _BaseAction(
 
     scope: Scopes = field(default_factory=Scopes)
 
+type ActionKind = L["as-ref", "new-tree", "remove"]
 
 @final
 class AsRefAction(
