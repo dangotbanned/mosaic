@@ -16,14 +16,16 @@ action                         = "new-tree"
 id                             = "params"
 scope.include.definition.names = ["ParamDefinition"]
 scope.over                     = "descendants"
-# purely eyeballing the depth, perhaps this need a different way to spell it?
 scope.ref_follow_depth         = 5
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
 id                             = "typing"
-# `ColorScheme` has some surgery
-scope.include.definition.names = ["Interval", "TimeIntervalName", "ColorScheme"]
+scope.include.id               = ["mosaic"]
+# TODO: `ColorScheme` Needs to remove 1x `Record<never, never>`
+scope.include.definition.names = ["Interval", "ColorScheme"]
+scope.over                     = "descendants"
+scope.ref_follow_depth         = 1
 
 # TODO: `SpecDeduplicate`
 
