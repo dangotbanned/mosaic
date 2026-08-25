@@ -182,7 +182,8 @@ class _BaseType[T: MLIR](_HasChildren, frozen=True, kw_only=True, cache_hash=Tru
         maybe_changed = self.type.with_ext_refs(ref_map)
         if current == maybe_changed:
             return self
-        return copy.replace(self, type=maybe_changed)
+        # NOTE: https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
+        return copy.replace(self, type=maybe_changed)  # pyrefly: ignore[bad-return]
 
 
 @final
@@ -208,7 +209,8 @@ class _BaseFields(_HasChildren, frozen=True, kw_only=True, cache_hash=True):
         new_fields = tuple(fld.with_ext_refs(ref_map) for fld in self.fields)
         if self.fields == new_fields:
             return self
-        return copy.replace(self, fields=new_fields)
+        # NOTE: https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
+        return copy.replace(self, fields=new_fields)  # pyrefly: ignore[bad-return]
 
 
 @final
