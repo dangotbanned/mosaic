@@ -77,6 +77,6 @@ class App:
 
     def _run_actions(self, roots: deque[mlir.Root]) -> deque[mlir.Root]:
         for idx, action in self.actions.items():
-            print(f"Running action {idx} ({action.kind!r})")
+            print(f"Running action {idx} {action!r}")
             roots = deque(action.run(roots))
         return roots

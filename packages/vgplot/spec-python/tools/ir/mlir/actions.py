@@ -57,6 +57,9 @@ class NewTree(_Base[cfg.NewTreeAction]):
     id_output: IdName
     _kind = "new-tree"
 
+    def __repr__(self) -> str:
+        return f"<{self.kind}: {self.id_output}>"
+
     @classmethod
     def from_config(cls, config: cfg.NewTreeAction) -> Self:
         self = super().from_config(config)
