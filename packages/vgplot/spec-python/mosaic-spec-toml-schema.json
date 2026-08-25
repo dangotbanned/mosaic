@@ -195,6 +195,13 @@
         "id": {
           "type": "string"
         },
+        "into_ext_ref": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "type": "object"
+        },
         "scope": {
           "$ref": "#/$defs/Scopes"
         }

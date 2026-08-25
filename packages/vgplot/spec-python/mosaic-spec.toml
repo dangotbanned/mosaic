@@ -100,6 +100,14 @@ scope.over                     = "definitions"
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
+id                             = "layout"
+scope.include.id               = ["mosaic"]
+scope.include.definition.names = ["HConcat", "VConcat", "HSpace", "VSpace"]
+scope.over                     = "definitions"
+into_ext_ref                   = { "Component" = "mosaic" }
+
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
 id                             = "plot_from"
 scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["PlotMarkData"]

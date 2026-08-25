@@ -9,8 +9,9 @@ from tools.ir.mlir.scopes import Matcher
 from tools.models import config as cfg
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Collection, Iterable, Iterator, Sequence, Set
+    from collections.abc import Callable, Collection, Iterable, Iterator, Mapping, Sequence, Set
 
+    from tools.ir.mlir.definition import Definition
     from tools.models.base import DefName, IdName
 
 type RootsMut = deque[Root]
@@ -61,8 +62,9 @@ class _Base[C: cfg._BaseAction]:
 
 
 class NewTree(_Base[cfg.NewTreeAction]):
-    __slots__ = ("id_output",)
+    __slots__ = ("id_output", "into_ext_ref")
     id_output: IdName
+    into_ext_ref: Mapping[DefName, IdName]
     _kind = "new-tree"
 
     def __repr__(self) -> str:
@@ -72,9 +74,10 @@ class NewTree(_Base[cfg.NewTreeAction]):
     def from_config(cls, config: cfg.NewTreeAction) -> Self:
         self = super().from_config(config)
         self.id_output = config.id
+        self.into_ext_ref = config.into_ext_ref
         return self
 
-    def run(self, roots: RootsMut) -> Iterator[Root]:
+    def run(self, roots: RootsMut) -> Iterator[Root]:  # ruff: ignore[complex-structure]
         matcher = self.matcher
         defs_moved = {}
 
@@ -91,7 +94,7 @@ class NewTree(_Base[cfg.NewTreeAction]):
                     find = self._over_definitions_find
 
                 else:
-                    raise not_yet(self)
+                    raise not_yet_error(self)
 
                 defs_moved.update((def_name, root.pop(def_name)) for def_name in find(root))
 
@@ -111,16 +114,17 @@ class NewTree(_Base[cfg.NewTreeAction]):
                     root.replace(def_name, root[def_name].inner.with_ext_refs(ref_map))
 
         # NOTE: Finally, create the new tree
+        circular = {}
         for def_name, defn in defs_moved.items():
             if not is_superset({ref.ref for ref in defn.refs}):
-                # NOTE: Much easier to get something done by pretending this is handled for now
-                # Means that `defs_moved` is finished
-                msg = (
-                    f"TODO: {def_name!r} has references that are not owned by {self.id_output!r}, got:\n"
-                    f"{ {ref.ref for ref in defn.refs}.difference(defs_moved_keys) }"
-                )
-                raise NotImplementedError(msg)
-        roots.append(Root(id=self.id_output, definitions=defs_moved))
+                if self.into_ext_ref:
+                    circular[def_name] = defn.from_mlir(
+                        defn.inner.with_ext_refs(self.into_ext_ref.get)
+                    )
+                else:
+                    raise dangling_ref_error(self, def_name, defn, defs_moved_keys)
+
+        roots.append(Root(id=self.id_output, definitions=defs_moved | circular))
 
         yield from roots
 
@@ -167,14 +171,27 @@ class Remove(_Base[cfg.RemoveAction]):
                         root.pop(def_name)
                     yield root
                 else:
-                    raise not_yet(self)
+                    raise not_yet_error(self)
             else:
                 yield root
 
 
-def not_yet(action: _Base[Any]) -> NotImplementedError:
+def not_yet_error(action: _Base[Any]) -> NotImplementedError:
     msg = f"Using both (action={action.kind!r}, over={action.over!r}) is not yet implemented."
     return NotImplementedError(msg)
+
+
+def dangling_ref_error(
+    action: NewTree, def_name: DefName, defn: Definition[Any], defs_moved: Iterable[DefName]
+) -> TypeError:
+    msg = (
+        f"{def_name!r} has references that are not owned by {action.id_output!r}, got:\n"
+        f"{ {ref.ref for ref in defn.refs}.difference(defs_moved) }.\n\n"
+        "Hints:\n"
+        "- consider increasing `scope.ref_follow_depth` to collect more references\n"
+        "- consider using `into_ext_ref` to define a cyclic dependency"
+    )
+    return TypeError(msg)
 
 
 def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]]:

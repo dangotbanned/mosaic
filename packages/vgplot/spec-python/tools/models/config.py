@@ -240,8 +240,11 @@ class _BaseAction(
 
     scope: Scopes = field(default_factory=Scopes)
 
+
 type ActionKind = L["as-ref", "new-tree", "remove"]
 
+
+# TODO @dangotbanned: Implement `"as-ref"`
 @final
 class AsRefAction(
     _BaseAction,
@@ -295,6 +298,12 @@ class NewTreeAction(
 
     id: base.IdName
     """The name of the new `Root`."""
+
+    into_ext_ref: Mapping[DefName, base.IdName] = field(default_factory=dict)
+    """If this operation would leave "dangling" references, resolve them using this mapping.
+
+    This option should be reserved for *acknowledging* cyclic definitions.
+    """
 
 
 @final
