@@ -80,6 +80,9 @@ class NewTree(_Base[cfg.NewTreeAction]):
 
         # NOTE: 1st pass collects everything that moves
         for root in roots:
+            # TODO @dangotbanned: Make it safe to use omit `id`
+            # The bug is that the fast paths do an exact lookup for `definitions` on an "always" id match,
+            # but "include" should not mean "require"
             if matcher.id.matches(root.id):
                 if self.over == "descendants":
                     find = self._over_descendants_find
