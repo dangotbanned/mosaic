@@ -91,5 +91,35 @@ scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["AggregateExpression", "SQLExpression"]
 scope.over                     = "definitions"
 
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
+id                             = "plot_from"
+scope.include.id               = ["mosaic"]
+scope.include.definition.names = ["PlotMarkData"]
+scope.over                     = "descendants"
+scope.ref_follow_depth         = 1
+
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
+id                             = "marks"
+scope.include.id               = ["mosaic"]
+scope.include.definition.names = ["PlotMark"]
+scope.over                     = "descendants"
+scope.ref_follow_depth         = 5
+
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
+id                             = "plot_legend"
+scope.include.id               = ["mosaic"]
+scope.include.definition.names = ["Legend", "PlotLegend"]
+scope.over                     = "definitions"
+
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
+id                             = "plot"
+scope.include.id               = ["mosaic"]
+scope.include.definition.names = ["PlotAttributes", "Plot"]
+scope.over                     = "definitions"
+
 # TODO: `_recursive_replace` -> `KEYS_REPLACE`
 # - Should be handled in a later stage, where identifiers need to be valid python
