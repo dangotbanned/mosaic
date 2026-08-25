@@ -23,9 +23,33 @@ action                         = "new-tree"
 id                             = "typing"
 scope.include.id               = ["mosaic"]
 # TODO: `ColorScheme` Needs to remove 1x `Record<never, never>`
-scope.include.definition.names = ["Interval", "ColorScheme"]
+scope.include.definition.names = [
+  "ChannelDomainValue",
+  "ColorScaleType",
+  "ColorScheme",
+  "ContinuousScaleType",
+  "Curve",
+  "DiscreteScaleType",
+  "Fixed",
+  "FrameAnchor",
+  "GridInterpolate",
+  "Interpolate",
+  "Interval",
+  "LabelArrow",
+  "MarkerName",
+  "PositionScaleType",
+  "ProjectionName",
+  "Reducer",
+  "ScaleName",
+  "SelectFilter",
+  "StackOffset",
+  "StackOrder",
+  "SymbolType",
+  "TipPointer",
+  "VectorShape",
+]
 scope.over                     = "descendants"
-scope.ref_follow_depth         = 1
+scope.ref_follow_depth         = 2
 
 # TODO: `SpecDeduplicate`
 
