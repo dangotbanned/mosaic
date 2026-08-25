@@ -59,13 +59,9 @@ class Matcher:
         if include.child or include.ref:
             msg = f"include.{('child' if include.child else 'ref')} is not yet implemented, got:\n{include!r}"
             raise NotImplementedError(msg)
-        if exclude.child:
-            msg = f"exclude.child is not yet implemented, got:\n{exclude!r}"
+        if exclude.child or exclude.ref:
+            msg = f"exclude.{('child' if exclude.child else 'ref')} is not yet implemented, got:\n{exclude!r}"
             raise NotImplementedError(msg)
-
-        if exclude.ref:
-            # NOTE: This is the only one I have configured so far, but it is last in the order anyway
-            warnings.warn(f"exclude.ref is not yet implemented, got: {exclude!r}", stacklevel=2)
 
         # TODO @dangotbanned: `child``
         # TODO @dangotbanned: `ref`
