@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import deque
-from typing import TYPE_CHECKING, ClassVar, Protocol, Self, assert_never
+from typing import TYPE_CHECKING, Any, ClassVar, Protocol, Self, assert_never
 
 from tools.ir.mlir.common import into_ref_map
 from tools.ir.mlir.root import Root
@@ -41,6 +41,14 @@ class _Base[C: cfg._BaseAction]:
     def kind(self) -> cfg.ActionKind:
         return self._kind
 
+    @property
+    def ref_follow_depth(self) -> cfg.Depth:
+        return self.matcher.ref_follow_depth
+
+    @property
+    def over(self) -> cfg.IterOver:
+        return self.matcher.over
+
     @classmethod
     def from_config(cls, config: C) -> Self:
         self = cls.__new__(cls)
@@ -68,20 +76,19 @@ class NewTree(_Base[cfg.NewTreeAction]):
 
     def run(self, roots: RootsMut) -> Iterator[Root]:
         matcher = self.matcher
-        over = matcher.over
         defs_moved = {}
 
         # NOTE: 1st pass collects everything that moves
         for root in roots:
             if matcher.id.matches(root.id):
-                if over == "descendants":
+                if self.over == "descendants":
                     defs_moved.update(
                         (def_name, root.pop(def_name))
                         for def_name in self._over_descendants_find(root)
                     )
 
                 else:
-                    raise not_yet(self.kind, over)
+                    raise not_yet(self)
 
         # NOTE: 2nd pass fixes stale refs that remain
         defs_moved_keys = defs_moved.keys()
@@ -115,7 +122,7 @@ class NewTree(_Base[cfg.NewTreeAction]):
     def _over_descendants_find(self, root: Root) -> set[DefName]:
         """Identify all definitions we're going to steal."""
         take: set[DefName] = set()
-        follow_until = self.matcher.ref_follow_depth
+        follow_until = self.ref_follow_depth
         for name, defn in self.matcher.matching_definitions(root):
             take.add(name)
             refs = defn.refs
@@ -150,13 +157,13 @@ class Remove(_Base[cfg.RemoveAction]):
                         root.pop(def_name)
                     yield root
                 else:
-                    raise not_yet(self.kind, matcher.over)
+                    raise not_yet(self)
             else:
                 yield root
 
 
-def not_yet(kind: cfg.ActionKind, over: cfg.IterOver) -> NotImplementedError:
-    msg = f"Using both (action={kind!r}, over={over!r}) is not yet implemented."
+def not_yet(action: _Base[Any]) -> NotImplementedError:
+    msg = f"Using both (action={action.kind!r}, over={action.over!r}) is not yet implemented."
     return NotImplementedError(msg)
 
 
