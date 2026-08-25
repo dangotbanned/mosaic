@@ -117,7 +117,7 @@ class NewTree(_Base[cfg.NewTreeAction]):
                 # Means that `defs_moved` is finished
                 msg = (
                     f"TODO: {def_name!r} has references that are not owned by {self.id_output!r}, got:\n"
-                    f"{defs_moved_keys - set(ref.ref for ref in defn.refs)}"  # ruff: ignore[unnecessary-generator-set]
+                    f"{ {ref.ref for ref in defn.refs}.difference(defs_moved_keys) }"
                 )
                 raise NotImplementedError(msg)
         roots.append(Root(id=self.id_output, definitions=defs_moved))
