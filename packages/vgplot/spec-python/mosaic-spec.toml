@@ -93,6 +93,13 @@ scope.over                     = "definitions"
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
+id                             = "inputs"
+scope.include.id               = ["mosaic"]
+scope.include.definition.names = ["Menu", "Search", "Slider", "Table"]
+scope.over                     = "definitions"
+
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
 id                             = "plot_from"
 scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["PlotMarkData"]
