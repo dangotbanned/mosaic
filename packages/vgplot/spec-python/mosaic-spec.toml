@@ -75,5 +75,14 @@ scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["Transform", "IntervalTransform"]
 scope.over                     = "descendants"
 scope.ref_follow_depth         = 10
+
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
+id                             = "data"
+scope.include.id               = ["mosaic"]
+scope.include.definition.names = ["DataDefinition"]
+scope.over                     = "descendants"
+scope.ref_follow_depth         = 1
+
 # TODO: `_recursive_replace` -> `KEYS_REPLACE`
 # - Should be handled in a later stage, where identifiers need to be valid python
