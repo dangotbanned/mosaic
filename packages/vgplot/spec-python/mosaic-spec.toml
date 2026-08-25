@@ -32,6 +32,7 @@ scope.ref_follow_depth         = 1
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
 id                             = "css_styles"
+scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["CSSStyles"]
 scope.over                     = "definitions"
 

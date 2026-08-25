@@ -9,7 +9,7 @@ from tools.ir.mlir.scopes import Matcher
 from tools.models import config as cfg
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Sequence
+    from collections.abc import Collection, Iterator, Sequence
 
     from tools.models.base import DefName, IdName
 
@@ -82,13 +82,15 @@ class NewTree(_Base[cfg.NewTreeAction]):
         for root in roots:
             if matcher.id.matches(root.id):
                 if self.over == "descendants":
-                    defs_moved.update(
-                        (def_name, root.pop(def_name))
-                        for def_name in self._over_descendants_find(root)
-                    )
+                    find = self._over_descendants_find
+
+                elif self.over == "definitions":
+                    find = self._over_definitions_find
 
                 else:
                     raise not_yet(self)
+
+                defs_moved.update((def_name, root.pop(def_name)) for def_name in find(root))
 
         # NOTE: 2nd pass fixes stale refs that remain
         defs_moved_keys = defs_moved.keys()
@@ -119,8 +121,13 @@ class NewTree(_Base[cfg.NewTreeAction]):
 
         yield from roots
 
-    def _over_descendants_find(self, root: Root) -> set[DefName]:
-        """Identify all definitions we're going to steal."""
+    def _over_definitions_find(self, root: Root) -> Collection[DefName]:
+        if take := tuple(name for name, _ in self.matcher.matching_definitions(root)):
+            return take
+        msg = f"Did not find any matches for {self!r}"
+        raise NotImplementedError(msg)
+
+    def _over_descendants_find(self, root: Root) -> Collection[DefName]:
         take: set[DefName] = set()
         follow_until = self.ref_follow_depth
         for name, defn in self.matcher.matching_definitions(root):
