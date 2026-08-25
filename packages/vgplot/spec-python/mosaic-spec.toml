@@ -44,6 +44,12 @@ scope.include.definition.names = ["PlotInteractor"]
 scope.over                     = "descendants"
 scope.ref_follow_depth         = 2
 
-# TODO: `TransformSplit`
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
+id                             = "transform"
+scope.include.id               = ["mosaic"]
+scope.include.definition.names = ["Transform", "IntervalTransform"]
+scope.over                     = "descendants"
+scope.ref_follow_depth         = 10
 # TODO: `_recursive_replace` -> `KEYS_REPLACE`
 # - Should be handled in a later stage, where identifiers need to be valid python
