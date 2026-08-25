@@ -39,9 +39,10 @@ scope.over                     = "definitions"
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
 id                             = "interactors"
+scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["PlotInteractor"]
-scope.exclude.ref.names        = ["ParamRef"]
-scope.ref_follow_depth         = 1
+scope.over                     = "descendants"
+scope.ref_follow_depth         = 2
 
 # TODO: `TransformSplit`
 # TODO: `_recursive_replace` -> `KEYS_REPLACE`
