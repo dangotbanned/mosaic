@@ -284,6 +284,7 @@ ignore = [
   "non-lowercase-variable-in-function",
   "redundant-literal-union",                # (opinionated)
   "docstring-in-stub",                      # (opinionated)
+  "unaliased-collections-abc-set-import",   # (opinionated)
 ]
 
 [tool.ruff.lint.isort]

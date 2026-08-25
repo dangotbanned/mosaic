@@ -9,7 +9,7 @@ from tools.ir.mlir.scopes import Matcher
 from tools.models import config as cfg
 
 if TYPE_CHECKING:
-    from collections.abc import Collection, Iterator, Sequence
+    from collections.abc import Callable, Collection, Iterable, Iterator, Sequence, Set
 
     from tools.models.base import DefName, IdName
 
@@ -94,13 +94,13 @@ class NewTree(_Base[cfg.NewTreeAction]):
 
         # NOTE: 2nd pass fixes stale refs that remain
         defs_moved_keys = defs_moved.keys()
-        is_disjoint = defs_moved_keys.isdisjoint
-        is_superset = defs_moved_keys.__ge__
+        is_disjoint: Callable[[Iterable[DefName]], bool] = defs_moved_keys.isdisjoint
+        is_superset: Callable[[Set[DefName]], bool] = defs_moved_keys.__ge__
         for root in roots:
             has_stale_refs = [
                 def_name
                 for def_name, defn in root.def_items()
-                if (refs := defn.refs) and not is_disjoint(refs)
+                if (refs := defn.refs) and not is_disjoint({ref.ref for ref in refs})
             ]
             if has_stale_refs:
                 ref_map = into_ref_map(defs_moved, self.id_output)
