@@ -79,4 +79,7 @@ class App:
         for idx, action in self.actions.items():
             print(f"Running action {idx} {action!r}")
             roots = deque(action.run(roots))
+            # TODO @dangotbanned: Remove assignment once all actions are working
+            # This saves progress for an interactive session
+            self._mlirs = roots
         return roots
