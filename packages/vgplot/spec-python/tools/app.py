@@ -51,7 +51,7 @@ class App:
             self.read_into_inputs(refresh=refresh)
             self._wrappers.extend(jw.Root.from_input_schema(schema) for schema in self._inputs)
 
-    def into_mlir(self, *, refresh: bool = False) -> None:
+    def into_mlir(self, *, refresh: bool = False, quiet: bool = False) -> None:
         # NOTE: While these are still being implemented, coupling the steps here ensures an
         # interactive session doesn't re-run on partial data.
         # I don't want to add exception handling (yet)
@@ -62,8 +62,12 @@ class App:
         config = self.config.convert.to_mlir
         fn = mlir.Root.from_json_wrapper
         self._mlirs.extend(fn(root, config)[0] for root in self._wrappers)
-
+        if not quiet:
+            print(f"Starting {len(self.actions)} actions, w/ {len(self._mlirs)} roots.")
         self._mlirs = self._run_actions(self._mlirs)
+        if not quiet:
+            print(f"Finished actions, w/ {len(self._mlirs)} roots.")
+            print("\n".join(root._describe() for root in self._mlirs))
 
     def _read_sources(self) -> Iterator[InputSchema]:
         if not (sources := self.config.convert.sources):
@@ -79,7 +83,4 @@ class App:
         for idx, action in self.actions.items():
             print(f"Running action {idx} {action!r}")
             roots = deque(action.run(roots))
-            # TODO @dangotbanned: Remove assignment once all actions are working
-            # This saves progress for an interactive session
-            self._mlirs = roots
         return roots

@@ -62,8 +62,13 @@ class Root[D](Struct, kw_only=True):
         # NOTE: Fallback used to keep bound method reprs small
         tp = self.__class__
         module_name = tp.__module__.removeprefix("tools.models.")
-        class_name = tp.__name__
-        return f"{module_name}.{class_name}<id: {self.id!r}, defs: {len(self.definitions)}>"
+        return f"{module_name}.{tp.__name__}{self._describe(names=False)}"
+
+    def _describe(self, *, length: bool = True, names: bool = True) -> str:
+        header = f"<id: {self.id}, defs: {len(self.definitions)}>" if length else f"<id: {self.id}>"
+        if not names:
+            return header
+        return f"{header}\n    {list(self.definitions)!r}"
 
     @overload
     def iter_defs[R](self, predicate: Guard[R], /) -> Iterator[Entry[R]]: ...
