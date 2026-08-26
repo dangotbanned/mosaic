@@ -63,10 +63,10 @@ class App:
         fn = mlir.Root.from_json_wrapper
         self._mlirs.extend(fn(root, config) for root in self._wrappers)
         if not quiet:
-            print(f"Starting {len(self.actions)} actions, w/ {len(self._mlirs)} roots.")
-        self._mlirs = self._run_actions(self._mlirs)
+            print(f"Starting {len(self.actions)} actions on {len(self._mlirs)} root(s).")
+        self._mlirs = self._run_actions(self._mlirs, quiet=quiet)
         if not quiet:
-            print(f"Finished actions, w/ {len(self._mlirs)} roots.")
+            print(f"Finished actions with {len(self._mlirs)} root(s).")
             print("\n".join(root._describe() for root in self._mlirs))
 
     def _read_sources(self) -> Iterator[InputSchema]:
@@ -79,8 +79,9 @@ class App:
             schema.id = source.id
             yield schema
 
-    def _run_actions(self, roots: deque[mlir.Root]) -> deque[mlir.Root]:
+    def _run_actions(self, roots: deque[mlir.Root], *, quiet: bool) -> deque[mlir.Root]:
         for idx, action in self.actions.items():
-            print(f"Running action {idx} {action!r}")
+            if not quiet:
+                print(f"  Running action {idx} {action!r}")
             roots = deque(action.run(roots))
         return roots
