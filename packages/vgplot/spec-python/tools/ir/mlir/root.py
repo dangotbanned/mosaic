@@ -16,18 +16,13 @@ if TYPE_CHECKING:
 @final
 class Root(base.Root[Definition[MLIR]], kw_only=True):
     @classmethod
-    def from_json_wrapper(
-        cls, source: jw.Root, config: JsonWrapperToMLIR, /
-    ) -> tuple[Root, convert.ConversionCtx]:
+    def from_json_wrapper(cls, source: jw.Root, config: JsonWrapperToMLIR, /) -> Root:
         source.ref_unwrap(config)
-        # Probably not gonna go too far into this idea
-        ctx = convert.ConversionCtx()
         definitions = {
-            name: Definition.from_mlir(convert.from_json(schema, name, ctx))
+            name: Definition.from_mlir(convert.from_json(schema, name))
             for name, schema in source.def_items()
         }
-        self = Root(id=source.id, definitions=definitions)
-        return self, ctx
+        return Root(id=source.id, definitions=definitions)
 
     def replace(self, name: DefName, node: MLIR, /) -> None:
         """Replace an existing definition with an updated version.

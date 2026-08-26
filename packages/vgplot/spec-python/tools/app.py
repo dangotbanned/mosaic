@@ -61,7 +61,7 @@ class App:
         self.into_json_wrapper(refresh=refresh)
         config = self.config.convert.to_mlir
         fn = mlir.Root.from_json_wrapper
-        self._mlirs.extend(fn(root, config)[0] for root in self._wrappers)
+        self._mlirs.extend(fn(root, config) for root in self._wrappers)
         if not quiet:
             print(f"Starting {len(self.actions)} actions, w/ {len(self._mlirs)} roots.")
         self._mlirs = self._run_actions(self._mlirs)
