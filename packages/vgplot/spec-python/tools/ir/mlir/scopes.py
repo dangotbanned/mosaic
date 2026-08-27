@@ -50,6 +50,9 @@ class Matcher:
     child: ChildMatcher
     ref_follow_depth: Depth
 
+    def __repr__(self) -> str:
+        return f"{self.id!r} & {self.definition!r} & {self.child!r}"
+
     def matching_definitions(self, root: Root) -> DefsEntries:
         return self.definition.iter_defs(root)
 

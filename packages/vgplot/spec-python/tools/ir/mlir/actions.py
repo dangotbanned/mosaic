@@ -50,6 +50,9 @@ class _Base[O: cfg.IterOver](Protocol):
         msg = f"{type(self).__name__}.{self.run.__name__}() is not yet implemented"
         raise NotImplementedError(msg)
 
+    def __repr__(self) -> str:
+        return f"<{self.kind}: {self.matcher}>"
+
 
 type Todo = typing.Any
 
@@ -65,6 +68,7 @@ class _MultiOver[O: cfg.IterOver](_Base[O], Protocol):
 
 class AsRef[O: L["children", "descendants"]](_MultiOver[O]):
     __slots__ = ("match_doc", "name", "type")
+    _kind = "as-ref"
 
     def __init__(
         self,
@@ -198,6 +202,7 @@ class Remove(_Base[L["definitions"]]):
 
 class AsDefs(_Base[L["children"]]):
     __slots__ = ()
+    _kind = "as-defs"
 
     @property
     def over(self) -> L["children"]:
