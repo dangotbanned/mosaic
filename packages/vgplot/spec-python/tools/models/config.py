@@ -241,7 +241,25 @@ class _BaseAction(
     scope: Scopes = field(default_factory=Scopes)
 
 
-type ActionKind = L["as-ref", "new-tree", "remove"]
+type ActionKind = L["as-ref", "as-defs", "new-tree", "remove"]
+
+
+# NOTE: `DensityX`, `DensityY` don't quite fit `"as-ref"` as they have 4 members each
+@final
+class AsDefsAction(
+    _BaseAction,
+    frozen=True,
+    kw_only=True,
+    tag="as-defs",
+    tag_field="action",
+    forbid_unknown_fields=True,
+):
+    """Lift one or more anonymous types into new definitions.
+
+    Similar to `"as-ref"`, but aimed at naming multiple *distinct* types that are nested at a single location.
+
+    Whereas `"as-ref"` is suited for a single *duplicated* type found in multiple locations.
+    """
 
 
 # TODO @dangotbanned: Implement `"as-ref"`
@@ -318,7 +336,7 @@ class RemoveAction(
     """Remove matching definitions, without replacement."""
 
 
-type Action = AsRefAction | NewTreeAction | RemoveAction
+type Action = AsRefAction | AsDefsAction | NewTreeAction | RemoveAction
 
 
 class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):

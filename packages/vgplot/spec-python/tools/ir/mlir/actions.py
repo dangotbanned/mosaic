@@ -201,8 +201,10 @@ def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]
                 item = Remove.from_config(config)
             case cfg.NewTreeAction():
                 item = NewTree.from_config(config)
-            case cfg.AsRefAction():
-                msg = f"TODO @dangotbanned: action='as-ref', got: {config!r}"
+            case cfg.AsRefAction() | cfg.AsDefsAction():
+                msg = (
+                    f"TODO @dangotbanned: action='{config.__struct_config__.tag}', got: {config!r}"
+                )
                 raise NotImplementedError(msg)
             case _:
                 assert_never(config)

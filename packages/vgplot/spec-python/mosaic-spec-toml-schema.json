@@ -1,5 +1,24 @@
 {
   "$defs": {
+    "AsDefsAction": {
+      "additionalProperties": false,
+      "description": "Lift one or more anonymous types into new definitions.\n\nSimilar to `\"as-ref\"`, but aimed at naming multiple *distinct* types that are nested at a single location.\n\nWhereas `\"as-ref\"` is suited for a single *duplicated* type found in multiple locations.",
+      "properties": {
+        "action": {
+          "enum": [
+            "as-defs"
+          ]
+        },
+        "scope": {
+          "$ref": "#/$defs/Scopes"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "AsDefsAction",
+      "type": "object"
+    },
     "AsRefAction": {
       "additionalProperties": false,
       "description": "Replace all anonymous matches with a reference to this new definition.\n\nAiming to do the heavy lifting for de-duplicating anonymous unions.",
@@ -83,6 +102,9 @@
                 "$ref": "#/$defs/AsRefAction"
               },
               {
+                "$ref": "#/$defs/AsDefsAction"
+              },
+              {
                 "$ref": "#/$defs/NewTreeAction"
               },
               {
@@ -91,6 +113,7 @@
             ],
             "discriminator": {
               "mapping": {
+                "as-defs": "#/$defs/AsDefsAction",
                 "as-ref": "#/$defs/AsRefAction",
                 "new-tree": "#/$defs/NewTreeAction",
                 "remove": "#/$defs/RemoveAction"
