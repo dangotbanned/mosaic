@@ -174,5 +174,12 @@ def _(obj: jw.Union, owner: DefName, /) -> mlir.Union:
         else:
             members.add(converted)
     if merge_literals:
-        members.add(mlir.Literal(members=tuple(merge_literals)))
-    return mlir.Union(members=tuple(members), doc=obj.description)
+        members.add(mlir.Literal(members=tuple(sorted(merge_literals, key=str))))
+
+    return mlir.Union(members=tuple(sorted(members, key=sort_key)), doc=obj.description)
+
+
+def sort_key(node: MLIR, /) -> str:
+    # Doesn't make this fully deterministic, but improves common cases
+    # of builtin unions
+    return node.__class__.__name__
