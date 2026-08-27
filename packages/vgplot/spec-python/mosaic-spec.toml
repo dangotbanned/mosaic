@@ -9,7 +9,6 @@ ref_unwrap = { Curve = { description = "outer" } }
 [[convert.to_mlir.actions]]
 action                         = "remove"
 scope.include.definition.names = ["Spec"]
-scope.over                     = "definitions"
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
@@ -58,7 +57,6 @@ action                         = "new-tree"
 id                             = "css_styles"
 scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["CSSStyles"]
-scope.over                     = "definitions"
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
@@ -89,21 +87,18 @@ action                         = "new-tree"
 id                             = "expression"
 scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["AggregateExpression", "SQLExpression"]
-scope.over                     = "definitions"
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
 id                             = "inputs"
 scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["Menu", "Search", "Slider", "Table"]
-scope.over                     = "definitions"
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
 id                             = "layout"
 scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["HConcat", "VConcat", "HSpace", "VSpace"]
-scope.over                     = "definitions"
 into_ext_ref                   = { "Component" = "mosaic" }
 
 [[convert.to_mlir.actions]]
@@ -127,14 +122,18 @@ action                         = "new-tree"
 id                             = "plot_legend"
 scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["Legend", "PlotLegend"]
-scope.over                     = "definitions"
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
 id                             = "plot"
 scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["PlotAttributes", "Plot"]
-scope.over                     = "definitions"
+
+[[convert.to_mlir.actions]]
+action                         = "as-defs"
+scope.include.id               = ["marks"]
+scope.include.definition.names = ["DensityX", "DensityY"]
+scope.include.child.nodes      = ["ClosedDict"]
 
 # TODO: `_recursive_replace` -> `KEYS_REPLACE`
 # - Should be handled in a later stage, where identifiers need to be valid python

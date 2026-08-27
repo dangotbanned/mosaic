@@ -10,7 +10,7 @@
           ]
         },
         "scope": {
-          "$ref": "#/$defs/Scopes"
+          "$ref": "#/$defs/ChildrenScope"
         }
       },
       "required": [
@@ -36,7 +36,7 @@
           "type": "string"
         },
         "scope": {
-          "$ref": "#/$defs/Scopes"
+          "$ref": "#/$defs/ChildrenDescendantsScope"
         },
         "type": {}
       },
@@ -46,6 +46,65 @@
         "type"
       ],
       "title": "AsRefAction",
+      "type": "object"
+    },
+    "ChildrenDescendantsScope": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    over: The kind of traversal to perform.\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "properties": {
+        "exclude": {
+          "$ref": "#/$defs/Filter"
+        },
+        "include": {
+          "$ref": "#/$defs/Filter"
+        },
+        "over": {
+          "default": "children",
+          "enum": [
+            "children",
+            "descendants"
+          ]
+        },
+        "ref_follow_depth": {
+          "default": 0,
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      },
+      "required": [],
+      "title": "ChildrenDescendantsScope",
+      "type": "object"
+    },
+    "ChildrenScope": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    over: The kind of traversal to perform.\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "properties": {
+        "exclude": {
+          "$ref": "#/$defs/Filter"
+        },
+        "include": {
+          "$ref": "#/$defs/Filter"
+        },
+        "over": {
+          "default": "children",
+          "enum": [
+            "children"
+          ]
+        }
+      },
+      "required": [],
+      "title": "ChildrenScope",
       "type": "object"
     },
     "ConvertConfig": {
@@ -64,6 +123,65 @@
       },
       "required": [],
       "title": "ConvertConfig",
+      "type": "object"
+    },
+    "DefsDescendantsScope": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    over: The kind of traversal to perform.\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "properties": {
+        "exclude": {
+          "$ref": "#/$defs/Filter"
+        },
+        "include": {
+          "$ref": "#/$defs/Filter"
+        },
+        "over": {
+          "default": "definitions",
+          "enum": [
+            "definitions",
+            "descendants"
+          ]
+        },
+        "ref_follow_depth": {
+          "default": 0,
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      },
+      "required": [],
+      "title": "DefsDescendantsScope",
+      "type": "object"
+    },
+    "DefsScope": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    over: The kind of traversal to perform.\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "properties": {
+        "exclude": {
+          "$ref": "#/$defs/Filter"
+        },
+        "include": {
+          "$ref": "#/$defs/Filter"
+        },
+        "over": {
+          "default": "definitions",
+          "enum": [
+            "definitions"
+          ]
+        }
+      },
+      "required": [],
+      "title": "DefsScope",
       "type": "object"
     },
     "Filter": {
@@ -226,7 +344,7 @@
           "type": "object"
         },
         "scope": {
-          "$ref": "#/$defs/Scopes"
+          "$ref": "#/$defs/DefsDescendantsScope"
         }
       },
       "required": [
@@ -309,52 +427,13 @@
           ]
         },
         "scope": {
-          "$ref": "#/$defs/Scopes"
+          "$ref": "#/$defs/DefsScope"
         }
       },
       "required": [
         "action"
       ],
       "title": "RemoveAction",
-      "type": "object"
-    },
-    "Scopes": {
-      "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    over: The kind of traversal to perform.\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
-      "properties": {
-        "exclude": {
-          "$ref": "#/$defs/Filter"
-        },
-        "include": {
-          "$ref": "#/$defs/Filter"
-        },
-        "over": {
-          "default": "children",
-          "enum": [
-            "children",
-            "definitions",
-            "descendants"
-          ]
-        },
-        "ref_follow_depth": {
-          "default": 0,
-          "enum": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10
-          ]
-        }
-      },
-      "required": [],
-      "title": "Scopes",
       "type": "object"
     },
     "SourceConfig": {

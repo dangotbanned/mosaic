@@ -3,7 +3,7 @@
 import typing
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
-from typing import Literal as L, final
+from typing import Any, Literal as L, final
 
 from msgspec import field
 
@@ -181,7 +181,9 @@ class Filter(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
             yield "ref", self.ref
 
 
-class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+class _BaseScopes[Over: IterOver](
+    base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True
+):
     """A search space for an `Action`.
 
     Args:
@@ -212,11 +214,11 @@ class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
 
     include: Filter = field(default_factory=Filter)
     exclude: Filter = field(default_factory=Filter)
-    over: IterOver = "children"
-    ref_follow_depth: Depth = 0
+    # NOTE: children doesn't make sense everywhere, different actions have different defaults
+    over: Over
 
     def __bool__(self) -> bool:
-        return bool(self.ref_follow_depth or self.include or self.exclude)
+        return bool(self.include or self.exclude)
 
     def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
         if self.include:
@@ -224,11 +226,65 @@ class Scopes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
         if self.exclude:
             yield "exclude", self.exclude
         yield "over", self.over
+
+    def __init_subclass__(cls, **kwds: Any) -> None:
+        super().__init_subclass__(**kwds)
+        # HACK: Ensures `msgspec` collects the doc that's written in the base class, when
+        # generating the schema
+        if not cls.__dict__.get("__doc__", ""):
+            cls.__doc__ = _BaseScopes.__doc__
+
+
+@final
+class ChildrenScope(
+    _BaseScopes[L["children"]], frozen=True, kw_only=True, forbid_unknown_fields=True
+):
+    over: L["children"] = "children"
+
+
+@final
+class DefsScope(
+    _BaseScopes[L["definitions"]], frozen=True, kw_only=True, forbid_unknown_fields=True
+):
+    over: L["definitions"] = "definitions"
+
+
+@final
+class DefsDescendantsScope(
+    _BaseScopes[L["definitions", "descendants"]],
+    frozen=True,
+    kw_only=True,
+    forbid_unknown_fields=True,
+):
+    over: L["definitions", "descendants"] = "definitions"
+    ref_follow_depth: Depth = 0
+
+    def __bool__(self) -> bool:
+        return bool(self.ref_follow_depth or self.include or self.exclude)
+
+    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+        yield from super().__rich_repr__()
         if self.ref_follow_depth:
             yield "ref_follow_depth", self.ref_follow_depth
 
 
-class _BaseAction(
+@final
+class ChildrenDescendantsScope(
+    _BaseScopes[L["children", "descendants"]], frozen=True, kw_only=True, forbid_unknown_fields=True
+):
+    over: L["children", "descendants"] = "children"
+    ref_follow_depth: Depth = 0
+
+    def __bool__(self) -> bool:
+        return bool(self.ref_follow_depth or self.include or self.exclude)
+
+    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+        yield from super().__rich_repr__()
+        if self.ref_follow_depth:
+            yield "ref_follow_depth", self.ref_follow_depth
+
+
+class _BaseAction[Over: IterOver](
     base.FrozenStruct,
     frozen=True,
     kw_only=True,
@@ -238,16 +294,12 @@ class _BaseAction(
 ):
     """Combines a search space (`scope`) and what to do with it (`action`, ...)."""
 
-    scope: Scopes = field(default_factory=Scopes)
+    scope: _BaseScopes[Over]
 
 
-type ActionKind = L["as-ref", "as-defs", "new-tree", "remove"]
-
-
-# NOTE: `DensityX`, `DensityY` don't quite fit `"as-ref"` as they have 4 members each
 @final
 class AsDefsAction(
-    _BaseAction,
+    _BaseAction[L["children"]],
     frozen=True,
     kw_only=True,
     tag="as-defs",
@@ -261,11 +313,14 @@ class AsDefsAction(
     Whereas `"as-ref"` is suited for a single *duplicated* type found in multiple locations.
     """
 
+    # NOTE: `DensityX`, `DensityY` don't quite fit `"as-ref"` as they have 4 members each
+    scope: ChildrenScope = field(default_factory=ChildrenScope)
+
 
 # TODO @dangotbanned: Implement `"as-ref"`
 @final
 class AsRefAction(
-    _BaseAction,
+    _BaseAction[L["children", "descendants"]],
     frozen=True,
     kw_only=True,
     tag="as-ref",
@@ -277,6 +332,7 @@ class AsRefAction(
     Aiming to do the heavy lifting for de-duplicating anonymous unions.
     """
 
+    scope: ChildrenDescendantsScope = field(default_factory=ChildrenDescendantsScope)
     name: DefName
     """The name of the new definition."""
     type: Todo
@@ -298,7 +354,7 @@ class AsRefAction(
 
 @final
 class NewTreeAction(
-    _BaseAction,
+    _BaseAction[L["definitions", "descendants"]],
     frozen=True,
     kw_only=True,
     tag="new-tree",
@@ -314,6 +370,7 @@ class NewTreeAction(
     - creates a new `mlir.Root` per-action
     """
 
+    scope: DefsDescendantsScope = field(default_factory=DefsDescendantsScope)
     id: base.IdName
     """The name of the new `Root`."""
 
@@ -326,7 +383,7 @@ class NewTreeAction(
 
 @final
 class RemoveAction(
-    _BaseAction,
+    _BaseAction[L["definitions"]],
     frozen=True,
     kw_only=True,
     tag="remove",
@@ -335,8 +392,12 @@ class RemoveAction(
 ):
     """Remove matching definitions, without replacement."""
 
+    scope: DefsScope = field(default_factory=DefsScope)
 
+
+type ActionKind = L["as-ref", "as-defs", "new-tree", "remove"]
 type Action = AsRefAction | AsDefsAction | NewTreeAction | RemoveAction
+type Scopes = ChildrenScope | DefsScope | ChildrenDescendantsScope | DefsDescendantsScope
 
 
 class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):

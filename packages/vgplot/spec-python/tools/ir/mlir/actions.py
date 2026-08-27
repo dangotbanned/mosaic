@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import typing
 from collections import deque
-from typing import TYPE_CHECKING, Any, ClassVar, Protocol, Self, assert_never
+from typing import TYPE_CHECKING, Any, ClassVar, Literal as L, Protocol, assert_never
 
 from tools.ir.mlir.common import into_ref_map
 from tools.ir.mlir.root import Root
@@ -33,35 +34,54 @@ class Action(Protocol):
     def kind(self) -> cfg.ActionKind: ...
 
 
-class _Base[C: cfg._BaseAction]:
+class _Base[O: cfg.IterOver](Protocol):
     __slots__ = ("matcher",)
     matcher: Matcher
     _kind: ClassVar[cfg.ActionKind]
 
     @property
+    def over(self) -> O: ...
+    @property
     def kind(self) -> cfg.ActionKind:
         return self._kind
-
-    @property
-    def ref_follow_depth(self) -> cfg.Depth:
-        return self.matcher.ref_follow_depth
-
-    @property
-    def over(self) -> cfg.IterOver:
-        return self.matcher.over
-
-    @classmethod
-    def from_config(cls, config: C) -> Self:
-        self = cls.__new__(cls)
-        self.matcher = Matcher.from_scopes(config.scope)
-        return self
 
     def run(self, roots: RootsMut) -> Iterator[Root]:
         msg = f"{type(self).__name__}.{self.run.__name__}() is not yet implemented"
         raise NotImplementedError(msg)
 
 
-class NewTree(_Base[cfg.NewTreeAction]):
+type Todo = typing.Any
+
+
+class _MultiOver[O: cfg.IterOver](_Base[O], Protocol):
+    __slots__ = ("_over",)
+    _over: O
+
+    @property
+    def over(self) -> O:
+        return self._over
+
+
+class AsRef[O: L["children", "descendants"]](_MultiOver[O]):
+    __slots__ = ("match_doc", "name", "type")
+
+    def __init__(
+        self,
+        matcher: Matcher,
+        over: O,
+        name: DefName,
+        type: Todo,  # ruff: ignore[builtin-argument-shadowing]
+        *,
+        match_doc: bool,
+    ) -> None:
+        self.matcher = matcher
+        self._over = over
+        self.name = name
+        self.type = type
+        self.match_doc = match_doc
+
+
+class NewTree[O: L["definitions", "descendants"]](_MultiOver[O]):
     __slots__ = ("id_output", "into_ext_ref")
     id_output: IdName
     into_ext_ref: Mapping[DefName, IdName]
@@ -70,32 +90,28 @@ class NewTree(_Base[cfg.NewTreeAction]):
     def __repr__(self) -> str:
         return f"<{self.kind}: {self.id_output}>"
 
-    @classmethod
-    def from_config(cls, config: cfg.NewTreeAction) -> Self:
-        self = super().from_config(config)
-        self.id_output = config.id
-        self.into_ext_ref = config.into_ext_ref
-        return self
+    def __init__(
+        self, matcher: Matcher, over: O, id: IdName, into_ext_ref: Mapping[DefName, IdName]
+    ) -> None:
+        self.matcher = matcher
+        self._over = over
+        self.id_output = id
+        self.into_ext_ref = into_ext_ref
 
-    def run(self, roots: RootsMut) -> Iterator[Root]:  # ruff: ignore[complex-structure]
+    def run(self, roots: RootsMut) -> Iterator[Root]:
         matcher = self.matcher
         defs_moved = {}
 
         # NOTE: 1st pass collects everything that moves
+        if self.over == "descendants":
+            find = self._over_descendants_find
+        else:
+            find = self._over_definitions_find
         for root in roots:
             # TODO @dangotbanned: Make it safe to use omit `id`
             # The bug is that the fast paths do an exact lookup for `definitions` on an "always" id match,
             # but "include" should not mean "require"
             if matcher.id.matches(root.id):
-                if self.over == "descendants":
-                    find = self._over_descendants_find
-
-                elif self.over == "definitions":
-                    find = self._over_definitions_find
-
-                else:
-                    raise not_yet_error(self)
-
                 defs_moved.update((def_name, root.pop(def_name)) for def_name in find(root))
 
         # NOTE: 2nd pass fixes stale refs that remain
@@ -136,7 +152,7 @@ class NewTree(_Base[cfg.NewTreeAction]):
 
     def _over_descendants_find(self, root: Root) -> Collection[DefName]:
         take: set[DefName] = set()
-        follow_until = self.ref_follow_depth
+        follow_until = self.matcher.ref_follow_depth
         for name, defn in self.matcher.matching_definitions(root):
             take.add(name)
             refs = defn.refs
@@ -159,21 +175,35 @@ class NewTree(_Base[cfg.NewTreeAction]):
         return take
 
 
-class Remove(_Base[cfg.RemoveAction]):
+class Remove(_Base[L["definitions"]]):
+    __slots__ = ()
     _kind = "remove"
+
+    @property
+    def over(self) -> L["definitions"]:
+        return "definitions"
 
     def run(self, roots: RootsMut) -> Iterator[Root]:
         matcher = self.matcher
         for root in roots:
             if matcher.id.matches(root.id):
-                if matcher.over == "definitions":
-                    for def_name in tuple(name for name, _ in matcher.matching_definitions(root)):
-                        root.pop(def_name)
-                    yield root
-                else:
-                    raise not_yet_error(self)
-            else:
-                yield root
+                for def_name in tuple(name for name, _ in matcher.matching_definitions(root)):
+                    root.pop(def_name)
+            yield root
+
+    def __init__(self, matcher: Matcher) -> None:
+        self.matcher = matcher
+
+
+class AsDefs(_Base[L["children"]]):
+    __slots__ = ()
+
+    @property
+    def over(self) -> L["children"]:
+        return "children"
+
+    def __init__(self, matcher: Matcher) -> None:
+        self.matcher = matcher
 
 
 def not_yet_error(action: _Base[Any]) -> NotImplementedError:
@@ -182,7 +212,7 @@ def not_yet_error(action: _Base[Any]) -> NotImplementedError:
 
 
 def dangling_ref_error(
-    action: NewTree, def_name: DefName, defn: Definition[Any], defs_moved: Iterable[DefName]
+    action: NewTree[Any], def_name: DefName, defn: Definition[Any], defs_moved: Iterable[DefName]
 ) -> TypeError:
     msg = (
         f"{def_name!r} has references that are not owned by {action.id_output!r}, got:\n"
@@ -197,11 +227,20 @@ def dangling_ref_error(
 def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]]:
     for idx, config in enumerate(configs):
         match config:
-            case cfg.RemoveAction():
-                item = Remove.from_config(config)
-            case cfg.NewTreeAction():
-                item = NewTree.from_config(config)
-            case cfg.AsRefAction() | cfg.AsDefsAction():
+            case cfg.RemoveAction(scope=scope):
+                item = Remove(Matcher.from_scopes(scope))
+            case cfg.NewTreeAction(scope=scope, id=id, into_ext_ref=into_ext_ref):
+                item = NewTree(Matcher.from_scopes(scope), scope.over, id, into_ext_ref)
+            case cfg.AsRefAction(scope=scope, name=name, type=type, match_doc=match_doc):
+                item = AsRef(
+                    Matcher.from_scopes(scope), scope.over, name, type, match_doc=match_doc
+                )
+                msg = (
+                    f"TODO @dangotbanned: action='{config.__struct_config__.tag}', got: {config!r}"
+                )
+                raise NotImplementedError(msg)
+            case cfg.AsDefsAction(scope=scope):
+                item = AsDefs(Matcher.from_scopes(scope))
                 msg = (
                     f"TODO @dangotbanned: action='{config.__struct_config__.tag}', got: {config!r}"
                 )

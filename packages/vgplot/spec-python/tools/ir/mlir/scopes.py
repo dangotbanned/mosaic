@@ -10,7 +10,7 @@ from __future__ import annotations
 import typing
 from collections.abc import Callable, Iterable, Iterator
 from itertools import chain
-from typing import Final, Literal as L, Self
+from typing import Final, Literal as L
 
 from tools.ir.mlir import nodes as mlir
 from tools.ir.mlir.nodes import MLIR
@@ -19,7 +19,7 @@ from tools.models.base import DefName, Entry, IdName
 if typing.TYPE_CHECKING:
     from tools.ir.mlir.definition import Definition
     from tools.ir.mlir.root import Root
-    from tools.models.config import Depth, Filter, IterOver, NamesNodes, Nodes, Scopes
+    from tools.models.config import Depth, Filter, NamesNodes, Nodes, Scopes
 
 type Unused = typing.Any
 type Incomplete = typing.Any
@@ -44,11 +44,10 @@ class Matcher:
     #   i. Possibly in combination with others, to decide what kind of "cleanup" would be needed
     # 3. Transform `Scopes` into a "compiled" representation
     #   i. Calling the compiled version will be a single call, instead of checking 19 different conditions
-    __slots__ = ("child", "definition", "id", "over", "ref_follow_depth")
+    __slots__ = ("child", "definition", "id", "ref_follow_depth")
     id: IdMatcher
     definition: DefsMatcher
     child: ChildMatcher
-    over: IterOver
     ref_follow_depth: Depth
 
     def matching_definitions(self, root: Root) -> DefsEntries:
@@ -62,7 +61,7 @@ class Matcher:
         raise NotImplementedError(msg)
 
     @classmethod
-    def from_scopes(cls, scopes: Scopes) -> Self:
+    def from_scopes(cls, scopes: Scopes) -> Matcher:
         self = cls.__new__(cls)
         include, exclude = scopes.include, scopes.exclude
         if not (incl_id := include.id):
@@ -71,8 +70,7 @@ class Matcher:
             self.id = IdInclude(incl_id - exclude.id) if exclude.id else IdInclude(incl_id)
 
         self.definition = _into_defs_matcher(include, exclude)
-        self.over = scopes.over
-        self.ref_follow_depth = scopes.ref_follow_depth
+        self.ref_follow_depth = getattr(scopes, "ref_follow_depth", 0)
 
         if include.child or exclude.child:
             self.child = ChildIncludeNodes(include.child, exclude.child)
