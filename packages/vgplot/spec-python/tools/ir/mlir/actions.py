@@ -236,11 +236,6 @@ class AsDefs(_Base[L["children"]]):
             yield root
 
 
-def not_yet_error(action: _Base[Any]) -> NotImplementedError:
-    msg = f"Using both (action={action.kind!r}, over={action.over!r}) is not yet implemented."
-    return NotImplementedError(msg)
-
-
 def dangling_ref_error(
     action: NewTree[Any], def_name: DefName, defn: Definition[Any], defs_moved: Iterable[DefName]
 ) -> TypeError:
