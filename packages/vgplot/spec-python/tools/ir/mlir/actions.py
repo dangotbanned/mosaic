@@ -4,7 +4,9 @@ import typing
 from collections import deque
 from typing import TYPE_CHECKING, Any, ClassVar, Literal as L, Protocol, assert_never
 
+from tools.ir.mlir import nodes
 from tools.ir.mlir.common import into_ref_map
+from tools.ir.mlir.definition import Definition
 from tools.ir.mlir.root import Root
 from tools.ir.mlir.scopes import Matcher
 from tools.models import config as cfg
@@ -12,7 +14,6 @@ from tools.models import config as cfg
 if TYPE_CHECKING:
     from collections.abc import Callable, Collection, Iterable, Iterator, Mapping, Sequence, Set
 
-    from tools.ir.mlir.definition import Definition
     from tools.models.base import DefName, IdName
 
 type RootsMut = deque[Root]
@@ -205,6 +206,30 @@ class AsDefs(_Base[L["children"]]):
     def __init__(self, matcher: Matcher) -> None:
         self.matcher = matcher
 
+    def run(self, roots: RootsMut) -> Iterator[Root]:
+        matcher = self.matcher
+        for root in roots:
+            if matcher.id.matches(root.id):
+                new_defs = {}
+                for entry, children in matcher.matching_children(root):
+                    def_name, defn = entry
+
+                    # NOTE: Simpler to just handle the case I have, before generalizing to anything
+                    if not isinstance(defn.inner, nodes.Union):
+                        msg = f"TODO: Support {defn.inner.__class__.__name__!r} as a parent type in {self.kind!r}, got:\n{defn!r}"
+                        raise NotImplementedError(msg)
+                    new_members = []
+                    for idx, child in enumerate(children, 1):
+                        child_name = f"{def_name}{idx}"
+                        new_defs[child_name] = Definition.from_mlir(child.with_doc(defn.inner.doc))
+                        new_members.append(nodes.Reference(ref=child_name))
+                    new_defs[def_name] = Definition.from_mlir(
+                        defn.inner.__replace__(members=tuple(new_members))
+                    )
+                if new_defs:
+                    root.definitions.update(new_defs)
+            yield root
+
 
 def not_yet_error(action: _Base[Any]) -> NotImplementedError:
     msg = f"Using both (action={action.kind!r}, over={action.over!r}) is not yet implemented."
@@ -235,16 +260,8 @@ def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]
                 item = AsRef(
                     Matcher.from_scopes(scope), scope.over, name, type, match_doc=match_doc
                 )
-                msg = (
-                    f"TODO @dangotbanned: action='{config.__struct_config__.tag}', got: {config!r}"
-                )
-                raise NotImplementedError(msg)
             case cfg.AsDefsAction(scope=scope):
                 item = AsDefs(Matcher.from_scopes(scope))
-                msg = (
-                    f"TODO @dangotbanned: action='{config.__struct_config__.tag}', got: {config!r}"
-                )
-                raise NotImplementedError(msg)
             case _:
                 assert_never(config)
 
