@@ -242,7 +242,7 @@ extend-safe-fixes                        = [
   "unnecessary-multiline-docstring"
 ]
 future-annotations                       = true
-flake8-builtins.ignorelist               = ["format", "input"]
+flake8-builtins.ignorelist               = ["format", "input", "id"]
 flake8-tidy-imports.ban-relative-imports = "all"
 typing-modules                           = ["mosaic_spec._typing_compat"]
 pydoclint.ignore-one-line-docstrings     = true

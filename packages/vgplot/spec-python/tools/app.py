@@ -10,7 +10,9 @@ from tools.models.config import MosaicSpecToml
 from tools.models.mosaic import InputSchema
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Mapping
+    from collections.abc import Collection, Iterator, Mapping
+
+    from tools.models.base import IdName
 
 
 @final
@@ -26,6 +28,7 @@ class App:
         self._wrappers = deque[jw.Root]()
         self._mlirs = deque[mlir.Root]()
         self._actions: dict[int, mlir.Action] = {}
+        self._mlirs_inv: dict[IdName, int] = {}
 
     @staticmethod
     def discover(path: fs.IntoPath = fs.MOSAIC_SPEC_TOML) -> App:
@@ -65,9 +68,18 @@ class App:
         if not quiet:
             print(f"Starting {len(self.actions)} actions on {len(self._mlirs)} root(s).")
         self._mlirs = self._run_actions(self._mlirs, quiet=quiet)
+        self._mlirs_inv = {root.id: idx for idx, root in enumerate(self._mlirs)}
         if not quiet:
             print(f"Finished actions with {len(self._mlirs)} root(s).")
             print("\n".join(root._describe() for root in self._mlirs))
+
+    def mlir_root(self, id: IdName, /) -> mlir.Root:
+        """Return the `MLIR` representation of module `id`."""
+        return self._mlirs[self._mlirs_inv[id]]
+
+    def mlir_root_ids(self) -> Collection[IdName]:
+        """Return the names of all `MLIR` modules."""
+        return self._mlirs_inv.keys()
 
     def _read_sources(self) -> Iterator[InputSchema]:
         if not (sources := self.config.convert.sources):
