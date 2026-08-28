@@ -3,7 +3,7 @@ from __future__ import annotations
 # ruff: file-ignore[builtin-argument-shadowing]
 import functools
 import typing
-from typing import Final, NewType
+from typing import Final
 
 from tools.codegen.convert import pascal_to_snake_case
 from tools.common import POUND_DEFS
@@ -15,8 +15,6 @@ from tools.models.base import DefName, IdName, Lit
 if typing.TYPE_CHECKING:
     from collections.abc import Mapping
 
-
-Idx = NewType("Idx", int)
 
 _JSON_PY_INST: Final[Mapping[jw.Scalar, mlir.PyBuiltin]] = {
     "boolean": mlir.PyBool(),
