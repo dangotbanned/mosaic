@@ -1,13 +1,3 @@
-"""A limited representation of Python's type system & data model.
-
-## Important
-- No classes
-- No objects
-- No functions/methods/operators
-- No AST
-- Strictly, things that can be used in the generation of modules containing `TypedDict`s
-"""
-
 from __future__ import annotations
 
 import typing as t
@@ -15,35 +5,11 @@ from itertools import chain
 from typing import Literal as L
 
 from tools.codegen.docstrings import doc
-from tools.ir.pyir.base import INDENT, Expr, Lines, PyIdentifier, PyIR, TypeExpr, join_comma
+from tools.ir.pyir.base import INDENT, Definition, Expr, Lines, join_comma
 
 if t.TYPE_CHECKING:
     from tools.ir.pyir.field import Field
-
-
-class Definition(PyIR):
-    """A named definition."""
-
-    name: PyIdentifier
-    doc: str = ""
-
-    def as_ref(self) -> TypeExpr:
-        """Refer to this symbol as a type expression."""
-        return TypeExpr(self.name)
-
-
-@t.final
-class TypeVar(Definition):
-    """A representation of a TypeVar."""
-
-    bound: Expr | None = None
-    constraints: tuple[Expr, ...] = ()
-
-    def iter_lines(self) -> Lines:
-        value = str(bound) if (bound := self.bound) else join_comma(map(str, self.constraints))
-        yield f"{self.name} = TypeVar({self.name!r}{value})"
-        if self.doc:
-            yield doc(self.doc)
+    from tools.ir.pyir.type_param import TypeVar
 
 
 @t.final

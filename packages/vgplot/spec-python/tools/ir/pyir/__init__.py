@@ -10,9 +10,19 @@
 
 from __future__ import annotations
 
-from tools.ir.pyir import base, convert, definition, expr, field, module, qualifier, value
-from tools.ir.pyir.base import Expr, PyIdentifier, PyIR
-from tools.ir.pyir.definition import Definition
+from tools.ir.pyir import (
+    base,
+    convert,
+    definition,
+    expr,
+    field,
+    module,
+    qualifier,
+    special,
+    type_param,
+    value,
+)
+from tools.ir.pyir.base import Definition, Expr, PyIdentifier, PyIR
 from tools.ir.pyir.field import Field
 from tools.ir.pyir.module import Module
 
@@ -30,5 +40,7 @@ __all__ = (
     "field",
     "module",
     "qualifier",
+    "special",
+    "type_param",
     "value",
 )

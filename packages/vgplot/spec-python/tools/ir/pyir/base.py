@@ -53,3 +53,14 @@ class Expr(PyIR):
 
     def iter_lines(self) -> Lines:
         yield self.__str__()
+
+
+class Definition(PyIR):
+    """A named definition."""
+
+    name: PyIdentifier
+    doc: str = ""
+
+    def as_ref(self) -> TypeExpr:
+        """Refer to this symbol as a type expression."""
+        return TypeExpr(self.name)
