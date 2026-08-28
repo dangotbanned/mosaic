@@ -35,6 +35,9 @@ type GroupByIter[T, S] = Iterator[tuple[T, Iterator[S]]]
 - Each `Definition` is guaranteed to have at-least one matching child
 """
 
+# HACK: Forcing `pyrefly` to not infer `0` as `int`
+_ZERO: Final[L[0]] = 0  # ruff: ignore[redundant-final-literal]
+
 
 # TODO @dangotbanned: `ref`
 class Matcher:
@@ -73,7 +76,7 @@ class Matcher:
             self.id = IdInclude(incl_id - exclude.id) if exclude.id else IdInclude(incl_id)
 
         self.definition = _into_defs_matcher(include, exclude)
-        self.ref_follow_depth = getattr(scopes, "ref_follow_depth", 0)
+        self.ref_follow_depth = getattr(scopes, "ref_follow_depth", _ZERO)
 
         if include.child or exclude.child:
             self.child = ChildIncludeNodes(include.child, exclude.child)
