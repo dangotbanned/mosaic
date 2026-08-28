@@ -1,5 +1,15 @@
 from collections.abc import Callable, Collection, Iterator
-from typing import TYPE_CHECKING, Any, ClassVar, NewType, Self, TypeIs, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Final,
+    NewType,
+    Self,
+    TypeIs,
+    dataclass_transform,
+    overload,
+)
 
 import msgspec
 
@@ -27,10 +37,78 @@ class Struct(msgspec.Struct, omit_defaults=True, repr_omit_defaults=True):
         def __copy__(self) -> Self: ...
 
 
+# TODO @dangotbanned: Switch to using a variation of `FrozenHashableMeta` as a metaclass
+# The diff right now will be huge and pointless
 class FrozenStruct(msgspec.Struct, frozen=True, omit_defaults=True, repr_omit_defaults=True):
     """`frozen=True, omit_defaults=True, repr_omit_defaults=True`."""
 
     # NOTE: > "Frozen dataclass cannot inherit from non-frozen dataclass"
+    if TYPE_CHECKING:
+        __slots__ = ()
+        __struct_defaults__: ClassVar[tuple[Any, ...]]
+        __struct_encode_fields__: ClassVar[tuple[str, ...]]
+
+        def __copy__(self) -> Self: ...
+
+
+_KWDS_FROZEN_CACHE_HASH: Final = {
+    "cache_hash": True,
+    "frozen": True,
+    "kw_only": True,
+    "tag": True,
+    "tag_field": "tag",
+    "omit_defaults": True,
+    "repr_omit_defaults": True,
+}
+
+
+@dataclass_transform(field_specifiers=(msgspec.field,), frozen_default=True, kw_only_default=True)
+class FrozenHashableMeta(msgspec.StructMeta):
+    """Custom `msgspec.Struct` metaclass.
+
+    Similar to writing this definition:
+
+    ```py
+    import msgspec
+
+
+    class SomeClass(
+        msgspec.Struct,
+        cache_hash=True,
+        frozen=True,
+        kw_only=True,
+        tag=True,
+        tag_field="tag",
+        omit_defaults=True,
+        repr_omit_defaults=True,
+    ): ...
+    ```
+
+    But all keyword arguments will be inherited in subclasses.
+
+    ## See Also
+    https://msgspec.dev/api#msgspec.StructMeta
+    """
+
+    def __new__[FHM: FrozenHashableMeta](  # ruff: ignore[custom-type-var-for-self]
+        mcls: type[FHM],
+        name: str,
+        bases: tuple[type, ...],
+        namespace: dict[str, Any],
+        **struct_config: Any,
+    ) -> FHM:
+        for k, v in _KWDS_FROZEN_CACHE_HASH.items():
+            struct_config.setdefault(k, v)
+        return super().__new__(mcls, name, bases, namespace, **struct_config)
+
+
+# TODO @dangotbanned: Make a minimal repro for `pyrefly` getting this wrong
+# NOTE: This base class is required for `pyrefly`
+# Other type checkers understand the metaclass on it's own
+@dataclass_transform(field_specifiers=(msgspec.field,), frozen_default=True, kw_only_default=True)
+class FrozenHashableStruct(
+    msgspec.Struct, omit_defaults=True, repr_omit_defaults=True, metaclass=FrozenHashableMeta
+):
     if TYPE_CHECKING:
         __slots__ = ()
         __struct_defaults__: ClassVar[tuple[Any, ...]]

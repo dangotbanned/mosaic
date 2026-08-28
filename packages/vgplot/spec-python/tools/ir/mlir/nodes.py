@@ -18,9 +18,7 @@ if typing.TYPE_CHECKING:
 type Incomplete = typing.Any
 
 
-class MLIR(
-    base.FrozenStruct, frozen=True, tag=True, tag_field="tag", kw_only=True, cache_hash=True
-):
+class MLIR(base.FrozenHashableStruct):
     """Mid-level IR, representing something that's not quite JSON or Python."""
 
     doc: str
@@ -54,7 +52,7 @@ class MLIR(
 
 
 @final
-class Reference(MLIR, frozen=True, kw_only=True, cache_hash=True):
+class Reference(MLIR):
     """A reference to a symbol defined in the same file.
 
     ## Differences from JSON Schema
@@ -90,7 +88,7 @@ class Reference(MLIR, frozen=True, kw_only=True, cache_hash=True):
 
 
 @final
-class ExtReference(MLIR, frozen=True, kw_only=True, cache_hash=True):
+class ExtReference(MLIR):
     """A reference to a symbol defined externally."""
 
     ext: IdName
@@ -105,37 +103,37 @@ class ExtReference(MLIR, frozen=True, kw_only=True, cache_hash=True):
 
 
 @final
-class Any(MLIR, frozen=True, kw_only=True, cache_hash=True):
+class Any(MLIR):
     doc: str = ""
 
 
 @final
-class Unknown(MLIR, frozen=True, kw_only=True, cache_hash=True):
+class Unknown(MLIR):
     doc: str = ""
 
 
-class PyBuiltin(MLIR, frozen=True, kw_only=True, cache_hash=True):
+class PyBuiltin(MLIR):
     doc: str = ""
 
 
 @final
-class PyStr(PyBuiltin, frozen=True, cache_hash=True): ...
+class PyStr(PyBuiltin): ...
 
 
 @final
-class PyInt(PyBuiltin, frozen=True, cache_hash=True): ...
+class PyInt(PyBuiltin): ...
 
 
 @final
-class PyFloat(PyBuiltin, frozen=True, cache_hash=True): ...
+class PyFloat(PyBuiltin): ...
 
 
 @final
-class PyBool(PyBuiltin, frozen=True, cache_hash=True): ...
+class PyBool(PyBuiltin): ...
 
 
 @final
-class PyNone(PyBuiltin, frozen=True, cache_hash=True): ...
+class PyNone(PyBuiltin): ...
 
 
 # TODO @dangotbanned: `None` should be `PyNone`
@@ -144,17 +142,17 @@ type _LiteralMember = jw.Lit | jw.LitBool | None
 
 
 @final
-class Literal(MLIR, frozen=True, kw_only=True, cache_hash=True):
+class Literal(MLIR):
     members: tuple[_LiteralMember, ...]
     doc: str = ""
 
 
 @final
-class EmptyTuple(MLIR, frozen=True, kw_only=True, cache_hash=True):
+class EmptyTuple(MLIR):
     doc: str = ""
 
 
-class _HasChildren(MLIR, frozen=True, kw_only=True, cache_hash=True):
+class _HasChildren(MLIR):
     def iter_descendants(self) -> Iterator[MLIR]:
         # `ast.walk`-ish
         yield self
@@ -170,7 +168,7 @@ class _HasChildren(MLIR, frozen=True, kw_only=True, cache_hash=True):
             yield from child.iter_ext_refs()
 
 
-class _BaseType[T: MLIR](_HasChildren, frozen=True, kw_only=True, cache_hash=True):
+class _BaseType[T: MLIR](_HasChildren):
     type: Final[T]
     doc: str = ""
 
@@ -187,7 +185,7 @@ class _BaseType[T: MLIR](_HasChildren, frozen=True, kw_only=True, cache_hash=Tru
 
 
 @final
-class Field[T: MLIR = MLIR](_BaseType[T], frozen=True, cache_hash=True):
+class Field[T: MLIR = MLIR](_BaseType[T]):
     """An entry in a `*Dict` or `NamedTuple`."""
 
     name: snake_case
@@ -195,10 +193,10 @@ class Field[T: MLIR = MLIR](_BaseType[T], frozen=True, cache_hash=True):
     required: bool = False
 
 
-class _BaseSeq[T: MLIR](_BaseType[T], frozen=True, cache_hash=True): ...
+class _BaseSeq[T: MLIR](_BaseType[T]): ...
 
 
-class _BaseFields(_HasChildren, frozen=True, kw_only=True, cache_hash=True):
+class _BaseFields(_HasChildren):
     fields: tuple[Field, ...]
     doc: str = ""
 
@@ -214,12 +212,12 @@ class _BaseFields(_HasChildren, frozen=True, kw_only=True, cache_hash=True):
 
 
 @final
-class Sequence[T: MLIR](_BaseSeq[T], frozen=True, cache_hash=True):
+class Sequence[T: MLIR](_BaseSeq[T]):
     """A sequence where all elements are the same type."""
 
 
 @final
-class HomogeneousTuple[T: MLIR, N: int](_BaseSeq[T], frozen=True, kw_only=True, cache_hash=True):
+class HomogeneousTuple[T: MLIR, N: int](_BaseSeq[T]):
     """A sequence where all elements are the same type and has a fixed-length.
 
     ## Notes
@@ -230,9 +228,7 @@ class HomogeneousTuple[T: MLIR, N: int](_BaseSeq[T], frozen=True, kw_only=True, 
 
 
 @final
-class VariantHomogeneousTuple[T: MLIR, Ns: tuple[int, ...]](
-    _BaseSeq[T], frozen=True, kw_only=True, cache_hash=True
-):
+class VariantHomogeneousTuple[T: MLIR, Ns: tuple[int, ...]](_BaseSeq[T]):
     """A sequence where all elements are the same type and has one of the lengths specified in `Ns`.
 
     ## Notes
@@ -243,12 +239,12 @@ class VariantHomogeneousTuple[T: MLIR, Ns: tuple[int, ...]](
 
 
 @final
-class NamedTuple(_BaseFields, frozen=True, cache_hash=True):
+class NamedTuple(_BaseFields):
     """A tuple with `Annotated` field names."""
 
 
 @final
-class OpenDict(_BaseFields, frozen=True, cache_hash=True):
+class OpenDict(_BaseFields):
     """A `TypedDict` with the default configuration.
 
     `bases`, `total` will be in the next IR.
@@ -256,12 +252,12 @@ class OpenDict(_BaseFields, frozen=True, cache_hash=True):
 
 
 @final
-class ClosedDict(_BaseFields, frozen=True, cache_hash=True):
+class ClosedDict(_BaseFields):
     """A `TypedDict` with `closed=True`."""
 
 
 @final
-class ExtraDict(_BaseFields, frozen=True, cache_hash=True):
+class ExtraDict(_BaseFields):
     """A `TypedDict` with `extra_items`."""
 
     extra_items: MLIR
@@ -279,7 +275,7 @@ class ExtraDict(_BaseFields, frozen=True, cache_hash=True):
 
 
 @final
-class Union(_HasChildren, frozen=True, kw_only=True, cache_hash=True):
+class Union(_HasChildren):
     members: tuple[MLIR, ...]
     doc: str = ""
 
