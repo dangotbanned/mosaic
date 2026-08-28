@@ -257,7 +257,8 @@ def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]
             case cfg.NewTreeAction(scope=scope, id=id, into_ext_ref=into_ext_ref):
                 item = NewTree(Matcher.from_scopes(scope), scope.over, id, into_ext_ref)
             case cfg.AsRefAction(scope=scope, name=name, type=type, match_doc=match_doc):
-                item = AsRef(
+                # NOTE: Pretty cool that `pyright` reports this here tbf
+                item = AsRef(  # pyright: ignore[reportAbstractUsage]
                     Matcher.from_scopes(scope), scope.over, name, type, match_doc=match_doc
                 )
             case cfg.AsDefsAction(scope=scope):
