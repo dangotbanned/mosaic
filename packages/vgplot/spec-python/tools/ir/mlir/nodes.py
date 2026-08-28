@@ -4,8 +4,8 @@ import copy
 import typing
 from typing import Final, Self, final
 
-from tools.ir.json_wrapper import nodes as jw
 from tools.models import base
+from tools.models.base import Lit
 
 if typing.TYPE_CHECKING:
     from collections.abc import Iterator
@@ -136,14 +136,22 @@ class PyBool(PyBuiltin): ...
 class PyNone(PyBuiltin): ...
 
 
-# TODO @dangotbanned: `None` should be `PyNone`
-# TODO @dangotbanned: `LitBool` should be `PyTrue`, `PyFalse`
-type _LiteralMember = jw.Lit | jw.LitBool | None
+@final
+class PyTrue(MLIR):
+    doc: str = ""
+
+
+@final
+class PyFalse(MLIR):
+    doc: str = ""
+
+
+type LiteralMember = Lit | PyTrue | PyFalse | PyNone
 
 
 @final
 class Literal(MLIR):
-    members: tuple[_LiteralMember, ...]
+    members: tuple[LiteralMember, ...]
     doc: str = ""
 
 

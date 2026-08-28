@@ -6,7 +6,7 @@ import msgspec
 
 from tools.common import POUND_DEFS
 from tools.models import base
-from tools.models.base import DefName
+from tools.models.base import DefName, Lit
 from tools.models.mosaic import JsonSchema
 from tools.serde import convert_json
 
@@ -20,9 +20,6 @@ type Scalar = L["boolean", "integer", "number", "string", "null"]
 
 _SCALAR_NAMES: Final = frozenset(("boolean", "integer", "number", "string", "null"))
 
-
-type Lit = str
-"""A schema-static literal string."""
 
 type LitBool = bool
 """A schema-static literal boolean."""

@@ -19,6 +19,9 @@ type DefName = str
 IdName = NewType("IdName", str)
 """The unique name for a `Root`."""
 
+Lit = NewType("Lit", str)
+"""A schema-static literal string."""
+
 if TYPE_CHECKING:
     # https://github.com/python/typeshed/pull/12309
     from _collections_abc import dict_items, dict_keys

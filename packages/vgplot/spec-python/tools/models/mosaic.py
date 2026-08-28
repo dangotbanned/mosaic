@@ -145,8 +145,8 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
     title: str = ""
     format: str = ""
     type: Primitive | Sequence[Primitive] | None = None
-    const: str | bool | None = None
-    enum: Sequence[str | bool | None] = field(default_factory=list)
+    const: base.Lit | bool | None = None
+    enum: Sequence[base.Lit | bool | None] = field(default_factory=list)
     additional_properties: NonRecursiveFields | bool = field(
         name="additionalProperties", default=True
     )

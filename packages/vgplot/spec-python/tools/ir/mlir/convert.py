@@ -10,7 +10,7 @@ from tools.common import POUND_DEFS
 from tools.ir.json_wrapper import nodes as jw
 from tools.ir.mlir import nodes as mlir
 from tools.ir.mlir.nodes import MLIR
-from tools.models.base import DefName, IdName
+from tools.models.base import DefName, IdName, Lit
 
 if typing.TYPE_CHECKING:
     from collections.abc import Mapping
@@ -31,6 +31,12 @@ _JSON_PY_TYPE: Final[Mapping[jw.Scalar, type[mlir.PyBuiltin]]] = {
     "number": mlir.PyFloat,
     "string": mlir.PyStr,
     "null": mlir.PyNone,
+}
+
+_PY_LITERAL: Final[Mapping[Lit | jw.LitBool | None, mlir.LiteralMember]] = {
+    None: mlir.PyNone(),
+    False: mlir.PyFalse(),
+    True: mlir.PyTrue(),
 }
 
 
@@ -77,7 +83,9 @@ def _(obj: jw.Reference, _owner: DefName, /) -> mlir.Reference | mlir.ExtReferen
 @_from_json_dispatch.register(jw.Const)
 @_from_json_dispatch.register(jw.Enum)
 def _(obj: jw.Const | jw.Enum, _owner: DefName, /) -> mlir.Literal:
-    return mlir.Literal(members=tuple(obj.iter_values()), doc=obj.description)
+    it = obj.iter_values()
+    members = tuple(member if isinstance(member, str) else _PY_LITERAL[member] for member in it)
+    return mlir.Literal(members=members, doc=obj.description)
 
 
 @_from_json_dispatch.register(jw.Primitive)
