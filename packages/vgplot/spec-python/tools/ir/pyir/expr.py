@@ -20,27 +20,27 @@ class _Singleton(Expr):
 
 @t.final
 class EmptyTuple(_Singleton):
-    _tp_expr = TypeExpr("tuple[()]")
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("tuple[()]")
 
 
 @t.final
 class Any(_Singleton):
-    _tp_expr = TypeExpr("Any")
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("Any")
 
 
 @t.final
 class PyStr(_Singleton):
-    _tp_expr = TypeExpr("str")
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("str")
 
 
 @t.final
 class PyInt(_Singleton):
-    _tp_expr = TypeExpr("int")
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("int")
 
 
 @t.final
 class PyFloat(_Singleton):
-    _tp_expr = TypeExpr("float")
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("float")
 
 
 @t.final

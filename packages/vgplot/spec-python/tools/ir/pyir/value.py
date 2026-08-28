@@ -17,9 +17,9 @@ class Value(PyIR):
 
 @t.final
 class PyTrue(Value):
-    value = "True"
+    value: ClassVar[str] = "True"
 
 
 @t.final
 class PyFalse(Value):
-    value = "False"
+    value: ClassVar[str] = "False"
