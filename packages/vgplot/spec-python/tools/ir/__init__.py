@@ -2,6 +2,6 @@
 
 from __future__ import annotations
 
-from tools.ir import json_wrapper, mlir
+from tools.ir import json_wrapper, mlir, pyir
 
-__all__ = "json_wrapper", "mlir"
+__all__ = "json_wrapper", "mlir", "pyir"
