@@ -14,43 +14,47 @@ if t.TYPE_CHECKING:
 class _Singleton(Expr):
     _tp_expr: t.ClassVar[TypeExpr]
 
-    def __init_subclass__(cls, tp_expr: str, **kwds: t.Any) -> None:
-        super().__init_subclass__(**kwds)
-        cls._tp_expr = TypeExpr(tp_expr)
-
     def __str__(self) -> TypeExpr:
         return self._tp_expr
 
 
 @t.final
-class EmptyTuple(_Singleton, tp_expr="tuple[()]"): ...
+class EmptyTuple(_Singleton):
+    _tp_expr = TypeExpr("tuple[()]")
 
 
 @t.final
-class Any(_Singleton, tp_expr="Any"): ...
+class Any(_Singleton):
+    _tp_expr = TypeExpr("Any")
 
 
 @t.final
-class PyStr(_Singleton, tp_expr="str"): ...
+class PyStr(_Singleton):
+    _tp_expr = TypeExpr("str")
 
 
 @t.final
-class PyInt(_Singleton, tp_expr="int"): ...
+class PyInt(_Singleton):
+    _tp_expr = TypeExpr("int")
 
 
 @t.final
-class PyFloat(_Singleton, tp_expr="float"): ...
+class PyFloat(_Singleton):
+    _tp_expr = TypeExpr("float")
 
 
 @t.final
-class PyBool(_Singleton, tp_expr="bool"): ...
+class PyBool(_Singleton):
+    _tp_expr = TypeExpr("bool")
 
 
 @t.final
-class PyNone(_Singleton, tp_expr="None"):
+class PyNone(_Singleton):
+    _tp_expr = TypeExpr("None")
+
     @property
     def value(self) -> str:
-        return "None"
+        return self._tp_expr
 
 
 # technically a special-form
