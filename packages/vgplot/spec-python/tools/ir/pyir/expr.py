@@ -58,12 +58,15 @@ class PyNone(_Singleton):
         return self._tp_expr
 
 
+type LiteralMember = base.Lit | value.PyTrue | value.PyFalse | PyNone
+
+
 # technically a special-form
 @t.final
 class Literal(Expr):
     """A representation of an `typing.Literal`."""
 
-    members: tuple[base.Lit | value.PyTrue | value.PyFalse | PyNone, ...]
+    members: tuple[LiteralMember, ...]
 
     _ALIAS: t.ClassVar[L["Literal", "L", "Lit"]] = "L"
 
