@@ -4,7 +4,7 @@ import functools
 import re
 import string
 from keyword import iskeyword as is_keyword
-from typing import Final
+from typing import ClassVar, Final, Self
 
 from tools.common import PyIdentifier, PyIdentifierSnake
 
@@ -25,7 +25,7 @@ def py_identifier(name: str) -> PyIdentifier:
     """Ensure `name` can be used as an identifier."""
     if name.isidentifier() and not is_keyword(name):
         return PyIdentifier(name)
-    raise _identifier_error(name)
+    raise InvalidIdentifierError.from_name(name)
 
 
 @functools.lru_cache(maxsize=1024)
@@ -39,21 +39,27 @@ def py_identifier_snake(name: str) -> PyIdentifierSnake:
         s = _PATTERN_UPPER_LOWER.sub(_REPL_ADD_UNDERSCORE, name)
         s = _PATTERN_LOWER_UPPER.sub(_REPL_ADD_UNDERSCORE, s).lower()
         return PyIdentifierSnake(s)
-    raise _identifier_error(name)
+
+    raise InvalidIdentifierError.from_name(name)
 
 
-def _identifier_error(name: str) -> SyntaxError:
-    if is_keyword(name):
-        reason = " as it is a Python keyword."
-    elif "-" in name:
-        reason = " as it uses kebab-case."
-    elif name.startswith(string.digits):
-        reason = " as it starts with a number."
-    else:
-        reason = "."
-    url = "https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords"
-    msg = (
-        f"Cannot use {name!r} as an identifier{reason}\n"
-        f"Hint: try picking a different name?\nSee also: {url}"
+class InvalidIdentifierError(SyntaxError):
+    _URL: ClassVar = (
+        "https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords"
     )
-    return SyntaxError(msg)
+
+    @classmethod
+    def from_name(cls, name: str) -> Self:
+        if is_keyword(name):
+            reason = " as it is a Python keyword."
+        elif "-" in name:
+            reason = " as it uses kebab-case."
+        elif name.startswith(string.digits):
+            reason = " as it starts with a number."
+        else:
+            reason = "."
+        msg = (
+            f"Cannot use {name!r} as an identifier{reason}\n"
+            f"Hint: try picking a different name?\nSee also: {cls._URL}"
+        )
+        return cls(msg)
