@@ -12,15 +12,14 @@ if t.TYPE_CHECKING:
     from collections.abc import Iterator
 
     from tools.ir.pyir.field import Field
-    from tools.ir.pyir.qualifier import NotRequired, Required
     from tools.ir.pyir.type_param import TypeVar
 
 
 @t.final
-class TypeAlias(Definition):
+class TypeAlias[E: Expr = Expr](Definition):
     """A representation of a TypeAliasType."""
 
-    expr: Expr
+    expr: E
     type_params: tuple[TypeVar, ...] = ()
 
     _ALIAS: t.ClassVar[L["TypeAliasType"]] = "TypeAliasType"
@@ -89,9 +88,9 @@ whereas `{Closed,Extra}Dict` are created during conversion of JSON Schema.
 
 
 class _Dict(Definition):
-    fields: tuple[Field[Expr | Required | NotRequired], ...]
+    fields: tuple[Field, ...]
     bases: tuple[BaseTD, ...] = (sf.TYPED_DICT,)
-    total: bool
+    total: bool = False
 
     def keywords(self) -> Iterator[str]:
         """Keyword arguments, as defined [here](https://typing.python.org/en/latest/spec/typeddict.html#class-based-syntax)."""
