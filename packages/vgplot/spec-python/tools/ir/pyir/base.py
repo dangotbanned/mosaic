@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing as t
+from typing import LiteralString as LS
 
 from tools.models import base
 
@@ -27,7 +28,22 @@ PyIdentifier = t.NewType("PyIdentifier", str)
 [1]: https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords
 """
 
-join_comma: t.Final = ",".join
+if t.TYPE_CHECKING:
+
+    @t.overload
+    def join_comma(iterable: cabc.Iterable[TypeExpr], /) -> TypeExpr: ...
+    @t.overload
+    def join_comma(iterable: cabc.Iterable[LS], /) -> LS: ...
+    @t.overload
+    def join_comma(iterable: cabc.Iterable[str], /) -> str: ...
+    def join_comma(iterable: cabc.Iterable[str], /) -> str:
+        raise NotImplementedError
+
+    join_or = join_comma
+else:
+    join_comma: t.Final = ",".join
+    join_or: t.Final = " | ".join
+
 INDENT: t.Final = " " * 4
 
 

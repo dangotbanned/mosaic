@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing as t
 from typing import Literal as L
 
-from tools.ir.pyir.base import Expr, PyIdentifier, TypeExpr, join_comma
+from tools.ir.pyir.base import Expr, PyIdentifier, TypeExpr, join_comma, join_or
 from tools.models import base
 
 if t.TYPE_CHECKING:
@@ -82,7 +82,7 @@ class Union(Expr):
     members: tuple[Expr, ...]
 
     def __str__(self) -> TypeExpr:
-        return TypeExpr(" | ".join(m.__str__() for m in self.members))
+        return join_or(m.__str__() for m in self.members)
 
 
 @t.final
