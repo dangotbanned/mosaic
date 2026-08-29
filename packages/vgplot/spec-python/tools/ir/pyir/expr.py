@@ -58,6 +58,11 @@ class PyNone(_Singleton):
         return self._tp_expr
 
 
+@t.final
+class MappingAny(_Singleton):
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("Mapping[str, Any]")
+
+
 type LiteralMember = base.Lit | value.PyTrue | value.PyFalse | PyNone
 
 
