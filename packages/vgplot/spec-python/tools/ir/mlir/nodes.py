@@ -189,7 +189,7 @@ class _BaseType[T: MLIR](_HasChildren):
         if current == maybe_changed:
             return self
         # NOTE: https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
-        return copy.replace(self, type=maybe_changed)  # pyrefly: ignore[bad-return]
+        return copy.replace(self, type=maybe_changed)  # pyrefly: ignore[bad-argument-type]
 
 
 @final
@@ -216,7 +216,7 @@ class _BaseFields(_HasChildren):
         if self.fields == new_fields:
             return self
         # NOTE: https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
-        return copy.replace(self, fields=new_fields)  # pyrefly: ignore[bad-return]
+        return copy.replace(self, fields=new_fields)  # pyrefly: ignore[bad-argument-type]
 
 
 @final
