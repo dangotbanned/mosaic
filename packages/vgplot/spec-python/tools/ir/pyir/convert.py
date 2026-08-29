@@ -10,11 +10,15 @@ if TYPE_CHECKING:
 type Incomplete = t.Any
 
 
-def from_def(obj: mlir.Definition[mlir.MLIR], name: DefName) -> pyir.Definition:
+def from_def(_obj: mlir.Definition[mlir.MLIR], _name: DefName) -> pyir.Definition:
     """`from_def` allows `mlir.*Dict`."""
-    raise NotImplementedError(from_def.__name__)
+    name = f"{from_def.__module__}.{from_def.__name__}"
+    msg = f"{name!r} is not yet implemented"
+    raise NotImplementedError(msg)
 
 
-def from_mlir(obj: mlir.MLIR) -> Incomplete:
+def from_mlir(_obj: mlir.MLIR) -> Incomplete:
     """`from_mlir` must reject dicts, since they require a name."""
-    raise NotImplementedError(from_mlir.__name__)
+    name = f"{from_mlir.__module__}.{from_mlir.__name__}"
+    msg = f"{name!r} is not yet implemented"
+    raise NotImplementedError(msg)

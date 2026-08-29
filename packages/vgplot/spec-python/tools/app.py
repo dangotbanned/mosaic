@@ -5,7 +5,8 @@ from collections import deque
 from typing import TYPE_CHECKING, final
 
 from tools import fs, serde
-from tools.ir import json_wrapper as jw, mlir
+from tools.common import PyIdentifierSnake
+from tools.ir import json_wrapper as jw, mlir, pyir
 from tools.models.config import MosaicSpecToml
 from tools.models.mosaic import InputSchema
 
@@ -212,6 +213,20 @@ class App:
         if not quiet:
             print(f"Finished actions with {len(self._mlirs)} root(s).")
             print("\n".join(root._describe() for root in self._mlirs))
+
+    def into_pyir(self) -> deque[pyir.Module]:
+        """Lower MLIR into PyIR.
+
+        Quite far from having this working, so it's simpler to not have state yet.
+        """
+        self.into_mlir(refresh=True, quiet=True)
+        pkg = pyir.Module(name=PyIdentifierSnake("mosaic_spec"), filepath=fs.MOSAIC_SPEC_INIT)
+        sub_pkg = pyir.Module(
+            name=PyIdentifierSnake("_gen"), filepath=fs.MOSAIC_SPEC_GEN_INIT, parent=pkg
+        )
+        modules = deque((pkg, sub_pkg))
+        modules.extend(pyir.Module.from_mlir(root, sub_pkg) for root in self._mlirs)
+        return modules
 
     def mlir_root(self, id: IdName, /) -> mlir.Root:
         """Return the `MLIR` representation of module `id`."""

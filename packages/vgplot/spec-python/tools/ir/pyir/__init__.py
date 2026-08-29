@@ -22,7 +22,7 @@ from tools.ir.pyir import (
     type_param,
     value,
 )
-from tools.ir.pyir.base import Definition, Expr, PyIdentifier, PyIR
+from tools.ir.pyir.base import Definition, Expr, PyIR
 from tools.ir.pyir.field import Field
 from tools.ir.pyir.module import Module
 
@@ -32,7 +32,6 @@ __all__ = (
     "Field",
     "Module",
     "PyIR",
-    "PyIdentifier",
     "base",
     "convert",
     "definition",
