@@ -34,7 +34,10 @@ _PY_LITERAL: t.Final[Mapping[mlir.LiteralMember, expr.LiteralMember]] = {
     mlir.PyTrue(): value.PyTrue(),
 }
 
-_EXTRA_DICT_MAPPING_ANY: t.Final = mlir.ExtraDict(fields=(), extra_items=mlir.Unknown())
+_EXTRA_DICT_EXPR = {
+    mlir.ExtraDict(fields=(), extra_items=mlir.Unknown()): expr.MappingAny(),
+    mlir.ExtraDict(fields=(), extra_items=mlir.PyStr()): expr.MappingStr(),
+}
 
 
 def from_def(obj: mlir_Definition[MLIR], name: DefName) -> pyir.Definition:
@@ -47,8 +50,8 @@ def into_expr(obj: MLIR) -> Expr:
     """Try to convert an `mlir.MLIR` into a `pyir.Expr`."""
     if e := _MLIR_TO_EXPR_NO_ATTR.get(obj.__class__):
         return e
-    if isinstance(obj, mlir.ExtraDict) and obj == _EXTRA_DICT_MAPPING_ANY:
-        return expr.MappingAny()
+    if isinstance(obj, mlir.ExtraDict) and (found := _EXTRA_DICT_EXPR.get(obj)):
+        return found
     msg = f"{type(obj).__name__} could not be converted into a PyIR expression, got:\n{obj!r}"
     raise NotImplementedError(msg)
 

@@ -63,6 +63,11 @@ class MappingAny(_Singleton):
     _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("Mapping[str, Any]")
 
 
+@t.final
+class MappingStr(_Singleton):
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("Mapping[str, str]")
+
+
 type LiteralMember = base.Lit | value.PyTrue | value.PyFalse | PyNone
 
 
