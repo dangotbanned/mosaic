@@ -12,60 +12,44 @@ if t.TYPE_CHECKING:
     from tools.ir.pyir.field import Field
 
 
-class _Singleton(Expr):
-    _tp_expr: t.ClassVar[TypeExpr]
+@t.final
+class DynExpr(Expr):
+    """A simple, lightweight expression.
+
+    Represents some stdlib type with 0 or minimal configuration.
+    """
+
+    tp_expr: TypeExpr
+    requires: tuple[str, ...] = ()
+
+    def __str__(self) -> TypeExpr:
+        return self.tp_expr
+
+
+def _expr(s: str, *requires: str) -> DynExpr:
+    return DynExpr(tp_expr=TypeExpr(s), requires=requires)
+
+
+EMPTY_TUPLE: t.Final = _expr("tuple[()]")
+ANY: t.Final = _expr("Any", "typing.Any")
+STR: t.Final = _expr("str")
+INT: t.Final = _expr("int")
+FLOAT: t.Final = _expr("float")
+BOOL: t.Final = _expr("bool")
+MAPPING_STR_ANY: t.Final = _expr("Mapping[str, Any]", "collections.abc.Mapping", "typing.Any")
+MAPPING_STR_STR: t.Final = _expr("Mapping[str, str]", "collections.abc.Mapping")
+
+
+@t.final
+class PyNone(Expr):
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("None")
 
     def __str__(self) -> TypeExpr:
         return self._tp_expr
 
-
-@t.final
-class EmptyTuple(_Singleton):
-    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("tuple[()]")
-
-
-@t.final
-class Any(_Singleton):
-    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("Any")
-
-
-@t.final
-class PyStr(_Singleton):
-    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("str")
-
-
-@t.final
-class PyInt(_Singleton):
-    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("int")
-
-
-@t.final
-class PyFloat(_Singleton):
-    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("float")
-
-
-@t.final
-class PyBool(_Singleton):
-    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("bool")
-
-
-@t.final
-class PyNone(_Singleton):
-    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("None")
-
     @property
     def value(self) -> str:
         return self._tp_expr
-
-
-@t.final
-class MappingAny(_Singleton):
-    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("Mapping[str, Any]")
-
-
-@t.final
-class MappingStr(_Singleton):
-    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("Mapping[str, str]")
 
 
 type LiteralMember = base.Lit | value.PyTrue | value.PyFalse | PyNone

@@ -18,14 +18,14 @@ if t.TYPE_CHECKING:
     from tools.models.base import DefName
 
 
-_MLIR_TO_EXPR_NO_ATTR: t.Final[Mapping[type[MLIR], expr._Singleton]] = {
-    mlir.PyBool: expr.PyBool(),
-    mlir.PyInt: expr.PyInt(),
-    mlir.PyFloat: expr.PyFloat(),
-    mlir.Unknown: expr.Any(),
-    mlir.PyStr: expr.PyStr(),  # TODO @dangotbanned: handle configuration later (default)
-    mlir.Any: expr.Any(),
-    mlir.EmptyTuple: expr.EmptyTuple(),
+_MLIR_TO_EXPR_NO_ATTR: t.Final[Mapping[type[MLIR], expr.DynExpr | expr.PyNone]] = {
+    mlir.PyBool: expr.BOOL,
+    mlir.PyInt: expr.INT,
+    mlir.PyFloat: expr.FLOAT,
+    mlir.Unknown: expr.ANY,
+    mlir.PyStr: expr.STR,  # TODO @dangotbanned: handle configuration later (default)
+    mlir.Any: expr.ANY,
+    mlir.EmptyTuple: expr.EMPTY_TUPLE,
     mlir.PyNone: expr.PyNone(),
 }
 _PY_LITERAL: t.Final[Mapping[mlir.LiteralMember, expr.LiteralMember]] = {
@@ -35,8 +35,8 @@ _PY_LITERAL: t.Final[Mapping[mlir.LiteralMember, expr.LiteralMember]] = {
 }
 
 _EXTRA_DICT_EXPR = {
-    mlir.ExtraDict(fields=(), extra_items=mlir.Unknown()): expr.MappingAny(),
-    mlir.ExtraDict(fields=(), extra_items=mlir.PyStr()): expr.MappingStr(),
+    mlir.ExtraDict(fields=(), extra_items=mlir.Unknown()): expr.MAPPING_STR_ANY,
+    mlir.ExtraDict(fields=(), extra_items=mlir.PyStr()): expr.MAPPING_STR_STR,
 }
 
 
