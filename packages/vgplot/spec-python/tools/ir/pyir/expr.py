@@ -130,6 +130,10 @@ class Annotated(Expr):
 class NamedTuple(Expr):
     """A structural named tuple.
 
+    You could think of this as similar to `typing.NamedTuple`, but it doesn't have a name *itself* and
+    the "field names" are merely annotations.
+
+    ## Examples
     Full verbosity version:
 
     ```py
