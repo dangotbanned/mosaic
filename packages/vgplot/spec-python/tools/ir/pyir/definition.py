@@ -5,10 +5,14 @@ from itertools import chain
 from typing import Literal as L
 
 from tools.codegen.docstrings import doc
-from tools.ir.pyir.base import INDENT, Definition, Expr, Lines, join_comma
+from tools.ir.pyir import special as sf
+from tools.ir.pyir.base import INDENT, Definition, Expr, Lines, TypedExtRef, TypedRef, join_comma
 
 if t.TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from tools.ir.pyir.field import Field
+    from tools.ir.pyir.qualifier import NotRequired, Required
     from tools.ir.pyir.type_param import TypeVar
 
 
@@ -58,13 +62,68 @@ class NamedTuple(Definition):
             yield f"{INDENT}{line}"
 
 
-# TODO @dangotbanned: Dicts (total, bases, TypedDict sf)
-class OpenDict: ...
+type BaseTD = sf.TypedDict | sf.Generic | TypedRef[OpenDict] | TypedExtRef[OpenDict]
+"""Any type that is valid to use in the bases of a `TypedDict`.
+
+Where one or more of these symbols appear as below:
+
+```py
+class TD(<BaseTD>, ...):...
+```
+
+## Important
+This definition is *intentionally narrower* than what [the spec defines][1],
+and is aimed to be a more easy to understand subset.
+
+In short:
+
+1. By default, the `TypedDict` special-form will be the only type that is present.
+2. Sythesizing a generic will add `Generic[T, ...]`.
+3. Sythesizing a base class will add `<name of new base>`.
+
+`OpenDict` and `Generic` can only be generated explicitly,
+whereas `{Closed,Extra}Dict` are created during conversion of JSON Schema.
+
+[1]: https://typing.python.org/en/latest/spec/typeddict.html#inheritance
+"""
 
 
-# TODO @dangotbanned: Dicts
-class ClosedDict: ...
+class _Dict(Definition):
+    fields: tuple[Field[Expr | Required | NotRequired], ...]
+    bases: tuple[BaseTD, ...] = (sf.TYPED_DICT,)
+    total: bool
+
+    def keywords(self) -> Iterator[str]:
+        """Keyword arguments, as defined [here](https://typing.python.org/en/latest/spec/typeddict.html#class-based-syntax)."""
+        if not self.total:
+            yield "total=False"
+
+    def iter_lines(self) -> Lines:
+        inheritance_list = join_comma(
+            chain((base.as_base() for base in self.bases), self.keywords())
+        )
+        yield f"class {self.name}({inheritance_list}):"
+        if self.doc:
+            yield doc(f"{INDENT}{self.doc}")
+        for line in chain.from_iterable(fld.iter_lines() for fld in self.fields):
+            yield f"{INDENT}{line}"
 
 
-# TODO @dangotbanned: Dicts
-class ExtraDict: ...
+@t.final
+class OpenDict(_Dict): ...
+
+
+@t.final
+class ClosedDict(_Dict):
+    def keywords(self) -> Iterator[str]:
+        yield from super().keywords()
+        yield "closed=True"
+
+
+@t.final
+class ExtraDict(_Dict):
+    extra_items: Expr
+
+    def keywords(self) -> Iterator[str]:
+        yield from super().keywords()
+        yield from self.extra_items.iter_lines()

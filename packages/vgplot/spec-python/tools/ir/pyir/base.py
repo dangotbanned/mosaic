@@ -76,3 +76,30 @@ class Definition(PyIR):
     def as_ref(self) -> TypeExpr:
         """Refer to this symbol as a type expression."""
         return TypeExpr(self.name)
+
+
+class TypedRef[T: PyIR](PyIR):
+    """A reference to a resolved `PyIR` type.
+
+    ## Notes
+    - The type of references need to be resolved *during* the final stage
+    - This doesn't *need* to happen at the beginning of conversion
+    - But must be known before trying to synthesize base class typed dicts
+    """
+
+    ref: PyIdentifier
+    type: type[T]
+
+    def as_base(self) -> str:
+        return self.ref
+
+
+class TypedExtRef[T: PyIR](PyIR):
+    """A reference to a resolved `PyIR` type, originated from an external module."""
+
+    ext: PyIdentifierSnake
+    ref: PyIdentifier
+    type: type[T]
+
+    def as_base(self) -> str:
+        return self.ref
