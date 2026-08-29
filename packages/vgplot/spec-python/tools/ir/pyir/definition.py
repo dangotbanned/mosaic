@@ -72,13 +72,13 @@ class TD(<BaseTD>, ...):...
 
 ## Important
 This definition is *intentionally narrower* than what [the spec defines][1],
-and is aimed to be a more easy to understand subset.
+and is aimed to be an easier to understand subset.
 
 In short:
 
 1. By default, the `TypedDict` special-form will be the only type that is present.
-2. Sythesizing a generic will add `Generic[T, ...]`.
-3. Sythesizing a base class will add `<name of new base>`.
+2. Synthesizing a generic will add `Generic[T, ...]`.
+3. Synthesizing a base class will add `<name of new base>`.
 
 `OpenDict` and `Generic` can only be generated explicitly,
 whereas `{Closed,Extra}Dict` are created during conversion of JSON Schema.
