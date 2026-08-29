@@ -46,12 +46,12 @@ class PyFloat(_Singleton):
 
 @t.final
 class PyBool(_Singleton):
-    _tp_expr = TypeExpr("bool")
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("bool")
 
 
 @t.final
 class PyNone(_Singleton):
-    _tp_expr = TypeExpr("None")
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("None")
 
     @property
     def value(self) -> str:
