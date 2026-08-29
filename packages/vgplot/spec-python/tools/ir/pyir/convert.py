@@ -6,6 +6,7 @@ import typing as t
 from tools.codegen.convert import py_identifier, py_identifier_snake
 from tools.ir.mlir import MLIR, Definition as mlir_Definition, nodes as mlir
 from tools.ir.pyir import definition as d, expr, qualifier as q, value
+from tools.ir.pyir.base import UntypedExtRef, UntypedRef
 from tools.ir.pyir.field import Field
 
 if t.TYPE_CHECKING:
@@ -39,7 +40,6 @@ def from_def(obj: mlir_Definition[MLIR], name: DefName) -> pyir.Definition:
     return _from_def(obj.inner, py_identifier(name))
 
 
-# TODO @dangotbanned: Decide on how to handle references
 @functools.singledispatch
 def into_expr(obj: MLIR) -> Expr:
     """Try to convert an `mlir.MLIR` into a `pyir.Expr`."""
@@ -47,6 +47,16 @@ def into_expr(obj: MLIR) -> Expr:
         return e
     msg = f"{type(obj).__name__} could not be converted into a PyIR expression, got:\n{obj!r}"
     raise NotImplementedError(msg)
+
+
+@into_expr.register(mlir.Reference)
+def _(obj: mlir.Reference) -> UntypedRef:
+    return UntypedRef(inner=obj)
+
+
+@into_expr.register(mlir.ExtReference)
+def _(obj: mlir.ExtReference) -> UntypedExtRef:
+    return UntypedExtRef(inner=obj)
 
 
 @into_expr.register(mlir.Literal)

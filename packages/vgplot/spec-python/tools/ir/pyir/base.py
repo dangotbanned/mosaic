@@ -9,6 +9,7 @@ if t.TYPE_CHECKING:
     import collections.abc as cabc
 
     from tools.common import PyIdentifier, PyIdentifierSnake
+    from tools.ir.mlir import nodes as mlir
 
 
 type Line = str
@@ -76,6 +77,18 @@ class Definition(PyIR):
     def as_ref(self) -> TypeExpr:
         """Refer to this symbol as a type expression."""
         return TypeExpr(self.name)
+
+
+class UntypedRef(Expr):
+    """Placeholder for `TypedRef`."""
+
+    inner: mlir.Reference
+
+
+class UntypedExtRef(Expr):
+    """Placeholder for `UntypedTypedRef`."""
+
+    inner: mlir.ExtReference
 
 
 class TypedRef[T: PyIR](PyIR):
