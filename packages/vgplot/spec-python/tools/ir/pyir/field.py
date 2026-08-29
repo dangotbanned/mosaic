@@ -8,7 +8,7 @@ from tools.ir.pyir.qualifier import NotRequired, Required
 
 
 @t.final
-class Field[T: Expr | Required | NotRequired = Expr](PyIR):
+class Field[T: Expr | Required | NotRequired = Expr | Required | NotRequired](PyIR):
     name: PyIdentifier
     expr: t.Final[T]
     doc: str = ""
