@@ -3,10 +3,11 @@ from __future__ import annotations
 import typing as t
 from typing import Literal as L
 
-from tools.ir.pyir.base import Expr, PyIdentifier, TypeExpr, join_comma, join_or
+from tools.ir.pyir.base import Expr, TypeExpr, join_comma, join_or
 from tools.models import base
 
 if t.TYPE_CHECKING:
+    from tools.common import PyIdentifierSnake
     from tools.ir.pyir import value
     from tools.ir.pyir.field import Field
 
@@ -71,7 +72,7 @@ class Literal(Expr):
         return TypeExpr(f"{self._ALIAS}[{join_comma(members)}]")
 
     @classmethod
-    def from_name(cls, name: PyIdentifier, /) -> Literal:
+    def from_name(cls, name: PyIdentifierSnake, /) -> Literal:
         return Literal(members=(base.Lit(name),))
 
 

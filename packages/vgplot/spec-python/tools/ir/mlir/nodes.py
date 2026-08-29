@@ -10,7 +10,6 @@ from tools.models.base import Lit
 if typing.TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from tools.common import snake_case
     from tools.ir.mlir.common import RefMap
     from tools.models.base import DefName, IdName
 
@@ -196,7 +195,7 @@ class _BaseType[T: MLIR](_HasChildren):
 class Field[T: MLIR = MLIR](_BaseType[T]):
     """An entry in a `*Dict` or `NamedTuple`."""
 
-    name: snake_case
+    name: str
     """The name of the field."""
     required: bool = False
 

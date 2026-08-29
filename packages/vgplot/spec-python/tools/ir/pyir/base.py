@@ -8,6 +8,8 @@ from tools.models import base
 if t.TYPE_CHECKING:
     import collections.abc as cabc
 
+    from tools.common import PyIdentifier, PyIdentifierSnake
+
 
 type Line = str
 """An unindented line of code.
@@ -21,12 +23,6 @@ type Lines = cabc.Iterator[Line]
 TypeExpr = t.NewType("TypeExpr", str)
 """A rendered type expression."""
 
-
-PyIdentifier = t.NewType("PyIdentifier", str)
-"""A name that is a [valid python identifier][1].
-
-[1]: https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords
-"""
 
 if t.TYPE_CHECKING:
 

@@ -5,7 +5,6 @@ import functools
 import typing
 from typing import Final
 
-from tools.codegen.convert import pascal_to_snake_case
 from tools.common import POUND_DEFS
 from tools.ir.json_wrapper import nodes as jw
 from tools.ir.mlir import nodes as mlir
@@ -136,10 +135,9 @@ def _(obj: jw.NamedSequence, owner: DefName, /) -> mlir.NamedTuple:
 def field(
     owner: DefName, name: jw.camelCase, type: jw.JsonWrapper, *, required: bool
 ) -> mlir.Field:
-    out_name = pascal_to_snake_case(name)
     out_type = from_json(type, owner)
     doc = out_type.doc
-    return mlir.Field(name=out_name, type=out_type.with_doc(""), required=required, doc=doc)
+    return mlir.Field(name=name, type=out_type.with_doc(""), required=required, doc=doc)
 
 
 # TODO @dangotbanned: Report pyrefly bug for `None` case (failed to narrow after trying the cheap cases)

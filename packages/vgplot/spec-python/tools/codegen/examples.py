@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, Any, Final, LiteralString as LS, Self
 
 from typing_extensions import TypedDict
 
-from tools.codegen.convert import KEYS_REPLACE, pascal_to_snake_case
+from tools.codegen.convert import KEYS_REPLACE, py_identifier_snake
 from tools.codegen.docstrings import doc
 from tools.models.mosaic import _fix_ambiguous_unicode_characters
 from tools.serde import read_yaml_untyped
@@ -57,7 +57,7 @@ _GET_KEY = KEYS_REPLACE.get
 
 @functools.cache
 def _py_name(s: str, /) -> str:
-    return _GET_KEY(s) or pascal_to_snake_case(s)
+    return _GET_KEY(s) or py_identifier_snake(s)
 
 
 _LIST_AS_TUPLE: Final = frozenset(

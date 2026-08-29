@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import functools
 import re
+import string
+from keyword import iskeyword as is_keyword
 from typing import Final
 
-from tools.common import snake_case
+from tools.common import PyIdentifier, PyIdentifierSnake
 
 KEYS_REPLACE: Final = {"as": "bind", "from": "source", "for": "plot"}
 """Keys that collide with [`keyword.kwlist`][], but the values are required.
@@ -19,10 +21,39 @@ _PATTERN_LOWER_UPPER = re.compile(r"([a-z])([A-Z])")
 
 
 @functools.lru_cache(maxsize=1024)
-def pascal_to_snake_case(s: str, /) -> snake_case:
-    """Convert a PascalCase string to snake_case.
+def py_identifier(name: str) -> PyIdentifier:
+    """Ensure `name` can be used as an identifier."""
+    if name.isidentifier() and not is_keyword(name):
+        return PyIdentifier(name)
+    raise _identifier_error(name)
 
-    Adapted from https://github.com/pydantic/pydantic/blob/f7a9b73517afecf25bf898e3b5f591dffe669778/pydantic/alias_generators.py#L43-L62
+
+@functools.lru_cache(maxsize=1024)
+def py_identifier_snake(name: str) -> PyIdentifierSnake:
+    """Try to coerce `name` into a snake_case identifier.
+
+    Accepts camelCase, PascalCase, kebab-case.
     """
-    s = _PATTERN_UPPER_LOWER.sub(_REPL_ADD_UNDERSCORE, s)
-    return snake_case(_PATTERN_LOWER_UPPER.sub(_REPL_ADD_UNDERSCORE, s).lower())
+    name = name.replace("-", "_")
+    if name.isidentifier() and not is_keyword(name):
+        s = _PATTERN_UPPER_LOWER.sub(_REPL_ADD_UNDERSCORE, name)
+        s = _PATTERN_LOWER_UPPER.sub(_REPL_ADD_UNDERSCORE, s).lower()
+        return PyIdentifierSnake(s)
+    raise _identifier_error(name)
+
+
+def _identifier_error(name: str) -> SyntaxError:
+    if is_keyword(name):
+        reason = " as it is a Python keyword."
+    elif "-" in name:
+        reason = " as it uses kebab-case."
+    elif name.startswith(string.digits):
+        reason = " as it starts with a number."
+    else:
+        reason = "."
+    url = "https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords"
+    msg = (
+        f"Cannot use {name!r} as an identifier{reason}\n"
+        f"Hint: try picking a different name?\nSee also: {url}"
+    )
+    return SyntaxError(msg)

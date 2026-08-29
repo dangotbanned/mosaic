@@ -4,23 +4,13 @@ import typing as t
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from tools.ir import mlir
-    from tools.ir.pyir.base import PyIdentifier
-    from tools.ir.pyir.module import Module
+    from tools.ir import mlir, pyir
     from tools.models.base import DefName
 
 type Incomplete = t.Any
 
 
-def identifier(name: str) -> PyIdentifier:
-    raise NotImplementedError(identifier.__name__)
-
-
-def from_root(root: mlir.Root) -> Module:
-    raise NotImplementedError(from_root.__name__)
-
-
-def from_def(obj: mlir.Definition[mlir.MLIR], name: DefName) -> Incomplete:
+def from_def(obj: mlir.Definition[mlir.MLIR], name: DefName) -> pyir.Definition:
     """`from_def` allows `mlir.*Dict`."""
     raise NotImplementedError(from_def.__name__)
 
