@@ -16,6 +16,7 @@ These keys only appear in `"properties"` and `"required"`, the challenge is find
 
 
 _REPL_ADD_UNDERSCORE = r"\g<1>_\g<2>"
+_REPL_ADD_HYPHEN = r"\g<1>-\g<2>"
 _PATTERN_UPPER_LOWER = re.compile(r"([A-Z]+)([A-Z][a-z])")
 _PATTERN_LOWER_UPPER = re.compile(r"([a-z])([A-Z])")
 
@@ -41,6 +42,11 @@ def py_identifier_snake(name: str) -> PyIdentifierSnake:
         return PyIdentifierSnake(s)
 
     raise InvalidIdentifierError.from_name(name)
+
+
+def kebab_case(name: str) -> str:
+    s = _PATTERN_UPPER_LOWER.sub(_REPL_ADD_HYPHEN, name)
+    return _PATTERN_LOWER_UPPER.sub(_REPL_ADD_HYPHEN, s).lower()
 
 
 class InvalidIdentifierError(SyntaxError):

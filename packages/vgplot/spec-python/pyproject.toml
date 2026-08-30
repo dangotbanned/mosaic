@@ -124,6 +124,11 @@ preset = "strict"
 [tool.pyrefly.errors]
 missing-override-decorator = "ignore"
 
+[[tool.pyrefly.sub-config]]
+# Doesn't understand protocol being satisfied in `__init_subclass__`
+matches                  = "tools/ir/mlir/actions.py"
+errors.bad-instantiation = "ignore"
+
 [tool.pyright]
 extends               = "../../../pyproject.toml"
 include               = ["src", "scripts", "tools", "*.py", "*.ipynb", "tests"]

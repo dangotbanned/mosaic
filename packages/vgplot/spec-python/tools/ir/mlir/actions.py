@@ -4,6 +4,7 @@ import typing
 from collections import deque
 from typing import TYPE_CHECKING, Any, ClassVar, Final, Literal as L, Protocol, assert_never
 
+from tools.codegen.convert import kebab_case
 from tools.ir.mlir import nodes
 from tools.ir.mlir.common import into_name_map, into_ref_map
 from tools.ir.mlir.definition import Definition
@@ -53,6 +54,20 @@ class _Base[O: cfg.IterOver](Protocol):
     def __repr__(self) -> str:
         return f"<{self.kind}: {self.matcher}>"
 
+    def __init_subclass__(cls, **kwds: Any) -> None:
+        super().__init_subclass__(**kwds)
+        name = cls.__name__
+        if not name.startswith("_"):
+            kind = kebab_case(name)
+            if kind not in cfg._ACTION_KIND:
+                msg = (
+                    f"{name!r} should be the PascalCase version of a kebab-case `action` value.\n"
+                    f"But {kind!r} is not one of: {cfg._ACTION_KIND!r}\n\n"
+                    f"Hints:\n- try updating {cfg.ActionKind}?\n- spell {name!r} differently?"
+                )
+                raise TypeError(msg)
+            cls._kind = kind
+
 
 type Todo = typing.Any
 
@@ -68,7 +83,6 @@ class _MultiOver[O: cfg.IterOver](_Base[O], Protocol):
 
 class AsRef[O: L["children", "descendants"]](_MultiOver[O]):
     __slots__ = ("match_doc", "name", "type")
-    _kind = "as-ref"
 
     def __init__(
         self,
@@ -90,7 +104,6 @@ class NewTree[O: L["definitions", "descendants"]](_MultiOver[O]):
     __slots__ = ("id_output", "into_ext_ref")
     id_output: IdName
     into_ext_ref: Mapping[DefName, IdName]
-    _kind = "new-tree"
 
     def __repr__(self) -> str:
         return f"<{self.kind}: {self.id_output}>"
@@ -182,7 +195,6 @@ class NewTree[O: L["definitions", "descendants"]](_MultiOver[O]):
 
 class Remove(_Base[L["definitions"]]):
     __slots__ = ()
-    _kind = "remove"
 
     @property
     def over(self) -> L["definitions"]:
@@ -202,7 +214,6 @@ class Remove(_Base[L["definitions"]]):
 
 class AsDefs(_Base[L["children"]]):
     __slots__ = ()
-    _kind = "as-defs"
 
     @property
     def over(self) -> L["children"]:
@@ -239,7 +250,6 @@ class AsDefs(_Base[L["children"]]):
 class RenameFields(_Base[L["definitions"]]):
     __slots__ = ("overrides",)
     overrides: Mapping[str, str]
-    _kind = "rename-fields"
 
     _SUPPORTED: Final = nodes.ClosedDict, nodes.ExtraDict, nodes.OpenDict, nodes.NamedTuple
 

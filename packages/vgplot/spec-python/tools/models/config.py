@@ -414,6 +414,8 @@ type ActionKind = L["as-ref", "as-defs", "rename-fields", "new-tree", "remove"]
 type Action = AsRefAction | AsDefsAction | NewTreeAction | RemoveAction | RenameFieldsAction
 type Scopes = ChildrenScope | DefsScope | ChildrenDescendantsScope | DefsDescendantsScope
 
+_ACTION_KIND: typing.Final[tuple[ActionKind, ...]] = typing.get_args(ActionKind.__value__)
+
 
 class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """Configure converting from json schema.
