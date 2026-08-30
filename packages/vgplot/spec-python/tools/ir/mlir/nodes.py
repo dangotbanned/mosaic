@@ -8,9 +8,9 @@ from tools.models import base
 from tools.models.base import Lit
 
 if typing.TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Iterable, Iterator
 
-    from tools.ir.mlir.common import RefMap
+    from tools.ir.mlir.common import NameMap, RefMap
     from tools.models.base import DefName, IdName
 
 # NOTE: Use this instead of importing `Any`, since we have one defined here
@@ -203,6 +203,9 @@ class Field[T: MLIR = MLIR](_BaseType[T]):
 class _BaseSeq[T: MLIR](_BaseType[T]): ...
 
 
+# TODO @dangotbanned: Add replacement for `copy.replace` that either:
+# 1. Fixes typing
+# 2. Eats the diagnostics in one place
 class _BaseFields(_HasChildren):
     fields: tuple[Field, ...]
     doc: str = ""
@@ -216,6 +219,22 @@ class _BaseFields(_HasChildren):
             return self
         # NOTE: https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
         return copy.replace(self, fields=new_fields)  # pyrefly: ignore[bad-argument-type]
+
+    # NOTE: Only used for debugging
+    def field_names(self) -> Iterable[str]:
+        yield from (fld.name for fld in self.fields)
+
+    def replace_field_names(self, overrides: NameMap, /) -> Self:
+        new_fields = {
+            idx: fld.__replace__(name=changed)
+            for idx, fld in enumerate(self.fields)
+            if (changed := overrides(fld.name))
+        }
+        if not new_fields:
+            return self
+        fields = tuple(new_fields.get(idx, fld) for idx, fld in enumerate(self.fields))
+        # NOTE: `Self` seems to be https://github.com/python/typeshed/issues/15973
+        return copy.replace(self, fields=fields)  # pyrefly: ignore[bad-argument-type]
 
 
 @final

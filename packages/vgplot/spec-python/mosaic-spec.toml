@@ -15,7 +15,7 @@ action                         = "new-tree"
 id                             = "params"
 scope.include.definition.names = ["ParamDefinition", "Params"]
 scope.over                     = "descendants"
-scope.ref_follow_depth         = 5
+scope.ref_follow_depth         = 6
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
@@ -135,5 +135,30 @@ scope.include.id               = ["marks"]
 scope.include.definition.names = ["DensityX", "DensityY"]
 scope.include.child.nodes      = ["ClosedDict"]
 
-# TODO: `_recursive_replace` -> `KEYS_REPLACE`
-# - Should be handled in a later stage, where identifiers need to be valid python
+[[convert.to_mlir.actions]]
+action                         = "rename-fields"
+scope.include.id               = ["inputs"]
+scope.include.definition.nodes = ["ClosedDict"]
+overrides                      = { as = "bind", from = "source" }
+
+[[convert.to_mlir.actions]]
+action                         = "rename-fields"
+scope.include.id               = ["interactors"]
+scope.include.definition.nodes = ["ClosedDict"]
+overrides                      = { as = "bind" }
+
+[[convert.to_mlir.actions]]
+action                         = "rename-fields"
+scope.include.id               = ["plot_from"]
+scope.include.definition.nodes = ["ClosedDict"]
+overrides                      = { from = "source" }
+
+[[convert.to_mlir.actions]]
+action                         = "rename-fields"
+scope.include.id               = ["plot_legend"]
+scope.include.definition.nodes = ["ClosedDict"]
+# TODO @dangotbanned: Propose changing this the "for" override
+# - "plot" means something completely different elsewhere
+# - makes it more complex to translate back to JSON
+# - cannot use `{"plot": "for"}`, without knowing the context
+overrides                      = { as = "bind", for = "plot" }

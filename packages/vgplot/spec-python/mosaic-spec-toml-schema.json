@@ -227,6 +227,9 @@
               },
               {
                 "$ref": "#/$defs/RemoveAction"
+              },
+              {
+                "$ref": "#/$defs/RenameFieldsAction"
               }
             ],
             "discriminator": {
@@ -234,7 +237,8 @@
                 "as-defs": "#/$defs/AsDefsAction",
                 "as-ref": "#/$defs/AsRefAction",
                 "new-tree": "#/$defs/NewTreeAction",
-                "remove": "#/$defs/RemoveAction"
+                "remove": "#/$defs/RemoveAction",
+                "rename-fields": "#/$defs/RenameFieldsAction"
               },
               "propertyName": "action"
             }
@@ -434,6 +438,32 @@
         "action"
       ],
       "title": "RemoveAction",
+      "type": "object"
+    },
+    "RenameFieldsAction": {
+      "additionalProperties": false,
+      "description": "Rename fields that match a name provided in `overrides`.",
+      "properties": {
+        "action": {
+          "enum": [
+            "rename-fields"
+          ]
+        },
+        "overrides": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "scope": {
+          "$ref": "#/$defs/DefsScope"
+        }
+      },
+      "required": [
+        "action",
+        "overrides"
+      ],
+      "title": "RenameFieldsAction",
       "type": "object"
     },
     "SourceConfig": {

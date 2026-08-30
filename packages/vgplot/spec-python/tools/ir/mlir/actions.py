@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import typing
 from collections import deque
-from typing import TYPE_CHECKING, Any, ClassVar, Literal as L, Protocol, assert_never
+from typing import TYPE_CHECKING, Any, ClassVar, Final, Literal as L, Protocol, assert_never
 
 from tools.ir.mlir import nodes
-from tools.ir.mlir.common import into_ref_map
+from tools.ir.mlir.common import into_name_map, into_ref_map
 from tools.ir.mlir.definition import Definition
 from tools.ir.mlir.root import Root
 from tools.ir.mlir.scopes import Matcher
@@ -236,6 +236,39 @@ class AsDefs(_Base[L["children"]]):
             yield root
 
 
+class RenameFields(_Base[L["definitions"]]):
+    __slots__ = ("overrides",)
+    overrides: Mapping[str, str]
+    _kind = "rename-fields"
+
+    _SUPPORTED: Final = nodes.ClosedDict, nodes.ExtraDict, nodes.OpenDict, nodes.NamedTuple
+
+    @property
+    def over(self) -> L["definitions"]:
+        return "definitions"
+
+    def __init__(self, matcher: Matcher, overrides: Mapping[str, str]) -> None:
+        self.matcher = matcher
+        self.overrides = overrides
+
+    def run(self, roots: RootsMut) -> Iterator[Root]:
+        matcher = self.matcher
+        name_map = into_name_map(self.overrides)
+        for root in roots:
+            if matcher.id.matches(root.id):
+                new_defs = {}
+                for def_name, defn in matcher.matching_definitions(root):
+                    inner = defn.inner
+                    if not isinstance(inner, self._SUPPORTED):
+                        raise rename_fields_error(self, def_name, defn)
+                    maybe_replace = inner.replace_field_names(name_map)
+                    if maybe_replace is not inner:
+                        new_defs[def_name] = defn.__replace__(inner=maybe_replace)
+                if new_defs:
+                    root.definitions.update(new_defs)
+            yield root
+
+
 def dangling_ref_error(
     action: NewTree[Any], def_name: DefName, defn: Definition[Any], defs_moved: Iterable[DefName]
 ) -> TypeError:
@@ -245,6 +278,17 @@ def dangling_ref_error(
         "Hints:\n"
         "- consider increasing `scope.ref_follow_depth` to collect more references\n"
         "- consider using `into_ext_ref` to define a cyclic dependency"
+    )
+    return TypeError(msg)
+
+
+def rename_fields_error(
+    action: RenameFields, def_name: DefName, defn: Definition[Any]
+) -> TypeError:
+    options = [tp.__name__ for tp in action._SUPPORTED]
+    msg = (
+        f"{action.kind!r} is not supported for node types that do not define fields, got:\n  {def_name!r}: {defn.inner.__class__.__name__!r}"
+        f"\n\nHint:\n- refine the search with `scope.include.definition.nodes = {options!r}"
     )
     return TypeError(msg)
 
@@ -263,6 +307,8 @@ def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]
                 )
             case cfg.AsDefsAction(scope=scope):
                 item = AsDefs(Matcher.from_scopes(scope))
+            case cfg.RenameFieldsAction(scope=scope, overrides=overrides):
+                item = RenameFields(Matcher.from_scopes(scope), overrides)
             case _:
                 assert_never(config)
 

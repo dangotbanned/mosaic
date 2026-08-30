@@ -395,8 +395,23 @@ class RemoveAction(
     scope: DefsScope = field(default_factory=DefsScope)
 
 
-type ActionKind = L["as-ref", "as-defs", "new-tree", "remove"]
-type Action = AsRefAction | AsDefsAction | NewTreeAction | RemoveAction
+@final
+class RenameFieldsAction(
+    _BaseAction[L["definitions"]],
+    frozen=True,
+    kw_only=True,
+    tag="rename-fields",
+    tag_field="action",
+    forbid_unknown_fields=True,
+):
+    """Rename fields that match a name provided in `overrides`."""
+
+    scope: DefsScope = field(default_factory=DefsScope)
+    overrides: Mapping[str, str]
+
+
+type ActionKind = L["as-ref", "as-defs", "rename-fields", "new-tree", "remove"]
+type Action = AsRefAction | AsDefsAction | NewTreeAction | RemoveAction | RenameFieldsAction
 type Scopes = ChildrenScope | DefsScope | ChildrenDescendantsScope | DefsDescendantsScope
 
 
