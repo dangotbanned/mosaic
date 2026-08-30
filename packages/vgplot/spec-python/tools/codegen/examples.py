@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any, Final, LiteralString as LS, Self
 
 from typing_extensions import TypedDict
 
+from tools.codegen import markdown
 from tools.codegen.convert import KEYS_REPLACE, py_identifier_snake
 from tools.codegen.docstrings import doc
 from tools.models.mosaic import _fix_ambiguous_unicode_characters
@@ -181,7 +182,8 @@ class Example:
         return self
 
     def render_test_module(self) -> str:
-        docstring = doc(f"{self.title}\n\n{self.description}\n")
+        s = markdown.fix(f"{self.title}\n\n{self.description}")
+        docstring = doc(s)
         return TEMPLATE_TEST_MODULE.format(doc=docstring, content=self.converted, type=self.type)
 
 

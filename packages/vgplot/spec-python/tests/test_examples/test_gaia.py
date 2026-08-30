@@ -1,11 +1,13 @@
 """Gaia Star Catalog.
 
-A 5M row sample of the 1.8B element Gaia star catalog.
-A `raster` sky map reveals our Milky Way galaxy. Select high parallax stars in the histogram to reveal a
-[Hertzsprung-Russel diagram](https://en.wikipedia.org/wiki/Hertzsprung%E2%80%93Russell_diagram)
+A 5M row sample of the 1.8B element Gaia star catalog. A `raster` sky map reveals our Milky Way
+galaxy. Select high parallax stars in the histogram to reveal a
+[Hertzsprung-Russel diagram]
 in the plot of stellar color vs. magnitude on the right.
 
 _You may need to wait a few seconds for the dataset to load._
+
+[Hertzsprung-Russel diagram]: https://en.wikipedia.org/wiki/Hertzsprung%E2%80%93Russell_diagram
 """
 
 from __future__ import annotations

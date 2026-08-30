@@ -1,9 +1,16 @@
 """Line Multi-Series.
 
-This line chart shows the unemployment rate of various U.S. metro divisions from 2000 through 2013. On hover, the closest data point to the pointer and its associated series is highlighted. Highlighting of series is performed using `nearestX` and `highlight` interactors. Point and text annotations instead use the mark `select` filter option.
+This line chart shows the unemployment rate of various U.S. metro divisions from 2000 through 2013.
+On hover, the closest data point to the pointer and its associated series is highlighted.
+Highlighting of series is performed using `nearestX` and `highlight` interactors. Point and text
+annotations instead use the mark `select` filter option.
 
 ## Credit
-Adapted from a [D3 example](https://observablehq.com/@d3/multi-line-chart/2). Data from the [Bureau of Labor Statistics](https://www.bls.gov/).
+
+Adapted from a [D3 example]. Data from the [Bureau of Labor Statistics].
+
+[D3 example]: https://observablehq.com/@d3/multi-line-chart/2
+[Bureau of Labor Statistics]: https://www.bls.gov/
 """
 
 from __future__ import annotations

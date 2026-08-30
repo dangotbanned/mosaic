@@ -3,7 +3,12 @@
 A connected scatter plot of miles driven vs. gas prices.
 
 ## Credit
-Adapted from an [Observable Plot example](https://observablehq.com/@observablehq/plot-connected-scatterplot), which in turn adapts Hannah Fairfield's [New York Times article](http://www.nytimes.com/imagepages/2010/05/02/business/02metrics.html).
+
+Adapted from an [Observable Plot example], which in turn adapts Hannah Fairfield's
+[New York Times article].
+
+[Observable Plot example]: https://observablehq.com/@observablehq/plot-connected-scatterplot
+[New York Times article]: http://www.nytimes.com/imagepages/2010/05/02/business/02metrics.html
 """
 
 from __future__ import annotations

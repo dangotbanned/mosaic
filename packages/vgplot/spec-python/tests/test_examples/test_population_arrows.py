@@ -1,9 +1,13 @@
 """Population Change Arrows.
 
-An `arrow` connects the positions in 1980 and 2015 of each city on this population × inequality chart. Color encodes variation.
+An `arrow` connects the positions in 1980 and 2015 of each city on this population × inequality
+chart. Color encodes variation.
 
 ## Credit
-Adapted from an [Observable Plot example](https://observablehq.com/@observablehq/plot-arrow-variation-chart).
+
+Adapted from an [Observable Plot example].
+
+[Observable Plot example]: https://observablehq.com/@observablehq/plot-arrow-variation-chart
 """
 
 from __future__ import annotations

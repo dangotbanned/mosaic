@@ -1,6 +1,8 @@
 """Linear Regression.
 
-A linear regression plot predicting athletes' heights based on their weights. Regression computation is performed in the database. The area around a regression line shows a 95% confidence interval. Select a region to view regression results for a data subset.
+A linear regression plot predicting athletes' heights based on their weights. Regression computation
+is performed in the database. The area around a regression line shows a 95% confidence interval.
+Select a region to view regression results for a data subset.
 """
 
 from __future__ import annotations

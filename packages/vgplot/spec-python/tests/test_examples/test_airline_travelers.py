@@ -3,7 +3,10 @@
 A labeled line chart comparing airport travelers in 2019 and 2020.
 
 ## Credit
-Adapted from an [Observable Plot example](https://observablehq.com/@observablehq/plot-labeled-line-chart).
+
+Adapted from an [Observable Plot example].
+
+[Observable Plot example]: https://observablehq.com/@observablehq/plot-labeled-line-chart
 """
 
 from __future__ import annotations

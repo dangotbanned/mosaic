@@ -1,6 +1,7 @@
 """U.S. Counties.
 
-A map of U.S. counties. County name tooltips are anchored to invisible centroid dot marks. Requires the DuckDB `spatial` extension.
+A map of U.S. counties. County name tooltips are anchored to invisible centroid dot marks. Requires
+the DuckDB `spatial` extension.
 """
 
 from __future__ import annotations

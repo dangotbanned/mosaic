@@ -1,6 +1,7 @@
 """Legends.
 
-Tests for different legend types and configurations. We test both legends defined within plots (with a zero-size frame) and external legends that reference a named plot.
+Tests for different legend types and configurations. We test both legends defined within plots (with
+a zero-size frame) and external legends that reference a named plot.
 """
 
 from __future__ import annotations

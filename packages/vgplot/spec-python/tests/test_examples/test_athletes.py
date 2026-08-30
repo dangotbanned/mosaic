@@ -1,6 +1,7 @@
 """Olympic Athletes.
 
-An interactive dashboard of athlete statistics. The menus and searchbox filter the display and are automatically populated by backing data columns.
+An interactive dashboard of athlete statistics. The menus and searchbox filter the display and are
+automatically populated by backing data columns.
 """
 
 from __future__ import annotations

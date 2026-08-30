@@ -1,9 +1,14 @@
 """Seattle Weather.
 
-An interactive view of Seattle's weather, including maximum temperature, amount of precipitation, and type of weather. By dragging on the scatter plot, you can see the proportion of days in that range that have sun, fog, drizzle, rain, or snow.
+An interactive view of Seattle's weather, including maximum temperature, amount of precipitation,
+and type of weather. By dragging on the scatter plot, you can see the proportion of days in that
+range that have sun, fog, drizzle, rain, or snow.
 
 ## Credit
-Based on a [Vega-Lite/Altair example](https://vega.github.io/vega-lite/examples/interactive_seattle_weather.html) by Jake Vanderplas.
+
+Based on a [Vega-Lite/Altair example] by Jake Vanderplas.
+
+[Vega-Lite/Altair example]: https://vega.github.io/vega-lite/examples/interactive_seattle_weather.html
 """
 
 from __future__ import annotations

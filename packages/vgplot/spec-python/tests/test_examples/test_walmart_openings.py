@@ -3,7 +3,10 @@
 Maps showing Walmart store openings per decade. Requires the DuckDB `spatial` extension.
 
 ## Credit
-Adapted from an [Observable Plot example](https://observablehq.com/@observablehq/plot-map-large-multiples).
+
+Adapted from an [Observable Plot example].
+
+[Observable Plot example]: https://observablehq.com/@observablehq/plot-map-large-multiples
 """
 
 from __future__ import annotations

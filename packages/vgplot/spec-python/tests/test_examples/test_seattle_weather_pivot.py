@@ -1,6 +1,8 @@
 """Seattle Weather Pivot.
 
-A DuckDB `PIVOT` query reshapes Seattle's daily weather observations into a cross-tab: one row per year, with a column counting the days of each weather type. The pivoted result is shown in a sortable `table` view. Click a column header to sort.
+A DuckDB `PIVOT` query reshapes Seattle's daily weather observations into a cross-tab: one row per
+year, with a column counting the days of each weather type. The pivoted result is shown in a
+sortable `table` view. Click a column header to sort.
 """
 
 from __future__ import annotations

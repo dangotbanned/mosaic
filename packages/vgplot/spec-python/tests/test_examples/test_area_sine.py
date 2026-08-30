@@ -1,6 +1,7 @@
 """Area Sine Wave.
 
-A test specification to compare M4 optimized and unoptimized area charts over a dense dual-tone sine wave.
+A test specification to compare M4 optimized and unoptimized area charts over a dense dual-tone sine
+wave.
 """
 
 from __future__ import annotations

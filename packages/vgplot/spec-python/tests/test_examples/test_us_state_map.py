@@ -3,7 +3,10 @@
 A map of U.S. states overlaid with computed centroids. Requires the DuckDB `spatial` extension.
 
 ## Credit
-Adapted from an [Observable Plot example](https://observablehq.com/@observablehq/plot-state-centroids).
+
+Adapted from an [Observable Plot example].
+
+[Observable Plot example]: https://observablehq.com/@observablehq/plot-state-centroids
 """
 
 from __future__ import annotations

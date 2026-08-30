@@ -1,9 +1,13 @@
 """Earthquakes Globe.
 
-A rotatable globe of earthquake activity. To show land masses, this example loads and parses TopoJSON data in the database. Requires the DuckDB `spatial` extension.
+A rotatable globe of earthquake activity. To show land masses, this example loads and parses
+TopoJSON data in the database. Requires the DuckDB `spatial` extension.
 
 ## Credit
-Adapted from an [Observable Plot example](https://observablehq.com/@observablehq/plot-earthquake-globe).
+
+Adapted from an [Observable Plot example].
+
+[Observable Plot example]: https://observablehq.com/@observablehq/plot-earthquake-globe
 """
 
 from __future__ import annotations

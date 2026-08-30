@@ -3,6 +3,7 @@
 A faceted plot with 2D interval selections.
 
 ## Credit
+
 Adapted from https://observablehq.com/@observablehq/plot-non-faceted-marks
 """
 

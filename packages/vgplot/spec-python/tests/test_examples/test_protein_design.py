@@ -1,7 +1,7 @@
 """Protein Design Explorer.
 
 Explore synthesized proteins generated via
-[RFDiffusion](https://www.bakerlab.org/2023/07/11/diffusion-model-for-protein-design/).
+[RFDiffusion].
 "Minibinders" are small proteins that bind to a specific protein target.
 When designing a minibinder, a researcher inputs the structure of the
 target protein and other parameters into the AI diffusion model. Often, a
@@ -25,7 +25,13 @@ The dashboard below enables exploration of the results to identify
 promising protein designs and assess the effects of process parameters.
 
 ## Credit
-Adapted from a [UW CSE 512](https://courses.cs.washington.edu/courses/cse512/24sp/) project by Christina Savvides, Alexander Shida, Riti Biswas, and Nora McNamara-Bordewick. Data from the [UW Institute for Protein Design](https://www.ipd.uw.edu/).
+
+Adapted from a [UW CSE 512] project by Christina Savvides, Alexander Shida, Riti Biswas, and Nora
+McNamara-Bordewick. Data from the [UW Institute for Protein Design].
+
+[RFDiffusion]: https://www.bakerlab.org/2023/07/11/diffusion-model-for-protein-design/
+[UW CSE 512]: https://courses.cs.washington.edu/courses/cse512/24sp/
+[UW Institute for Protein Design]: https://www.ipd.uw.edu/
 """
 
 from __future__ import annotations

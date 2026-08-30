@@ -1,9 +1,14 @@
 """Wind Map.
 
-`vector` marks on a grid show both direction and intensity—here, the speed of winds. Expressions for `rotate`, `length`, and `stroke` values are evaluated in the database. Both the legend and map support interactive selections to highlight values.
+`vector` marks on a grid show both direction and intensity—here, the speed of winds. Expressions for
+`rotate`, `length`, and `stroke` values are evaluated in the database. Both the legend and map
+support interactive selections to highlight values.
 
 ## Credit
-Adapted from an [Observable Plot example](https://observablehq.com/@observablehq/plot-wind-map).
+
+Adapted from an [Observable Plot example].
+
+[Observable Plot example]: https://observablehq.com/@observablehq/plot-wind-map
 """
 
 from __future__ import annotations

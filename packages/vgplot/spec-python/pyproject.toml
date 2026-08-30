@@ -19,7 +19,7 @@ dev    = [
   { include-group = "typing" }
 ]
 docs   = [
-  "rumdl>=0.2.55",
+  "rumdl>=0.2.62",
 ]
 gen    = [
   "datamodel-code-generator>=0.72.2",

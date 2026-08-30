@@ -1,6 +1,7 @@
 """Axes & Gridlines.
 
-Customized axis and gridline marks can be used in addition to standard scale attributes such as `xAxis`, `yGrid`, etc. Just add data!
+Customized axis and gridline marks can be used in addition to standard scale attributes such as
+`xAxis`, `yGrid`, etc. Just add data!
 """
 
 from __future__ import annotations

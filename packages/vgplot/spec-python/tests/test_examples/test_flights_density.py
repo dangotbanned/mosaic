@@ -1,6 +1,7 @@
 """Flights Density.
 
-Density `heatmap` and `contour` lines for 200,000+ flights by departure hour and arrival delay. The sliders adjust the smoothing (bandwidth) and number of contour thresholds.
+Density `heatmap` and `contour` lines for 200,000+ flights by departure hour and arrival delay. The
+sliders adjust the smoothing (bandwidth) and number of contour thresholds.
 """
 
 from __future__ import annotations
