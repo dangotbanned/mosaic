@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from typing import Final, final
+import typing as t
 
 from tools.ir.mlir.nodes import MLIR, ExtReference, Reference
 from tools.models import base
 
+if t.TYPE_CHECKING:
+    from collections.abc import Callable
 
-@final
+
+@t.final
 class Definition[T: MLIR](base.Struct, kw_only=True):
     """A top-level (named) node, with pre-computed reference info.
 
@@ -21,7 +24,7 @@ class Definition[T: MLIR](base.Struct, kw_only=True):
         - Then subsequent changes are incremental
     """
 
-    inner: Final[T]
+    inner: t.Final[T]
     refs: set[Reference]
     ext_refs: set[ExtReference]
 
@@ -33,3 +36,31 @@ class Definition[T: MLIR](base.Struct, kw_only=True):
 
     def has_references(self) -> bool:
         return bool(self.refs or self.ext_refs)
+
+
+def inner_type_is[M: MLIR](
+    inner_type: type[M], /
+) -> Callable[[Definition[t.Any]], t.TypeIs[Definition[M]]]:
+    """Generate a typeguard to pass to [`mlir.Root.iter_defs`][].
+
+    Args:
+        inner_type: A single `MLIR` class to check against `Definition.inner`.
+
+    ## Examples
+    ```py
+    from typing import assert_type
+
+    from tools.ir import mlir
+    from tools.ir.mlir.nodes import ClosedDict
+
+
+    def func(root: mlir.Root) -> None:
+        _, first_closed_dict = next(root.iter_defs(mlir.inner_type_is(ClosedDict)))
+        assert_type(first_closed_dict, mlir.Definition[ClosedDict])  # OK
+    ```
+    """
+
+    def guard(obj: Definition[t.Any], /) -> t.TypeIs[Definition[M]]:
+        return isinstance(obj.inner, inner_type)
+
+    return guard
