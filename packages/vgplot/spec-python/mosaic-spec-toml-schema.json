@@ -5,6 +5,7 @@
       "description": "Lift one or more anonymous types into new definitions.\n\nSimilar to `\"as-ref\"`, but aimed at naming multiple *distinct* types that are nested at a single location.\n\nWhereas `\"as-ref\"` is suited for a single *duplicated* type found in multiple locations.",
       "properties": {
         "action": {
+          "description": "Lift one or more anonymous types into new definitions.\n\nSimilar to `\"as-ref\"`, but aimed at naming multiple *distinct* types that are nested at a single location.\n\nWhereas `\"as-ref\"` is suited for a single *duplicated* type found in multiple locations.",
           "enum": [
             "as-defs"
           ]
@@ -24,21 +25,26 @@
       "description": "Replace all anonymous matches with a reference to this new definition.\n\nAiming to do the heavy lifting for de-duplicating anonymous unions.",
       "properties": {
         "action": {
+          "description": "Replace all anonymous matches with a reference to this new definition.\n\nAiming to do the heavy lifting for de-duplicating anonymous unions.",
           "enum": [
             "as-ref"
           ]
         },
         "match_doc": {
           "default": false,
+          "description": "Require `type.doc == candidate.doc` for a successful match.\n\nBy default, action can define a new `doc` and match anonymous types which never had one.\n\nHowever, `True` may make sense when a `doc` exists due to obfuscation\n(e.g. `--expose=export` in [ts-json-schema-generator][1]).\n\n[1]: https://github.com/vega/ts-json-schema-generator#options",
           "type": "boolean"
         },
         "name": {
+          "description": "The name of the new definition.",
           "type": "string"
         },
         "scope": {
           "$ref": "#/$defs/ChildrenDescendantsScope"
         },
-        "type": {}
+        "type": {
+          "description": "The new definition itself.\n\nWill appear as a new entry in `definitions`."
+        }
       },
       "required": [
         "action",
@@ -50,16 +56,19 @@
     },
     "ChildrenDescendantsScope": {
       "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    over: The kind of traversal to perform.\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
       "properties": {
         "exclude": {
-          "$ref": "#/$defs/Filter"
+          "$ref": "#/$defs/Filter",
+          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
         },
         "include": {
-          "$ref": "#/$defs/Filter"
+          "$ref": "#/$defs/Filter",
+          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
         },
         "over": {
           "default": "children",
+          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
           "enum": [
             "children",
             "descendants"
@@ -67,6 +76,7 @@
         },
         "ref_follow_depth": {
           "default": 0,
+          "description": "Resolve references to a maximum of this depth, before stopping a search.\n\nBy default, refs are left unresolved.\nEach increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\nThis model chooses not to support an \"unbounded\" search.",
           "enum": [
             0,
             1,
@@ -88,16 +98,19 @@
     },
     "ChildrenScope": {
       "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    over: The kind of traversal to perform.\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
       "properties": {
         "exclude": {
-          "$ref": "#/$defs/Filter"
+          "$ref": "#/$defs/Filter",
+          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
         },
         "include": {
-          "$ref": "#/$defs/Filter"
+          "$ref": "#/$defs/Filter",
+          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
         },
         "over": {
           "default": "children",
+          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
           "enum": [
             "children"
           ]
@@ -127,16 +140,19 @@
     },
     "DefsDescendantsScope": {
       "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    over: The kind of traversal to perform.\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
       "properties": {
         "exclude": {
-          "$ref": "#/$defs/Filter"
+          "$ref": "#/$defs/Filter",
+          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
         },
         "include": {
-          "$ref": "#/$defs/Filter"
+          "$ref": "#/$defs/Filter",
+          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
         },
         "over": {
           "default": "definitions",
+          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
           "enum": [
             "definitions",
             "descendants"
@@ -144,6 +160,7 @@
         },
         "ref_follow_depth": {
           "default": 0,
+          "description": "Resolve references to a maximum of this depth, before stopping a search.\n\nBy default, refs are left unresolved.\nEach increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\nThis model chooses not to support an \"unbounded\" search.",
           "enum": [
             0,
             1,
@@ -165,16 +182,19 @@
     },
     "DefsScope": {
       "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\nArgs:\n    include: Require matches to meet these constraints for inclusion.\n        By default, the search includes all roots, definitions and their children.\n    exclude: Reject candidates that meet these constraints.\n        By default, the search does not exclude.\n    over: The kind of traversal to perform.\n    ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.\n        By default, refs are left unresolved.\n        Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\n        This model chooses not to support an \"unbounded\" search.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
       "properties": {
         "exclude": {
-          "$ref": "#/$defs/Filter"
+          "$ref": "#/$defs/Filter",
+          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
         },
         "include": {
-          "$ref": "#/$defs/Filter"
+          "$ref": "#/$defs/Filter",
+          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
         },
         "over": {
           "default": "definitions",
+          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
           "enum": [
             "definitions"
           ]
@@ -186,15 +206,18 @@
     },
     "Filter": {
       "additionalProperties": false,
-      "description": "A specification for matching against a graph.\n\nEach parameter constrains the search in the priority order of:\n\n```\nid -> definition -> child -> ref\n```\n\nArgs:\n    id: Match on the name of a module (`Root.id`).\n    definition: Match on a named symbol within a module (`Root.definitions`).\n    child: Match on an anonymous symbol within a definition.\n    ref: Match on the subset of `child`, which is a reference to named definition.",
+      "description": "A specification for matching against a graph.\n\nEach parameter constrains the search in the priority order of:\n\n```\nid -> definition -> child -> ref\n```",
       "properties": {
         "child": {
-          "$ref": "#/$defs/Nodes"
+          "$ref": "#/$defs/Nodes",
+          "description": "Match on an anonymous symbol within a definition."
         },
         "definition": {
-          "$ref": "#/$defs/NamesNodes"
+          "$ref": "#/$defs/NamesNodes",
+          "description": "Match on a named symbol within a module (`Root.definitions`)."
         },
         "id": {
+          "description": "Match on the name of a module (`Root.id`).",
           "items": {
             "type": "string"
           },
@@ -202,7 +225,8 @@
           "uniqueItems": true
         },
         "ref": {
-          "$ref": "#/$defs/Names"
+          "$ref": "#/$defs/Names",
+          "description": "Match on the subset of `child`, which is a reference to named definition."
         }
       },
       "required": [],
@@ -250,6 +274,7 @@
             "$ref": "#/$defs/ReferenceUnwrap"
           },
           "default": {},
+          "description": "Mapping from the outer (\"$ref\"-defining) definition name to a policy table.",
           "type": "object"
         }
       },
@@ -333,11 +358,13 @@
       "description": "Derive a new `Root` from another, taking ownership of related definitions.\n\nThis action could be considered taking a cutting from a tree and \"re-planting\" it.\n\n## Notes\n- differs by not requiring 1 `root_name: DefName`, since multiple definitions can match\n- creates a new `mlir.Root` per-action",
       "properties": {
         "action": {
+          "description": "Derive a new `Root` from another, taking ownership of related definitions.\n\nThis action could be considered taking a cutting from a tree and \"re-planting\" it.\n\n## Notes\n- differs by not requiring 1 `root_name: DefName`, since multiple definitions can match\n- creates a new `mlir.Root` per-action",
           "enum": [
             "new-tree"
           ]
         },
         "id": {
+          "description": "The name of the new `Root`.",
           "type": "string"
         },
         "into_ext_ref": {
@@ -345,6 +372,7 @@
             "type": "string"
           },
           "default": {},
+          "description": "If this operation would leave \"dangling\" references, resolve them using this mapping.\n\nThis option should be reserved for *acknowledging* cyclic definitions.",
           "type": "object"
         },
         "scope": {
@@ -426,6 +454,7 @@
       "description": "Remove matching definitions, without replacement.",
       "properties": {
         "action": {
+          "description": "Remove matching definitions, without replacement.",
           "enum": [
             "remove"
           ]
@@ -445,6 +474,7 @@
       "description": "Rename fields that match a name provided in `overrides`.",
       "properties": {
         "action": {
+          "description": "Rename fields that match a name provided in `overrides`.",
           "enum": [
             "rename-fields"
           ]
@@ -453,6 +483,7 @@
           "additionalProperties": {
             "type": "string"
           },
+          "description": "A mapping from old name to new name.",
           "type": "object"
         },
         "scope": {
@@ -468,9 +499,10 @@
     },
     "SourceConfig": {
       "additionalProperties": false,
-      "description": "A schema source for conversion.\n\nArgs:\n    path: A relative path to the schema, resolved against the location of `mosaic-spec.toml`.\n    id: A unique identifier for the loaded result.",
+      "description": "A schema source for conversion.",
       "properties": {
         "id": {
+          "description": "A unique identifier for the loaded result.\n\nIn the final representation, `id` is used for the name of a python module.",
           "type": "string"
         },
         "path": {

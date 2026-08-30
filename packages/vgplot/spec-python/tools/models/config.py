@@ -3,7 +3,7 @@
 import typing
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
-from typing import Any, Literal as L, final
+from typing import Literal as L, final
 
 from msgspec import field
 
@@ -154,18 +154,16 @@ class Filter(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
     ```
     id -> definition -> child -> ref
     ```
-
-    Args:
-        id: Match on the name of a module (`Root.id`).
-        definition: Match on a named symbol within a module (`Root.definitions`).
-        child: Match on an anonymous symbol within a definition.
-        ref: Match on the subset of `child`, which is a reference to named definition.
     """
 
     id: frozenset[base.IdName] = field(default_factory=frozenset[base.IdName])
+    """Match on the name of a module (`Root.id`)."""
     definition: NamesNodes = field(default_factory=NamesNodes)
+    """Match on a named symbol within a module (`Root.definitions`)."""
     child: Nodes = field(default_factory=Nodes)
+    """Match on an anonymous symbol within a definition."""
     ref: Names = field(default_factory=Names)
+    """Match on the subset of `child`, which is a reference to named definition."""
 
     def __bool__(self) -> bool:
         return bool(self.id or self.definition or self.child or self.ref)
@@ -186,17 +184,6 @@ class _BaseScopes[Over: IterOver](
 ):
     """A search space for an `Action`.
 
-    Args:
-        include: Require matches to meet these constraints for inclusion.
-            By default, the search includes all roots, definitions and their children.
-        exclude: Reject candidates that meet these constraints.
-            By default, the search does not exclude.
-        over: The kind of traversal to perform.
-        ref_follow_depth: Resolve references to a maximum of this depth, before stopping a search.
-            By default, refs are left unresolved.
-            Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.
-            This model chooses not to support an "unbounded" search.
-
     ## Notes
     The algorithm for resolving `include` and `exclude` is *roughly*:
 
@@ -213,9 +200,22 @@ class _BaseScopes[Over: IterOver](
     """
 
     include: Filter = field(default_factory=Filter)
+    """Require matches to meet these constraints for inclusion.
+
+    By default, the search includes all roots, definitions and their children.
+    """
     exclude: Filter = field(default_factory=Filter)
-    # NOTE: children doesn't make sense everywhere, different actions have different defaults
+    """Reject candidates that meet these constraints.
+
+    By default, the search does not exclude.
+    """
     over: Over
+    """The kind of traversal to perform.
+
+    - *"definitions"*: Visit top-level definitions only.
+    - *"children"*: Visit the children of top-level definitions.
+    - *"descendants"*: Visit top-level definitions, then their children, recursively.
+    """
 
     def __bool__(self) -> bool:
         return bool(self.include or self.exclude)
@@ -226,13 +226,6 @@ class _BaseScopes[Over: IterOver](
         if self.exclude:
             yield "exclude", self.exclude
         yield "over", self.over
-
-    def __init_subclass__(cls, **kwds: Any) -> None:
-        super().__init_subclass__(**kwds)
-        # HACK: Ensures `msgspec` collects the doc that's written in the base class, when
-        # generating the schema
-        if not cls.__dict__.get("__doc__", ""):
-            cls.__doc__ = _BaseScopes.__doc__
 
 
 @final
@@ -258,6 +251,12 @@ class DefsDescendantsScope(
 ):
     over: L["definitions", "descendants"] = "definitions"
     ref_follow_depth: Depth = 0
+    """Resolve references to a maximum of this depth, before stopping a search.
+
+    By default, refs are left unresolved.
+    Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.
+    This model chooses not to support an "unbounded" search.
+    """
 
     def __bool__(self) -> bool:
         return bool(self.ref_follow_depth or self.include or self.exclude)
@@ -274,6 +273,12 @@ class ChildrenDescendantsScope(
 ):
     over: L["children", "descendants"] = "children"
     ref_follow_depth: Depth = 0
+    """Resolve references to a maximum of this depth, before stopping a search.
+
+    By default, refs are left unresolved.
+    Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.
+    This model chooses not to support an "unbounded" search.
+    """
 
     def __bool__(self) -> bool:
         return bool(self.ref_follow_depth or self.include or self.exclude)
@@ -408,6 +413,7 @@ class RenameFieldsAction(
 
     scope: DefsScope = field(default_factory=DefsScope)
     overrides: Mapping[str, str]
+    """A mapping from old name to new name."""
 
 
 type ActionKind = L["as-ref", "as-defs", "rename-fields", "new-tree", "remove"]
@@ -434,15 +440,15 @@ class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=Tr
 
 
 class SourceConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
-    """A schema source for conversion.
-
-    Args:
-        path: A relative path to the schema, resolved against the location of `mosaic-spec.toml`.
-        id: A unique identifier for the loaded result.
-    """
+    """A schema source for conversion."""
 
     path: Path
+    """A relative path to the schema, resolved against the location of `mosaic-spec.toml`."""
     id: base.IdName
+    """A unique identifier for the loaded result.
+
+    In the final representation, `id` is used for the name of a python module.
+    """
 
 
 class ConvertConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
