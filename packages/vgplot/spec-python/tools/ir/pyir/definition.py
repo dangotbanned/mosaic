@@ -25,9 +25,9 @@ class TypeAlias[E: Expr = Expr](Definition):
     _ALIAS: t.ClassVar[L["TypeAliasType"]] = "TypeAliasType"
 
     def iter_lines(self) -> Lines:
-        params = ""
+        params = f", {self.expr}"
         if type_params := self.type_params:
-            params = f", {join_comma(tp.as_ref() for tp in type_params)}"
+            params = f", type_params = {join_comma(tp.as_ref() for tp in type_params)}"
         yield f"{self.name} = {self._ALIAS}({self.name!r}{params})"
         if self.doc:
             yield doc(self.doc)
