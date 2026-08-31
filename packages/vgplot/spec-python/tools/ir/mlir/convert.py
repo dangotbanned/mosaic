@@ -158,13 +158,10 @@ def _(
         case ("closed", None):
             result = mlir.ClosedDict(fields=fields, doc=doc)
         case (None, extra):
+            items = from_json(extra, owner)  # pyrefly: ignore[bad-argument-type]
             if not fields:
-                return mlir.Mapping(type=from_json(extra, owner), doc=doc)
-            result = mlir.ExtraDict(
-                fields=fields,
-                extra_items=from_json(extra, owner),  # pyrefly: ignore[bad-argument-type]
-                doc=doc,
-            )
+                return mlir.Mapping(type=items, doc=doc)
+            result = mlir.ExtraDict(fields=fields, extra_items=items, doc=doc)
         case _:
             msg = f"Cannot combine closed={obj.closed!r} and extra_items={obj.extra_items!r} in {owner!r}\n\n{obj!r}"
             raise TypeError(msg)
