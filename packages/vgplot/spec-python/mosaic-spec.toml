@@ -167,3 +167,19 @@ overrides                      = { as = "bind", for = "plot" }
 action           = "as-ref-field"
 scope.include.id = ["plot"]
 field_name       = "margins"
+
+[[convert.to_mlir.actions]]
+action                         = "as-ref-field"
+scope.include.id               = ["inputs"]
+scope.include.definition.names = ["Table"]
+field_name                     = "align"
+
+[[convert.to_mlir.actions]]
+# TODO @dangotbanned: fix so this gets the deeply nested object
+# https://github.com/dangotbanned/mosaic/blob/225af0d474c044f4b210f31d619400b230ba2a19/packages/vgplot/spec/src/spec/Input.ts#L48-L49
+action                         = "as-ref-field"
+scope.include.id               = ["inputs"]
+scope.include.definition.names = ["Menu"]
+field_name                     = "options"
+
+# TODO @dangotbanned: tip/Tip in `marks`

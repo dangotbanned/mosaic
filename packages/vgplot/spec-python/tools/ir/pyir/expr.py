@@ -8,6 +8,7 @@ from tools.models import base
 
 if t.TYPE_CHECKING:
     from tools.common import PyIdentifierSnake
+    from tools.ir.mlir import nodes as mlir
     from tools.ir.pyir import value
     from tools.ir.pyir.field import Field
 
@@ -184,3 +185,11 @@ class ForwardRef(Expr):
 
     def __str__(self) -> TypeExpr:
         return TypeExpr(f'"{self.expr}"')
+
+
+# TODO @dangotbanned: Resolve these with more context
+@t.final
+class Unresolved(Expr):
+    """A marker wrapping a type that is not valid as an expression."""
+
+    inner: mlir.MLIR
