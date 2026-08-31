@@ -39,7 +39,6 @@ type GroupByIter[T, S] = Iterator[tuple[T, Iterator[S]]]
 _ZERO: Final[L[0]] = 0  # ruff: ignore[redundant-final-literal]
 
 
-# TODO @dangotbanned: `ref`
 class Matcher:
     # NOTE: For this part, some options are:
     # 1. Treat every action as an individual. Do everything sequentially. Use the scope as-is.
@@ -82,9 +81,6 @@ class Matcher:
             self.child = ChildIncludeNodes(include.child, exclude.child)
         else:
             self.child = _CHILD_ALWAYS
-        if include.ref or exclude.ref:
-            msg = f"{('include' if include.ref else 'exclude')}.ref is not yet implemented, got:\n{(include.ref or exclude.ref)!r}"
-            raise NotImplementedError(msg)
 
         return self
 

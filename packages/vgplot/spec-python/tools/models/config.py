@@ -117,19 +117,6 @@ class Nodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=
             yield "nodes", self.nodes
 
 
-class Names(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
-    """Match on the name of a definition."""
-
-    names: frozenset[DefName] = field(default_factory=frozenset[DefName])
-
-    def __bool__(self) -> bool:
-        return bool(self.names)
-
-    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
-        if self.names:
-            yield "names", self.names
-
-
 class NamesNodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
     """Match on the name or type of a definition."""
 
@@ -152,7 +139,7 @@ class Filter(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
     Each parameter constrains the search in the priority order of:
 
     ```
-    id -> definition -> child -> ref
+    id -> definition -> child
     ```
     """
 
@@ -162,11 +149,9 @@ class Filter(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
     """Match on a named symbol within a module (`Root.definitions`)."""
     child: Nodes = field(default_factory=Nodes)
     """Match on an anonymous symbol within a definition."""
-    ref: Names = field(default_factory=Names)
-    """Match on the subset of `child`, which is a reference to named definition."""
 
     def __bool__(self) -> bool:
-        return bool(self.id or self.definition or self.child or self.ref)
+        return bool(self.id or self.definition or self.child)
 
     def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
         if self.id:
@@ -175,8 +160,6 @@ class Filter(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields
             yield "definition", self.definition
         if self.child:
             yield "child", self.child
-        if self.ref:
-            yield "ref", self.ref
 
 
 class _BaseScopes[Over: IterOver](

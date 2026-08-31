@@ -206,7 +206,7 @@
     },
     "Filter": {
       "additionalProperties": false,
-      "description": "A specification for matching against a graph.\n\nEach parameter constrains the search in the priority order of:\n\n```\nid -> definition -> child -> ref\n```",
+      "description": "A specification for matching against a graph.\n\nEach parameter constrains the search in the priority order of:\n\n```\nid -> definition -> child\n```",
       "properties": {
         "child": {
           "$ref": "#/$defs/Nodes",
@@ -223,10 +223,6 @@
           },
           "type": "array",
           "uniqueItems": true
-        },
-        "ref": {
-          "$ref": "#/$defs/Names",
-          "description": "Match on the subset of `child`, which is a reference to named definition."
         }
       },
       "required": [],
@@ -292,22 +288,6 @@
       },
       "required": [],
       "title": "MosaicSpecToml",
-      "type": "object"
-    },
-    "Names": {
-      "additionalProperties": false,
-      "description": "Match on the name of a definition.",
-      "properties": {
-        "names": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array",
-          "uniqueItems": true
-        }
-      },
-      "required": [],
-      "title": "Names",
       "type": "object"
     },
     "NamesNodes": {
