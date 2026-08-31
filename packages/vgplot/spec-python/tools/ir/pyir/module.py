@@ -62,6 +62,7 @@ class Module(base.Struct, kw_only=True):
         return Module(
             name=name,
             filepath=parent.filepath.parent / f"{name}.py",
+            parent=parent,
             definitions={defn.name: defn for defn in it},
         )
 

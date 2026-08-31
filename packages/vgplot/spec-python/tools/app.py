@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
     from tools.models.base import IdName
 
+type CanonicalPath = str
+
 
 @final
 class App:
@@ -171,6 +173,7 @@ class App:
     _inputs: deque[InputSchema]
     _wrappers: deque[jw.Root]
     _mlirs: deque[mlir.Root]
+    _modules: dict[CanonicalPath, pyir.Module]
 
     def __init__(self, config: MosaicSpecToml) -> None:
         self.config = config
@@ -179,6 +182,7 @@ class App:
         self._mlirs = deque[mlir.Root]()
         self._actions: dict[int, mlir.Action] = {}
         self._mlirs_inv: dict[IdName, int] = {}
+        self._modules: dict[CanonicalPath, pyir.Module] = {}
 
     @staticmethod
     def discover(path: fs.IntoPath = fs.MOSAIC_SPEC_TOML) -> App:
@@ -211,33 +215,40 @@ class App:
             self._wrappers.extend(it)
 
     def into_mlir(self, *, refresh: bool = False, quiet: bool = False) -> None:
-        if self._mlirs:
-            self._mlirs.clear()
-            self._mlirs_inv.clear()
+        if not self._mlirs or refresh:
+            if self._mlirs:
+                self._mlirs.clear()
+                self._mlirs_inv.clear()
+            self.into_json_wrapper(refresh=refresh)
+            config = self.config.convert.to_mlir
+            fn = mlir.Root.from_json_wrapper
+            self._mlirs.extend(fn(root, config) for root in self._wrappers)
+            if not quiet:
+                print(f"Starting {len(self.actions)} actions on {len(self._mlirs)} root(s).")
+            self._mlirs = self._run_actions(self._mlirs, quiet=quiet)
+            self._mlirs_inv = {root.id: idx for idx, root in enumerate(self._mlirs)}
+            if not quiet:
+                print(f"Finished actions with {len(self._mlirs)} root(s).")
+                print("\n".join(root._describe() for root in self._mlirs))
 
-        self.into_json_wrapper(refresh=refresh)
-        config = self.config.convert.to_mlir
-        fn = mlir.Root.from_json_wrapper
-        self._mlirs.extend(fn(root, config) for root in self._wrappers)
-        if not quiet:
-            print(f"Starting {len(self.actions)} actions on {len(self._mlirs)} root(s).")
-        self._mlirs = self._run_actions(self._mlirs, quiet=quiet)
-        self._mlirs_inv = {root.id: idx for idx, root in enumerate(self._mlirs)}
-        if not quiet:
-            print(f"Finished actions with {len(self._mlirs)} root(s).")
-            print("\n".join(root._describe() for root in self._mlirs))
-
-    # TODO @dangotbanned: Make this stateful
-    def into_pyir(self) -> deque[pyir.Module]:
+    def into_pyir(self, *, refresh: bool = False, quiet: bool = False) -> None:
         """Lower MLIR into PyIR."""
-        self.into_mlir(refresh=True)
+        self.into_mlir(refresh=refresh, quiet=quiet)
+        if not quiet:
+            print(f"Generating modules from {len(self._mlirs)} root(s).")
         pkg = pyir.Module(name=PyIdentifierSnake("mosaic_spec"), filepath=fs.MOSAIC_SPEC_INIT)
         sub_pkg = pyir.Module(
             name=PyIdentifierSnake("_gen"), filepath=fs.MOSAIC_SPEC_GEN_INIT, parent=pkg
         )
-        modules = deque((pkg, sub_pkg))
-        modules.extend(pyir.Module.from_mlir(root, sub_pkg) for root in self._mlirs if root.id)
-        return modules
+
+        self._modules = {pkg.canonical_path: pkg, sub_pkg.canonical_path: sub_pkg}
+        if not quiet:
+            print(f"Added {len(self._modules)} packages.")
+        it = (pyir.Module.from_mlir(root, sub_pkg) for root in self._mlirs)
+        self._modules.update((module.canonical_path, module) for module in it)
+        if not quiet:
+            print(f"Finished generating with {len(self._modules)} modules(s).")
+            print("\n".join(f" - {m}" for m in self._modules))
 
     def mlir_root(self, id: IdName, /) -> mlir.Root:
         """Return the `MLIR` representation of module `id`."""
