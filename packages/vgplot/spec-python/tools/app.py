@@ -76,8 +76,17 @@ class App:
 
     ### Stage 4
 
-    *TBD*
-    ...
+    - Package: `tools.ir.pyir`
+    - Root: `pyir.Module`
+    - Definition: `pyir.Definition`, 7 implementations
+    - Nodes:
+        - `pyir.Expr`, 14 implementations
+        - `pyir.PyIR` (other), 9 implementations
+
+    #### Open issues
+
+    - Some deeply nested edge cases are not converted yet (`expr.Unresolved`)
+    - Reference typing, for inheritance lists
 
     ## Targets
 
@@ -218,11 +227,9 @@ class App:
             print(f"Finished actions with {len(self._mlirs)} root(s).")
             print("\n".join(root._describe() for root in self._mlirs))
 
+    # TODO @dangotbanned: Make this stateful
     def into_pyir(self) -> deque[pyir.Module]:
-        """Lower MLIR into PyIR.
-
-        Quite far from having this working, so it's simpler to not have state yet.
-        """
+        """Lower MLIR into PyIR."""
         self.into_mlir(refresh=True)
         pkg = pyir.Module(name=PyIdentifierSnake("mosaic_spec"), filepath=fs.MOSAIC_SPEC_INIT)
         sub_pkg = pyir.Module(
