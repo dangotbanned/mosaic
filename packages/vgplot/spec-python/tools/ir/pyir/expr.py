@@ -36,8 +36,6 @@ STR: t.Final = _expr("str")
 INT: t.Final = _expr("int")
 FLOAT: t.Final = _expr("float")
 BOOL: t.Final = _expr("bool")
-MAPPING_STR_ANY: t.Final = _expr("Mapping[str, Any]", "collections.abc.Mapping", "typing.Any")
-MAPPING_STR_STR: t.Final = _expr("Mapping[str, str]", "collections.abc.Mapping")
 
 
 @t.final
@@ -81,6 +79,16 @@ class Union(Expr):
 
     def __str__(self) -> TypeExpr:
         return join_or(m.__str__() for m in self.members)
+
+
+@t.final
+class Mapping(Expr):
+    """A representation of a `collections.abc.Mapping`, with str keys."""
+
+    expr: Expr
+
+    def __str__(self) -> TypeExpr:
+        return TypeExpr(f"Mapping[str, {self.expr}]")
 
 
 @t.final

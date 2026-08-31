@@ -142,7 +142,9 @@ def field(
 
 # TODO @dangotbanned: Report pyrefly bug for `None` case (failed to narrow after trying the cheap cases)
 @_from_json_dispatch.register(jw.Object)
-def _(obj: jw.Object, owner: DefName, /) -> mlir.OpenDict | mlir.ClosedDict | mlir.ExtraDict:
+def _(
+    obj: jw.Object, owner: DefName, /
+) -> mlir.OpenDict | mlir.ClosedDict | mlir.ExtraDict | mlir.Mapping:
     # Having `required` paired with each field removes a surface to sync
     is_required = frozenset(obj.required).__contains__
     fields = tuple(
@@ -156,6 +158,8 @@ def _(obj: jw.Object, owner: DefName, /) -> mlir.OpenDict | mlir.ClosedDict | ml
         case ("closed", None):
             result = mlir.ClosedDict(fields=fields, doc=doc)
         case (None, extra):
+            if not fields:
+                return mlir.Mapping(type=from_json(extra, owner), doc=doc)
             result = mlir.ExtraDict(
                 fields=fields,
                 extra_items=from_json(extra, owner),  # pyrefly: ignore[bad-argument-type]

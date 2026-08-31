@@ -214,6 +214,11 @@ class Field[T: MLIR = MLIR](_BaseType[T]):
     required: bool = False
 
 
+@final
+class Mapping[T: MLIR = MLIR](_BaseType[T]):
+    """Special-case of `ExtraDict`, with only `extra_items`."""
+
+
 class _BaseSeq[T: MLIR](_BaseType[T]): ...
 
 
