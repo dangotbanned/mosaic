@@ -188,19 +188,23 @@ class App:
 
     def read_into_inputs(self, *, refresh: bool = False) -> None:
         if not self._inputs or refresh:
-            self._inputs.extend(self._read_sources())
+            it = self._read_sources()
+            if refresh:
+                self._inputs.clear()
+            self._inputs.extend(it)
 
     def into_json_wrapper(self, *, refresh: bool = False) -> None:
         if not self._wrappers or refresh:
             self.read_into_inputs(refresh=refresh)
-            self._wrappers.extend(jw.Root.from_input_schema(schema) for schema in self._inputs)
+            it = (jw.Root.from_input_schema(schema) for schema in self._inputs)
+            if refresh:
+                self._wrappers.clear()
+            self._wrappers.extend(it)
 
     def into_mlir(self, *, refresh: bool = False, quiet: bool = False) -> None:
-        # NOTE: While these are still being implemented, coupling the steps here ensures an
-        # interactive session doesn't re-run on partial data.
-        # I don't want to add exception handling (yet)
         if self._mlirs:
             self._mlirs.clear()
+            self._mlirs_inv.clear()
 
         self.into_json_wrapper(refresh=refresh)
         config = self.config.convert.to_mlir
@@ -219,13 +223,13 @@ class App:
 
         Quite far from having this working, so it's simpler to not have state yet.
         """
-        self.into_mlir(refresh=True, quiet=True)
+        self.into_mlir(refresh=True)
         pkg = pyir.Module(name=PyIdentifierSnake("mosaic_spec"), filepath=fs.MOSAIC_SPEC_INIT)
         sub_pkg = pyir.Module(
             name=PyIdentifierSnake("_gen"), filepath=fs.MOSAIC_SPEC_GEN_INIT, parent=pkg
         )
         modules = deque((pkg, sub_pkg))
-        modules.extend(pyir.Module.from_mlir(root, sub_pkg) for root in self._mlirs)
+        modules.extend(pyir.Module.from_mlir(root, sub_pkg) for root in self._mlirs if root.id)
         return modules
 
     def mlir_root(self, id: IdName, /) -> mlir.Root:
