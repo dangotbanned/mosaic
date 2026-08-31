@@ -54,6 +54,31 @@
       "title": "AsRefAction",
       "type": "object"
     },
+    "AsRefFieldAction": {
+      "additionalProperties": false,
+      "description": "Lift a single field type into definitions, selected on the name of the field.",
+      "properties": {
+        "action": {
+          "description": "Lift a single field type into definitions, selected on the name of the field.",
+          "enum": [
+            "as-ref-field"
+          ]
+        },
+        "field_name": {
+          "description": "The target field.\n\nThe output definition name will be the capitalized version of it.",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/DefsScope"
+        }
+      },
+      "required": [
+        "action",
+        "field_name"
+      ],
+      "title": "AsRefFieldAction",
+      "type": "object"
+    },
     "ChildrenDescendantsScope": {
       "additionalProperties": false,
       "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
@@ -240,6 +265,9 @@
                 "$ref": "#/$defs/AsRefAction"
               },
               {
+                "$ref": "#/$defs/AsRefFieldAction"
+              },
+              {
                 "$ref": "#/$defs/AsDefsAction"
               },
               {
@@ -256,6 +284,7 @@
               "mapping": {
                 "as-defs": "#/$defs/AsDefsAction",
                 "as-ref": "#/$defs/AsRefAction",
+                "as-ref-field": "#/$defs/AsRefFieldAction",
                 "new-tree": "#/$defs/NewTreeAction",
                 "remove": "#/$defs/RemoveAction",
                 "rename-fields": "#/$defs/RenameFieldsAction"

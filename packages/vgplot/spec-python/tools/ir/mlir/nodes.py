@@ -8,7 +8,7 @@ from tools.models import base
 from tools.models.base import Lit
 
 if typing.TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
+    from collections.abc import Iterator
 
     from tools.ir.mlir.common import NameMap, RefMap
     from tools.models.base import DefName, IdName
@@ -49,6 +49,16 @@ class MLIR(base.FrozenHashableStruct):
     def with_ext_refs(self, ref_map: RefMap, /) -> Self | MLIR:
         return self
 
+    def _select_field(self, name: str, /) -> Field | None:
+        """Return the field `name` if it exists."""
+        # NOTE: Doesn't use `iter_fields` as most instances will not be derived from of `_BaseFields`.
+        # So this skips a function call and iterator exhaustion for the commmon case.
+        return
+
+    def iter_fields(self) -> Iterator[Field]:
+        """Iterate over child `Field`s."""
+        yield from ()
+
 
 @final
 class Reference(MLIR):
@@ -84,6 +94,10 @@ class Reference(MLIR):
         if ext := ref_map(self.ref):
             return self.to_ext_ref(ext)
         return self
+
+
+def ref(name: DefName, /) -> Reference:
+    return Reference(ref=name)
 
 
 @final
@@ -207,6 +221,8 @@ class _BaseSeq[T: MLIR](_BaseType[T]): ...
 # 1. Fixes typing
 # 2. Eats the diagnostics in one place
 class _BaseFields(_HasChildren):
+    # TODO @dangotbanned: Switch to `frozendict` when available, to avoid linear search
+    # https://docs.python.org/3.15/library/stdtypes.html#frozendict
     fields: tuple[Field, ...]
     doc: str = ""
 
@@ -220,11 +236,7 @@ class _BaseFields(_HasChildren):
         # NOTE: https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
         return copy.replace(self, fields=new_fields)  # pyrefly: ignore[bad-argument-type]
 
-    # NOTE: Only used for debugging
-    def field_names(self) -> Iterable[str]:
-        yield from (fld.name for fld in self.fields)
-
-    def replace_field_names(self, overrides: NameMap, /) -> Self:
+    def rename_fields(self, overrides: NameMap, /) -> Self:
         new_fields = {
             idx: fld.__replace__(name=changed)
             for idx, fld in enumerate(self.fields)
@@ -235,6 +247,17 @@ class _BaseFields(_HasChildren):
         fields = tuple(new_fields.get(idx, fld) for idx, fld in enumerate(self.fields))
         # NOTE: `Self` seems to be https://github.com/python/typeshed/issues/15973
         return copy.replace(self, fields=fields)  # pyrefly: ignore[bad-argument-type]
+
+    def iter_fields(self) -> Iterator[Field]:
+        yield from self.fields
+
+    def _select_field(self, name: str, /) -> Field | None:
+        # NOTE: Keeping this private because the need for it is temporary.
+        # `fields` can switch to `frozendict` in 3.15
+        for fld in self.fields:
+            if fld.name == name:
+                return fld
+        return None
 
 
 @final

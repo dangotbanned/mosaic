@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import typing as t
+from typing import Literal as L
 
-from tools.ir.mlir.nodes import MLIR, ExtReference, Reference
+from tools.ir.mlir.nodes import MLIR, ExtReference, Field, Reference
 from tools.models import base
 
 if t.TYPE_CHECKING:
-    from collections.abc import Callable
+    from collections.abc import Callable, Iterator
 
 
 @t.final
@@ -36,6 +37,25 @@ class Definition[T: MLIR](base.Struct, kw_only=True):
 
     def has_references(self) -> bool:
         return bool(self.refs or self.ext_refs)
+
+    @t.overload
+    def field(self, name: str, /, *, allow_missing: L[False] = False) -> Field: ...
+    @t.overload
+    def field(self, name: str, /, *, allow_missing: L[True]) -> Field | None: ...
+    def field(self, name: str, /, *, allow_missing: bool = False) -> Field | None:
+        if field := self.inner._select_field(name):
+            return field
+        if allow_missing:
+            return None
+        inner = self.inner
+        if not hasattr(inner, "fields"):
+            msg = f"{inner.__class__.__name__!r} is not a type that defines fields, got:\n{inner!r}"
+            raise TypeError(msg)
+        msg = f"Field {name!r} is not present in:\n{inner!r}"
+        raise KeyError(msg)
+
+    def iter_fields(self) -> Iterator[Field]:
+        yield from self.inner.iter_fields()
 
 
 def inner_type_is[M: MLIR](

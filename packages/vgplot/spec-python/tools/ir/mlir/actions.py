@@ -238,7 +238,7 @@ class AsDefs(_Base[L["children"]]):
                     for idx, child in enumerate(children, 1):
                         child_name = f"{def_name}{idx}"
                         new_defs[child_name] = Definition.from_mlir(child.with_doc(defn.inner.doc))
-                        new_members.append(nodes.Reference(ref=child_name))
+                        new_members.append(nodes.ref(child_name))
                     new_defs[def_name] = Definition.from_mlir(
                         defn.inner.__replace__(members=tuple(new_members))
                     )
@@ -271,9 +271,47 @@ class RenameFields(_Base[L["definitions"]]):
                     inner = defn.inner
                     if not isinstance(inner, self._SUPPORTED):
                         raise rename_fields_error(self, def_name, defn)
-                    maybe_replace = inner.replace_field_names(name_map)
+                    maybe_replace = inner.rename_fields(name_map)
                     if maybe_replace is not inner:
                         new_defs[def_name] = defn.__replace__(inner=maybe_replace)
+                if new_defs:
+                    root.definitions.update(new_defs)
+            yield root
+
+
+class AsRefField(_Base[L["definitions"]]):
+    __slots__ = ("field_name",)
+    field_name: str
+
+    @property
+    def over(self) -> L["definitions"]:
+        return "definitions"
+
+    def __init__(self, matcher: Matcher, field_name: str) -> None:
+        self.matcher = matcher
+        self.field_name = field_name
+
+    def run(self, roots: RootsMut) -> Iterator[Root]:
+        matcher = self.matcher
+        field_name = self.field_name
+        new_def_name = field_name.capitalize()
+        for root in roots:
+            if matcher.id.matches(root.id):
+                new_defs: dict[str, Definition[nodes.MLIR]] = {}
+                for def_name, defn in matcher.matching_definitions(root):
+                    inner = defn.inner
+                    if not isinstance(
+                        inner, (nodes.ClosedDict, nodes.ExtraDict, nodes.OpenDict, nodes.NamedTuple)
+                    ):
+                        raise TypeError
+
+                    old = defn.field(field_name)
+                    new_defs[new_def_name] = Definition.from_mlir(old.type.with_doc(old.doc))
+                    fields = tuple(
+                        old.__replace__(type=nodes.ref(new_def_name)) if f.name == field_name else f
+                        for f in inner.fields
+                    )
+                    new_defs[def_name] = Definition.from_mlir(inner.__replace__(fields=fields))
                 if new_defs:
                     root.definitions.update(new_defs)
             yield root
@@ -319,6 +357,9 @@ def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]
                 item = AsDefs(Matcher.from_scopes(scope))
             case cfg.RenameFieldsAction(scope=scope, overrides=overrides):
                 item = RenameFields(Matcher.from_scopes(scope), overrides)
+
+            case cfg.AsRefFieldAction(scope=scope, field_name=field_name):
+                item = AsRefField(Matcher.from_scopes(scope), field_name)
             case _:
                 assert_never(config)
 

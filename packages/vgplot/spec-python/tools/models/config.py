@@ -399,8 +399,34 @@ class RenameFieldsAction(
     """A mapping from old name to new name."""
 
 
-type ActionKind = L["as-ref", "as-defs", "rename-fields", "new-tree", "remove"]
-type Action = AsRefAction | AsDefsAction | NewTreeAction | RemoveAction | RenameFieldsAction
+@final
+class AsRefFieldAction(
+    _BaseAction[L["definitions"]],
+    frozen=True,
+    kw_only=True,
+    tag="as-ref-field",
+    tag_field="action",
+    forbid_unknown_fields=True,
+):
+    """Lift a single field type into definitions, selected on the name of the field."""
+
+    scope: DefsScope = field(default_factory=DefsScope)
+    field_name: str
+    """The target field.
+
+    The output definition name will be the capitalized version of it.
+    """
+
+
+type ActionKind = L["as-ref", "as-ref-field", "as-defs", "rename-fields", "new-tree", "remove"]
+type Action = (
+    AsRefAction
+    | AsRefFieldAction
+    | AsDefsAction
+    | NewTreeAction
+    | RemoveAction
+    | RenameFieldsAction
+)
 type Scopes = ChildrenScope | DefsScope | ChildrenDescendantsScope | DefsDescendantsScope
 
 _ACTION_KIND: typing.Final[tuple[ActionKind, ...]] = typing.get_args(ActionKind.__value__)

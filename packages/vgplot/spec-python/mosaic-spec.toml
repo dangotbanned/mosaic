@@ -162,3 +162,8 @@ scope.include.definition.nodes = ["ClosedDict"]
 # - makes it more complex to translate back to JSON
 # - cannot use `{"plot": "for"}`, without knowing the context
 overrides                      = { as = "bind", for = "plot" }
+
+[[convert.to_mlir.actions]]
+action           = "as-ref-field"
+scope.include.id = ["plot"]
+field_name       = "margins"
