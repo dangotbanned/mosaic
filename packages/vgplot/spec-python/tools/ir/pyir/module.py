@@ -18,6 +18,7 @@ if t.TYPE_CHECKING:
     from tools.ir import mlir
 
 
+# ruff: file-ignore[print]
 # TODO @dangotbanned: `PyIR` needs to declare import dependencies
 @t.final
 class Module(base.Struct, kw_only=True):
@@ -74,3 +75,9 @@ class Module(base.Struct, kw_only=True):
     def __rich_repr__(self) -> Iterable[tuple[str, Any]]:
         yield "name", self.name
         yield "definitions", self.definitions
+
+    def preview(self) -> None:
+        print(f"# Generated: {self.canonical_path}\n")
+        for defn in self.definitions.values():
+            print("\n".join(defn.iter_lines()))
+            print("\n")

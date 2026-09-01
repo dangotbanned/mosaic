@@ -49,7 +49,7 @@ class PyIR(base.FrozenHashableStruct):
 
     def iter_lines(self) -> Lines:
         """Yield lines of code that this symbol produces."""
-        msg = f"{type(self).__name__}.{self.iter_lines.__name__}() is not yet implemented"
+        msg = f"{type(self).__name__}.{self.iter_lines.__name__}() is not yet implemented. Got:\n{self!r}"
         raise NotImplementedError(msg)
 
 
@@ -61,7 +61,7 @@ class Expr(PyIR):
 
     def __str__(self) -> TypeExpr:
         """Render the type expression as a string."""
-        msg = f"{type(self).__name__}.{self.__str__.__name__}() is not yet implemented"
+        msg = f"{type(self).__name__}.{self.__str__.__name__}() is not yet implemented. Got:\n{self!r}"
         raise NotImplementedError(msg)
 
     def iter_lines(self) -> Lines:
