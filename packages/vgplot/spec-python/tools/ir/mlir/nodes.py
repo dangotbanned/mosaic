@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import typing
 from typing import Final, Self, final
 
@@ -15,6 +14,17 @@ if typing.TYPE_CHECKING:
 
 # NOTE: Use this instead of importing `Any`, since we have one defined here
 type Incomplete = typing.Any
+
+def copy_replace(obj: Incomplete, /, **changes: Incomplete) -> Incomplete:
+    """Identical to `copy.replace`, but silences an unresolved 3.13 regression.
+
+    Maybe one day someone will make covariance possible again.
+
+    ## Related
+    - https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
+    - https://github.com/python/typeshed/issues/15973
+    """
+    return obj.__replace__(**changes)
 
 
 class MLIR(base.FrozenHashableStruct):
@@ -43,8 +53,7 @@ class MLIR(base.FrozenHashableStruct):
         yield from ()
 
     def with_doc(self, doc: str, /) -> Self:
-        # NOTE: One day someone will resolve https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
-        return self.__replace__(doc=doc)  # ty: ignore[invalid-return-type] # pyrefly: ignore[bad-return]
+        return copy_replace(self, doc=doc)
 
     def with_ext_refs(self, ref_map: RefMap, /) -> Self | MLIR:
         return self
@@ -201,8 +210,7 @@ class _BaseType[T: MLIR](_HasChildren):
         maybe_changed = self.type.with_ext_refs(ref_map)
         if current == maybe_changed:
             return self
-        # NOTE: https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
-        return copy.replace(self, type=maybe_changed)  # pyrefly: ignore[bad-argument-type]
+        return copy_replace(self, type=maybe_changed)
 
 
 @final
@@ -222,9 +230,6 @@ class Mapping[T: MLIR = MLIR](_BaseType[T]):
 class _BaseSeq[T: MLIR](_BaseType[T]): ...
 
 
-# TODO @dangotbanned: Add replacement for `copy.replace` that either:
-# 1. Fixes typing
-# 2. Eats the diagnostics in one place
 class _BaseFields(_HasChildren):
     # TODO @dangotbanned: Switch to `frozendict` when available, to avoid linear search
     # https://docs.python.org/3.15/library/stdtypes.html#frozendict
@@ -238,8 +243,7 @@ class _BaseFields(_HasChildren):
         new_fields = tuple(fld.with_ext_refs(ref_map) for fld in self.fields)
         if self.fields == new_fields:
             return self
-        # NOTE: https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
-        return copy.replace(self, fields=new_fields)  # pyrefly: ignore[bad-argument-type]
+        return copy_replace(self, fields=new_fields)
 
     def rename_fields(self, overrides: NameMap, /) -> Self:
         new_fields = {
@@ -250,8 +254,7 @@ class _BaseFields(_HasChildren):
         if not new_fields:
             return self
         fields = tuple(new_fields.get(idx, fld) for idx, fld in enumerate(self.fields))
-        # NOTE: `Self` seems to be https://github.com/python/typeshed/issues/15973
-        return copy.replace(self, fields=fields)  # pyrefly: ignore[bad-argument-type]
+        return copy_replace(self, fields=fields)
 
     def iter_fields(self) -> Iterator[Field]:
         yield from self.fields
