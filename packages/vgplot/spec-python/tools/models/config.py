@@ -104,7 +104,7 @@ class ReferenceUnwrap(base.FrozenStruct, frozen=True, forbid_unknown_fields=True
     description: UnwrapPolicy = "longest"
 
 
-class Nodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+class Nodes(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """Match on the type of a node."""
 
     nodes: frozenset[MLIRType] = field(default_factory=frozenset[MLIRType])
@@ -117,7 +117,7 @@ class Nodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=
             yield "nodes", self.nodes
 
 
-class NamesNodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+class NamesNodes(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """Match on the name or type of a definition."""
 
     names: frozenset[DefName] = field(default_factory=frozenset[DefName])
@@ -133,7 +133,7 @@ class NamesNodes(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fi
             yield "nodes", self.nodes
 
 
-class Filter(base.FrozenStruct, frozen=True, kw_only=True, forbid_unknown_fields=True):
+class Filter(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """A specification for matching against a graph.
 
     Each parameter constrains the search in the priority order of:

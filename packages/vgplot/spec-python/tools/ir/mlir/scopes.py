@@ -15,11 +15,12 @@ from typing import Final, Literal as L
 from tools.ir.mlir import nodes as mlir
 from tools.ir.mlir.nodes import MLIR
 from tools.models.base import DefName, Entry, IdName
+from tools.models.config import Filter, MLIRType, NamesNodes, Nodes
 
 if typing.TYPE_CHECKING:
     from tools.ir.mlir.definition import Definition
     from tools.ir.mlir.root import Root
-    from tools.models.config import Depth, Filter, NamesNodes, Nodes, Scopes
+    from tools.models.config import Depth, Scopes
 
 type Unused = typing.Any
 type Incomplete = typing.Any
@@ -67,21 +68,58 @@ class Matcher:
 
     @classmethod
     def from_scopes(cls, scopes: Scopes) -> Matcher:
+        """Construct from a full, nested configuration object."""
+        return cls._from_filters(
+            scopes.include, scopes.exclude, getattr(scopes, "ref_follow_depth", _ZERO)
+        )
+
+    @classmethod
+    def from_builtins(
+        cls,
+        *,
+        # include
+        include_id: frozenset[IdName] = frozenset[IdName](),
+        include_definition_names: frozenset[DefName] = frozenset[DefName](),
+        include_definition_nodes: frozenset[MLIRType] = frozenset[MLIRType](),
+        include_child_nodes: frozenset[MLIRType] = frozenset[MLIRType](),
+        # exclude
+        exclude_id: frozenset[IdName] = frozenset[IdName](),
+        exclude_definition_names: frozenset[DefName] = frozenset[DefName](),
+        exclude_definition_nodes: frozenset[MLIRType] = frozenset[MLIRType](),
+        exclude_child_nodes: frozenset[MLIRType] = frozenset[MLIRType](),
+        # other
+        ref_follow_depth: Depth = 0,
+    ) -> Matcher:
+        """Construct from keyword arguments, using only builtin types."""
+        return cls._from_filters(
+            Filter(
+                include_id,
+                NamesNodes(include_definition_names, include_definition_nodes),
+                Nodes(include_child_nodes),
+            ),
+            Filter(
+                exclude_id,
+                NamesNodes(exclude_definition_names, exclude_definition_nodes),
+                Nodes(exclude_child_nodes),
+            ),
+            ref_follow_depth=ref_follow_depth,
+        )
+
+    @classmethod
+    def _from_filters(
+        cls, include: Filter, exclude: Filter, ref_follow_depth: Depth = 0
+    ) -> Matcher:
         self = cls.__new__(cls)
-        include, exclude = scopes.include, scopes.exclude
         if not (incl_id := include.id):
             self.id = IdNotExclude(exclude.id) if exclude.id else _ID_ALWAYS
         else:
             self.id = IdInclude(incl_id - exclude.id) if exclude.id else IdInclude(incl_id)
-
         self.definition = _into_defs_matcher(include, exclude)
-        self.ref_follow_depth = getattr(scopes, "ref_follow_depth", _ZERO)
-
         if include.child or exclude.child:
             self.child = ChildIncludeNodes(include.child, exclude.child)
         else:
             self.child = _CHILD_ALWAYS
-
+        self.ref_follow_depth = ref_follow_depth
         return self
 
 
