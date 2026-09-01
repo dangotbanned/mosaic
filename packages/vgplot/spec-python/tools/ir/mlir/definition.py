@@ -7,7 +7,7 @@ from tools.ir.mlir.nodes import MLIR, ExtReference, Field, Reference
 from tools.models import base
 
 if t.TYPE_CHECKING:
-    from collections.abc import Callable, Iterator
+    from collections.abc import Callable
 
 
 @t.final
@@ -43,7 +43,7 @@ class Definition[T: MLIR](base.Struct, kw_only=True):
     @t.overload
     def field(self, name: str, /, *, allow_missing: L[True]) -> Field | None: ...
     def field(self, name: str, /, *, allow_missing: bool = False) -> Field | None:
-        if field := self.inner._select_field(name):
+        if field := self.inner.get_field(name):
             return field
         if allow_missing:
             return None
@@ -53,9 +53,6 @@ class Definition[T: MLIR](base.Struct, kw_only=True):
             raise TypeError(msg)
         msg = f"Field {name!r} is not present in:\n{inner!r}"
         raise KeyError(msg)
-
-    def iter_fields(self) -> Iterator[Field]:
-        yield from self.inner.iter_fields()
 
 
 def inner_type_is[M: MLIR](

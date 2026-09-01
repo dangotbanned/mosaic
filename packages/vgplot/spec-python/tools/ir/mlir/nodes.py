@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 from typing import Final, Self, final
 
+from tools import ds
 from tools.models import base
 from tools.models.base import Lit
 
@@ -14,6 +15,7 @@ if typing.TYPE_CHECKING:
 
 # NOTE: Use this instead of importing `Any`, since we have one defined here
 type Incomplete = typing.Any
+
 
 def copy_replace(obj: Incomplete, /, **changes: Incomplete) -> Incomplete:
     """Identical to `copy.replace`, but silences an unresolved 3.13 regression.
@@ -58,15 +60,9 @@ class MLIR(base.FrozenHashableStruct):
     def with_ext_refs(self, ref_map: RefMap, /) -> Self | MLIR:
         return self
 
-    def _select_field(self, name: str, /) -> Field | None:
+    def get_field(self, name: str, /) -> Field | None:
         """Return the field `name` if it exists."""
-        # NOTE: Doesn't use `iter_fields` as most instances will not be derived from of `_BaseFields`.
-        # So this skips a function call and iterator exhaustion for the commmon case.
         return
-
-    def iter_fields(self) -> Iterator[Field]:
-        """Iterate over child `Field`s."""
-        yield from ()
 
 
 @final
@@ -217,8 +213,6 @@ class _BaseType[T: MLIR](_HasChildren):
 class Field[T: MLIR = MLIR](_BaseType[T]):
     """An entry in a `*Dict` or `NamedTuple`."""
 
-    name: str
-    """The name of the field."""
     required: bool = False
 
 
@@ -231,41 +225,47 @@ class _BaseSeq[T: MLIR](_BaseType[T]): ...
 
 
 class _BaseFields(_HasChildren):
-    # TODO @dangotbanned: Switch to `frozendict` when available, to avoid linear search
-    # https://docs.python.org/3.15/library/stdtypes.html#frozendict
-    fields: tuple[Field, ...]
+    fields: ds.FrozenMap[str, Field]
     doc: str = ""
 
     def iter_children(self) -> Iterator[MLIR]:
+        yield from self.fields.values()
+
+    def iter_fields_names(self) -> Iterator[str]:
         yield from self.fields
+
+    def iter_fields_types(self) -> Iterator[Field]:
+        yield from self.fields.values()
+
+    def iter_fields_items(self) -> Iterator[tuple[str, Field]]:
+        yield from self.fields.items()
 
     def with_ext_refs(self, ref_map: RefMap, /) -> Self:
-        new_fields = tuple(fld.with_ext_refs(ref_map) for fld in self.fields)
-        if self.fields == new_fields:
+        changes = {}
+        for name, field in self.fields.items():
+            field_out = field.with_ext_refs(ref_map)
+            if field_out is not field:
+                changes[name] = field_out
+        if not changes:
             return self
-        return copy_replace(self, fields=new_fields)
+        return copy_replace(self, fields=self.fields.update(changes))
 
     def rename_fields(self, overrides: NameMap, /) -> Self:
-        new_fields = {
-            idx: fld.__replace__(name=changed)
-            for idx, fld in enumerate(self.fields)
-            if (changed := overrides(fld.name))
+        # TODO @dangotbanned: Redo the param type
+        # this is optimized for the tuple version
+        new_names = {
+            idx: changed for idx, name in enumerate(self.fields) if (changed := overrides(name))
         }
-        if not new_fields:
+        if not new_names:
             return self
-        fields = tuple(new_fields.get(idx, fld) for idx, fld in enumerate(self.fields))
+        fields = ds.frozenmap(
+            (new_names.get(idx, name), field)
+            for idx, (name, field) in enumerate(self.fields.items())
+        )
         return copy_replace(self, fields=fields)
 
-    def iter_fields(self) -> Iterator[Field]:
-        yield from self.fields
-
-    def _select_field(self, name: str, /) -> Field | None:
-        # NOTE: Keeping this private because the need for it is temporary.
-        # `fields` can switch to `frozendict` in 3.15
-        for fld in self.fields:
-            if fld.name == name:
-                return fld
-        return None
+    def get_field(self, name: str, /) -> Field | None:
+        return self.fields.get(name)
 
 
 @final

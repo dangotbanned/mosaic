@@ -25,6 +25,7 @@ docs   = [
 ]
 gen    = [
   "datamodel-code-generator>=0.72.2",
+  "rpds-py>=0.30.0",
 ]
 repl   = [
   "ipykernel>=7.3.0",

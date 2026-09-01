@@ -307,9 +307,12 @@ class AsRefField(_Base[L["definitions"]]):
 
                     old = defn.field(field_name)
                     new_defs[new_def_name] = Definition.from_mlir(old.type.with_doc(old.doc))
-                    fields = tuple(
-                        old.__replace__(type=nodes.ref(new_def_name)) if f.name == field_name else f
-                        for f in inner.fields
+                    fields = inner.fields.update(
+                        {
+                            field_name: inner.fields[field_name].__replace__(
+                                type=nodes.ref(new_def_name)
+                            )
+                        }
                     )
                     new_defs[def_name] = Definition.from_mlir(inner.__replace__(fields=fields))
                 if new_defs:

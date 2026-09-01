@@ -10,7 +10,7 @@ from tools.ir.pyir.base import UntypedExtRef, UntypedRef
 from tools.ir.pyir.field import Field
 
 if t.TYPE_CHECKING:
-    from collections.abc import Mapping
+    from collections.abc import Iterator, Mapping
 
     from tools.common import PyIdentifier
     from tools.ir import pyir
@@ -98,8 +98,8 @@ def _(obj: mlir.Union) -> expr.Union:
 @into_expr.register(mlir.NamedTuple)
 def _named_tuple_expr(obj: mlir.NamedTuple) -> expr.NamedTuple:
     fields = tuple(
-        Field(name=py_identifier_snake(fld.name), expr=into_expr(fld.type), doc="")
-        for fld in obj.fields
+        Field(name=py_identifier_snake(name), expr=into_expr(f.type), doc="")
+        for name, f in obj.iter_fields_items()
     )
     return expr.NamedTuple(fields=fields)
 
@@ -122,8 +122,8 @@ for tp in into_expr.registry:
 @_from_def.register(mlir.NamedTuple)
 def _(obj: mlir.NamedTuple, name: PyIdentifier) -> d.NamedTuple:
     fields = tuple(
-        Field(name=py_identifier_snake(fld.name), expr=into_expr(fld.type), doc=fld.doc)
-        for fld in obj.fields
+        Field(name=py_identifier_snake(name), expr=into_expr(f.type), doc=f.doc)
+        for name, f in obj.iter_fields_items()
     )
     return d.NamedTuple(name=name, fields=fields, doc=obj.doc)
 
@@ -146,14 +146,14 @@ def _(obj: mlir.MLIR, name: PyIdentifier) -> t.Never:
     raise NotImplementedError(msg)
 
 
-def _td_fields(fields: tuple[mlir.Field[MLIR], ...]) -> tuple[Field, ...]:
+def _td_fields(fields: Iterator[tuple[str, mlir.Field]]) -> tuple[Field, ...]:
     return tuple(
         Field(
-            name=py_identifier_snake(fld.name),
-            expr=q.Required(expr=into_expr(fld.type)) if fld.required else into_expr(fld.type),
-            doc=fld.doc,
+            name=py_identifier_snake(name),
+            expr=q.Required(expr=into_expr(f.type)) if f.required else into_expr(f.type),
+            doc=f.doc,
         )
-        for fld in fields
+        for name, f in fields
     )
 
 
@@ -161,14 +161,14 @@ def _td_fields(fields: tuple[mlir.Field[MLIR], ...]) -> tuple[Field, ...]:
 @_from_def.register(mlir.ClosedDict)
 def _(obj: mlir.OpenDict | mlir.ClosedDict, name: PyIdentifier) -> d.OpenDict | d.ClosedDict:
     tp_pyir = d.ClosedDict if obj.__class__ is mlir.ClosedDict else d.OpenDict
-    return tp_pyir(name=name, fields=_td_fields(obj.fields), doc=obj.doc)
+    return tp_pyir(name=name, fields=_td_fields(obj.iter_fields_items()), doc=obj.doc)
 
 
 @_from_def.register(mlir.ExtraDict)
 def _(obj: mlir.ExtraDict, name: PyIdentifier) -> d.ExtraDict:
     return d.ExtraDict(
         name=name,
-        fields=_td_fields(obj.fields),
+        fields=_td_fields(obj.iter_fields_items()),
         extra_items=into_expr(obj.extra_items),
         doc=obj.doc,
     )

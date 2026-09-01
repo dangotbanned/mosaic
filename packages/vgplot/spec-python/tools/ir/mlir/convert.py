@@ -5,6 +5,7 @@ import functools
 import typing
 from typing import Final
 
+from tools import ds
 from tools.common import POUND_DEFS
 from tools.ir.json_wrapper import nodes as jw
 from tools.ir.mlir import nodes as mlir
@@ -126,7 +127,7 @@ def _(
 
 @_from_json_dispatch.register(jw.NamedSequence)
 def _(obj: jw.NamedSequence, owner: DefName, /) -> mlir.NamedTuple:
-    fields = tuple(
+    fields = ds.frozenmap(
         field(owner, f_name, f_type, required=True) for f_name, f_type in obj.fields.items()
     )
     return mlir.NamedTuple(fields=fields, doc=obj.description)
@@ -134,10 +135,10 @@ def _(obj: jw.NamedSequence, owner: DefName, /) -> mlir.NamedTuple:
 
 def field(
     owner: DefName, name: jw.camelCase, type: jw.JsonWrapper, *, required: bool
-) -> mlir.Field:
+) -> tuple[str, mlir.Field]:
     out_type = from_json(type, owner)
     doc = out_type.doc
-    return mlir.Field(name=name, type=out_type.with_doc(""), required=required, doc=doc)
+    return name, mlir.Field(type=out_type.with_doc(""), required=required, doc=doc)
 
 
 # TODO @dangotbanned: Report pyrefly bug for `None` case (failed to narrow after trying the cheap cases)
@@ -147,7 +148,7 @@ def _(
 ) -> mlir.OpenDict | mlir.ClosedDict | mlir.ExtraDict | mlir.Mapping:
     # Having `required` paired with each field removes a surface to sync
     is_required = frozenset(obj.required).__contains__
-    fields = tuple(
+    fields = ds.frozenmap(
         field(owner, f_name, f_type, required=is_required(f_name))
         for f_name, f_type in obj.fields.items()
     )

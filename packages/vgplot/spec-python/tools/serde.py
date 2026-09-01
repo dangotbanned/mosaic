@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final, Literal as L
 
 import msgspec
+import rpds
 
 if TYPE_CHECKING:
     from collections.abc import Buffer, Callable, Generator, Mapping
@@ -195,7 +196,10 @@ def _decode_into_path(_tp: type[Path], obj: str, /) -> Path:
 
 
 _encoder_hook.register(deque, list)
+_encoder_hook.register(rpds.HashTrieMap, dict)
+
 _DECODER_DISPATCH: Mapping[type[_Extension], _IntoExtension] = {
     deque: _use_constructor,
     Path: _decode_into_path,
+    rpds.HashTrieMap: _use_constructor,
 }
