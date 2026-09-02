@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import operator
 import typing
 from typing import Final, Self, final
 
@@ -243,6 +244,9 @@ class Mapping[T: MLIR = MLIR](_BaseType[T]):
 class _BaseSeq[T: MLIR](_BaseType[T]): ...
 
 
+_get_name = operator.itemgetter(0)
+
+
 class _BaseFields(_HasChildren):
     fields: ds.FrozenMap[str, Field]
     doc: str = ""
@@ -297,6 +301,16 @@ class _BaseFields(_HasChildren):
 
     def get_field(self, name: str, /) -> Field | None:
         return self.fields.get(name)
+
+    def __rich_repr__(self) -> Iterator[tuple[str, typing.Any]]:
+        # NOTE: Resolving 2 problems
+        # 1. `rich` renders `rpds.HashTrieMap` as a single line.
+        #    This doesn't mix well with 40-500 fields
+        # 2. `rpds.HashTrieMap` appears to be either unordered,
+        #    or it is defined but seeded by something that I can't control
+        # Being unordered is okay, just need to sort things later
+        yield "fields", dict(sorted(self.iter_fields_items(), key=_get_name))
+        yield "doc", self.doc
 
 
 @final
@@ -374,6 +388,12 @@ class ExtraDict(_BaseFields):
             )
             raise TypeError(msg)
         return out.__replace__(extra_items=extra_items)
+
+    def __rich_repr__(self) -> Iterator[tuple[str, typing.Any]]:
+        yield "fields", dict(sorted(self.iter_fields_items(), key=_get_name))
+        yield "extra_items", self.extra_items
+        yield "doc", self.doc
+
 
 @final
 class Union(_HasChildren):
