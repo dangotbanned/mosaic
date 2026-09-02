@@ -9,13 +9,14 @@ from __future__ import annotations
 
 import typing
 from collections.abc import Callable, Iterable, Iterator
-from itertools import chain
-from typing import Final, Literal as L
+from typing import Any, Final, Literal as L, TypeIs
 
+from tools.common import prepend, select_items
 from tools.ir.mlir import nodes as mlir
+from tools.ir.mlir.common import inner_type_is
 from tools.ir.mlir.nodes import MLIR
 from tools.models.base import DefName, Entry, IdName
-from tools.models.config import Filter, MLIRType, NamesNodes, Nodes
+from tools.models.config import Child, Filter, MLIRType, NamesNodes
 
 if typing.TYPE_CHECKING:
     from tools.ir.mlir.definition import Definition
@@ -24,20 +25,34 @@ if typing.TYPE_CHECKING:
 
 type Unused = typing.Any
 type Incomplete = typing.Any
-type DefsEntries = Iterable[Entry[Definition[MLIR]]]
+type DefEntry[D: MLIR = MLIR] = Entry[Definition[D]]
+type DefsEntries[D: MLIR = MLIR] = Iterable[DefEntry[D]]
 type IdMatcher = IdAlways | IdInclude | IdNotExclude
 type DefsMatcher = DefsAlways | DefsIncludeNames | DefsExcludeNames | DefsIncludeNodes | DefsGeneral
 type ChildMatcher = ChildAlways | ChildIncludeNodes
+type FieldMatcher = AlwaysFieldNames | IncludeFieldNames
 
 type GroupByIter[T, S] = Iterator[tuple[T, Iterator[S]]]
-"""An iterator with the same shape as [`itertools.groupby`][].
+"""An iterator with the same shape as [`itertools.groupby`][]."""
 
+
+type ChildIter[D: MLIR, S] = GroupByIter[DefEntry[D], S]
+"""
 - On each iteration, it pulls a named `Definition` and an iterator over it's matching children.
 - Each `Definition` is guaranteed to have at-least one matching child
 """
 
+type HasFields = mlir.ClosedDict | mlir.ExtraDict | mlir.OpenDict | mlir.NamedTuple
+_HAS_FIELDS: Final = mlir.ClosedDict, mlir.ExtraDict, mlir.OpenDict, mlir.NamedTuple
+
 # HACK: Forcing `pyrefly` to not infer `0` as `int`
 _ZERO: Final[L[0]] = 0  # ruff: ignore[redundant-final-literal]
+
+
+# NOTE: `ty` reports `Unknown`, but `pyrefly` understands
+is_inner_fields: Callable[[Definition[Any]], TypeIs[Definition[HasFields]]] = inner_type_is(
+    mlir.ClosedDict, mlir.ExtraDict, mlir.OpenDict, mlir.NamedTuple
+)
 
 
 class Matcher:
@@ -47,10 +62,11 @@ class Matcher:
     #   i. Possibly in combination with others, to decide what kind of "cleanup" would be needed
     # 3. Transform `Scopes` into a "compiled" representation
     #   i. Calling the compiled version will be a single call, instead of checking 19 different conditions
-    __slots__ = ("child", "definition", "id", "ref_follow_depth")
+    __slots__ = ("child", "definition", "field", "id", "ref_follow_depth")
     id: IdMatcher
     definition: DefsMatcher
     child: ChildMatcher
+    field: FieldMatcher
     ref_follow_depth: Depth
 
     def __repr__(self) -> str:
@@ -59,8 +75,15 @@ class Matcher:
     def matching_definitions(self, root: Root) -> DefsEntries:
         return self.definition.iter_defs(root)
 
-    def matching_children(self, root: Root) -> GroupByIter[Entry[Definition[MLIR]], MLIR]:
+    def matching_children(self, root: Root) -> ChildIter[MLIR, MLIR]:
+        """Iterate over matching definitions with at least one matching child."""
         return self.child.iter_children(self.matching_definitions(root))
+
+    def matching_fields(self, root: Root) -> ChildIter[HasFields, tuple[str, mlir.Field]]:
+        """Iterate over matching definitions with at least one matching field."""
+        return self.field.iter_children(
+            ((k, v) for k, v in self.matching_definitions(root) if is_inner_fields(v))
+        )
 
     def matching_descendants(self, root: Root) -> Incomplete:
         msg = "TODO @dangotbanned: Move things from `actions.py` to here"
@@ -95,12 +118,12 @@ class Matcher:
             Filter(
                 include_id,
                 NamesNodes(include_definition_names, include_definition_nodes),
-                Nodes(include_child_nodes),
+                Child(include_child_nodes),
             ),
             Filter(
                 exclude_id,
                 NamesNodes(exclude_definition_names, exclude_definition_nodes),
-                Nodes(exclude_child_nodes),
+                Child(exclude_child_nodes),
             ),
             ref_follow_depth=ref_follow_depth,
         )
@@ -119,6 +142,7 @@ class Matcher:
             self.child = ChildIncludeNodes(include.child, exclude.child)
         else:
             self.child = _CHILD_ALWAYS
+        self.field = _into_field_matcher(include.child, exclude.child)
         self.ref_follow_depth = ref_follow_depth
         return self
 
@@ -149,6 +173,20 @@ def _into_defs_matcher(include: Filter, exclude: Filter) -> DefsMatcher:
             return DefsGeneral(incl_defs, excl_defs)
 
 
+def _into_field_matcher(include: Child, exclude: Child, /) -> FieldMatcher:
+    incl, excl = include.field_names, exclude.field_names
+    match (len(incl), len(excl)):
+        case (0, 0):
+            return _FIELD_ALWAYS
+        case (_, 0):
+            return IncludeFieldNames(incl)
+        case (0, _):
+            msg = f"`exclude.nodes.field_names` is not yet implemented, got: {excl!r}"
+            raise NotImplementedError(msg)
+        case _:
+            return IncludeFieldNames(incl - excl)
+
+
 def _ordered_args(iterable: Iterable[str], /) -> str:
     """Display as a variadic argument list."""
     items = sorted(iterable)
@@ -159,34 +197,65 @@ def _ordered_args(iterable: Iterable[str], /) -> str:
     return "()"
 
 
-class ChildAlways:
+class _BaseChild[D: MLIR, C]:
+    __slots__ = ()
+
+    def _into_iter(self, parent: D, /) -> Iterator[C]:
+        raise NotImplementedError
+
+    def iter_children(self, entries: DefsEntries[D], /) -> ChildIter[D, C]:
+        for name, defn in entries:
+            children = self._into_iter(defn.inner)
+            if first := next(children, None):
+                yield (name, defn), prepend(first, children)
+
+
+class ChildAlways(_BaseChild[MLIR, MLIR]):
     __slots__ = ()
 
     def __repr__(self) -> str:
         return "child.always()"
 
-    def iter_children(self, entries: DefsEntries, /) -> GroupByIter[Entry[Definition[MLIR]], MLIR]:
-        for name, node in entries:
-            it = node.inner.iter_children()
-            if first := next(it, None):
-                yield (name, node), chain((first,), it)
+    def _into_iter(self, parent: MLIR, /) -> Iterator[MLIR]:
+        return parent.iter_children()
 
 
-class ChildIncludeNodes:
+class ChildIncludeNodes(_BaseChild[MLIR, MLIR]):
     __slots__ = ("types",)
 
     def __repr__(self) -> str:
         return f"child.node.is_in{_ordered_args(tp.__name__ for tp in self.types)}"
 
-    def __init__(self, incl: Nodes, excl: Nodes, /) -> None:
+    def __init__(self, incl: Child, excl: Child, /) -> None:
         self.types: tuple[type[MLIR], ...] = _convert_nodes(incl, excl)
 
-    def iter_children(self, entries: DefsEntries, /) -> GroupByIter[Entry[Definition[MLIR]], MLIR]:
+    def _into_iter(self, parent: MLIR, /) -> Iterator[MLIR]:
         types = self.types
-        for name, node in entries:
-            it = (child for child in node.inner.iter_children() if isinstance(child, types))
-            if first := next(it, None):
-                yield (name, node), chain((first,), it)
+        return (child for child in parent.iter_children() if isinstance(child, types))
+
+
+class AlwaysFieldNames(_BaseChild[HasFields, tuple[str, mlir.Field]]):
+    __slots__ = ()
+
+    def __repr__(self) -> str:
+        return "field_names.always()"
+
+    def _into_iter(self, parent: HasFields, /) -> Iterator[tuple[str, mlir.Field]]:
+        return parent.iter_fields_items()
+
+
+class IncludeFieldNames(_BaseChild[HasFields, tuple[str, mlir.Field]]):
+    __slots__ = ("names",)
+    names: frozenset[str]
+
+    def __repr__(self) -> str:
+        return f"field_names.is_in{_ordered_args(self.names)}"
+
+    def __init__(self, names: frozenset[str], /) -> None:
+        self.names = names
+
+    def _into_iter(self, parent: HasFields, /) -> Iterator[tuple[str, mlir.Field]]:
+        return select_items(parent.fields, self.names, allow_missing=True)
 
 
 class DefsAlways:
@@ -296,7 +365,7 @@ _MLIR_TYPES = frozenset(
 )
 
 
-def _convert_nodes(incl: NamesNodes | Nodes, excl: NamesNodes | Nodes, /) -> tuple[type[MLIR], ...]:
+def _convert_nodes(incl: NamesNodes | Child, excl: NamesNodes | Child, /) -> tuple[type[MLIR], ...]:
     nodes = (incl.nodes or _MLIR_TYPES).difference(excl.nodes)
     return tuple[type[MLIR], ...](getattr(mlir, name) for name in nodes)
 
@@ -341,3 +410,4 @@ class IdAlways:
 _ID_ALWAYS: Final = IdAlways()
 _DEFS_ALWAYS: Final = DefsAlways()
 _CHILD_ALWAYS: Final = ChildAlways()
+_FIELD_ALWAYS: Final = AlwaysFieldNames()

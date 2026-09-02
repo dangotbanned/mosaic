@@ -104,17 +104,25 @@ class ReferenceUnwrap(base.FrozenStruct, frozen=True, forbid_unknown_fields=True
     description: UnwrapPolicy = "longest"
 
 
-class Nodes(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
-    """Match on the type of a node."""
+class Child(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    """Match on the contents of a definition's children."""
 
     nodes: frozenset[MLIRType] = field(default_factory=frozenset[MLIRType])
+    """Match on the type of a child node."""
+    field_names: frozenset[str] = field(default_factory=frozenset[str])
+    """Match on the name of a field.
+
+    **Implies that the parent has fields**.
+    """
 
     def __bool__(self) -> bool:
-        return bool(self.nodes)
+        return bool(self.nodes or self.field_names)
 
     def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
         if self.nodes:
             yield "nodes", self.nodes
+        if self.field_names:
+            yield "field_names", self.field_names
 
 
 class NamesNodes(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
@@ -147,7 +155,7 @@ class Filter(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """Match on the name of a module (`Root.id`)."""
     definition: NamesNodes = field(default_factory=NamesNodes)
     """Match on a named symbol within a module (`Root.definitions`)."""
-    child: Nodes = field(default_factory=Nodes)
+    child: Child = field(default_factory=Child)
     """Match on an anonymous symbol within a definition."""
 
     def __bool__(self) -> bool:
@@ -305,6 +313,23 @@ class AsDefsAction(
     scope: ChildrenScope = field(default_factory=ChildrenScope)
 
 
+@final
+class AsDefsFieldAction(
+    _BaseAction[L["children"]],
+    frozen=True,
+    kw_only=True,
+    tag="as-defs-field",
+    tag_field="action",
+    forbid_unknown_fields=True,
+):
+    """Lift unrepresentable anonymous types from field(s) into definitions.
+
+    Target fields can be selected via `scope.include.child.field_names`.
+    """
+
+    scope: ChildrenScope = field(default_factory=ChildrenScope)
+
+
 # TODO @dangotbanned: Implement `"as-ref"`
 @final
 class AsRefAction(
@@ -399,30 +424,11 @@ class RenameFieldsAction(
     """A mapping from old name to new name."""
 
 
-@final
-class AsRefFieldAction(
-    _BaseAction[L["definitions"]],
-    frozen=True,
-    kw_only=True,
-    tag="as-ref-field",
-    tag_field="action",
-    forbid_unknown_fields=True,
-):
-    """Lift a single field type into definitions, selected on the name of the field."""
-
-    scope: DefsScope = field(default_factory=DefsScope)
-    field_name: str
-    """The target field.
-
-    The output definition name will be the capitalized version of it.
-    """
-
-
-type ActionKind = L["as-ref", "as-ref-field", "as-defs", "rename-fields", "new-tree", "remove"]
+type ActionKind = L["as-ref", "as-defs", "as-defs-field", "rename-fields", "new-tree", "remove"]
 type Action = (
     AsRefAction
-    | AsRefFieldAction
     | AsDefsAction
+    | AsDefsFieldAction
     | NewTreeAction
     | RemoveAction
     | RenameFieldsAction

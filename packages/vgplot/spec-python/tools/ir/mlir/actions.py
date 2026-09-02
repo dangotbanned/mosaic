@@ -247,6 +247,63 @@ class AsDefs(_Base[L["children"]]):
             yield root
 
 
+class AsDefsField(_Base[L["children"]]):
+    """Name all anonymous types within a field, which are not valid syntactically in python.
+
+    This is a pretty annoying problem, because there are so few cases of them but they're all different.
+    """
+
+    __slots__ = ()
+
+    @property
+    def over(self) -> L["children"]:
+        return "children"
+
+    def __init__(self, matcher: Matcher) -> None:
+        self.matcher = matcher
+
+    def run(self, roots: RootsMut) -> Iterator[Root]:
+        matcher = self.matcher
+        for root in roots:
+            if matcher.id.matches(root.id):
+                yield self._handle_root(root)
+            yield root
+
+    def _handle_root(self, root: Root) -> Root:
+        new_defs: dict[str, Definition[nodes.MLIR]] = {}
+        repl_old_new: dict[nodes.MLIR, nodes.MLIR] = {}
+        for (def_name, defn), it_fields in self.matcher.matching_fields(root):
+            for old_name, old_field in it_fields:
+                old_field_type = old_field.type
+                new_def_name = old_name.capitalize()
+                if _has_fields(old_field_type):
+                    new_defs[new_def_name] = Definition.from_mlir(
+                        old_field_type.with_doc(old_field.doc)
+                    )
+                    repl_old_new[old_field_type] = nodes.ref(new_def_name)
+                elif old_types := [
+                    desc for desc in old_field_type.iter_descendants() if _has_fields(desc)
+                ]:
+                    # Need to defer creating the name until we know that there are more than 2
+                    if len(old_types) == 1:
+                        old_type = old_types[0]
+                        new_defs[new_def_name] = Definition.from_mlir(old_type)
+                        repl_old_new[old_type] = nodes.ref(new_def_name)
+                    else:
+                        # TODO @dangotbanned: doesn't work well for tip.format
+                        # dcg splits that out as `Format`
+                        # I have `Tip1`, `Tip2`
+                        for idx, old_type in enumerate(old_types, 1):
+                            new_def_name_i = f"{new_def_name}{idx}"
+                            new_defs[new_def_name_i] = Definition.from_mlir(old_type)
+                            repl_old_new[old_type] = nodes.ref(new_def_name_i)
+            if repl_old_new:
+                new_defs[def_name] = Definition.from_mlir(defn.inner.find_replace(repl_old_new))
+        if new_defs:
+            root.definitions.update(new_defs)
+        return root
+
+
 class RenameFields(_Base[L["definitions"]]):
     __slots__ = ("overrides",)
     overrides: Mapping[str, str]
@@ -279,45 +336,11 @@ class RenameFields(_Base[L["definitions"]]):
             yield root
 
 
-class AsRefField(_Base[L["definitions"]]):
-    __slots__ = ("field_name",)
-    field_name: str
+_HAS_FIELDS: Final = (nodes.ClosedDict, nodes.ExtraDict, nodes.OpenDict)
 
-    @property
-    def over(self) -> L["definitions"]:
-        return "definitions"
 
-    def __init__(self, matcher: Matcher, field_name: str) -> None:
-        self.matcher = matcher
-        self.field_name = field_name
-
-    def run(self, roots: RootsMut) -> Iterator[Root]:
-        matcher = self.matcher
-        field_name = self.field_name
-        new_def_name = field_name.capitalize()
-        for root in roots:
-            if matcher.id.matches(root.id):
-                new_defs: dict[str, Definition[nodes.MLIR]] = {}
-                for def_name, defn in matcher.matching_definitions(root):
-                    inner = defn.inner
-                    if not isinstance(
-                        inner, (nodes.ClosedDict, nodes.ExtraDict, nodes.OpenDict, nodes.NamedTuple)
-                    ):
-                        raise TypeError
-
-                    old = defn.field(field_name)
-                    new_defs[new_def_name] = Definition.from_mlir(old.type.with_doc(old.doc))
-                    fields = inner.fields.update(
-                        {
-                            field_name: inner.fields[field_name].__replace__(
-                                type=nodes.ref(new_def_name)
-                            )
-                        }
-                    )
-                    new_defs[def_name] = Definition.from_mlir(inner.__replace__(fields=fields))
-                if new_defs:
-                    root.definitions.update(new_defs)
-            yield root
+def _has_fields(obj: Any) -> typing.TypeIs[nodes.ClosedDict | nodes.ExtraDict | nodes.OpenDict]:
+    return isinstance(obj, _HAS_FIELDS)
 
 
 def dangling_ref_error(
@@ -360,9 +383,8 @@ def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]
                 item = AsDefs(Matcher.from_scopes(scope))
             case cfg.RenameFieldsAction(scope=scope, overrides=overrides):
                 item = RenameFields(Matcher.from_scopes(scope), overrides)
-
-            case cfg.AsRefFieldAction(scope=scope, field_name=field_name):
-                item = AsRefField(Matcher.from_scopes(scope), field_name)
+            case cfg.AsDefsFieldAction(scope=scope):
+                item = AsDefsField(Matcher.from_scopes(scope))
             case _:
                 assert_never(config)
 

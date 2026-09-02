@@ -78,3 +78,7 @@ def select_items[K, V](
         for key, value in mapping.items():
             if key in targets:
                 yield key, value
+
+
+def prepend[T, S](first: T, iterable: Iterator[S], /) -> Iterator[T | S]:
+    return chain((first,), iterable)
