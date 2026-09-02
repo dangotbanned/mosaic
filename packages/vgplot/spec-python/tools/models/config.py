@@ -3,8 +3,9 @@
 import typing
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
-from typing import Literal as L, final
+from typing import Annotated as A, Final, Literal as L, final
 
+import msgspec
 from msgspec import field
 
 from tools.models import base
@@ -48,6 +49,20 @@ type IterOver = L["definitions", "children", "descendants"]
 - *"definitions"*: Visit top-level definitions only.
 - *"children"*: Visit the children of top-level definitions.
 - *"descendants"*: Visit top-level definitions, then their children, recursively.
+"""
+
+ENTRY_POINT_PATTERN: Final[Mapping[L["json", "python"], typing.LiteralString]] = {
+    "json": r"([\w.]+)\s*(:\s*([\w.]+)\s*)$",
+    "python": r"(?P<module>[\w.]+)\s*(:\s*(?P<attr>[\w.]+)\s*)$",
+}
+"""A pair of regex patterns to validate and parse an entry point.
+
+The python version is semantically the same, but uses named capture groups.
+
+```py
+"module" # the fully qualified module path
+"attr"   # the function to call inside it
+```
 """
 
 
@@ -280,6 +295,11 @@ class ChildrenDescendantsScope(
             yield "ref_follow_depth", self.ref_follow_depth
 
 
+class PluginScope(_BaseScopes[IterOver], frozen=True, kw_only=True, forbid_unknown_fields=True):
+    over: IterOver = "definitions"
+    ref_follow_depth: Depth = 0
+
+
 class _BaseAction[Over: IterOver](
     base.FrozenStruct,
     frozen=True,
@@ -424,7 +444,38 @@ class RenameFieldsAction(
     """A mapping from old name to new name."""
 
 
-type ActionKind = L["as-ref", "as-defs", "as-defs-field", "rename-fields", "new-tree", "remove"]
+class PluginAction(
+    _BaseAction[IterOver],
+    frozen=True,
+    kw_only=True,
+    tag="plugin",
+    tag_field="action",
+    forbid_unknown_fields=True,
+):
+    """You're on your own, jim."""
+
+    scope: PluginScope = field(default_factory=PluginScope)
+    entry_point: A[str, msgspec.Meta(pattern=ENTRY_POINT_PATTERN["json"])]
+    """The path to the plugin definition.
+
+    Uses a pattern adapted from [entry-points], restricted to the following forms:
+
+    ```py
+    "package.module:attribute"
+    "package.module:object.attribute"
+    ```
+
+    [entry-points]: https://packaging.python.org/en/latest/specifications/entry-points/
+    """
+    extra: A[
+        Mapping[str, typing.Any], msgspec.Meta(extra_json_schema={"additionalProperties": True})
+    ] = field(default_factory=dict)
+    """Namespace for arbitrary data passed to the plugin."""
+
+
+type ActionKind = L[
+    "as-ref", "as-defs", "as-defs-field", "rename-fields", "new-tree", "remove", "plugin"
+]
 type Action = (
     AsRefAction
     | AsDefsAction
@@ -432,8 +483,11 @@ type Action = (
     | NewTreeAction
     | RemoveAction
     | RenameFieldsAction
+    | PluginAction
 )
-type Scopes = ChildrenScope | DefsScope | ChildrenDescendantsScope | DefsDescendantsScope
+type Scopes = (
+    ChildrenScope | DefsScope | ChildrenDescendantsScope | DefsDescendantsScope | PluginScope
+)
 
 _ACTION_KIND: typing.Final[tuple[ActionKind, ...]] = typing.get_args(ActionKind.__value__)
 

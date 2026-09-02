@@ -318,6 +318,9 @@
               },
               {
                 "$ref": "#/$defs/RenameFieldsAction"
+              },
+              {
+                "$ref": "#/$defs/PluginAction"
               }
             ],
             "discriminator": {
@@ -326,6 +329,7 @@
                 "as-defs-field": "#/$defs/AsDefsFieldAction",
                 "as-ref": "#/$defs/AsRefAction",
                 "new-tree": "#/$defs/NewTreeAction",
+                "plugin": "#/$defs/PluginAction",
                 "remove": "#/$defs/RemoveAction",
                 "rename-fields": "#/$defs/RenameFieldsAction"
               },
@@ -433,6 +437,80 @@
         "id"
       ],
       "title": "NewTreeAction",
+      "type": "object"
+    },
+    "PluginAction": {
+      "additionalProperties": false,
+      "description": "You're on your own, jim.",
+      "properties": {
+        "action": {
+          "description": "You're on your own, jim.",
+          "enum": [
+            "plugin"
+          ]
+        },
+        "entry_point": {
+          "description": "The path to the plugin definition.\n\nUses a pattern adapted from [entry-points], restricted to the following forms:\n\n```py\n\"package.module:attribute\"\n\"package.module:object.attribute\"\n```\n\n[entry-points]: https://packaging.python.org/en/latest/specifications/entry-points/",
+          "pattern": "([\\w.]+)\\s*(:\\s*([\\w.]+)\\s*)$",
+          "type": "string"
+        },
+        "extra": {
+          "additionalProperties": true,
+          "default": {},
+          "description": "Namespace for arbitrary data passed to the plugin.",
+          "type": "object"
+        },
+        "scope": {
+          "$ref": "#/$defs/PluginScope"
+        }
+      },
+      "required": [
+        "action",
+        "entry_point"
+      ],
+      "title": "PluginAction",
+      "type": "object"
+    },
+    "PluginScope": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "properties": {
+        "exclude": {
+          "$ref": "#/$defs/Filter",
+          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
+        },
+        "include": {
+          "$ref": "#/$defs/Filter",
+          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
+        },
+        "over": {
+          "default": "definitions",
+          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
+          "enum": [
+            "children",
+            "definitions",
+            "descendants"
+          ]
+        },
+        "ref_follow_depth": {
+          "default": 0,
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      },
+      "required": [],
+      "title": "PluginScope",
       "type": "object"
     },
     "ReferenceUnwrap": {

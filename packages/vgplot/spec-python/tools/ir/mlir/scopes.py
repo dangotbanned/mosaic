@@ -89,6 +89,9 @@ class Matcher:
         msg = "TODO @dangotbanned: Move things from `actions.py` to here"
         raise NotImplementedError(msg)
 
+    def matches_root(self, root: Root) -> bool:
+        return self.id.matches(root.id)
+
     @classmethod
     def from_scopes(cls, scopes: Scopes) -> Matcher:
         """Construct from a full, nested configuration object."""

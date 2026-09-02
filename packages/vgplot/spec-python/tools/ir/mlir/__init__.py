@@ -15,10 +15,21 @@
 from __future__ import annotations
 
 from tools.ir.mlir import actions, nodes
-from tools.ir.mlir.actions import Action
+from tools.ir.mlir.actions import Action, Plugin, RootsMut, actions_plugin
 from tools.ir.mlir.common import inner_type_is
 from tools.ir.mlir.definition import Definition
 from tools.ir.mlir.nodes import MLIR
 from tools.ir.mlir.root import Root
 
-__all__ = "MLIR", "Action", "Definition", "Root", "actions", "inner_type_is", "nodes"
+__all__ = (
+    "MLIR",
+    "Action",
+    "Definition",
+    "Plugin",
+    "Root",
+    "RootsMut",
+    "actions",
+    "actions_plugin",
+    "inner_type_is",
+    "nodes",
+)

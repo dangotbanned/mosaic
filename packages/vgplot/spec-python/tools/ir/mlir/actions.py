@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import functools
+import re
 import typing
 from collections import deque
+from importlib import import_module
+from types import ModuleType
 from typing import TYPE_CHECKING, Any, ClassVar, Final, Literal as L, Protocol, assert_never
 
 from tools.codegen.convert import kebab_case
@@ -79,6 +83,76 @@ class _MultiOver[O: cfg.IterOver](_Base[O], Protocol):
     @property
     def over(self) -> O:
         return self._over
+
+
+@typing.final
+class Plugin(_MultiOver[cfg.IterOver]):
+    __slots__ = ("entry_point", "extra")
+    entry_point: str
+    extra: Mapping[str, Any]
+
+    _PATTERN: ClassVar = re.compile(cfg.ENTRY_POINT_PATTERN["python"])
+
+    def __init__(self, config: cfg.PluginAction) -> None:
+        self.matcher = Matcher.from_scopes(config.scope)
+        self.entry_point = config.entry_point
+        self.extra = config.extra
+        self._over = config.scope.over
+
+    def load(self) -> PluginImpl:
+        if (
+            (match := self._PATTERN.match(self.entry_point))
+            and (name := match.group("module"))
+            and (module := import_module(name))
+            and (
+                loaded := functools.reduce(
+                    getattr, filter(None, (match.group("attr") or "").split(".")), module
+                )
+            )
+        ):
+            if isinstance(loaded, ModuleType) or not _is_plugin_impl(loaded):
+                msg = f"{type(loaded).__name__!r} is not a callable, got:\n{loaded!r}"
+                raise TypeError(msg)
+            return loaded
+        msg = f"Entry point {self.entry_point!r} not found."
+        raise NotImplementedError(msg)
+
+    def run(self, roots: RootsMut) -> Iterator[Root]:
+        yield from self.load()(self, roots)
+
+
+class PluginImpl(Protocol):
+    def __call__(self, action: Plugin, roots: RootsMut, /) -> Iterator[Root]: ...
+
+
+def _is_plugin_impl(obj: Any) -> typing.TypeIs[PluginImpl]:
+    return callable(obj)
+
+
+def actions_plugin[Fn: PluginImpl](function: Fn, /) -> Fn:
+    """Decorate a plugin function for type checking.
+
+    Args:
+        function: The function to decorate.
+            At runtime the function is returned unchanged.
+
+    ## Examples
+    ```py
+    from tools.ir import mlir
+    from collections.abc import Iterator
+
+
+    @mlir.actions_plugin
+    def something(action: mlir.Plugin, roots: mlir.RootsMut) -> Iterator[mlir.Root]:
+        matcher = action.matcher
+        for root in roots:
+            if matcher.matches_root(root):
+                # do something with root ...
+                ...
+            yield root
+    ```
+    """
+    return function
 
 
 class AsRef[O: L["children", "descendants"]](_MultiOver[O]):
@@ -383,6 +457,8 @@ def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]
                 item = RenameFields(Matcher.from_scopes(scope), overrides)
             case cfg.AsDefsFieldAction(scope=scope):
                 item = AsDefsField(Matcher.from_scopes(scope))
+            case cfg.PluginAction():
+                item = Plugin(config)
             case _:
                 assert_never(config)
 
