@@ -8,6 +8,7 @@ from tools.models import base
 from tools.models.base import Lit
 
 if typing.TYPE_CHECKING:
+    import collections.abc as cabc
     from collections.abc import Iterator
 
     from tools.ir.mlir.common import NameMap, RefMap
@@ -59,6 +60,15 @@ class MLIR(base.FrozenHashableStruct):
 
     def with_ext_refs(self, ref_map: RefMap, /) -> Self | MLIR:
         return self
+
+    def find_replace(self, repl: cabc.Mapping[MLIR, MLIR], /) -> Self | MLIR:
+        """Perform a deep substitution on the entire tree.
+
+        ## Notes
+        - If a parent node matches, it will not attempt to replace it's children
+        - In other words, the largest match wins
+        """
+        return repl.get(self, self)
 
     def get_field(self, name: str, /) -> Field | None:
         """Return the field `name` if it exists."""
@@ -208,6 +218,15 @@ class _BaseType[T: MLIR](_HasChildren):
             return self
         return copy_replace(self, type=maybe_changed)
 
+    def find_replace(self, repl: cabc.Mapping[MLIR, MLIR], /) -> Self | MLIR:
+        if replaced := repl.get(self):
+            return replaced
+        current = self.type
+        maybe_changed = current.find_replace(repl)
+        if maybe_changed is current:
+            return self
+        return copy_replace(self, type=maybe_changed)
+
 
 @final
 class Field[T: MLIR = MLIR](_BaseType[T]):
@@ -246,6 +265,18 @@ class _BaseFields(_HasChildren):
             field_out = field.with_ext_refs(ref_map)
             if field_out is not field:
                 changes[name] = field_out
+        if not changes:
+            return self
+        return copy_replace(self, fields=self.fields.update(changes))
+
+    def find_replace(self, repl: cabc.Mapping[MLIR, MLIR], /) -> Self | MLIR:
+        if replaced := repl.get(self):
+            return replaced
+        changes = {
+            name: out
+            for name, field in self.fields.items()
+            if (out := field.find_replace(repl)) is not field
+        }
         if not changes:
             return self
         return copy_replace(self, fields=self.fields.update(changes))
@@ -330,6 +361,19 @@ class ExtraDict(_BaseFields):
             return out
         return out.__replace__(extra_items=extra_items)
 
+    def find_replace(self, repl: cabc.Mapping[MLIR, MLIR], /) -> Self | MLIR:
+        out = super().find_replace(repl)
+        extra_items = self.extra_items.find_replace(repl)
+        if extra_items is self.extra_items:
+            return out
+        if not isinstance(out, ExtraDict):
+            msg = (
+                f"Cannot satisfy both replacements.\n\n"
+                f"{self.__class__.__name__!r}\n-> {out.__class__.__name__!r}\n    {out!r}"
+                f"{self.extra_items!r}\n-> {extra_items}"
+            )
+            raise TypeError(msg)
+        return out.__replace__(extra_items=extra_items)
 
 @final
 class Union(_HasChildren):
@@ -341,6 +385,14 @@ class Union(_HasChildren):
 
     def with_ext_refs(self, ref_map: RefMap, /) -> Union:
         new_members = tuple(member.with_ext_refs(ref_map) for member in self.members)
+        if self.members == new_members:
+            return self
+        return self.__replace__(members=new_members)
+
+    def find_replace(self, repl: cabc.Mapping[MLIR, MLIR], /) -> Self | MLIR:
+        if replaced := repl.get(self):
+            return replaced
+        new_members = tuple(member.find_replace(repl) for member in self.members)
         if self.members == new_members:
             return self
         return self.__replace__(members=new_members)
