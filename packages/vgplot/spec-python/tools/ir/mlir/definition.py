@@ -6,9 +6,6 @@ from typing import Literal as L
 from tools.ir.mlir.nodes import MLIR, ExtReference, Field, Reference
 from tools.models import base
 
-if t.TYPE_CHECKING:
-    from collections.abc import Callable
-
 
 @t.final
 class Definition[T: MLIR](base.Struct, kw_only=True):
@@ -53,31 +50,3 @@ class Definition[T: MLIR](base.Struct, kw_only=True):
             raise TypeError(msg)
         msg = f"Field {name!r} is not present in:\n{inner!r}"
         raise KeyError(msg)
-
-
-def inner_type_is[M: MLIR](
-    inner_type: type[M], /
-) -> Callable[[Definition[t.Any]], t.TypeIs[Definition[M]]]:
-    """Generate a typeguard to pass to [`mlir.Root.iter_defs`][].
-
-    Args:
-        inner_type: A single `MLIR` class to check against `Definition.inner`.
-
-    ## Examples
-    ```py
-    from typing import assert_type
-
-    from tools.ir import mlir
-    from tools.ir.mlir.nodes import ClosedDict
-
-
-    def func(root: mlir.Root) -> None:
-        _, first_closed_dict = next(root.iter_defs(mlir.inner_type_is(ClosedDict)))
-        assert_type(first_closed_dict, mlir.Definition[ClosedDict])  # OK
-    ```
-    """
-
-    def guard(obj: Definition[t.Any], /) -> t.TypeIs[Definition[M]]:
-        return isinstance(obj.inner, inner_type)
-
-    return guard
