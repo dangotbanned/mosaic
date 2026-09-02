@@ -13,6 +13,8 @@ from typing import (
 
 import msgspec
 
+from tools.common import select_items
+
 type DefName = str
 """The name that keys the schema in `{"definitions": {<here>: ...}}`."""
 
@@ -198,16 +200,4 @@ class Root[D](Struct, kw_only=True):
         return self.definitions.items()
 
     def iter_defs_by_name(self, names: Collection[DefName], /) -> Iterator[Entry[D]]:
-        defs = self.definitions
-        if (len_names := len(names)) == 1:
-            for name in names:
-                yield name, defs[name]
-            return
-        elif (len_names / len(defs)) < 0.1:
-            get = defs.__getitem__
-            for name in names:
-                yield name, get(name)
-            return
-        for name, node in defs.items():
-            if name in names:
-                yield name, node
+        return select_items(self.definitions, names)
