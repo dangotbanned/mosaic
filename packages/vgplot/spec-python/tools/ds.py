@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 import rpds
 
@@ -16,6 +16,16 @@ type FrozenMap[K, V] = rpds.HashTrieMap[K, V]
 """An immutable, persistent mapping."""
 
 
+@overload
+def frozenmap[K, V](
+    iterable: cabc.Mapping[K, V] | cabc.Iterable[tuple[K, V]] = (), /
+) -> FrozenMap[K, V]: ...
+@overload
+def frozenmap[V](**kwds: V) -> FrozenMap[str, V]: ...
+@overload
+def frozenmap[K, V](
+    iterable: cabc.Mapping[K, V] | cabc.Iterable[tuple[K, V]], /, **kwds: V
+) -> FrozenMap[K | str, V]: ...
 def frozenmap[K, V](
     iterable: cabc.Mapping[K, V] | cabc.Iterable[tuple[K, V]] = (), /, **kwds: V
 ) -> FrozenMap[K, V]:
