@@ -15,7 +15,7 @@ from tools.common import prepend, select_items
 from tools.ir.mlir import nodes as mlir
 from tools.ir.mlir.common import inner_type_is
 from tools.ir.mlir.nodes import MLIR
-from tools.models.base import DefName, Entry, IdName
+from tools.models.base import DefName, IdName
 from tools.models.config import Child, Filter, MLIRType, NamesNodes
 
 if typing.TYPE_CHECKING:
@@ -25,8 +25,8 @@ if typing.TYPE_CHECKING:
 
 type Unused = typing.Any
 type Incomplete = typing.Any
-type DefEntry[D: MLIR = MLIR] = Entry[Definition[D]]
-type DefsEntries[D: MLIR = MLIR] = Iterable[DefEntry[D]]
+# NOTE: `pyrefly` stops understanding `tuple` if this is simplified
+type DefsEntries[D: MLIR = MLIR] = Iterable[tuple[DefName, Definition[D]]]
 type IdMatcher = IdAlways | IdInclude | IdNotExclude
 type DefsMatcher = DefsAlways | DefsIncludeNames | DefsExcludeNames | DefsIncludeNodes | DefsGeneral
 type ChildMatcher = ChildAlways | ChildIncludeNodes
@@ -36,7 +36,7 @@ type GroupByIter[T, S] = Iterator[tuple[T, Iterator[S]]]
 """An iterator with the same shape as [`itertools.groupby`][]."""
 
 
-type ChildIter[D: MLIR, S] = GroupByIter[DefEntry[D], S]
+type ChildIter[D: MLIR, S] = GroupByIter[tuple[DefName, Definition[D]], S]
 """
 - On each iteration, it pulls a named `Definition` and an iterator over it's matching children.
 - Each `Definition` is guaranteed to have at-least one matching child

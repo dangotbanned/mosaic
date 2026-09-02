@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, overload
+import typing as t
 
 import rpds
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     import collections.abc as cabc
 
 
@@ -15,20 +15,19 @@ __all__ = ("FrozenMap", "frozenmap")
 type FrozenMap[K, V] = rpds.HashTrieMap[K, V]
 """An immutable, persistent mapping."""
 
+type _IntoMapping[K, V] = cabc.Mapping[K, V] | cabc.Iterable[tuple[K, V]]
+type _Unknown = t.Any
 
-@overload
-def frozenmap[K, V](
-    iterable: cabc.Mapping[K, V] | cabc.Iterable[tuple[K, V]] = (), /
-) -> FrozenMap[K, V]: ...
-@overload
-def frozenmap[V](**kwds: V) -> FrozenMap[str, V]: ...
-@overload
-def frozenmap[K, V](
-    iterable: cabc.Mapping[K, V] | cabc.Iterable[tuple[K, V]], /, **kwds: V
-) -> FrozenMap[K | str, V]: ...
-def frozenmap[K, V](
-    iterable: cabc.Mapping[K, V] | cabc.Iterable[tuple[K, V]] = (), /, **kwds: V
-) -> FrozenMap[K, V]:
+
+@t.overload
+def frozenmap() -> FrozenMap[_Unknown, _Unknown]: ...
+@t.overload
+def frozenmap[V](iterable: _IntoMapping[str, V] = (), /, **kwds: V) -> FrozenMap[str, V]: ...
+@t.overload
+def frozenmap[K, V](iterable: _IntoMapping[K, V], /) -> FrozenMap[K, V]: ...
+@t.overload
+def frozenmap[K, V](iterable: _IntoMapping[K, V], /, **kwds: V) -> FrozenMap[K | str, V]: ...
+def frozenmap[K, V](iterable: _IntoMapping[K, V] = (), /, **kwds: V) -> FrozenMap[K | str, V]:
     """Create a new immutable mapping.
 
     ## Important

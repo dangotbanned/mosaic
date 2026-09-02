@@ -227,9 +227,7 @@ class AsDefs(_Base[L["children"]]):
         for root in roots:
             if matcher.id.matches(root.id):
                 new_defs = {}
-                for entry, children in matcher.matching_children(root):
-                    def_name, defn = entry
-
+                for (def_name, defn), children in matcher.matching_children(root):
                     # NOTE: Simpler to just handle the case I have, before generalizing to anything
                     if not isinstance(defn.inner, nodes.Union):
                         msg = f"TODO: Support {defn.inner.__class__.__name__!r} as a parent type in {self.kind!r}, got:\n{defn!r}"
