@@ -24,6 +24,7 @@ type Lines = cabc.Iterator[Line]
 TypeExpr = t.NewType("TypeExpr", str)
 """A rendered type expression."""
 
+type IterExprs = cabc.Iterator[Expr]
 
 if t.TYPE_CHECKING:
 
@@ -52,6 +53,14 @@ class PyIR(base.FrozenHashableStruct):
         msg = f"{type(self).__name__}.{self.iter_lines.__name__}() is not yet implemented. Got:\n{self!r}"
         raise NotImplementedError(msg)
 
+    def iter_exprs(self) -> IterExprs:
+        """Yield all descendant `Expr`s.
+
+        References are expressions, so we need to traverse to find them.
+        """
+        msg = f"{type(self).__name__}.{self.iter_exprs.__name__}() is not yet implemented. Got:\n{self!r}"
+        raise NotImplementedError(msg)
+
 
 class Expr(PyIR):
     """A [type expression][1].
@@ -66,6 +75,9 @@ class Expr(PyIR):
 
     def iter_lines(self) -> Lines:
         yield self.__str__()
+
+    def iter_exprs(self) -> IterExprs:
+        yield self
 
 
 class Definition(PyIR):
@@ -106,6 +118,9 @@ class TypedRef[T: PyIR](PyIR):
     def as_base(self) -> str:
         return self.ref
 
+    def iter_exprs(self) -> IterExprs:
+        yield from ()
+
 
 class TypedExtRef[T: PyIR](PyIR):
     """A reference to a resolved `PyIR` type, originated from an external module."""
@@ -116,3 +131,6 @@ class TypedExtRef[T: PyIR](PyIR):
 
     def as_base(self) -> str:
         return self.ref
+
+    def iter_exprs(self) -> IterExprs:
+        yield from ()

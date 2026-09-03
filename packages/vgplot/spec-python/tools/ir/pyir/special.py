@@ -8,7 +8,7 @@ from __future__ import annotations
 import typing as t
 from typing import Literal as L
 
-from tools.ir.pyir.base import PyIR, join_comma
+from tools.ir.pyir.base import IterExprs, PyIR, join_comma
 
 if t.TYPE_CHECKING:
     from tools.ir.pyir.type_param import TypeVar
@@ -20,6 +20,9 @@ class TypedDict(PyIR):
 
     def as_base(self) -> L["TypedDict"]:
         return "TypedDict"
+
+    def iter_exprs(self) -> IterExprs:
+        yield from ()
 
 
 TYPED_DICT: t.Final = TypedDict()
@@ -33,3 +36,7 @@ class Generic(PyIR):
 
     def as_base(self) -> str:
         return f"Generic[{join_comma(tp.as_ref() for tp in self.type_params)}]"
+
+    def iter_exprs(self) -> IterExprs:
+        for param in self.type_params:
+            yield from param.iter_exprs()

@@ -5,7 +5,7 @@ from __future__ import annotations
 import typing as t
 from typing import ClassVar
 
-from tools.ir.pyir.base import Lines, PyIR
+from tools.ir.pyir.base import IterExprs, Lines, PyIR
 
 
 class Value(PyIR):
@@ -13,6 +13,9 @@ class Value(PyIR):
 
     def iter_lines(self) -> Lines:
         yield self.value
+
+    def iter_exprs(self) -> IterExprs:
+        yield from ()
 
 
 @t.final

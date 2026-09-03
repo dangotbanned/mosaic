@@ -9,7 +9,7 @@ import msgspec
 from tools.codegen.convert import py_identifier_snake
 from tools.common import PyIdentifier, PyIdentifierSnake
 from tools.ir.pyir import convert
-from tools.ir.pyir.base import Definition
+from tools.ir.pyir.base import Definition, IterExprs, UntypedExtRef, UntypedRef
 from tools.models import base
 
 if t.TYPE_CHECKING:
@@ -81,3 +81,13 @@ class Module(base.Struct, kw_only=True):
         for defn in self.definitions.values():
             print("\n".join(defn.iter_lines()))
             print("\n")
+
+    def iter_exprs(self) -> IterExprs:
+        for defn in self.definitions.values():
+            yield from defn.iter_exprs()
+
+    def unique_refs(self) -> set[UntypedRef]:
+        return {expr for expr in self.iter_exprs() if isinstance(expr, UntypedRef)}
+
+    def unique_ext_refs(self) -> set[UntypedExtRef]:
+        return {expr for expr in self.iter_exprs() if isinstance(expr, UntypedExtRef)}

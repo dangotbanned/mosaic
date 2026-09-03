@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing as t
 
-from tools.ir.pyir.base import Expr, Lines, PyIR, TypeExpr
+from tools.ir.pyir.base import Expr, IterExprs, Lines, PyIR, TypeExpr
 
 
 class Qualifier(PyIR):
@@ -18,6 +18,9 @@ class Qualifier(PyIR):
 
     def __str__(self) -> TypeExpr:
         return TypeExpr(f"{self.__class__.__name__}[{self.expr}]")
+
+    def iter_exprs(self) -> IterExprs:
+        yield from self.expr.iter_exprs()
 
 
 @t.final

@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing as t
 from typing import Literal as L
 
-from tools.ir.pyir.base import Expr, TypeExpr, join_comma, join_or
+from tools.ir.pyir.base import Expr, IterExprs, TypeExpr, join_comma, join_or
 from tools.models import base
 
 if t.TYPE_CHECKING:
@@ -71,6 +71,7 @@ class Literal(Expr):
         return Literal(members=(base.Lit(name),))
 
 
+@t.final
 class Union(Expr):
     """A representation of an implicit `typing.Union`."""
 
@@ -79,6 +80,11 @@ class Union(Expr):
 
     def __str__(self) -> TypeExpr:
         return join_or(m.__str__() for m in self.members)
+
+    def iter_exprs(self) -> IterExprs:
+        yield self
+        for m in self.members:
+            yield from m.iter_exprs()
 
 
 @t.final
@@ -89,6 +95,10 @@ class Mapping(Expr):
 
     def __str__(self) -> TypeExpr:
         return TypeExpr(f"Mapping[str, {self.expr}]")
+
+    def iter_exprs(self) -> IterExprs:
+        yield self
+        yield from self.expr.iter_exprs()
 
 
 @t.final
@@ -101,6 +111,10 @@ class Sequence(Expr):
     def __str__(self) -> TypeExpr:
         return TypeExpr(f"{self._ALIAS}[{self.expr}]")
 
+    def iter_exprs(self) -> IterExprs:
+        yield self
+        yield from self.expr.iter_exprs()
+
 
 @t.final
 class HomogeneousTuple(Expr):
@@ -110,6 +124,10 @@ class HomogeneousTuple(Expr):
     def __str__(self) -> TypeExpr:
         tp = self.expr.__str__()
         return TypeExpr(f"tuple[{join_comma(tp for _ in range(self.length))}]")
+
+    def iter_exprs(self) -> IterExprs:
+        yield self
+        yield from self.expr.iter_exprs()
 
 
 @t.final
@@ -125,6 +143,12 @@ class Annotated(Expr):
         return TypeExpr(
             f"{self._ALIAS}[{self.origin}, {join_comma(m.__str__() for m in self.metadata)}]"
         )
+
+    def iter_exprs(self) -> IterExprs:
+        yield self
+        yield from self.origin.iter_exprs()
+        for m in self.metadata:
+            yield from m.iter_exprs()
 
 
 # NOTE: A new invention?
@@ -172,6 +196,11 @@ class NamedTuple(Expr):
         )
         return TypeExpr(f"tuple[{join_comma(e.__str__() for e in exprs)}]")
 
+    def iter_exprs(self) -> IterExprs:
+        yield self
+        for f in self.fields:
+            yield from f.iter_exprs()
+
 
 @t.final
 class ForwardRef(Expr):
@@ -184,3 +213,7 @@ class ForwardRef(Expr):
 
     def __str__(self) -> TypeExpr:
         return TypeExpr(f'"{self.expr}"')
+
+    def iter_exprs(self) -> IterExprs:
+        yield self
+        yield from self.expr.iter_exprs()

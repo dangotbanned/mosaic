@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing as t
 
 from tools.codegen.docstrings import doc
-from tools.ir.pyir.base import Expr, Lines, PyIR
+from tools.ir.pyir.base import Expr, IterExprs, Lines, PyIR
 from tools.ir.pyir.qualifier import NotRequired, Required
 
 if t.TYPE_CHECKING:
@@ -20,3 +20,6 @@ class Field[T: Expr | Required | NotRequired = Expr | Required | NotRequired](Py
         yield f"{self.name}: {self.expr}"
         if self.doc:
             yield doc(self.doc)
+
+    def iter_exprs(self) -> IterExprs:
+        yield from self.expr.iter_exprs()  # ty: ignore[invalid-argument-type]

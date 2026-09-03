@@ -6,7 +6,16 @@ from typing import Literal as L
 
 from tools.codegen.docstrings import doc
 from tools.ir.pyir import special as sf
-from tools.ir.pyir.base import INDENT, Definition, Expr, Lines, TypedExtRef, TypedRef, join_comma
+from tools.ir.pyir.base import (
+    INDENT,
+    Definition,
+    Expr,
+    IterExprs,
+    Lines,
+    TypedExtRef,
+    TypedRef,
+    join_comma,
+)
 
 if t.TYPE_CHECKING:
     from collections.abc import Iterator
@@ -32,6 +41,11 @@ class TypeAlias[E: Expr = Expr](Definition):
         if self.doc:
             yield doc(self.doc)
 
+    def iter_exprs(self) -> IterExprs:
+        yield from self.expr.iter_exprs()
+        for param in self.type_params:
+            yield from param.iter_exprs()
+
 
 @t.final
 class NewTypeStr(Definition):
@@ -44,6 +58,9 @@ class NewTypeStr(Definition):
         yield f"{self.name} = NewType({self.name!r}, str)"
         if self.doc:
             yield doc(self.doc)
+
+    def iter_exprs(self) -> IterExprs:
+        yield from ()
 
 
 @t.final
@@ -59,6 +76,10 @@ class NamedTuple(Definition):
             yield doc(f"{INDENT}{self.doc}")
         for line in chain.from_iterable(fld.iter_lines() for fld in self.fields):
             yield f"{INDENT}{line}"
+
+    def iter_exprs(self) -> IterExprs:
+        for f in self.fields:
+            yield from f.iter_exprs()
 
 
 type BaseTD = sf.TypedDict | sf.Generic | TypedRef[OpenDict] | TypedExtRef[OpenDict]
@@ -107,6 +128,12 @@ class _Dict(Definition):
         for line in chain.from_iterable(fld.iter_lines() for fld in self.fields):
             yield f"{INDENT}{line}"
 
+    def iter_exprs(self) -> IterExprs:
+        for f in self.fields:
+            yield from f.iter_exprs()
+        for base in self.bases:
+            yield from base.iter_exprs()
+
 
 @t.final
 class OpenDict(_Dict): ...
@@ -126,3 +153,7 @@ class ExtraDict(_Dict):
     def keywords(self) -> Iterator[str]:
         yield from super().keywords()
         yield from self.extra_items.iter_lines()
+
+    def iter_exprs(self) -> IterExprs:
+        yield from super().iter_exprs()
+        yield from self.extra_items.iter_exprs()
