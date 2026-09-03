@@ -13,7 +13,7 @@ from typing import (
 
 import msgspec
 
-from tools.common import select_items
+from tools.common import ensure_type, select_items
 
 type DefName = str
 """The name that keys the schema in `{"definitions": {<here>: ...}}`."""
@@ -180,11 +180,7 @@ class Root[D](Struct, kw_only=True):
 
     def get_typed[R](self, name: DefName, tp: type[R], /) -> R:
         """Get definition `name`, raising if it is not of type `tp`."""
-        defn = self[name]
-        if not isinstance(defn, tp):
-            msg = f"Expected {name!r} to be of type {tp.__name__!r}, got:\n{defn!r}"
-            raise TypeError(msg)
-        return defn
+        return ensure_type(self[name], tp, name=name)
 
     def pop(self, name: DefName, /) -> D:
         """Remove definition `name` and return it.

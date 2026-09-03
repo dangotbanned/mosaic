@@ -9,6 +9,7 @@ from types import ModuleType
 from typing import TYPE_CHECKING, Any, ClassVar, Final, Literal as L, Protocol, assert_never
 
 from tools.codegen.convert import kebab_case
+from tools.common import ensure_type
 from tools.ir.mlir import nodes
 from tools.ir.mlir.common import into_name_map, into_ref_map
 from tools.ir.mlir.definition import Definition
@@ -303,16 +304,19 @@ class AsDefs(_Base[L["children"]]):
                 new_defs = {}
                 for (def_name, defn), children in matcher.matching_children(root):
                     # NOTE: Simpler to just handle the case I have, before generalizing to anything
-                    if not isinstance(defn.inner, nodes.Union):
-                        msg = f"TODO: Support {defn.inner.__class__.__name__!r} as a parent type in {self.kind!r}, got:\n{defn!r}"
-                        raise NotImplementedError(msg)
+                    defn_inner = ensure_type(
+                        defn.inner,
+                        nodes.Union,
+                        name="defn.inner",
+                        explain=f"TODO: Support non-union parent types in {self.kind!r}",
+                    )
                     new_members = []
                     for idx, child in enumerate(children, 1):
                         child_name = f"{def_name}{idx}"
-                        new_defs[child_name] = Definition.from_mlir(child.with_doc(defn.inner.doc))
+                        new_defs[child_name] = Definition.from_mlir(child.with_doc(defn_inner.doc))
                         new_members.append(nodes.ref(child_name))
                     new_defs[def_name] = Definition.from_mlir(
-                        defn.inner.__replace__(members=tuple(new_members))
+                        defn_inner.__replace__(members=tuple(new_members))
                     )
                 if new_defs:
                     root.definitions.update(new_defs)

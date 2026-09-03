@@ -143,6 +143,14 @@ executionEnvironments = [
 ]
 defineConstant        = { "PYRIGHT" = true }
 
+[tool.pytest]
+addopts             = ["--doctest-modules"]
+doctest_optionflags = ["ELLIPSIS", "IGNORE_EXCEPTION_DETAIL", "NORMALIZE_WHITESPACE"]
+strict_xfail        = true
+
+[tool.pytest_env]
+MODIN_ENGINE = "python"
+
 [tool.ruff]
 fix            = true
 line-length    = 100
