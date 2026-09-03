@@ -11,12 +11,12 @@ dynamic         = ["version"]
 [dependency-groups]
 dev    = [
   "msgspec[toml,yaml]>=0.21.1",
-  "polars>=1.43.2",
-  "ruff",
+  "polars>=1.44.1",
+  "ruff>=0.16.5",
   { include-group = "docs" },
   { include-group = "gen" },
   { include-group = "tests" },
-  { include-group = "typing" }
+  { include-group = "typing" },
 ]
 docs   = [
   "griffe>=2.2.0",
@@ -38,8 +38,8 @@ tests  = [
 ]
 typing = [
   "pyrefly>=1.2.0",
-  "pyright",
-  "ty>=0.0.74",
+  "pyright>=1.1.411",
+  "ty>=0.0.78",
   "types-pyyaml>=6.0.12.20260724",
 ]
 
