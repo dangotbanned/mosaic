@@ -235,7 +235,7 @@ class App:
         """Lower MLIR into PyIR."""
         self.into_mlir(refresh=refresh, quiet=quiet)
         if not quiet:
-            print(f"Generating modules from {len(self._mlirs)} root(s).")
+            print(f"Generating module representation from {len(self._mlirs)} root(s).")
         pkg = pyir.Module(name=PyIdentifierSnake("mosaic_spec"), filepath=fs.MOSAIC_SPEC_INIT)
         sub_pkg = pyir.Module(
             name=PyIdentifierSnake("_gen"), filepath=fs.MOSAIC_SPEC_GEN_INIT, parent=pkg
