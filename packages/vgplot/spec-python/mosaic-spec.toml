@@ -132,7 +132,14 @@ scope.include.definition.names = ["PlotAttributes", "Plot"]
 [[convert.to_mlir.actions]]
 action                         = "as-defs"
 scope.include.id               = ["marks"]
-scope.include.definition.names = ["DensityX", "DensityY"]
+scope.include.definition.names = [
+  "DensityX",
+  "DensityY",
+  "SortOrder",
+  "ChannelDomainValueSpec",
+  "ChannelValueSpec",
+  "ChannelValueIntervalSpec",
+]
 scope.include.child.nodes      = ["ClosedDict"]
 
 [[convert.to_mlir.actions]]

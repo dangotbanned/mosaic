@@ -45,7 +45,8 @@ def into_expr(obj: MLIR) -> Expr:
     """Try to convert an `mlir.MLIR` into a `pyir.Expr`."""
     if e := _MLIR_TO_EXPR_NO_ATTR.get(obj.__class__):
         return e
-    return expr.Unresolved(inner=obj)
+    msg = f"{type(obj).__name__} could not be converted into a `pyir.Expr`, got:\n{obj!r}"
+    raise NotImplementedError(msg)
 
 
 @into_expr.register(mlir.Reference)
