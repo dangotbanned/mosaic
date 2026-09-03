@@ -175,14 +175,8 @@ scope.include.definition.names  = ["Menu"]
 scope.include.child.field_names = ["options"]
 
 [[convert.to_mlir.actions]]
-# TODO @dangotbanned: tip/Tip in `marks`
 action                          = "plugin"
 entry_point                     = "scripts.plugins.mlir_actions:fix_tip"
 scope.include.id                = ["marks"]
 scope.include.definition.nodes  = ["ClosedDict"]
-# tip racks up a total of 700 lines!
-# 2 levels of nesting
-# - tip (TipOptions) ish
-# - tip.format (type manipulation on `ChannelName`
 scope.include.child.field_names = ["tip"]
-extra                           = { "nested" = "format" }

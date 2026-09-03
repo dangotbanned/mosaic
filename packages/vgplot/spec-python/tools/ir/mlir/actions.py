@@ -353,13 +353,13 @@ class AsDefsField(_Base[L["children"]]):
             for old_name, old_field in it_fields:
                 old_field_type = old_field.type
                 new_def_name = old_name.capitalize()
-                if _has_fields(old_field_type):
+                if nodes.is_dict(old_field_type):
                     new_defs[new_def_name] = Definition.from_mlir(
                         old_field_type.with_doc(old_field.doc)
                     )
                     repl_old_new[old_field_type] = nodes.ref(new_def_name)
                 elif old_types := [
-                    desc for desc in old_field_type.iter_descendants() if _has_fields(desc)
+                    desc for desc in old_field_type.iter_descendants() if nodes.is_dict(desc)
                 ]:
                     # Need to defer creating the name until we know that there are more than 2
                     if len(old_types) == 1:
@@ -367,9 +367,6 @@ class AsDefsField(_Base[L["children"]]):
                         new_defs[new_def_name] = Definition.from_mlir(old_type)
                         repl_old_new[old_type] = nodes.ref(new_def_name)
                     else:
-                        # TODO @dangotbanned: doesn't work well for tip.format
-                        # dcg splits that out as `Format`
-                        # I have `Tip1`, `Tip2`
                         for idx, old_type in enumerate(old_types, 1):
                             new_def_name_i = f"{new_def_name}{idx}"
                             new_defs[new_def_name_i] = Definition.from_mlir(old_type)
@@ -411,13 +408,6 @@ class RenameFields(_Base[L["definitions"]]):
                 if new_defs:
                     root.definitions.update(new_defs)
             yield root
-
-
-_HAS_FIELDS: Final = (nodes.ClosedDict, nodes.ExtraDict, nodes.OpenDict)
-
-
-def _has_fields(obj: Any) -> typing.TypeIs[nodes.ClosedDict | nodes.ExtraDict | nodes.OpenDict]:
-    return isinstance(obj, _HAS_FIELDS)
 
 
 def dangling_ref_error(

@@ -235,6 +235,9 @@ class Field[T: MLIR = MLIR](_BaseType[T]):
 
     required: bool = False
 
+    def with_type[M: MLIR = MLIR](self, type: M, /) -> Field[M]:  # ruff: ignore[builtin-argument-shadowing]
+        return copy_replace(self, type=type)
+
 
 @final
 class Mapping[T: MLIR = MLIR](_BaseType[T]):
@@ -298,6 +301,9 @@ class _BaseFields(_HasChildren):
             for idx, (name, field) in enumerate(self.fields.items())
         )
         return copy_replace(self, fields=fields)
+
+    def merge_fields(self, updates: cabc.Mapping[str, Field]) -> Self:
+        return copy_replace(self, fields=self.fields.update(updates))
 
     def get_field(self, name: str, /) -> Field | None:
         return self.fields.get(name)
@@ -416,3 +422,11 @@ class Union(_HasChildren):
         if self.members == new_members:
             return self
         return self.__replace__(members=new_members)
+
+
+_TPS_DICT: Final = (ClosedDict, ExtraDict, OpenDict)
+
+
+def is_dict(obj: Incomplete) -> typing.TypeIs[ClosedDict | ExtraDict | OpenDict]:
+    """Return True if `obj` is one of the `TypedDict`-based `MLIR` nodes."""
+    return isinstance(obj, _TPS_DICT)
