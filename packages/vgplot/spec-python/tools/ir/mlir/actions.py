@@ -343,7 +343,8 @@ class AsDefsField(_Base[L["children"]]):
         for root in roots:
             if matcher.id.matches(root.id):
                 yield self._handle_root(root)
-            yield root
+            else:
+                yield root
 
     def _handle_root(self, root: Root) -> Root:
         new_defs: dict[str, Definition[nodes.MLIR]] = {}
