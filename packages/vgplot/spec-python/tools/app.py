@@ -258,6 +258,11 @@ class App:
         """Return the names of all `MLIR` modules."""
         return self._mlirs_inv.keys()
 
+    def module(self, name: CanonicalPath | str, /) -> pyir.Module:
+        """Return the `PyIR` representation of module `name`."""
+        name = name if name.startswith("mosaic_spec") else f"mosaic_spec._gen.{name}"
+        return self._modules[name]
+
     def _read_sources(self) -> Iterator[InputSchema]:
         if not (sources := self.config.convert.sources):
             msg = "Empty sources"
