@@ -16,7 +16,7 @@ from tools.ir.mlir import nodes as mlir
 from tools.ir.mlir.common import inner_type_is
 from tools.ir.mlir.nodes import MLIR
 from tools.models.base import DefName, IdName
-from tools.models.config import Child, Filter, MLIRType, NamesNodes
+from tools.models.config import _MLIR_TYPES, Child, Filter, MLIRType, NamesNodes
 
 if typing.TYPE_CHECKING:
     from tools.ir.mlir.definition import Definition
@@ -330,31 +330,6 @@ class DefsGeneral:
         for name, node in root.iter_defs_by_name(names):
             if isinstance(node.inner, types):
                 yield name, node
-
-
-_MLIR_TYPES = frozenset(
-    (
-        "ClosedDict",
-        "EmptyTuple",
-        "ExtReference",
-        "ExtraDict",
-        "Field",
-        "HomogeneousTuple",
-        "Literal",
-        "NamedTuple",
-        "OpenDict",
-        "PyBool",
-        "PyFloat",
-        "PyInt",
-        "PyNone",
-        "PyStr",
-        "Reference",
-        "Sequence",
-        "Union",
-        "Unknown",
-        "VariantHomogeneousTuple",
-    )
-)
 
 
 def _convert_nodes(incl: NamesNodes | Child, excl: NamesNodes | Child, /) -> tuple[type[MLIR], ...]:

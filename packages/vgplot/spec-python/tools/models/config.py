@@ -19,6 +19,7 @@ type MLIRType = L[
     "Field",
     "HomogeneousTuple",
     "Literal",
+    "Mapping",
     "NamedTuple",
     "OpenDict",
     "PyBool",
@@ -32,6 +33,7 @@ type MLIRType = L[
     "Unknown",
     "VariantHomogeneousTuple",
 ]
+_MLIR_TYPES: typing.Final[frozenset[MLIRType]] = frozenset(typing.get_args(MLIRType.__value__))
 
 type UnwrapPolicy = L["longest", "shortest", "inner", "outer"]
 type Depth = L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
