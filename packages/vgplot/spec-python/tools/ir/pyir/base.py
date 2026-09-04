@@ -10,6 +10,19 @@ if t.TYPE_CHECKING:
 
     from tools.common import PyIdentifier, PyIdentifierSnake
 
+    @t.overload
+    def join_comma(iterable: cabc.Iterable[TypeExpr], /) -> TypeExpr: ...
+    @t.overload
+    def join_comma(iterable: cabc.Iterable[LS], /) -> LS: ...
+    @t.overload
+    def join_comma(iterable: cabc.Iterable[str], /) -> str: ...
+    def join_comma(iterable: cabc.Iterable[str], /) -> str:
+        raise NotImplementedError
+
+    join_or = join_comma
+else:
+    join_comma: t.Final = ",".join
+    join_or: t.Final = " | ".join
 
 type Line = str
 """An unindented line of code.
@@ -25,21 +38,6 @@ TypeExpr = t.NewType("TypeExpr", str)
 
 type IterExprs = cabc.Iterator[Expr]
 
-if t.TYPE_CHECKING:
-
-    @t.overload
-    def join_comma(iterable: cabc.Iterable[TypeExpr], /) -> TypeExpr: ...
-    @t.overload
-    def join_comma(iterable: cabc.Iterable[LS], /) -> LS: ...
-    @t.overload
-    def join_comma(iterable: cabc.Iterable[str], /) -> str: ...
-    def join_comma(iterable: cabc.Iterable[str], /) -> str:
-        raise NotImplementedError
-
-    join_or = join_comma
-else:
-    join_comma: t.Final = ",".join
-    join_or: t.Final = " | ".join
 
 INDENT: t.Final = " " * 4
 
