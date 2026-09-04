@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing as t
-from typing import LiteralString as LS
+from typing import Annotated as A, Literal as L, LiteralString as LS
 
 from tools.models import base
 
@@ -38,6 +38,23 @@ TypeExpr = t.NewType("TypeExpr", str)
 
 type IterExprs = cabc.Iterator[Expr]
 
+
+type RuntimeScope[T] = A[T, L["runtime"]]
+"""Mark a position as being outside of an [annotation scope].
+
+Type expressions in these positions have the following constraints, which all others do not:
+
+1. External references must [^1] use non-`TYPE_CHECKING` imports.
+2. Internal references must not refer to to symbols defined *later* in the module.
+
+These rules mean that only a subset of all expressions need to be concerned about
+definition order and cyclic references.
+
+[^1]: In some cases a [ForwardRef] is permitted but this doesn't include a base class list.
+
+[annotation scope]: https://docs.python.org/3/reference/executionmodel.html#annotation-scopes
+[ForwardRef]: https://docs.python.org/3/library/typing.html#typing.ForwardRef
+"""
 
 INDENT: t.Final = " " * 4
 

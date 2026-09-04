@@ -12,6 +12,7 @@ from tools.ir.pyir.base import (
     Expr,
     IterExprs,
     Lines,
+    RuntimeScope,
     TypedExtRef,
     TypedRef,
     join_comma,
@@ -28,8 +29,8 @@ if t.TYPE_CHECKING:
 class TypeAlias[E: Expr = Expr](Definition):
     """A representation of a TypeAliasType."""
 
-    expr: E
-    type_params: tuple[TypeVar, ...] = ()
+    expr: RuntimeScope[E]
+    type_params: RuntimeScope[tuple[TypeVar, ...]] = ()
 
     _ALIAS: t.ClassVar[L["TypeAliasType"]] = "TypeAliasType"
 
@@ -110,7 +111,7 @@ whereas `{Closed,Extra}Dict` are created during conversion of JSON Schema.
 
 class _Dict(Definition):
     fields: tuple[Field, ...]
-    bases: tuple[BaseTD, ...] = (sf.TYPED_DICT,)
+    bases: RuntimeScope[tuple[BaseTD, ...]] = (sf.TYPED_DICT,)
     total: bool = False
 
     def keywords(self) -> Iterator[str]:
@@ -148,7 +149,7 @@ class ClosedDict(_Dict):
 
 @t.final
 class ExtraDict(_Dict):
-    extra_items: Expr
+    extra_items: RuntimeScope[Expr]
 
     def keywords(self) -> Iterator[str]:
         yield from super().keywords()

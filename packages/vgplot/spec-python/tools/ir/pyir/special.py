@@ -8,7 +8,7 @@ from __future__ import annotations
 import typing as t
 from typing import Literal as L
 
-from tools.ir.pyir.base import IterExprs, PyIR, join_comma
+from tools.ir.pyir.base import IterExprs, PyIR, RuntimeScope, join_comma
 
 if t.TYPE_CHECKING:
     from tools.ir.pyir.type_param import TypeVar
@@ -32,7 +32,7 @@ TYPED_DICT: t.Final = TypedDict()
 class Generic(PyIR):
     """A subscript of `Generic` in a base class list."""
 
-    type_params: tuple[TypeVar, ...]
+    type_params: RuntimeScope[tuple[TypeVar, ...]]
 
     def as_base(self) -> str:
         return f"Generic[{join_comma(tp.as_ref() for tp in self.type_params)}]"
