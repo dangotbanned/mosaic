@@ -240,7 +240,7 @@ _get_name = operator.itemgetter(0)
 
 
 class _BaseFields(_HasChildren):
-    fields: ds.FrozenMap[str, Field]
+    fields: Final[ds.FrozenMap[str, Field]]
     doc: str = ""
 
     def iter_children(self) -> Iterator[MLIR]:
