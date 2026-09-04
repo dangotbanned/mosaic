@@ -103,8 +103,8 @@ class UntypedExtRef(Expr):
     ref: PyIdentifier
 
 
-class TypedRef[T: PyIR](PyIR):
-    """A reference to a resolved `PyIR` type.
+class TypedRef[D: Definition = Definition](PyIR):
+    """A reference to a resolved `Definition` type.
 
     ## Notes
     - The type of references need to be resolved *during* the final stage
@@ -113,7 +113,7 @@ class TypedRef[T: PyIR](PyIR):
     """
 
     ref: PyIdentifier
-    type: type[T]
+    type: type[D]
 
     def as_base(self) -> str:
         return self.ref
@@ -122,12 +122,12 @@ class TypedRef[T: PyIR](PyIR):
         yield from ()
 
 
-class TypedExtRef[T: PyIR](PyIR):
-    """A reference to a resolved `PyIR` type, originated from an external module."""
+class TypedExtRef[D: Definition = Definition](PyIR):
+    """A reference to a resolved `Definition` type, originated from an external module."""
 
     ext: PyIdentifierSnake
     ref: PyIdentifier
-    type: type[T]
+    type: type[D]
 
     def as_base(self) -> str:
         return self.ref

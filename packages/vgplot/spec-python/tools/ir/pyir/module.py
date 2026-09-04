@@ -9,7 +9,7 @@ import msgspec
 from tools.codegen.convert import py_identifier_snake
 from tools.common import PyIdentifier, PyIdentifierSnake
 from tools.ir.pyir import convert
-from tools.ir.pyir.base import Definition, IterExprs, UntypedExtRef, UntypedRef
+from tools.ir.pyir.base import Definition, IterExprs, TypedRef, UntypedExtRef, UntypedRef
 from tools.models import base
 
 if t.TYPE_CHECKING:
@@ -91,3 +91,8 @@ class Module(base.Struct, kw_only=True):
 
     def unique_ext_refs(self) -> set[UntypedExtRef]:
         return {expr for expr in self.iter_exprs() if isinstance(expr, UntypedExtRef)}
+
+    def typed_ref(self, expr: UntypedRef) -> TypedRef:
+        """Retrieve the type of a same-module reference."""
+        name = expr.ref
+        return TypedRef(ref=name, type=type(self.definitions[name]))
