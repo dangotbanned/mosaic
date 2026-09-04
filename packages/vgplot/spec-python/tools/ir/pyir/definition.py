@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import typing as t
 from itertools import chain
-from typing import Literal as L
+from typing import Literal as L, Self
 
 from tools.codegen.docstrings import doc
+from tools.common import copy_replace
 from tools.ir.pyir import special as sf
 from tools.ir.pyir.base import (
     INDENT,
@@ -12,6 +13,7 @@ from tools.ir.pyir.base import (
     Expr,
     IterExprs,
     Lines,
+    RefRepl,
     RuntimeScope,
     TypedExtRef,
     TypedRef,
@@ -47,6 +49,21 @@ class TypeAlias[E: Expr = Expr](Definition):
         for param in self.type_params:
             yield from param.iter_exprs()
 
+    def with_refs(self, repl: RefRepl, /) -> Self | TypeAlias:
+        current = self.expr
+        expr_changed = self.expr.with_refs(repl)
+        if not self.type_params:
+            if current == expr_changed:
+                return self
+            return copy_replace(self, expr=expr_changed)
+        changes: dict[str, t.Any] = {"expr": expr_changed} if current != expr_changed else {}
+        params_changed = tuple(p.with_refs(repl) for p in self.type_params)
+        if params_changed != self.type_params:
+            changes["type_params"] = params_changed
+        if not changes:
+            return self
+        return copy_replace(self, **changes)
+
 
 @t.final
 class NewTypeStr(Definition):
@@ -81,6 +98,12 @@ class NamedTuple(Definition):
     def iter_exprs(self) -> IterExprs:
         for f in self.fields:
             yield from f.iter_exprs()
+
+    def with_refs(self, repl: RefRepl, /) -> NamedTuple:
+        changed = tuple(f.with_refs(repl) for f in self.fields)
+        if self.fields == changed:
+            return self
+        return self.__replace__(fields=changed)
 
 
 type BaseTD = sf.TypedDict | sf.Generic | TypedRef[OpenDict] | TypedExtRef[OpenDict]
@@ -135,6 +158,19 @@ class _Dict(Definition):
         for base in self.bases:
             yield from base.iter_exprs()
 
+    def with_refs(self, repl: RefRepl, /) -> Self:
+        changes: dict[str, t.Any] = {}
+        fields_changed = tuple(p.with_refs(repl) for p in self.fields)
+        if fields_changed != self.fields:
+            changes["fields"] = fields_changed
+        if self.bases != (sf.TYPED_DICT,):
+            bases_changed = tuple(b.with_refs(repl) for b in self.bases)
+            if self.bases != bases_changed:
+                changes["bases"] = bases_changed
+        if not changes:
+            return self
+        return copy_replace(self, **changes)
+
 
 @t.final
 class OpenDict(_Dict): ...
@@ -158,3 +194,10 @@ class ExtraDict(_Dict):
     def iter_exprs(self) -> IterExprs:
         yield from super().iter_exprs()
         yield from self.extra_items.iter_exprs()
+
+    def with_refs(self, repl: RefRepl, /) -> ExtraDict:
+        out = super().with_refs(repl)
+        extra_items = self.extra_items.with_refs(repl)
+        if self.extra_items == extra_items:
+            return out
+        return out.__replace__(extra_items=extra_items)

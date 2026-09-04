@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import functools
+
 # ruff: file-ignore[print]
 from collections import deque
 from typing import TYPE_CHECKING, final
 
 from tools import fs, serde
-from tools.common import PyIdentifierSnake
+from tools.common import PyIdentifierSnake, into_repl_map
 from tools.ir import json_wrapper as jw, mlir, pyir
 from tools.models.config import MosaicSpecToml
 from tools.models.mosaic import InputSchema
@@ -16,6 +18,9 @@ if TYPE_CHECKING:
     from tools.models.base import IdName
 
 type CanonicalPath = str
+
+type _PyIRRefMap = dict[pyir.UntypedRef | pyir.UntypedExtRef, pyir.TypedRef | pyir.TypedExtRef]
+"""Very long, unfortunate type."""
 
 
 @final
@@ -261,8 +266,56 @@ class App:
 
     def module(self, name: CanonicalPath | str, /) -> pyir.Module:
         """Return the `PyIR` representation of module `name`."""
-        name = name if name.startswith("mosaic_spec") else f"mosaic_spec._gen.{name}"
-        return self._modules[name]
+        return self._modules[canonical_path(name)]
+
+    def resolve_all_references(self) -> None:
+        """Convert all untyped references to typed references.
+
+        After this operation, every `PyIR` can be rendered.
+
+        ## Notes
+        - This is the most expensive version of what this *could be*
+            - **Takes around 20ms**
+        - Most places where it is *expected* to be needed are not ready yet
+            - `TypeVar`
+            - `TypedDict` bases
+            - `TypeAliasType` type params
+        """
+        modules = self._modules
+        done = {}
+        # typing is not strictly accurate, but this pleases invariance
+        resolved_ext_refs: _PyIRRefMap = {}
+        for canonical_path, module in modules.items():
+            # Fast path 1
+            if not module.definitions:
+                done[canonical_path] = module
+                continue
+
+            replace: _PyIRRefMap = {}
+            unique_refs = module.unique_refs()
+            unique_ext_refs = module.unique_ext_refs()
+            replace.update((ref, module.typed_ref(ref)) for ref in unique_refs)
+            if unique_ext_refs:
+                # NOTE: Takes advantage of dependencies being repetitive
+                # - 6 have no dependencies
+                # - 5 only depend on `params.ParamRef`
+                # - 4 remain (mosaic, marks, plot, layout)
+                replace_ext: _PyIRRefMap = {
+                    ref: resolved_ext_refs.get(ref) or typed_ext_ref(modules, ref)
+                    for ref in unique_ext_refs
+                }
+                replace.update(replace_ext)
+                resolved_ext_refs.update(replace_ext)
+
+            # Fast path 2
+            if not replace:
+                done[canonical_path] = module
+                continue
+
+            # NOTE: We have *some* work to do
+            done[canonical_path] = module.with_refs(into_repl_map(replace))
+
+        self._modules = done
 
     def _read_sources(self) -> Iterator[InputSchema]:
         if not (sources := self.config.convert.sources):
@@ -280,3 +333,17 @@ class App:
                 print(f"  Running action {idx} {action!r}")
             roots = deque(action.run(roots))
         return roots
+
+
+@functools.cache
+def canonical_path(name: CanonicalPath | str, /) -> CanonicalPath:
+    return name if name.startswith("mosaic_spec") else f"mosaic_spec._gen.{name}"
+
+
+def typed_ext_ref(
+    modules: dict[CanonicalPath, pyir.Module], expr: pyir.UntypedExtRef, /
+) -> pyir.TypedExtRef:
+    ref = expr.ref
+    ext = expr.ext
+    ext_module = modules[canonical_path(ext)]
+    return pyir.TypedExtRef(ext=ext, ref=ref, type=type(ext_module.definitions[ref]))

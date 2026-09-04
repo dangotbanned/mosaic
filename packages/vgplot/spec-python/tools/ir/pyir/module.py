@@ -13,6 +13,7 @@ from tools.ir.pyir import convert
 from tools.ir.pyir.base import (
     Definition,
     IterExprs,
+    RefRepl,
     TypedExtRef,
     TypedRef,
     UntypedExtRef,
@@ -106,6 +107,13 @@ class Module(base.Struct, kw_only=True):
         }
         yield from TopologicalSorter(graph).static_order()
 
+    def with_refs(self, repl: RefRepl, /) -> Module:
+        return self.__replace__(
+            definitions={
+                def_name: defn.with_refs(repl) for def_name, defn in self.definitions.items()
+            }
+        )
+
     def iter_exprs(self) -> IterExprs:
         for defn in self.definitions.values():
             yield from defn.iter_exprs()
@@ -120,3 +128,8 @@ class Module(base.Struct, kw_only=True):
         """Retrieve the type of a same-module reference."""
         name = expr.ref
         return TypedRef(ref=name, type=type(self.definitions[name]))
+
+    def depends_ext(self) -> set[PyIdentifierSnake]:
+        """Return the set of module names that this one depends on."""
+        tps = UntypedExtRef, TypedExtRef
+        return {expr.ext for expr in self.iter_exprs() if isinstance(expr, tps)}

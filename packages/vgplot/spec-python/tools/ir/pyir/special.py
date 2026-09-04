@@ -8,7 +8,7 @@ from __future__ import annotations
 import typing as t
 from typing import Literal as L
 
-from tools.ir.pyir.base import IterExprs, PyIR, RuntimeScope, join_comma
+from tools.ir.pyir.base import IterExprs, PyIR, RefRepl, RuntimeScope, join_comma
 
 if t.TYPE_CHECKING:
     from tools.ir.pyir.type_param import TypeVar
@@ -23,6 +23,9 @@ class TypedDict(PyIR):
 
     def iter_exprs(self) -> IterExprs:
         yield from ()
+
+    def with_refs(self, repl: RefRepl, /) -> TypedDict:
+        return self
 
 
 TYPED_DICT: t.Final = TypedDict()
@@ -40,3 +43,9 @@ class Generic(PyIR):
     def iter_exprs(self) -> IterExprs:
         for param in self.type_params:
             yield from param.iter_exprs()
+
+    def with_refs(self, repl: RefRepl, /) -> Generic:
+        params_changed = tuple(p.with_refs(repl) for p in self.type_params)
+        if params_changed != self.type_params:
+            return self.__replace__(type_params=params_changed)
+        return self

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import typing as t
+from typing import Self
 
-from tools.ir.pyir.base import Expr, IterExprs, Lines, PyIR, TypeExpr
+from tools.common import copy_replace
+from tools.ir.pyir.base import Expr, IterExprs, Lines, PyIR, RefRepl, TypeExpr
 
 
 class Qualifier(PyIR):
@@ -21,6 +23,13 @@ class Qualifier(PyIR):
 
     def iter_exprs(self) -> IterExprs:
         yield from self.expr.iter_exprs()
+
+    def with_refs(self, repl: RefRepl, /) -> Self:
+        current = self.expr
+        maybe_changed = self.expr.with_refs(repl)
+        if current == maybe_changed:
+            return self
+        return copy_replace(self, expr=maybe_changed)
 
 
 @t.final

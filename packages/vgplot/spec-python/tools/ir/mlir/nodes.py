@@ -5,6 +5,7 @@ import typing
 from typing import Final, Self, final
 
 from tools import ds
+from tools.common import copy_replace
 from tools.models import base
 from tools.models.base import Lit
 
@@ -17,18 +18,6 @@ if typing.TYPE_CHECKING:
 
 # NOTE: Use this instead of importing `Any`, since we have one defined here
 type Incomplete = typing.Any
-
-
-def copy_replace(obj: Incomplete, /, **changes: Incomplete) -> Incomplete:
-    """Identical to `copy.replace`, but silences an unresolved 3.13 regression.
-
-    Maybe one day someone will make covariance possible again.
-
-    ## Related
-    - https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
-    - https://github.com/python/typeshed/issues/15973
-    """
-    return obj.__replace__(**changes)
 
 
 class MLIR(base.FrozenHashableStruct):

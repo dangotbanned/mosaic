@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing as t
 
 from tools.codegen.docstrings import doc
-from tools.ir.pyir.base import Definition, Expr, IterExprs, Lines, RuntimeScope, join_comma
+from tools.ir.pyir.base import Definition, Expr, IterExprs, Lines, RefRepl, RuntimeScope, join_comma
 
 
 @t.final
@@ -24,3 +24,16 @@ class TypeVar(Definition):
             yield from bound.iter_exprs()
         for constraint in self.constraints:
             yield from constraint.iter_exprs()
+
+    def with_refs(self, repl: RefRepl, /) -> TypeVar:
+        changes: dict[str, t.Any] = {}
+        if bound := self.bound:
+            bound_changed = bound.with_refs(repl)
+            if bound_changed is not bound:
+                changes["bound"] = bound_changed
+        constraints_changed = tuple(constraint.with_refs(repl) for constraint in self.constraints)
+        if constraints_changed != self.constraints:
+            changes["constraints"] = constraints_changed
+        if not changes:
+            return self
+        return self.__replace__(**changes)

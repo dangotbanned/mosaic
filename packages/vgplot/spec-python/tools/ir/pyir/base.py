@@ -1,8 +1,19 @@
+"""Design notes.
+
+## Notes
+- `msgspec` may be limiting in how much metaprogramming can happen
+- would be nice to use descriptors for
+    - Is this in annotation scope?
+    - Which fields contain expresions?
+    - Something like `ExprIR` traversal stuff
+"""
+
 from __future__ import annotations
 
 import typing as t
-from typing import Annotated as A, Literal as L, LiteralString as LS
+from typing import Annotated as A, Literal as L, LiteralString as LS, Self
 
+import tools.common
 from tools.models import base
 
 if t.TYPE_CHECKING:
@@ -56,6 +67,8 @@ definition order and cyclic references.
 [ForwardRef]: https://docs.python.org/3/library/typing.html#typing.ForwardRef
 """
 
+type RefRepl = tools.common.ReplMap[UntypedRef | UntypedExtRef, TypedRef | TypedExtRef]
+
 INDENT: t.Final = " " * 4
 
 
@@ -75,6 +88,9 @@ class PyIR(base.FrozenHashableStruct):
         msg = f"{type(self).__name__}.{self.iter_exprs.__name__}() is not yet implemented. Got:\n{self!r}"
         raise NotImplementedError(msg)
 
+    def with_refs(self, repl: RefRepl, /) -> Self | PyIR:
+        return self
+
 
 class Expr(PyIR):
     """A [type expression][1].
@@ -93,6 +109,9 @@ class Expr(PyIR):
     def iter_exprs(self) -> IterExprs:
         yield self
 
+    def with_refs(self, repl: RefRepl, /) -> Self | Expr:
+        return self
+
 
 class Definition(PyIR):
     """A named definition."""
@@ -104,22 +123,35 @@ class Definition(PyIR):
         """Refer to this symbol as a type expression."""
         return TypeExpr(self.name)
 
+    def with_refs(self, repl: RefRepl, /) -> Self | Definition:
+        return self
 
-class UntypedRef(Expr):
-    """Placeholder for `TypedRef`."""
 
+class _Ref(Expr):
     ref: PyIdentifier
 
 
-class UntypedExtRef(Expr):
-    """Placeholder for `TypedExtRef`."""
-
+class _ExtRef(Expr):
     ext: PyIdentifierSnake
     ref: PyIdentifier
 
 
+class UntypedRef(_Ref, order=True):
+    """Placeholder for `TypedRef`."""
+
+    def with_refs(self, repl: RefRepl, /) -> Self | TypedRef | TypedExtRef:
+        return repl(self) or self
+
+
+class UntypedExtRef(_ExtRef, order=True):
+    """Placeholder for `TypedExtRef`."""
+
+    def with_refs(self, repl: RefRepl, /) -> Self | TypedRef | TypedExtRef:
+        return repl(self) or self
+
+
 @t.final
-class TypedRef[D: Definition = Definition](Expr):
+class TypedRef[D: Definition = Definition](_Ref):
     """A reference to a resolved `Definition` type.
 
     ## Notes
@@ -128,20 +160,34 @@ class TypedRef[D: Definition = Definition](Expr):
     - But must be known before trying to synthesize base class typed dicts
     """
 
-    ref: PyIdentifier
     type: type[D]
 
     def as_base(self) -> str:
         return self.ref
+
+    def display(self) -> str:
+        """Debug repr."""
+        return f"{self.__class__.__name__}[{self.type.__name__}]({self.ref!r})"
+
+    def with_refs(self, repl: RefRepl, /) -> Self:
+        return self
+
+    def __str__(self) -> TypeExpr:
+        return TypeExpr(self.ref)
 
 
 @t.final
-class TypedExtRef[D: Definition = Definition](Expr):
+class TypedExtRef[D: Definition = Definition](_ExtRef):
     """A reference to a resolved `Definition` type, originated from an external module."""
 
-    ext: PyIdentifierSnake
-    ref: PyIdentifier
     type: type[D]
 
     def as_base(self) -> str:
         return self.ref
+
+    def with_refs(self, repl: RefRepl, /) -> Self:
+        return self
+
+    def __str__(self) -> TypeExpr:
+        # NOTE: later, it might make sense to be smarter about using `ext.ref` to avoid collisions
+        return TypeExpr(self.ref)

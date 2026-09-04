@@ -8,7 +8,7 @@ from itertools import chain
 from typing import TYPE_CHECKING, Any, Final, NewType
 
 if TYPE_CHECKING:
-    from collections.abc import Collection, Iterator, Mapping
+    from collections.abc import Callable, Collection, Iterator, Mapping
 
     from typing_extensions import (
         Sentinel as sentinel,  # ruff: ignore[camelcase-imported-as-lowercase]
@@ -29,6 +29,17 @@ PyIdentifierSnake = NewType("PyIdentifierSnake", str)
 
 [1]: https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords
 """
+
+type Incomplete = t.Any
+
+type ReplMap[T, R] = Callable[[T], R | None]
+"""A function that returns a replacement, if needed."""
+
+
+def into_repl_map[T, R](mapping: Mapping[T, R], /) -> ReplMap[T, R]:
+    """Convert a replacement mapping into a function."""
+    return mapping.get
+
 
 POUND_DEFS: Final = "#/definitions/"
 
@@ -158,3 +169,15 @@ def qualified_type_name(obj: object | type[Any], /) -> str:
     tp = obj if isinstance(obj, type) else type(obj)
     module = tp.__module__ if tp.__module__ != "builtins" else ""
     return f"{module}.{tp.__name__}".lstrip(".")
+
+
+def copy_replace(obj: Incomplete, /, **changes: Incomplete) -> Incomplete:
+    """Identical to `copy.replace`, but silences an unresolved 3.13 regression.
+
+    Maybe one day someone will make covariance possible again.
+
+    ## Related
+    - https://discuss.python.org/t/make-replace-stop-interfering-with-variance-inference/96092
+    - https://github.com/python/typeshed/issues/15973
+    """
+    return obj.__replace__(**changes)

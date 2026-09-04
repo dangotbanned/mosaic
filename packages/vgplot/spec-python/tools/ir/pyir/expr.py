@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import typing as t
-from typing import Literal as L
+from typing import Literal as L, Self
 
-from tools.ir.pyir.base import Expr, IterExprs, TypeExpr, join_comma, join_or
+from tools.common import copy_replace
+from tools.ir.pyir.base import Expr, IterExprs, RefRepl, TypeExpr, join_comma, join_or
 from tools.models import base
 
 if t.TYPE_CHECKING:
@@ -86,48 +87,53 @@ class Union(Expr):
         for m in self.members:
             yield from m.iter_exprs()
 
+    def with_refs(self, repl: RefRepl, /) -> Union:
+        new_members = tuple(member.with_refs(repl) for member in self.members)
+        if self.members == new_members:
+            return self
+        return self.__replace__(members=new_members)
 
-@t.final
-class Mapping(Expr):
-    """A representation of a `collections.abc.Mapping`, with str keys."""
 
+class _HasExpr(Expr):
     expr: Expr
-
-    def __str__(self) -> TypeExpr:
-        return TypeExpr(f"Mapping[str, {self.expr}]")
 
     def iter_exprs(self) -> IterExprs:
         yield self
         yield from self.expr.iter_exprs()
 
+    def with_refs(self, repl: RefRepl, /) -> Self:
+        current = self.expr
+        maybe_changed = self.expr.with_refs(repl)
+        if current == maybe_changed:
+            return self
+        return copy_replace(self, expr=maybe_changed)
+
 
 @t.final
-class Sequence(Expr):
+class Mapping(_HasExpr):
+    """A representation of a `collections.abc.Mapping`, with str keys."""
+
+    def __str__(self) -> TypeExpr:
+        return TypeExpr(f"Mapping[str, {self.expr}]")
+
+
+@t.final
+class Sequence(_HasExpr):
     """A representation of a `collections.abc.Sequence`."""
 
-    expr: Expr
     _ALIAS: t.ClassVar[L["Sequence"]] = "Sequence"
 
     def __str__(self) -> TypeExpr:
         return TypeExpr(f"{self._ALIAS}[{self.expr}]")
 
-    def iter_exprs(self) -> IterExprs:
-        yield self
-        yield from self.expr.iter_exprs()
-
 
 @t.final
-class HomogeneousTuple(Expr):
-    expr: Expr
+class HomogeneousTuple(_HasExpr):
     length: int
 
     def __str__(self) -> TypeExpr:
         tp = self.expr.__str__()
         return TypeExpr(f"tuple[{join_comma(tp for _ in range(self.length))}]")
-
-    def iter_exprs(self) -> IterExprs:
-        yield self
-        yield from self.expr.iter_exprs()
 
 
 @t.final
@@ -149,6 +155,18 @@ class Annotated(Expr):
         yield from self.origin.iter_exprs()
         for m in self.metadata:
             yield from m.iter_exprs()
+
+    def with_refs(self, repl: RefRepl, /) -> Annotated:
+        changes: dict[str, t.Any] = {}
+        origin_changed = self.origin.with_refs(repl)
+        if origin_changed is not self.origin:
+            changes["origin"] = origin_changed
+        metadata_changed = tuple(m.with_refs(repl) for m in self.metadata)
+        if self.metadata != metadata_changed:
+            changes["metadata"] = metadata_changed
+        if not changes:
+            return self
+        return self.__replace__(**changes)
 
 
 # NOTE: A new invention?
@@ -201,19 +219,19 @@ class NamedTuple(Expr):
         for f in self.fields:
             yield from f.iter_exprs()
 
+    def with_refs(self, repl: RefRepl, /) -> NamedTuple:
+        changed = tuple(f.with_refs(repl) for f in self.fields)
+        if self.fields == changed:
+            return self
+        return self.__replace__(fields=changed)
+
 
 @t.final
-class ForwardRef(Expr):
+class ForwardRef(_HasExpr):
     """A [stringified][1] type expression.
 
     [1]: https://typing.python.org/en/latest/spec/annotations.html#string-annotations
     """
 
-    expr: Expr
-
     def __str__(self) -> TypeExpr:
         return TypeExpr(f'"{self.expr}"')
-
-    def iter_exprs(self) -> IterExprs:
-        yield self
-        yield from self.expr.iter_exprs()
