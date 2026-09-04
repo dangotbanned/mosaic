@@ -91,7 +91,7 @@ class NamedTuple(Definition):
     def iter_lines(self) -> Lines:
         yield f"class {self.name}(NamedTuple):"
         if self.doc:
-            yield doc(f"{INDENT}{self.doc}")
+            yield f'{INDENT}"""{self.doc}"""'
         for line in chain.from_iterable(fld.iter_lines() for fld in self.fields):
             yield f"{INDENT}{line}"
 
@@ -148,7 +148,7 @@ class _Dict(Definition):
         )
         yield f"class {self.name}({inheritance_list}):"
         if self.doc:
-            yield doc(f"{INDENT}{self.doc}")
+            yield f'{INDENT}"""{self.doc}"""'
         for line in chain.from_iterable(fld.iter_lines() for fld in self.fields):
             yield f"{INDENT}{line}"
 
