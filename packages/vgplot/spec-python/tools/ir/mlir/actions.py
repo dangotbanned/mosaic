@@ -74,9 +74,6 @@ class _Base[O: cfg.IterOver](Protocol):
             cls._kind = kind
 
 
-type Todo = typing.Any
-
-
 class _MultiOver[O: cfg.IterOver](_Base[O], Protocol):
     __slots__ = ("_over",)
     _over: O
@@ -154,25 +151,6 @@ def actions_plugin[Fn: PluginImpl](function: Fn, /) -> Fn:
     ```
     """
     return function
-
-
-class AsRef[O: L["children", "descendants"]](_MultiOver[O]):
-    __slots__ = ("match_doc", "name", "type")
-
-    def __init__(
-        self,
-        matcher: Matcher,
-        over: O,
-        name: DefName,
-        type: Todo,  # ruff: ignore[builtin-argument-shadowing]
-        *,
-        match_doc: bool,
-    ) -> None:
-        self.matcher = matcher
-        self._over = over
-        self.name = name
-        self.type = type
-        self.match_doc = match_doc
 
 
 class NewTree[O: L["definitions", "descendants"]](_MultiOver[O]):
@@ -441,11 +419,6 @@ def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]
                 item = Remove(Matcher.from_scopes(scope))
             case cfg.NewTreeAction(scope=scope, id=id, into_ext_ref=into_ext_ref):
                 item = NewTree(Matcher.from_scopes(scope), scope.over, id, into_ext_ref)
-            case cfg.AsRefAction(scope=scope, name=name, type=type, match_doc=match_doc):
-                # NOTE: Pretty cool that `pyright` reports this here tbf
-                item = AsRef(  # pyright: ignore[reportAbstractUsage]
-                    Matcher.from_scopes(scope), scope.over, name, type, match_doc=match_doc
-                )
             case cfg.AsDefsAction(scope=scope):
                 item = AsDefs(Matcher.from_scopes(scope))
             case cfg.RenameFieldsAction(scope=scope, overrides=overrides):

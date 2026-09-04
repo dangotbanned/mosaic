@@ -33,12 +33,6 @@ type MLIRType = L[
     "VariantHomogeneousTuple",
 ]
 
-type Todo = typing.Any
-"""Defining this type requires a refactor to prevent forward refs.
-
-Doing that is a good idea, so this marker is a reminder.
-"""
-
 type UnwrapPolicy = L["longest", "shortest", "inner", "outer"]
 type Depth = L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -273,28 +267,6 @@ class DefsDescendantsScope(
             yield "ref_follow_depth", self.ref_follow_depth
 
 
-@final
-class ChildrenDescendantsScope(
-    _BaseScopes[L["children", "descendants"]], frozen=True, kw_only=True, forbid_unknown_fields=True
-):
-    over: L["children", "descendants"] = "children"
-    ref_follow_depth: Depth = 0
-    """Resolve references to a maximum of this depth, before stopping a search.
-
-    By default, refs are left unresolved.
-    Each increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.
-    This model chooses not to support an "unbounded" search.
-    """
-
-    def __bool__(self) -> bool:
-        return bool(self.ref_follow_depth or self.include or self.exclude)
-
-    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
-        yield from super().__rich_repr__()
-        if self.ref_follow_depth:
-            yield "ref_follow_depth", self.ref_follow_depth
-
-
 class PluginScope(_BaseScopes[IterOver], frozen=True, kw_only=True, forbid_unknown_fields=True):
     over: IterOver = "definitions"
     ref_follow_depth: Depth = 0
@@ -322,14 +294,8 @@ class AsDefsAction(
     tag_field="action",
     forbid_unknown_fields=True,
 ):
-    """Lift one or more anonymous types into new definitions.
+    """Lift one or more anonymous types, within a union, into new definitions."""
 
-    Similar to `"as-ref"`, but aimed at naming multiple *distinct* types that are nested at a single location.
-
-    Whereas `"as-ref"` is suited for a single *duplicated* type found in multiple locations.
-    """
-
-    # NOTE: `DensityX`, `DensityY` don't quite fit `"as-ref"` as they have 4 members each
     scope: ChildrenScope = field(default_factory=ChildrenScope)
 
 
@@ -348,41 +314,6 @@ class AsDefsFieldAction(
     """
 
     scope: ChildrenScope = field(default_factory=ChildrenScope)
-
-
-# TODO @dangotbanned: Implement `"as-ref"`
-@final
-class AsRefAction(
-    _BaseAction[L["children", "descendants"]],
-    frozen=True,
-    kw_only=True,
-    tag="as-ref",
-    tag_field="action",
-    forbid_unknown_fields=True,
-):
-    """Replace all anonymous matches with a reference to this new definition.
-
-    Aiming to do the heavy lifting for de-duplicating anonymous unions.
-    """
-
-    scope: ChildrenDescendantsScope = field(default_factory=ChildrenDescendantsScope)
-    name: DefName
-    """The name of the new definition."""
-    type: Todo
-    """The new definition itself.
-
-    Will appear as a new entry in `definitions`.
-    """
-    match_doc: bool = False
-    """Require `type.doc == candidate.doc` for a successful match.
-
-    By default, action can define a new `doc` and match anonymous types which never had one.
-
-    However, `True` may make sense when a `doc` exists due to obfuscation
-    (e.g. `--expose=export` in [ts-json-schema-generator][1]).
-
-    [1]: https://github.com/vega/ts-json-schema-generator#options
-    """
 
 
 @final
@@ -473,21 +404,16 @@ class PluginAction(
     """Namespace for arbitrary data passed to the plugin."""
 
 
-type ActionKind = L[
-    "as-ref", "as-defs", "as-defs-field", "rename-fields", "new-tree", "remove", "plugin"
-]
+type ActionKind = L["as-defs", "as-defs-field", "rename-fields", "new-tree", "remove", "plugin"]
 type Action = (
-    AsRefAction
-    | AsDefsAction
+    AsDefsAction
     | AsDefsFieldAction
     | NewTreeAction
     | RemoveAction
     | RenameFieldsAction
     | PluginAction
 )
-type Scopes = (
-    ChildrenScope | DefsScope | ChildrenDescendantsScope | DefsDescendantsScope | PluginScope
-)
+type Scopes = ChildrenScope | DefsScope | DefsDescendantsScope | PluginScope
 
 _ACTION_KIND: typing.Final[tuple[ActionKind, ...]] = typing.get_args(ActionKind.__value__)
 

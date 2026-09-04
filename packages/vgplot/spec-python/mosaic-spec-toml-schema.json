@@ -2,10 +2,10 @@
   "$defs": {
     "AsDefsAction": {
       "additionalProperties": false,
-      "description": "Lift one or more anonymous types into new definitions.\n\nSimilar to `\"as-ref\"`, but aimed at naming multiple *distinct* types that are nested at a single location.\n\nWhereas `\"as-ref\"` is suited for a single *duplicated* type found in multiple locations.",
+      "description": "Lift one or more anonymous types, within a union, into new definitions.",
       "properties": {
         "action": {
-          "description": "Lift one or more anonymous types into new definitions.\n\nSimilar to `\"as-ref\"`, but aimed at naming multiple *distinct* types that are nested at a single location.\n\nWhereas `\"as-ref\"` is suited for a single *duplicated* type found in multiple locations.",
+          "description": "Lift one or more anonymous types, within a union, into new definitions.",
           "enum": [
             "as-defs"
           ]
@@ -38,40 +38,6 @@
         "action"
       ],
       "title": "AsDefsFieldAction",
-      "type": "object"
-    },
-    "AsRefAction": {
-      "additionalProperties": false,
-      "description": "Replace all anonymous matches with a reference to this new definition.\n\nAiming to do the heavy lifting for de-duplicating anonymous unions.",
-      "properties": {
-        "action": {
-          "description": "Replace all anonymous matches with a reference to this new definition.\n\nAiming to do the heavy lifting for de-duplicating anonymous unions.",
-          "enum": [
-            "as-ref"
-          ]
-        },
-        "match_doc": {
-          "default": false,
-          "description": "Require `type.doc == candidate.doc` for a successful match.\n\nBy default, action can define a new `doc` and match anonymous types which never had one.\n\nHowever, `True` may make sense when a `doc` exists due to obfuscation\n(e.g. `--expose=export` in [ts-json-schema-generator][1]).\n\n[1]: https://github.com/vega/ts-json-schema-generator#options",
-          "type": "boolean"
-        },
-        "name": {
-          "description": "The name of the new definition.",
-          "type": "string"
-        },
-        "scope": {
-          "$ref": "#/$defs/ChildrenDescendantsScope"
-        },
-        "type": {
-          "description": "The new definition itself.\n\nWill appear as a new entry in `definitions`."
-        }
-      },
-      "required": [
-        "action",
-        "name",
-        "type"
-      ],
-      "title": "AsRefAction",
       "type": "object"
     },
     "Child": {
@@ -117,48 +83,6 @@
       },
       "required": [],
       "title": "Child",
-      "type": "object"
-    },
-    "ChildrenDescendantsScope": {
-      "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
-      "properties": {
-        "exclude": {
-          "$ref": "#/$defs/Filter",
-          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
-        },
-        "include": {
-          "$ref": "#/$defs/Filter",
-          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
-        },
-        "over": {
-          "default": "children",
-          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
-          "enum": [
-            "children",
-            "descendants"
-          ]
-        },
-        "ref_follow_depth": {
-          "default": 0,
-          "description": "Resolve references to a maximum of this depth, before stopping a search.\n\nBy default, refs are left unresolved.\nEach increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\nThis model chooses not to support an \"unbounded\" search.",
-          "enum": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10
-          ]
-        }
-      },
-      "required": [],
-      "title": "ChildrenDescendantsScope",
       "type": "object"
     },
     "ChildrenScope": {
@@ -302,9 +226,6 @@
           "items": {
             "anyOf": [
               {
-                "$ref": "#/$defs/AsRefAction"
-              },
-              {
                 "$ref": "#/$defs/AsDefsAction"
               },
               {
@@ -327,7 +248,6 @@
               "mapping": {
                 "as-defs": "#/$defs/AsDefsAction",
                 "as-defs-field": "#/$defs/AsDefsFieldAction",
-                "as-ref": "#/$defs/AsRefAction",
                 "new-tree": "#/$defs/NewTreeAction",
                 "plugin": "#/$defs/PluginAction",
                 "remove": "#/$defs/RemoveAction",
