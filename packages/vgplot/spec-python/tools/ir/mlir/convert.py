@@ -15,6 +15,8 @@ from tools.models.base import DefName, IdName, Lit
 if typing.TYPE_CHECKING:
     from collections.abc import Mapping
 
+    from _typeshed import SupportsRichComparison
+
 
 _JSON_PY_INST: Final[Mapping[jw.Scalar, mlir.PyBuiltin]] = {
     "boolean": mlir.PyBool(),
@@ -185,7 +187,6 @@ def _(obj: jw.Union, owner: DefName, /) -> mlir.Union:
     return mlir.Union(members=tuple(sorted(members, key=sort_key)), doc=obj.description)
 
 
-def sort_key(node: MLIR, /) -> str:
-    # Doesn't make this fully deterministic, but improves common cases
-    # of builtin unions
-    return node.__class__.__name__
+def sort_key(node: MLIR, /) -> SupportsRichComparison:
+    """Determinitic sort for all `MLIR` nodes."""
+    return node.__class__.__name__, node.__hash__()

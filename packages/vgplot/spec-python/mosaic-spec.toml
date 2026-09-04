@@ -113,9 +113,11 @@ scope.ref_follow_depth         = 1
 action                         = "new-tree"
 id                             = "marks"
 scope.include.id               = ["mosaic"]
-scope.include.definition.names = ["PlotMark"]
+# NOTE: `ChannelDomainSort` is reachable from `PlotMark`,
+# but MLIR field order is not deterministic and many things need to align for this to work.
+scope.include.definition.names = ["PlotMark", "ChannelDomainSort"]
 scope.over                     = "descendants"
-scope.ref_follow_depth         = 5
+scope.ref_follow_depth         = 3
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"

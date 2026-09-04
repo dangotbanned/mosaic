@@ -414,8 +414,8 @@ def dangling_ref_error(
     action: NewTree[Any], def_name: DefName, defn: Definition[Any], defs_moved: Iterable[DefName]
 ) -> TypeError:
     msg = (
-        f"{def_name!r} has references that are not owned by {action.id_output!r}, got:\n"
-        f"{ {ref.ref for ref in defn.refs}.difference(defs_moved) }.\n\n"
+        f"{def_name!r} has references that are not owned by {action.id_output!r}, "
+        f"got: {sorted({ref.ref for ref in defn.refs}.difference(defs_moved))}.\n"
         "Hints:\n"
         "- consider increasing `scope.ref_follow_depth` to collect more references\n"
         "- consider using `into_ext_ref` to define a cyclic dependency"
