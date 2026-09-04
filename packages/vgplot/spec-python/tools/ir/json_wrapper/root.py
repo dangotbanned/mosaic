@@ -6,13 +6,12 @@ from typing import TYPE_CHECKING, Any, Literal as L, TypeIs, assert_never, final
 import msgspec
 
 from tools.common import POUND_DEFS
-from tools.ir.json_wrapper.nodes import JsonWrapper, Object, Reference, Union, _from_schema
+from tools.ir.json_wrapper.nodes import JsonWrapper, Reference, _from_schema
 from tools.models import base
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from tools.models.base import DefName
     from tools.models.config import JsonWrapperToMLIR
     from tools.models.mosaic import InputSchema
 
@@ -38,12 +37,6 @@ class Root(base.Root[JsonWrapper], kw_only=True):
         """Yield all references within the entire schema."""
         for schema in self.definitions.values():
             yield from schema.iter_refs()
-
-    def get_object(self, name: DefName, /) -> Object:
-        return self.get_typed(name, Object)
-
-    def get_union(self, name: DefName, /) -> Union:
-        return self.get_typed(name, Union)
 
     def ref_unwrap(self, config: JsonWrapperToMLIR) -> None:
         """Rewrite top-level references.

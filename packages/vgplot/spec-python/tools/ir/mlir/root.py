@@ -30,14 +30,3 @@ class Root(base.Root[Definition[MLIR]], kw_only=True):
         *Unconditionally* recomputes reference information based on the new version.
         """
         self.definitions[name] = Definition.from_mlir(node)
-
-    def replace_naive(self, name: DefName, node: MLIR, /) -> None:
-        """Replace an existing definition with an updated version.
-
-        *Naive* as we assume that because the definition didn't start with references, it never will.
-        """
-        current_defn = self[name]
-        if current_defn.has_references():
-            self.replace(name, node)
-        else:
-            self.definitions[name] = current_defn.__replace__(inner=node)

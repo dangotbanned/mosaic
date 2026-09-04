@@ -24,7 +24,6 @@ if typing.TYPE_CHECKING:
     from tools.models.config import Depth, Scopes
 
 type Unused = typing.Any
-type Incomplete = typing.Any
 # NOTE: `pyrefly` stops understanding `tuple` if this is simplified
 type DefsEntries[D: MLIR = MLIR] = Iterable[tuple[DefName, Definition[D]]]
 type IdMatcher = IdAlways | IdInclude | IdNotExclude
@@ -56,12 +55,6 @@ is_inner_fields: Callable[[Definition[Any]], TypeIs[Definition[HasFields]]] = in
 
 
 class Matcher:
-    # NOTE: For this part, some options are:
-    # 1. Treat every action as an individual. Do everything sequentially. Use the scope as-is.
-    # 2. Transform `Scopes` into something to base decisions on
-    #   i. Possibly in combination with others, to decide what kind of "cleanup" would be needed
-    # 3. Transform `Scopes` into a "compiled" representation
-    #   i. Calling the compiled version will be a single call, instead of checking 19 different conditions
     __slots__ = ("child", "definition", "field", "id", "ref_follow_depth")
     id: IdMatcher
     definition: DefsMatcher
@@ -84,10 +77,6 @@ class Matcher:
         return self.field.iter_children(
             ((k, v) for k, v in self.matching_definitions(root) if is_inner_fields(v))
         )
-
-    def matching_descendants(self, root: Root) -> Incomplete:
-        msg = "TODO @dangotbanned: Move things from `actions.py` to here"
-        raise NotImplementedError(msg)
 
     def matches_root(self, root: Root) -> bool:
         return self.id.matches(root.id)

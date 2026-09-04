@@ -32,9 +32,6 @@ class Definition[T: MLIR](base.Struct, kw_only=True):
             inner=defn, refs=set(defn.iter_refs()), ext_refs=set(defn.iter_ext_refs())
         )
 
-    def has_references(self) -> bool:
-        return bool(self.refs or self.ext_refs)
-
     @t.overload
     def field(self, name: str, /, *, allow_missing: L[False] = False) -> Field: ...
     @t.overload

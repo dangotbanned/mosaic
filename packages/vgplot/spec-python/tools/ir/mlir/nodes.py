@@ -116,9 +116,6 @@ class ExtReference(MLIR):
     def iter_ext_refs(self) -> Iterator[ExtReference]:
         yield self
 
-    def to_ref(self) -> Reference:
-        return Reference(ref=self.ref, doc=self.doc)
-
 
 @final
 class Any(MLIR):
