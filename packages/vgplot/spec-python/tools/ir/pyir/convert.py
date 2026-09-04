@@ -49,14 +49,22 @@ def into_expr(obj: MLIR) -> Expr:
     raise NotImplementedError(msg)
 
 
+# NOTE: SAFETY: Cache size bounds
+# - Worst case: bound by the number of definitions in all modules (228)
+# - Reality   : `CacheInfo(hits=1584, misses=181, maxsize=None, currsize=181)`
 @into_expr.register(mlir.Reference)
-def _(obj: mlir.Reference) -> UntypedRef:
-    return UntypedRef(inner=obj)
+@functools.cache
+def _ref(obj: mlir.Reference) -> UntypedRef:
+    return UntypedRef(ref=py_identifier(obj.ref))
 
 
+# NOTE: SAFETY: Cache size bounds
+# - Worst case: bound by the number of definitions in all modules (228)
+# - Reality   : `CacheInfo(hits=3789, misses=44, maxsize=None, currsize=44)`
 @into_expr.register(mlir.ExtReference)
-def _(obj: mlir.ExtReference) -> UntypedExtRef:
-    return UntypedExtRef(inner=obj)
+@functools.cache
+def _ext_ref(obj: mlir.ExtReference) -> UntypedExtRef:
+    return UntypedExtRef(ext=py_identifier_snake(obj.ext), ref=py_identifier(obj.ref))
 
 
 @into_expr.register(mlir.Literal)

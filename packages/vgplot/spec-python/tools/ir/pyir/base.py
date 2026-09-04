@@ -9,7 +9,6 @@ if t.TYPE_CHECKING:
     import collections.abc as cabc
 
     from tools.common import PyIdentifier, PyIdentifierSnake
-    from tools.ir.mlir import nodes as mlir
 
 
 type Line = str
@@ -94,13 +93,14 @@ class Definition(PyIR):
 class UntypedRef(Expr):
     """Placeholder for `TypedRef`."""
 
-    inner: mlir.Reference
+    ref: PyIdentifier
 
 
 class UntypedExtRef(Expr):
-    """Placeholder for `UntypedTypedRef`."""
+    """Placeholder for `TypedExtRef`."""
 
-    inner: mlir.ExtReference
+    ext: PyIdentifierSnake
+    ref: PyIdentifier
 
 
 class TypedRef[T: PyIR](PyIR):

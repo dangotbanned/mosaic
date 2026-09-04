@@ -249,6 +249,7 @@ class App:
         if not quiet:
             print(f"Finished generating with {len(self._modules)} modules(s).")
             print("\n".join(f" - {m}" for m in self._modules))
+            print(f"Total definitions: {sum(len(m.definitions) for m in self._modules.values())}")
 
     def mlir_root(self, id: IdName, /) -> mlir.Root:
         """Return the `MLIR` representation of module `id`."""
