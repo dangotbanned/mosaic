@@ -211,7 +211,7 @@ class App:
                 self._inputs.clear()
             self._inputs.extend(it)
 
-    def into_json_wrapper(self, *, refresh: bool = False) -> None:
+    def into_json_wrapper(self, *, refresh: bool = False, quiet: bool = False) -> None:
         if not self._wrappers or refresh:
             self.read_into_inputs(refresh=refresh)
             it = (jw.Root.from_input_schema(schema) for schema in self._inputs)
