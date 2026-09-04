@@ -53,7 +53,7 @@ def fix_tip(action: mlir.Plugin, roots: mlir.RootsMut) -> Iterator[mlir.Root]:
                     # Don't want to support that, things are confusing enough already
                     new_def_name = old_name.capitalize()
                     new_defs[new_def_name] = new_def(
-                        ClosedDict(fields=tip_fields, doc=old_field.doc)
+                        ClosedDict(fields=tip_fields, doc=old_field.doc)  # pyright: ignore[reportArgumentType]
                     )
                     new_fields[old_name] = old_field.with_type(
                         _replace_single_nested_member(old_tip_type, ref(new_def_name))
