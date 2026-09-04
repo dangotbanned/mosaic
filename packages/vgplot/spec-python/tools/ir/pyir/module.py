@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing as t
+from graphlib import TopologicalSorter
 from pathlib import Path  # ruff: ignore[typing-only-standard-library-import]
 from typing import Any
 
@@ -9,11 +10,18 @@ import msgspec
 from tools.codegen.convert import py_identifier_snake
 from tools.common import PyIdentifier, PyIdentifierSnake
 from tools.ir.pyir import convert
-from tools.ir.pyir.base import Definition, IterExprs, TypedRef, UntypedExtRef, UntypedRef
+from tools.ir.pyir.base import (
+    Definition,
+    IterExprs,
+    TypedExtRef,
+    TypedRef,
+    UntypedExtRef,
+    UntypedRef,
+)
 from tools.models import base
 
 if t.TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Iterator
 
     from tools.ir import mlir
 
@@ -78,9 +86,25 @@ class Module(base.Struct, kw_only=True):
 
     def preview(self) -> None:
         print(f"# Generated: {self.canonical_path}\n")
-        for defn in self.definitions.values():
-            print("\n".join(defn.iter_lines()))
+        get = self.definitions.__getitem__
+        for def_name in self.topological_sort():
+            print("\n".join(get(def_name).iter_lines()))
             print("\n")
+
+    def topological_sort(self) -> Iterator[PyIdentifier]:
+        """Return an iterator over a deterministic, [topological sort] within the bounds of this module.
+
+        In other words, return definition names before the names they depend on;
+        ensuring multiple runs produce the same order.
+
+        [topological sort]: https://docs.python.org/3/library/graphlib.html#graphlib.TopologicalSorter
+        """
+        tps = UntypedRef, TypedRef
+        graph = {
+            defn.name: sorted({expr.ref for expr in defn.iter_exprs() if isinstance(expr, tps)})
+            for defn in self.definitions.values()
+        }
+        yield from TopologicalSorter(graph).static_order()
 
     def iter_exprs(self) -> IterExprs:
         for defn in self.definitions.values():
