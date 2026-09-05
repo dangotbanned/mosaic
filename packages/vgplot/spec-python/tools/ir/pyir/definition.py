@@ -137,7 +137,6 @@ whereas `{Closed,Extra}Dict` are created during conversion of JSON Schema.
 _get_key = operator.itemgetter(0)
 
 
-# TODO @dangotbanned: This should've switched to using `ds.FrozenMap`
 class _Dict(Definition):
     fields: t.Final[ds.FrozenMap[PyIdentifierSnake, Field]]
     bases: RuntimeScope[tuple[BaseTD, ...]] = (sf.TYPED_DICT,)
@@ -215,3 +214,34 @@ class ExtraDict(_Dict):
         if self.extra_items == extra_items:
             return out
         return out.__replace__(extra_items=extra_items)
+
+
+def supertype(
+    definitions: Iterable[ClosedDict],
+    name: PyIdentifier,
+    *,
+    doc: str = "",
+    bases: RuntimeScope[tuple[BaseTD, ...]] = (sf.TYPED_DICT,),
+) -> OpenDict:
+    """Approximate a base class that all members of `definitions` can inherit from.
+
+    ## Notes
+    - This operation only makes sense if the common fields are non-generic
+    - Generic support requires checking the contents of the fields
+        - Could either do that implicitly, on request, or with a candidate field name?
+        - E.g. `"mark"`
+    """
+    it = iter(definitions)
+    fields = next(it).fields
+    first = frozenset(fields)
+    common = set(first)
+    common.intersection_update(*(defn.fields for defn in it))
+    if not common:
+        msg = "`definitions` have 0 common fields"
+        if isinstance(definitions, Collection):
+            msg += f", got:\n{definitions!r}"
+        raise TypeError(msg)
+
+    for f_name in first - common:
+        fields = fields.discard(f_name)
+    return OpenDict(name=name, fields=fields, bases=bases, doc=doc)
