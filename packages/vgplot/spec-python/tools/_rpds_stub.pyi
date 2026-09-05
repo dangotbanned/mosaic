@@ -34,19 +34,29 @@ class HashTrieMap[K, V](Mapping[K, V]):
     def __iter__(self) -> Iterator[K]: ...
     def __len__(self) -> int: ...
 
-    # NOTE: Didn't match the impl
-    # `#[pyo3(signature = (*maps, **kwds))]`
+    ##
     @overload
-    def update[K2, V2](self, *maps: _IntoMap[K2, V2]) -> HashTrieMap[K | K2, V | V2]: ...
+    def update[K2, V2](self, *maps: _IntoMap[K2, V2]) -> HashTrieMap[K | K2, V | V2]:
+        """Return a new mapping, with changes from `*maps`, `**kwds`.
+
+        Args:
+            *maps: One *or more* positional iterables/mappings.
+            **kwds: Keywords mapping keys to values.
+                `**kwds` will override `iterable` **and** change the order of the new mapping.
+
+        ## Important
+        Despite the name, this is not the same as [`MutableMapping.update`]
+
+        [`MutableMapping.update`]: https://github.com/python/typeshed/blob/bc016545988403f13b2dd9b56e88b931683c80b1/stdlib/typing.pyi#L854-L883
+        """
     @overload
     def update[V2](self, **kwds: V2) -> HashTrieMap[K | str, V | V2]: ...
     @overload
     def update[K2, V2](
         self, *maps: *tuple[_IntoMap[K2, V2], *tuple[_IntoMap[K2, V2]]], **kwds: V2
     ) -> HashTrieMap[K | K2 | str, V | V2]: ...
+
     # NOTE: `dict`-ish methods
-    # These stubs are derived from [typeshed]
-    # [typeshed]: https://github.com/python/typeshed/blob/bc016545988403f13b2dd9b56e88b931683c80b1/stdlib/builtins.pyi#L1288-L1313
     @overload
     def __init__(self, /) -> None: ...
     @overload
@@ -59,6 +69,8 @@ class HashTrieMap[K, V](Mapping[K, V]):
     def __init__[K2, V2](
         self: HashTrieMap[K2 | str, V2], iterable: _IntoMap[K2, V2], /, **kwds: V2
     ) -> None: ...
+
+    ##
     @classmethod
     @overload
     def fromkeys[K2](
@@ -68,7 +80,8 @@ class HashTrieMap[K, V](Mapping[K, V]):
     @classmethod
     @overload
     def fromkeys[K2, V2](cls, iterable: Iterable[K2], value: V2, /) -> HashTrieMap[K2, V2]: ...
-    # Non-mapping
+
+    # NOTE: Non-mapping methods
     @classmethod
     def convert[K2, V2](cls, value: _IntoMap[K2, V2], /) -> HashTrieMap[K2, V2]: ...
     def discard(self, key: K) -> Self: ...
