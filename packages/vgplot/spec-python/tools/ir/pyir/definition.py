@@ -84,6 +84,7 @@ class NewTypeStr(Definition):
         yield from ()
 
 
+# TODO @dangotbanned: Fix the field order being broken from the first `FrozenMap`
 @t.final
 class NamedTuple(Definition):
     """A representation of a `typing.NamedTuple`."""
