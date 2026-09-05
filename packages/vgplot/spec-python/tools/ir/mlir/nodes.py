@@ -298,9 +298,8 @@ class _BaseFields(_HasChildren):
         # NOTE: Resolving 2 problems
         # 1. `rich` renders `rpds.HashTrieMap` as a single line.
         #    This doesn't mix well with 40-500 fields
-        # 2. `rpds.HashTrieMap` appears to be either unordered,
-        #    or it is defined but seeded by something that I can't control
-        # Being unordered is okay, just need to sort things later
+        # 2. `rpds.HashTrieMap` does not preserve order
+        # Being unordered is okay (here), as the keys are sorted when generating code
         yield "fields", dict(sorted(self.iter_fields_items(), key=_get_name))
         yield "doc", self.doc
 

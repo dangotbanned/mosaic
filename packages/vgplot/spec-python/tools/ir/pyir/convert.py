@@ -3,6 +3,7 @@ from __future__ import annotations
 import functools
 import typing as t
 
+from tools import ds
 from tools.codegen.convert import py_identifier, py_identifier_snake
 from tools.ir.mlir import MLIR, Definition as mlir_Definition, nodes as mlir
 from tools.ir.pyir import definition as d, expr, qualifier as q, value
@@ -12,7 +13,7 @@ from tools.ir.pyir.field import Field
 if t.TYPE_CHECKING:
     from collections.abc import Iterator, Mapping
 
-    from tools.common import PyIdentifier
+    from tools.common import PyIdentifier, PyIdentifierSnake
     from tools.ir import pyir
     from tools.ir.pyir.base import Expr
     from tools.models.base import DefName
@@ -155,29 +156,27 @@ def _(obj: mlir.MLIR, name: PyIdentifier) -> t.Never:
     raise NotImplementedError(msg)
 
 
-def _td_fields(fields: Iterator[tuple[str, mlir.Field]]) -> tuple[Field, ...]:
-    return tuple(
-        Field(
-            name=py_identifier_snake(name),
-            expr=q.Required(expr=into_expr(f.type)) if f.required else into_expr(f.type),
-            doc=f.doc,
-        )
-        for name, f in fields
-    )
+def _td_fields(
+    obj: mlir.OpenDict | mlir.ClosedDict | mlir.ExtraDict,
+) -> Iterator[tuple[PyIdentifierSnake, Field]]:
+    for name, f in obj.iter_fields_items():
+        snake = py_identifier_snake(name)
+        expr = q.Required(expr=into_expr(f.type)) if f.required else into_expr(f.type)
+        yield (snake, Field(name=snake, expr=expr, doc=f.doc))
 
 
 @_from_def.register(mlir.OpenDict)
 @_from_def.register(mlir.ClosedDict)
 def _(obj: mlir.OpenDict | mlir.ClosedDict, name: PyIdentifier) -> d.OpenDict | d.ClosedDict:
     tp_pyir = d.ClosedDict if obj.__class__ is mlir.ClosedDict else d.OpenDict
-    return tp_pyir(name=name, fields=_td_fields(obj.iter_fields_items()), doc=obj.doc)
+    return tp_pyir(name=name, fields=ds.frozenmap(_td_fields(obj)), doc=obj.doc)
 
 
 @_from_def.register(mlir.ExtraDict)
 def _(obj: mlir.ExtraDict, name: PyIdentifier) -> d.ExtraDict:
     return d.ExtraDict(
         name=name,
-        fields=_td_fields(obj.iter_fields_items()),
+        fields=ds.frozenmap(_td_fields(obj)),
         extra_items=into_expr(obj.extra_items),
         doc=obj.doc,
     )

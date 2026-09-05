@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import operator
 import typing as t
+from collections.abc import Collection
 from itertools import chain
 from typing import Literal as L, Self
 
 from tools.codegen.docstrings import doc
-from tools.common import copy_replace
+from tools.common import PyIdentifier, PyIdentifierSnake, copy_replace
 from tools.ir.pyir import special as sf
 from tools.ir.pyir.base import (
     INDENT,
@@ -21,8 +23,9 @@ from tools.ir.pyir.base import (
 )
 
 if t.TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Iterable, Iterator
 
+    from tools import ds
     from tools.ir.pyir.field import Field
     from tools.ir.pyir.type_param import TypeVar
 
@@ -131,9 +134,12 @@ whereas `{Closed,Extra}Dict` are created during conversion of JSON Schema.
 [1]: https://typing.python.org/en/latest/spec/typeddict.html#inheritance
 """
 
+_get_key = operator.itemgetter(0)
 
+
+# TODO @dangotbanned: This should've switched to using `ds.FrozenMap`
 class _Dict(Definition):
-    fields: tuple[Field, ...]
+    fields: t.Final[ds.FrozenMap[PyIdentifierSnake, Field]]
     bases: RuntimeScope[tuple[BaseTD, ...]] = (sf.TYPED_DICT,)
     total: bool = False
 
@@ -142,6 +148,9 @@ class _Dict(Definition):
         if not self.total:
             yield "total=False"
 
+    def iter_fields_types(self) -> Iterator[Field]:
+        yield from self.fields.values()
+
     def iter_lines(self) -> Lines:
         inheritance_list = join_comma(
             chain((base.as_base() for base in self.bases), self.keywords())
@@ -149,20 +158,25 @@ class _Dict(Definition):
         yield f"class {self.name}({inheritance_list}):"
         if self.doc:
             yield f'{INDENT}"""{self.doc}"""'
-        for line in chain.from_iterable(fld.iter_lines() for fld in self.fields):
+        for line in chain.from_iterable(
+            f.iter_lines() for _, f in sorted(self.fields.items(), key=_get_key)
+        ):
             yield f"{INDENT}{line}"
 
     def iter_exprs(self) -> IterExprs:
-        for f in self.fields:
+        for f in self.iter_fields_types():
             yield from f.iter_exprs()
         for base in self.bases:
             yield from base.iter_exprs()
 
     def with_refs(self, repl: RefRepl, /) -> Self:
         changes: dict[str, t.Any] = {}
-        fields_changed = tuple(p.with_refs(repl) for p in self.fields)
-        if fields_changed != self.fields:
-            changes["fields"] = fields_changed
+        if fields_changed := {
+            name: out
+            for name, field in self.fields.items()
+            if (out := field.with_refs(repl)) is not field
+        }:
+            changes["fields"] = self.fields.update(fields_changed)
         if self.bases != (sf.TYPED_DICT,):
             bases_changed = tuple(b.with_refs(repl) for b in self.bases)
             if self.bases != bases_changed:
