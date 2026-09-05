@@ -5,14 +5,14 @@ import typing as t
 from tools.codegen.docstrings import doc
 from tools.common import copy_replace
 from tools.ir.pyir.base import Expr, IterExprs, Lines, PyIR, RefRepl
-from tools.ir.pyir.qualifier import NotRequired, Required
+from tools.ir.pyir.qualifier import Required
 
 if t.TYPE_CHECKING:
     from tools.common import PyIdentifierSnake
 
 
 @t.final
-class Field[T: Expr | Required | NotRequired = Expr | Required | NotRequired](PyIR):
+class Field[T: Expr | Required = Expr | Required](PyIR):
     name: PyIdentifierSnake
     expr: t.Final[T]
     doc: str = ""
@@ -25,7 +25,7 @@ class Field[T: Expr | Required | NotRequired = Expr | Required | NotRequired](Py
     def iter_exprs(self) -> IterExprs:
         yield from self.expr.iter_exprs()  # ty: ignore[invalid-argument-type]
 
-    # NOTE: Captures `NamedTuple` not supporting `Required`/`NotRequired`
+    # NOTE: Captures `NamedTuple` always being `Required`
     @t.overload
     def with_refs(self: Field[Expr], repl: RefRepl, /) -> Field[Expr]: ...
     @t.overload

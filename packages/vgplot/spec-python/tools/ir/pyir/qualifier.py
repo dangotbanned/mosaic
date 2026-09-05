@@ -37,10 +37,6 @@ class Required(Qualifier):
     """Marks a Field as required."""
 
 
-@t.final
-class NotRequired(Qualifier):
-    """Marks a Field as not required."""
-
 
 @t.final
 class ReadOnly(Qualifier):
