@@ -44,15 +44,17 @@ class HashTrieMap[K, V](Mapping[K, V]):
     def update[K2, V2](
         self, *maps: *tuple[_IntoMap[K2, V2], *tuple[_IntoMap[K2, V2]]], **kwds: V2
     ) -> HashTrieMap[K | K2 | str, V | V2]: ...
-    # `dict`-ish methods
+    # NOTE: `dict`-ish methods
+    # These stubs are derived from [typeshed]
+    # [typeshed]: https://github.com/python/typeshed/blob/bc016545988403f13b2dd9b56e88b931683c80b1/stdlib/builtins.pyi#L1288-L1313
     @overload
     def __init__(self, /) -> None: ...
+    @overload
+    def __init__[K2, V2](self: HashTrieMap[K2, V2], iterable: _IntoMap[K2, V2], /) -> None: ...
     @overload
     def __init__[V2](
         self: HashTrieMap[str, V2], iterable: _IntoMap[str, V2] = (), /, **kwds: V2
     ) -> None: ...
-    @overload
-    def __init__[K2, V2](self: HashTrieMap[K2, V2], iterable: _IntoMap[K2, V2], /) -> None: ...
     @overload
     def __init__[K2, V2](
         self: HashTrieMap[K2 | str, V2], iterable: _IntoMap[K2, V2], /, **kwds: V2
