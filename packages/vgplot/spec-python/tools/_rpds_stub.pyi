@@ -76,7 +76,7 @@ class HashTrieMap[K, V](Mapping[K, V]):
     def fromkeys[K2](
         cls, iterable: Iterable[K2], value: None = None, /
     ) -> HashTrieMap[K2, Any | None]:
-        """Create a new dictionary with keys from iterable and values set to value."""
+        """Create a new mapping with keys from iterable and values set to value."""
     @classmethod
     @overload
     def fromkeys[K2, V2](cls, iterable: Iterable[K2], value: V2, /) -> HashTrieMap[K2, V2]: ...
@@ -84,8 +84,14 @@ class HashTrieMap[K, V](Mapping[K, V]):
     # NOTE: Non-mapping methods
     @classmethod
     def convert[K2, V2](cls, value: _IntoMap[K2, V2], /) -> HashTrieMap[K2, V2]: ...
-    def discard(self, key: K) -> Self: ...
-    def remove(self, key: K) -> Self: ...
+    def discard(self, key: K, /) -> Self:
+        """Return a new mapping without `key`, **if** it is present."""
+    def remove(self, key: K, /) -> Self:
+        """Return a new mapping without `key`, it **must** be present.
+
+        Raises:
+            KeyError: If the key is not found.
+        """
     def insert[K2, V2](self, key: K2, val: V2) -> HashTrieMap[K | K2, V | V2]: ...
 
 class HashTrieSet[T](frozenset[T]):
