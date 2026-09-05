@@ -11,10 +11,15 @@ if t.TYPE_CHECKING:
     from tools.common import PyIdentifierSnake
 
 
+_T = t.TypeVar("_T", bound=Expr | Required, default=Expr | Required, covariant=True)
+
+
 @t.final
-class Field[T: Expr | Required = Expr | Required](PyIR):
+class Field(PyIR, t.Generic[_T]):  # ruff: ignore[non-pep695-generic-class]
     name: PyIdentifierSnake
-    expr: t.Final[T]
+    # NOTE: **Do not upgrade this to PEP 695**.
+    # `pyright` is not inferring the variance correctly
+    expr: t.Final[_T]
     doc: str = ""
 
     def iter_lines(self) -> Lines:
@@ -29,8 +34,10 @@ class Field[T: Expr | Required = Expr | Required](PyIR):
     @t.overload
     def with_refs(self: Field[Expr], repl: RefRepl, /) -> Field[Expr]: ...
     @t.overload
+    def with_refs(self: Field[Required], repl: RefRepl, /) -> Field[Required]: ...
+    @t.overload
     def with_refs(self, repl: RefRepl, /) -> Field: ...
-    def with_refs(self, repl: RefRepl, /) -> Field[Expr] | Field:
+    def with_refs(self, repl: RefRepl, /) -> Field:
         current = self.expr
         maybe_changed = self.expr.with_refs(repl)  # ty: ignore[invalid-argument-type]
         if current == maybe_changed:
