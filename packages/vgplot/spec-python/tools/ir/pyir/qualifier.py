@@ -7,7 +7,7 @@ from tools.common import copy_replace
 from tools.ir.pyir.base import Expr, IterExprs, Lines, PyIR, RefRepl, TypeExpr
 
 
-class Qualifier(PyIR):
+class Qualifier(PyIR, kw_only=False):
     """A type expression wrapped with a [type qualifier][1].
 
     [1]: https://typing.python.org/en/latest/spec/qualifiers.html#type-qualifiers
@@ -35,7 +35,6 @@ class Qualifier(PyIR):
 @t.final
 class Required(Qualifier):
     """Marks a Field as required."""
-
 
 
 @t.final
