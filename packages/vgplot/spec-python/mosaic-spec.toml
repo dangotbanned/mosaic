@@ -50,8 +50,6 @@ scope.include.definition.names = [
 scope.over                     = "descendants"
 scope.ref_follow_depth         = 2
 
-# TODO: `SpecDeduplicate`
-
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
 id                             = "css_styles"
@@ -195,3 +193,12 @@ entry_point                     = "scripts.plugins.mlir_actions:fix_tip"
 scope.include.id                = ["marks"]
 scope.include.definition.nodes  = ["ClosedDict"]
 scope.include.child.field_names = ["tip"]
+
+# TODO @dangotbanned: Deduplication in `TransformSplit`
+# - WindowOptions
+# - AggregateOptions
+# - Simplify `Arg`
+
+# TODO @dangotbanned: `SpecDeduplicate`
+# - Plot/PlotAttributes
+# - MarkData
