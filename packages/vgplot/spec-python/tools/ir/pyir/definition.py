@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import enum
 import operator
 import typing as t
 from collections.abc import Collection
 from itertools import chain
 from typing import Literal as L, Self
 
+from tools import ds
+from tools.codegen.convert import py_identifier
 from tools.codegen.docstrings import doc
 from tools.common import PyIdentifier, PyIdentifierSnake, copy_replace
 from tools.ir.pyir import special as sf
@@ -21,13 +24,17 @@ from tools.ir.pyir.base import (
     TypedRef,
     join_comma,
 )
+from tools.ir.pyir.field import Field
 
 if t.TYPE_CHECKING:
+    import collections.abc as cabc
     from collections.abc import Iterable, Iterator
 
-    from tools import ds
-    from tools.ir.pyir.field import Field
     from tools.ir.pyir.type_param import TypeVar
+
+type OneOrIterable[T] = T | t.Iterable[T]
+type _IntoMap[K, V] = cabc.Mapping[K, V] | Iterable[tuple[K, V]]
+type IntoFields = _IntoMap[PyIdentifierSnake, Field]
 
 
 @t.final
@@ -148,6 +155,10 @@ class _Dict(Definition):
         if not self.total:
             yield "total=False"
 
+    def has_field(self, name: str, /) -> bool:
+        """Check for the existence of a single field by name."""
+        return self.fields.__contains__(name)
+
     def iter_fields_types(self) -> Iterator[Field]:
         yield from self.fields.values()
 
@@ -186,8 +197,36 @@ class _Dict(Definition):
         return copy_replace(self, **changes)
 
 
+class Source(enum.Enum):
+    PARENT = enum.auto()
+    SELF = enum.auto()
+
+
 @t.final
-class OpenDict(_Dict): ...
+class OpenDict(_Dict):
+    def with_child_closed(
+        self, name: PyIdentifier, *, doc: L[Source.SELF] | str = "", fields: IntoFields = ()
+    ) -> ClosedDict:
+        """Return a new typed dict that inherits from `self`, preventing further subclassing."""
+        return ClosedDict(
+            name=name,
+            fields=ds.frozenmap(fields),  # pyright: ignore[reportArgumentType]
+            bases=(self.to_typed_ref(),),  # pyright: ignore[reportArgumentType]
+            total=self.total,
+            doc=self.doc if doc is Source.SELF else doc,
+        )
+
+    def with_child_open(
+        self, name: PyIdentifier, *, doc: L[Source.SELF] | str = "", fields: IntoFields = ()
+    ) -> OpenDict:
+        """Return a new typed dict that inherits from `self`."""
+        return OpenDict(
+            name=name,
+            fields=ds.frozenmap(fields),  # pyright: ignore[reportArgumentType]
+            bases=(self.to_typed_ref(),),  # pyright: ignore[reportArgumentType]
+            total=self.total,
+            doc=self.doc if doc is Source.SELF else doc,
+        )
 
 
 @t.final
@@ -195,6 +234,35 @@ class ClosedDict(_Dict):
     def keywords(self) -> Iterator[str]:
         yield from super().keywords()
         yield "closed=True"
+
+    def with_parent(
+        self, parent: OpenDict, name: PyIdentifier | str, *, doc: Source | str = Source.SELF
+    ) -> OpenDict:
+        """Return a new typed dict that inherits from `parent`.
+
+        Field names which are shared with `parent` will be dropped in the result.
+        """
+        for base in parent.bases:
+            if isinstance(base, sf.Generic):
+                msg = f"TODO: Support inheriting from a generic parent:\n{parent!r}"
+                raise NotImplementedError(msg)
+
+        bases = (parent.to_typed_ref(),)
+        match doc:
+            case Source.PARENT:
+                doc = parent.doc
+            case Source.SELF:
+                doc = self.doc
+            case str():
+                ...
+            case _:
+                t.assert_never(doc)
+
+        parent_field_names = frozenset(parent.fields)
+        fields = ds.frozenmap((k, v) for k, v in self.fields.items() if k not in parent_field_names)
+        return OpenDict(
+            name=py_identifier(name), fields=fields, bases=bases, total=self.total, doc=doc
+        )
 
 
 @t.final
@@ -219,30 +287,28 @@ class ExtraDict(_Dict):
 
 def supertype(
     definitions: Iterable[ClosedDict],
-    name: PyIdentifier,
+    name: PyIdentifier | str,
     *,
     doc: str = "",
     bases: RuntimeScope[tuple[BaseTD, ...]] = (sf.TYPED_DICT,),
+    exclude: OneOrIterable[str] = frozenset(),
 ) -> OpenDict:
     """Approximate a base class that all members of `definitions` can inherit from.
 
     ## Notes
     - This operation only makes sense if the common fields are non-generic
-    - Generic support requires checking the contents of the fields
-        - Could either do that implicitly, on request, or with a candidate field name?
-        - E.g. `"mark"`
+    - `exclude` should be used for discriminator/generic fields to preserve in children
+        - For `MarkOptions`-derived, each `mark` field has unique documentation to preserve
     """
     it = iter(definitions)
     fields = next(it).fields
     first = frozenset(fields)
-    common = set(first)
+    common = set(first.difference(exclude if not isinstance(exclude, str) else (exclude,)))
     common.intersection_update(*(defn.fields for defn in it))
     if not common:
         msg = "`definitions` have 0 common fields"
         if isinstance(definitions, Collection):
             msg += f", got:\n{definitions!r}"
         raise TypeError(msg)
-
-    for f_name in first - common:
-        fields = fields.discard(f_name)
-    return OpenDict(name=name, fields=fields, bases=bases, doc=doc)
+    fields = ds.frozenmap((k, v) for k, v in fields.items() if k in common)
+    return OpenDict(name=py_identifier(name), fields=fields, bases=bases, doc=doc)

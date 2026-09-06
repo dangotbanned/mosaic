@@ -245,12 +245,10 @@ class App:
         sub_pkg = pyir.Module(
             name=PyIdentifierSnake("_gen"), filepath=fs.MOSAIC_SPEC_GEN_INIT, parent=pkg
         )
-
-        self._modules = {pkg.canonical_path: pkg, sub_pkg.canonical_path: sub_pkg}
+        self.update_modules(pkg, sub_pkg)
         if not quiet:
             print(f"Added {len(self._modules)} packages.")
-        it = (pyir.Module.from_mlir(root, sub_pkg) for root in self._mlirs)
-        self._modules.update((module.canonical_path, module) for module in it)
+        self.update_modules(*(pyir.Module.from_mlir(root, sub_pkg) for root in self._mlirs))
         if not quiet:
             print(f"Finished generating with {len(self._modules)} modules(s).")
             print("\n".join(f" - {m}" for m in self._modules))
@@ -267,6 +265,10 @@ class App:
     def module(self, name: CanonicalPath | str, /) -> pyir.Module:
         """Return the `PyIR` representation of module `name`."""
         return self._modules[canonical_path(name)]
+
+    def update_modules(self, *modules: pyir.Module) -> None:
+        """Insert new modules or overwrite existing ones."""
+        self._modules.update((module.canonical_path, module) for module in modules)
 
     def resolve_all_references(self) -> None:
         """Convert all untyped references to typed references.

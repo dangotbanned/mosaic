@@ -126,6 +126,9 @@ class Definition(PyIR):
     def with_refs(self, repl: RefRepl, /) -> Self | Definition:
         return self
 
+    def to_typed_ref(self) -> TypedRef[Self]:
+        return TypedRef(ref=self.name, type=type(self))
+
 
 class _Ref(Expr):
     ref: PyIdentifier
@@ -160,7 +163,7 @@ class TypedRef[D: Definition = Definition](_Ref):
     - But must be known before trying to synthesize base class typed dicts
     """
 
-    type: type[D]
+    type: t.Final[type[D]]
 
     def as_base(self) -> str:
         return self.ref
@@ -180,7 +183,7 @@ class TypedRef[D: Definition = Definition](_Ref):
 class TypedExtRef[D: Definition = Definition](_ExtRef):
     """A reference to a resolved `Definition` type, originated from an external module."""
 
-    type: type[D]
+    type: t.Final[type[D]]
 
     def as_base(self) -> str:
         return self.ref

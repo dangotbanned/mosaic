@@ -63,17 +63,20 @@ class Module(base.Struct, kw_only=True):
 
     @classmethod
     def from_mlir(cls, source: mlir.Root, parent: Module, /) -> Module:
-        name = py_identifier_snake(source.id)
-        if not parent.is_init_module:
-            msg = f"{parent.filepath.name!r} cannot be used as a parent for {name!r}, as it is not a package."
-            raise TypeError(msg)
-
         it = (convert.from_def(defn, def_name) for def_name, defn in source.def_items())
+        return parent.child(source.id, it)
+
+    def child(self, name: str, definitions: Iterable[Definition]) -> Module:
+        """Add a new module to this package."""
+        name = py_identifier_snake(name)
+        if not self.is_init_module:
+            msg = f"{self.filepath.name!r} cannot be used as a parent for {name!r}, as it is not a package."
+            raise TypeError(msg)
         return Module(
             name=name,
-            filepath=parent.filepath.parent / f"{name}.py",
-            parent=parent,
-            definitions={defn.name: defn for defn in it},
+            filepath=self.filepath.parent / f"{name}.py",
+            parent=self,
+            definitions={defn.name: defn for defn in definitions},
         )
 
     def __repr__(self) -> str:
@@ -129,7 +132,16 @@ class Module(base.Struct, kw_only=True):
         name = expr.ref
         return TypedRef(ref=name, type=type(self.definitions[name]))
 
+    def import_ref(self, def_name: PyIdentifier | str, /) -> TypedExtRef:
+        """Return a reference that another module can use to refer to a def from here."""
+        name = PyIdentifier(def_name)
+        return TypedExtRef(ext=self.name, ref=name, type=type(self.definitions[name]))
+
     def depends_ext(self) -> set[PyIdentifierSnake]:
         """Return the set of module names that this one depends on."""
         tps = UntypedExtRef, TypedExtRef
         return {expr.ext for expr in self.iter_exprs() if isinstance(expr, tps)}
+
+    def update_defs(self, definitions: Iterable[Definition], /) -> None:
+        """Insert new definitions or overwrite existing ones."""
+        self.definitions.update((defn.name, defn) for defn in definitions)
