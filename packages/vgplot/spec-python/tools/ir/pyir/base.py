@@ -188,6 +188,10 @@ class TypedExtRef[D: Definition = Definition](_ExtRef):
     def as_base(self) -> str:
         return self.ref
 
+    def display(self) -> str:
+        """Debug repr."""
+        return f"{self.__class__.__name__}[{self.type.__name__}]('{self.ext}.{self.ref}')"
+
     def with_refs(self, repl: RefRepl, /) -> Self:
         return self
 

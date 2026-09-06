@@ -4,7 +4,7 @@ import functools
 
 # ruff: file-ignore[print]
 from collections import deque
-from typing import TYPE_CHECKING, final
+from typing import TYPE_CHECKING, Literal as L, Protocol, final
 
 from tools import fs, serde
 from tools.common import PyIdentifierSnake, into_repl_map
@@ -21,6 +21,15 @@ type CanonicalPath = str
 
 type _PyIRRefMap = dict[pyir.UntypedRef | pyir.UntypedExtRef, pyir.TypedRef | pyir.TypedExtRef]
 """Very long, unfortunate type."""
+
+type RunUntil = L["json_wrapper", "mlir", "pyir", "all"]
+
+
+class CLIOptions(Protocol):
+    stage: RunUntil
+    """Run until the end of a specific conversion stage."""
+    quiet: bool
+    "Print less to stdout."
 
 
 @final
@@ -194,6 +203,23 @@ class App:
         config = serde.read_toml(path, MosaicSpecToml, contains_paths=True)
         return App(config)
 
+    def run(self, options: CLIOptions) -> None:
+        stage = options.stage
+        quiet = options.quiet
+        if method := {
+            "pyir": self.into_pyir,
+            "mlir": self.into_mlir,
+            "json_wrapper": self.into_json_wrapper,
+        }.get(stage):
+            method(quiet=quiet)
+            return
+
+        # NOTE: `all` is  experimental stuff, which depends on `pyir`
+        self.into_pyir(quiet=quiet)
+        if not quiet:
+            self.display_references()
+        self.resolve_all_references(quiet=quiet)
+
     @property
     def actions(self) -> Mapping[int, mlir.Action]:
         if actions := self._actions:
@@ -238,21 +264,24 @@ class App:
 
     def into_pyir(self, *, refresh: bool = False, quiet: bool = False) -> None:
         """Lower MLIR into PyIR."""
-        self.into_mlir(refresh=refresh, quiet=quiet)
-        if not quiet:
-            print(f"Generating module representation from {len(self._mlirs)} root(s).")
-        pkg = pyir.Module(name=PyIdentifierSnake("mosaic_spec"), filepath=fs.MOSAIC_SPEC_INIT)
-        sub_pkg = pyir.Module(
-            name=PyIdentifierSnake("_gen"), filepath=fs.MOSAIC_SPEC_GEN_INIT, parent=pkg
-        )
-        self.update_modules(pkg, sub_pkg)
-        if not quiet:
-            print(f"Added {len(self._modules)} packages.")
-        self.update_modules(*(pyir.Module.from_mlir(root, sub_pkg) for root in self._mlirs))
-        if not quiet:
-            print(f"Finished generating with {len(self._modules)} modules(s).")
-            print("\n".join(f" - {m}" for m in self._modules))
-            print(f"Total definitions: {sum(len(m.definitions) for m in self._modules.values())}")
+        if not self._modules or refresh:
+            self.into_mlir(refresh=refresh, quiet=quiet)
+            if not quiet:
+                print(f"Generating module representation from {len(self._mlirs)} root(s).")
+            pkg = pyir.Module(name=PyIdentifierSnake("mosaic_spec"), filepath=fs.MOSAIC_SPEC_INIT)
+            sub_pkg = pyir.Module(
+                name=PyIdentifierSnake("_gen"), filepath=fs.MOSAIC_SPEC_GEN_INIT, parent=pkg
+            )
+            self.update_modules(pkg, sub_pkg)
+            if not quiet:
+                print(f"Added {len(self._modules)} packages.")
+            self.update_modules(*(pyir.Module.from_mlir(root, sub_pkg) for root in self._mlirs))
+            if not quiet:
+                print(f"Finished generating with {len(self._modules)} modules(s).")
+                print("\n".join(f" - {m}" for m in self._modules))
+                print(
+                    f"Total definitions: {sum(len(m.definitions) for m in self._modules.values())}"
+                )
 
     def mlir_root(self, id: IdName, /) -> mlir.Root:
         """Return the `MLIR` representation of module `id`."""
@@ -270,7 +299,23 @@ class App:
         """Insert new modules or overwrite existing ones."""
         self._modules.update((module.canonical_path, module) for module in modules)
 
-    def resolve_all_references(self) -> None:
+    def display_references(self) -> None:
+        print("Unique typed references:")
+        for module in self._modules.values():
+            unique_refs = sorted(module.unique_refs())
+            print(f"{module.canonical_path} ({len(unique_refs)}):")
+            if unique_refs:
+                print("\n".join(f"  {module.typed_ref(ref).display()}" for ref in unique_refs))
+            print()
+
+        print("Module dependencies:")
+        for module in self._modules.values():
+            depends = module.depends_ext()
+            print(f"{module.canonical_path} ({len(depends)}):")
+            if depends:
+                print("\n".join(f"  {s}" for s in sorted(depends)))
+
+    def resolve_all_references(self, *, refresh: bool = False, quiet: bool = False) -> None:
         """Convert all untyped references to typed references.
 
         After this operation, every `PyIR` can be rendered.
@@ -283,6 +328,13 @@ class App:
             - `TypedDict` bases
             - `TypeAliasType` type params
         """
+        # NOTE: Changes the state of `_modules`, so `refresh=False` cannot stop this step from running
+        # It should be a no-op though when already resolved
+        if not self._modules or refresh:
+            self.into_pyir(refresh=refresh, quiet=quiet)
+
+        if not quiet:
+            print("Resolving all dependency types")
         modules = self._modules
         done = {}
         # typing is not strictly accurate, but this pleases invariance
@@ -318,6 +370,9 @@ class App:
             done[canonical_path] = module.with_refs(into_repl_map(replace))
 
         self._modules = done
+        if not quiet:
+            print("Unique typed external references:")
+            print("\n".join(f"  {ref.display()}" for ref in resolved_ext_refs.values()))
 
     def _read_sources(self) -> Iterator[InputSchema]:
         if not (sources := self.config.convert.sources):
