@@ -13,7 +13,7 @@ from tools.models.config import MosaicSpecToml
 from tools.models.mosaic import InputSchema
 
 if TYPE_CHECKING:
-    from collections.abc import Collection, Iterator, Mapping
+    from collections.abc import Collection, Iterator, Mapping, Sequence
 
     from tools.models.base import IdName
 
@@ -30,6 +30,8 @@ class CLIOptions(Protocol):
     """Run until the end of a specific conversion stage."""
     quiet: bool
     "Print less to stdout."
+    preview_modules: Sequence[str]
+    "Print the full generated code for these modules to stdout."
 
 
 @final
@@ -218,7 +220,10 @@ class App:
         self.into_pyir(quiet=quiet)
         if not quiet:
             self.display_references()
-        self.resolve_all_references(quiet=quiet)
+        if options.preview_modules:
+            self.preview_modules(*options.preview_modules, quiet=quiet)
+        else:
+            self.resolve_all_references(quiet=quiet)
 
     @property
     def actions(self) -> Mapping[int, mlir.Action]:
@@ -373,6 +378,24 @@ class App:
         if not quiet:
             print("Unique typed external references:")
             print("\n".join(f"  {ref.display()}" for ref in resolved_ext_refs.values()))
+
+    def preview_modules(
+        self, *names: CanonicalPath | str, refresh: bool = False, quiet: bool = False
+    ) -> None:
+        self.resolve_all_references(refresh=refresh, quiet=quiet)
+        if not quiet:
+            print(f"Previewing modules: {list(names)!r}")
+
+        # NOTE: `quiet=True` will only silence previous steps, this one is about displaying stuff
+        if len(names) > 1:
+            for module in self._modules.values():
+                if module.name in names:
+                    module.preview()
+                    print("-" * 100)
+        else:
+            for module in self._modules.values():
+                if module.name in names:
+                    module.preview()
 
     def _read_sources(self) -> Iterator[InputSchema]:
         if not (sources := self.config.convert.sources):
