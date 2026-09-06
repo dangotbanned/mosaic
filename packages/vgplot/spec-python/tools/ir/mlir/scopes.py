@@ -52,6 +52,9 @@ _ZERO: Final[L[0]] = 0  # ruff: ignore[redundant-final-literal]
 is_inner_fields: Callable[[Definition[Any]], TypeIs[Definition[HasFields]]] = inner_type_is(
     mlir.ClosedDict, mlir.ExtraDict, mlir.OpenDict, mlir.NamedTuple
 )
+is_inner_union: Callable[[Definition[Any]], TypeIs[Definition[mlir.Union]]] = inner_type_is(
+    mlir.Union
+)
 
 
 class Matcher:

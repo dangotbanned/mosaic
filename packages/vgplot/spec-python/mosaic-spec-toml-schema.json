@@ -472,6 +472,11 @@
             "remove"
           ]
         },
+        "preserve_children": {
+          "default": false,
+          "description": "If the target definition is a union, substitute references to it with refs to the children.",
+          "type": "boolean"
+        },
         "scope": {
           "$ref": "#/$defs/DefsScope"
         }

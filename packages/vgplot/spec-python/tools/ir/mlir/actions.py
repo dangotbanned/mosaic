@@ -14,7 +14,7 @@ from tools.ir.mlir import nodes
 from tools.ir.mlir.common import into_name_map, into_ref_map
 from tools.ir.mlir.definition import Definition
 from tools.ir.mlir.root import Root
-from tools.ir.mlir.scopes import Matcher
+from tools.ir.mlir.scopes import Matcher, is_inner_union
 from tools.models import config as cfg
 
 if TYPE_CHECKING:
@@ -247,22 +247,56 @@ class NewTree[O: L["definitions", "descendants"]](_MultiOver[O]):
 
 
 class Remove(_Base[L["definitions"]]):
-    __slots__ = ()
+    __slots__ = ("preserve_children",)
+    preserve_children: bool
 
     @property
     def over(self) -> L["definitions"]:
         return "definitions"
 
+    def _replace_with_children(
+        self, roots: RootsMut, defs_removed: dict[DefName, Definition[nodes.Union]]
+    ) -> Iterator[Root]:
+        is_disjoint: Callable[[Iterable[DefName]], bool] = defs_removed.keys().isdisjoint
+        explain = f"TODO: Support non-union types in {self.kind!r} w/ `preserve_children=True`"
+        for root in roots:
+            if has_stale_refs := [
+                def_name
+                for def_name, defn in root.def_items()
+                if (refs := defn.refs) and not is_disjoint({ref.ref for ref in refs})
+            ]:
+                for def_name in has_stale_refs:
+                    stale_inner = ensure_type(
+                        root[def_name].inner, nodes.Union, name=def_name, explain=explain
+                    )
+                    new_members = deque()
+                    for member in stale_inner.members:
+                        if isinstance(member, nodes.Reference) and (
+                            found := defs_removed.get(member.ref)
+                        ):
+                            new_members.extend(found.inner.members)
+                        else:
+                            new_members.append(member)
+                    root.replace(def_name, stale_inner.__replace__(members=tuple(new_members)))
+            yield root
+
     def run(self, roots: RootsMut) -> Iterator[Root]:
         matcher = self.matcher
+        defs_removed: dict[DefName, Definition[nodes.Union]] = {}
         for root in roots:
             if matcher.id.matches(root.id):
                 for def_name in tuple(name for name, _ in matcher.matching_definitions(root)):
-                    root.pop(def_name)
-            yield root
+                    removed = root.pop(def_name)
+                    if self.preserve_children and is_inner_union(removed):
+                        defs_removed[def_name] = removed
+        if defs_removed:
+            yield from self._replace_with_children(roots, defs_removed)
+        else:
+            yield from roots
 
-    def __init__(self, matcher: Matcher) -> None:
+    def __init__(self, matcher: Matcher, *, preserve_children: bool) -> None:
         self.matcher = matcher
+        self.preserve_children = preserve_children
 
 
 class AsDefs(_Base[L["children"]]):
@@ -415,8 +449,8 @@ def rename_fields_error(
 def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]]:
     for idx, config in enumerate(configs):
         match config:
-            case cfg.RemoveAction(scope=scope):
-                item = Remove(Matcher.from_scopes(scope))
+            case cfg.RemoveAction(scope=scope, preserve_children=preserve):
+                item = Remove(Matcher.from_scopes(scope), preserve_children=preserve)
             case cfg.NewTreeAction(scope=scope, id=id, into_ext_ref=into_ext_ref):
                 item = NewTree(Matcher.from_scopes(scope), scope.over, id, into_ext_ref)
             case cfg.AsDefsAction(scope=scope):

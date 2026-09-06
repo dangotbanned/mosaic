@@ -145,6 +145,12 @@ scope.include.definition.names = [
 scope.include.child.nodes      = ["ClosedDict"]
 
 [[convert.to_mlir.actions]]
+action                         = "remove"
+scope.include.id               = ["marks"]
+scope.include.definition.names = ["DensityX", "DensityY"]
+preserve_children              = true
+
+[[convert.to_mlir.actions]]
 action                         = "rename-fields"
 scope.include.id               = ["inputs"]
 scope.include.definition.nodes = ["ClosedDict"]

@@ -359,6 +359,9 @@ class RemoveAction(
     """Remove matching definitions, without replacement."""
 
     scope: DefsScope = field(default_factory=DefsScope)
+    # NOTE: Option is a possible candidate for a plugin
+    preserve_children: bool = False
+    """If the target definition is a union, substitute references to it with refs to the children."""
 
 
 @final
