@@ -43,4 +43,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    from tools._colorize_install import install
+
+    install()
     main()
