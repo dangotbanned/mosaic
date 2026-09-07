@@ -311,7 +311,6 @@ class App:
             print(f"{module.canonical_path} ({len(unique_refs)}):")
             if unique_refs:
                 print("\n".join(f"  {module.typed_ref(ref).display()}" for ref in unique_refs))
-            print()
 
         print("Module dependencies:")
         for module in self._modules.values():

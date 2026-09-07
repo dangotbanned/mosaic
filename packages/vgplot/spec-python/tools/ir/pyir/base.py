@@ -170,7 +170,7 @@ class TypedRef[D: Definition = Definition](_Ref):
 
     def display(self) -> str:
         """Debug repr."""
-        return f"{self.__class__.__name__}[{self.type.__name__}]({self.ref!r})"
+        return f"{self.type.__name__}({self.ref!r})"
 
     def with_refs(self, repl: RefRepl, /) -> Self:
         return self
@@ -190,7 +190,7 @@ class TypedExtRef[D: Definition = Definition](_ExtRef):
 
     def display(self) -> str:
         """Debug repr."""
-        return f"{self.__class__.__name__}[{self.type.__name__}]('{self.ext}.{self.ref}')"
+        return f"{self.type.__name__}('{self.ext}.{self.ref}')"
 
     def with_refs(self, repl: RefRepl, /) -> Self:
         return self
