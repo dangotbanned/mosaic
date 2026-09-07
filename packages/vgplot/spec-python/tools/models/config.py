@@ -1,13 +1,14 @@
 """Configuration via toml."""
 
-import typing
-from collections.abc import Iterable, Mapping, Sequence
+import collections.abc as cabc
+import typing as t
 from pathlib import Path
 from typing import Annotated as A, Final, Literal as L, final
 
 import msgspec
 from msgspec import field
 
+from tools.common import RichRepr
 from tools.models import base
 from tools.models.base import DefName
 
@@ -33,7 +34,7 @@ type MLIRType = L[
     "Unknown",
     "VariantHomogeneousTuple",
 ]
-_MLIR_TYPES: typing.Final[frozenset[MLIRType]] = frozenset(typing.get_args(MLIRType.__value__))
+_MLIR_TYPES: t.Final[frozenset[MLIRType]] = frozenset(t.get_args(MLIRType.__value__))
 
 type UnwrapPolicy = L["longest", "shortest", "inner", "outer"]
 type Depth = L[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -47,7 +48,7 @@ type IterOver = L["definitions", "children", "descendants"]
 - *"descendants"*: Visit top-level definitions, then their children, recursively.
 """
 
-ENTRY_POINT_PATTERN: Final[Mapping[L["json", "python"], typing.LiteralString]] = {
+ENTRY_POINT_PATTERN: Final[cabc.Mapping[L["json", "python"], t.LiteralString]] = {
     "json": r"([\w.]+)\s*(:\s*([\w.]+)\s*)$",
     "python": r"(?P<module>[\w.]+)\s*(:\s*(?P<attr>[\w.]+)\s*)$",
 }
@@ -129,7 +130,7 @@ class Child(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     def __bool__(self) -> bool:
         return bool(self.nodes or self.field_names)
 
-    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+    def __rich_repr__(self) -> RichRepr:
         if self.nodes:
             yield "nodes", self.nodes
         if self.field_names:
@@ -145,7 +146,7 @@ class NamesNodes(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     def __bool__(self) -> bool:
         return bool(self.names or self.nodes)
 
-    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+    def __rich_repr__(self) -> RichRepr:
         if self.names:
             yield "names", self.names
         if self.nodes:
@@ -172,7 +173,7 @@ class Filter(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     def __bool__(self) -> bool:
         return bool(self.id or self.definition or self.child)
 
-    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+    def __rich_repr__(self) -> RichRepr:
         if self.id:
             yield "id", self.id
         if self.definition:
@@ -222,7 +223,7 @@ class _BaseScopes[Over: IterOver](
     def __bool__(self) -> bool:
         return bool(self.include or self.exclude)
 
-    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+    def __rich_repr__(self) -> RichRepr:
         if self.include:
             yield "include", self.include
         if self.exclude:
@@ -263,7 +264,7 @@ class DefsDescendantsScope(
     def __bool__(self) -> bool:
         return bool(self.ref_follow_depth or self.include or self.exclude)
 
-    def __rich_repr__(self) -> Iterable[base.Entry[typing.Any]]:
+    def __rich_repr__(self) -> RichRepr:
         yield from super().__rich_repr__()
         if self.ref_follow_depth:
             yield "ref_follow_depth", self.ref_follow_depth
@@ -340,7 +341,7 @@ class NewTreeAction(
     id: base.IdName
     """The name of the new `Root`."""
 
-    into_ext_ref: Mapping[DefName, base.IdName] = field(default_factory=dict)
+    into_ext_ref: cabc.Mapping[DefName, base.IdName] = field(default_factory=dict)
     """If this operation would leave "dangling" references, resolve them using this mapping.
 
     This option should be reserved for *acknowledging* cyclic definitions.
@@ -376,7 +377,7 @@ class RenameFieldsAction(
     """Rename fields that match a name provided in `overrides`."""
 
     scope: DefsScope = field(default_factory=DefsScope)
-    overrides: Mapping[str, str]
+    overrides: cabc.Mapping[str, str]
     """A mapping from old name to new name."""
 
 
@@ -404,7 +405,7 @@ class PluginAction(
     [entry-points]: https://packaging.python.org/en/latest/specifications/entry-points/
     """
     extra: A[
-        Mapping[str, typing.Any], msgspec.Meta(extra_json_schema={"additionalProperties": True})
+        cabc.Mapping[str, t.Any], msgspec.Meta(extra_json_schema={"additionalProperties": True})
     ] = field(default_factory=dict)
     """Namespace for arbitrary data passed to the plugin."""
 
@@ -420,7 +421,7 @@ type Action = (
 )
 type Scopes = ChildrenScope | DefsScope | DefsDescendantsScope | PluginScope
 
-_ACTION_KIND: typing.Final[tuple[ActionKind, ...]] = typing.get_args(ActionKind.__value__)
+_ACTION_KIND: t.Final[tuple[ActionKind, ...]] = t.get_args(ActionKind.__value__)
 
 
 class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
@@ -429,10 +430,10 @@ class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=Tr
     Represents the first conversion stage.
     """
 
-    ref_unwrap: Mapping[DefName, ReferenceUnwrap] = field(default_factory=dict)
+    ref_unwrap: cabc.Mapping[DefName, ReferenceUnwrap] = field(default_factory=dict)
     """Mapping from the outer ("$ref"-defining) definition name to a policy table."""
 
-    actions: Sequence[Action] = field(default_factory=list[Action])
+    actions: cabc.Sequence[Action] = field(default_factory=list[Action])
 
     @property
     def ref_unwrap_default(self) -> ReferenceUnwrap:
@@ -454,7 +455,7 @@ class SourceConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
 class ConvertConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """Top-level config for translation/codegen."""
 
-    sources: Sequence[SourceConfig] = field(default_factory=list[SourceConfig])
+    sources: cabc.Sequence[SourceConfig] = field(default_factory=list[SourceConfig])
     to_mlir: JsonWrapperToMLIR = field(default_factory=JsonWrapperToMLIR)
 
 

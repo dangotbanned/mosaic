@@ -8,7 +8,7 @@ from itertools import chain
 from typing import TYPE_CHECKING, Any, Final, NewType
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Collection, Iterator, Mapping
+    from collections.abc import Callable, Collection, Iterable, Iterator, Mapping
 
     from typing_extensions import (
         Sentinel as sentinel,  # ruff: ignore[camelcase-imported-as-lowercase]
@@ -31,6 +31,9 @@ PyIdentifierSnake = NewType("PyIdentifierSnake", str)
 """
 
 type Incomplete = t.Any
+
+type RichRepr = Iterable[tuple[str, t.Any]]
+"""The return type of `__rich_repr__`."""
 
 type ReplMap[T, R] = Callable[[T], R | None]
 """A function that returns a replacement, if needed."""
