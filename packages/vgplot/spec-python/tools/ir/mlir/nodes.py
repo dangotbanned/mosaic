@@ -5,7 +5,7 @@ import typing
 from typing import Final, Self, final
 
 from tools import ds
-from tools.common import copy_replace
+from tools.common import RichRepr, copy_replace
 from tools.models import base
 from tools.models.base import Lit
 
@@ -294,7 +294,7 @@ class _BaseFields(_HasChildren):
     def get_field(self, name: str, /) -> Field | None:
         return self.fields.get(name)
 
-    def __rich_repr__(self) -> Iterator[tuple[str, typing.Any]]:
+    def __rich_repr__(self) -> RichRepr:
         # NOTE: Resolving 2 problems
         # 1. `rich` renders `rpds.HashTrieMap` as a single line.
         #    This doesn't mix well with 40-500 fields
@@ -380,7 +380,7 @@ class ExtraDict(_BaseFields):
             raise TypeError(msg)
         return out.__replace__(extra_items=extra_items)
 
-    def __rich_repr__(self) -> Iterator[tuple[str, typing.Any]]:
+    def __rich_repr__(self) -> RichRepr:
         yield "fields", dict(sorted(self.iter_fields_items(), key=_get_name))
         yield "extra_items", self.extra_items
         yield "doc", self.doc

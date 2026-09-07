@@ -3,12 +3,11 @@ from __future__ import annotations
 import typing as t
 from graphlib import TopologicalSorter
 from pathlib import Path  # ruff: ignore[typing-only-standard-library-import]
-from typing import Any
 
 import msgspec
 
 from tools.codegen.convert import py_identifier_snake
-from tools.common import PyIdentifier, PyIdentifierSnake
+from tools.common import PyIdentifier, PyIdentifierSnake, RichRepr
 from tools.ir.pyir import convert
 from tools.ir.pyir.base import (
     Definition,
@@ -84,7 +83,7 @@ class Module(base.Struct, kw_only=True):
             f"Module<name: {self.name}, defs: {len(self.definitions)}, path:{self.canonical_path}>"
         )
 
-    def __rich_repr__(self) -> Iterable[tuple[str, Any]]:
+    def __rich_repr__(self) -> RichRepr:
         yield "name", self.name
         yield "definitions", self.definitions
 
