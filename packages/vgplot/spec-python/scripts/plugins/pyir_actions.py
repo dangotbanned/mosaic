@@ -4,19 +4,23 @@ from __future__ import annotations
 
 import dataclasses
 import typing as t
+from itertools import chain
 
 from tools.codegen.convert import py_identifier_snake
-from tools.common import prepend
+from tools.common import PyIdentifier, ensure_type
 from tools.ir import pyir
+from tools.ir.pyir import TypedExtRef, definition as pyir_d, dsl, expr as pyir_e
 from tools.ir.pyir.definition import ClosedDict, OpenDict, supertype
 
 if t.TYPE_CHECKING:
-    from collections.abc import Collection, Iterator
+    from collections.abc import Collection, Iterable, Iterator
 
     from tools.app import App
 
+type SpecTarget = tuple[PyIdentifier, TypedExtRef[OpenDict]]
 
-def shrink_marks_build_spec(app: App) -> None:
+
+def massage_components(app: App) -> None:
     """Derive a hierarchy for `marks.py` and reuse it to construct the intersections for `spec.py`.
 
     These operations have had the most impactful reduction in generated code.
@@ -41,10 +45,87 @@ def shrink_marks_build_spec(app: App) -> None:
     module_marks = app.module("marks")
     marks_rels = _MarksRelations.from_module(module_marks)
     module_marks.update_defs(marks_rels.iter_defs())
-    app.update_modules(_build_spec_module(app, marks_rels))
+
+    spec_targets = _non_mark_components(app)
+    spec_targets = chain(spec_targets, marks_rels.iter_spec_targets())
+
+    app.update_modules(_build_spec_module(app, spec_targets))
 
 
-def _build_spec_module(app: App, rels: _MarksRelations) -> pyir.Module:
+def _non_mark_components(app: App) -> Iterable[SpecTarget]:
+    """Handle the rest of `Component`, that is not covered by `PlotMark`.
+
+    The awkward part is to represent this hierarchy:
+
+    Defined in `_gen.mosaic.py`:
+
+    ```py
+    # fmt: off
+    class _PlotAttributesOpen(TypedDict, total=False): ...
+    class _PlotOpen(_PlotAttributesOpen, total=False): ...
+
+    class PlotAttributes(_PlotAttributesOpen, total=False, closed=True): ...
+    class Plot(_PlotOpen, total=False, closed=True): ...
+    ```
+
+    Defined in `spec.py`:
+
+    ```py
+    class SpecHead(TypedDict, total=False):
+        config: Config
+        meta: Meta
+        params: Params
+        plot_defaults: PlotAttributes
+        data: Data
+
+
+    class Plot(SpecHead, _PlotOpen, closed=True): ...
+    ```
+    """
+    module_mosaic = app.module("mosaic")
+    module_plot = app.module("plot")
+
+    component = ensure_type(module_mosaic["Component"], pyir_d.TypeAlias)
+    union = ensure_type(component.expr, pyir_e.Union)
+    found = {}
+    for m in union.members:
+        if isinstance(m, pyir.TypedExtRef):
+            if m.ref != "PlotMark":
+                # TODO @dangotbanned: Don't store the keys like this, it is more work later
+                found[f"{m.ext}.{m.ref}"] = ensure_type(app.module(m.ext)[m.ref], ClosedDict)
+        else:
+            # NOTE: I don't have any cases like this here, but it would complicate things if I did
+            raise NotImplementedError(m)
+
+    plot = found.pop("plot.Plot")
+    plot_attrs = module_plot.get_typed("PlotAttributes", ClosedDict)
+
+    plot_attrs_base = plot_attrs.to_open()
+    plot_attrs = plot_attrs_base.with_child_closed(plot_attrs.name)
+
+    plot_name = py_identifier_snake("plot")
+
+    plot_base = plot_attrs_base.with_child_open(
+        OpenDict.format_name(plot.name), doc=plot.doc, fields={plot_name: plot.fields["plot"]}
+    )
+    plot = plot_base.with_child_closed(plot.name)
+    module_plot.update_defs((plot_attrs_base, plot_attrs, plot_base, plot))
+
+    spec_targets: dict[PyIdentifier, TypedExtRef[OpenDict]] = {
+        plot.name: TypedExtRef(ext=plot_name, ref=plot_base.name, type=plot_base.__class__)
+    }
+
+    for k, v in found.items():
+        v_name = v.name
+        v_base = v.to_open()
+        v_closed = v_base.with_child_closed(v_name)
+        module_name = py_identifier_snake(k.split(".")[0])
+        spec_targets[v_name] = TypedExtRef(ext=module_name, ref=v_base.name, type=v_base.__class__)
+        app.module(module_name).update_defs((v_base, v_closed))
+    return spec_targets.items()
+
+
+def _build_spec_module(app: App, targets: Iterable[SpecTarget]) -> pyir.Module:
     module_mosaic = app.module("mosaic")
     td_spec_head = dsl.dict(
         "SpecHead",
@@ -62,10 +143,14 @@ def _build_spec_module(app: App, rels: _MarksRelations) -> pyir.Module:
     )
     td_spec_head_ref = td_spec_head.to_typed_ref()
     spec_defns = (
-        dsl.dict(closed.name, closed=True, bases=(td_spec_head_ref, open.to_typed_ref()))
-        for open, closed in rels.marks
+        dsl.dict(name, closed=True, bases=(td_spec_head_ref, base_ref))
+        for name, base_ref in targets
     )
-    return app.module("mosaic_spec").child("spec", prepend(td_spec_head, spec_defns))
+    module_spec = app.module("mosaic_spec").child("spec", spec_defns)
+    alias_members = (defn.to_typed_ref() for defn in module_spec.def_values())
+    spec_union = dsl.alias("Spec", *alias_members, doc="A declarative Mosaic specification.")
+    module_spec.update_defs((spec_union, td_spec_head))
+    return module_spec
 
 
 @dataclasses.dataclass
@@ -119,6 +204,11 @@ class _MarksRelations:
         for open_closed in self.marks:
             yield from open_closed
 
+    def iter_spec_targets(self) -> Iterator[SpecTarget]:
+        ext = py_identifier_snake("marks")
+        for open, closed in self.marks:
+            yield closed.name, TypedExtRef(ext=ext, ref=open.name, type=open.__class__)
+
     @classmethod
     def _from_marks(cls, definitions: Collection[ClosedDict]) -> _MarksRelations:
         options = supertype(
@@ -144,3 +234,8 @@ class _MarksRelations:
             parent = mark.with_parent(options, fmt(name))
             child_fields = {data: f} if (f := mark.fields.get(data)) else ()
             yield parent, parent.with_child_closed(name, fields=child_fields)
+
+
+def run(app: App) -> None:
+    """Run after typing all references."""
+    massage_components(app)

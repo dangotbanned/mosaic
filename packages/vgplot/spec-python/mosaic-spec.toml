@@ -200,7 +200,6 @@ scope.include.child.field_names = ["tip"]
 # - Simplify `Arg`
 
 # TODO @dangotbanned: `SpecDeduplicate`
-# - Plot/PlotAttributes
 # - MarkData
 
 [convert.to_pyir]

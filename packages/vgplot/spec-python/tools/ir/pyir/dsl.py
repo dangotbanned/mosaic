@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Literal as L
 
 from tools import ds as _ds
 from tools.codegen import convert as _name
-from tools.ir.pyir import definition as _defn, qualifier as _q, special as _sf
+from tools.ir.pyir import definition as _defn, expr as _e, qualifier as _q, special as _sf
 from tools.ir.pyir.field import Field as _Field
 
 if TYPE_CHECKING:
@@ -56,3 +56,8 @@ def dict[E: _base.Expr | _q.Required](
         total=total,
         doc=doc,
     )
+
+
+def alias(name: str, *exprs: _base.Expr, doc: str = "") -> _defn.TypeAlias[_base.Expr | _e.Union]:
+    expr_ = exprs[0] if len(exprs) == 1 else _e.Union(members=exprs)
+    return _defn.TypeAlias(name=_name.py_identifier(name), expr=expr_, doc=doc)

@@ -36,12 +36,14 @@ type OneOrIterable[T] = T | t.Iterable[T]
 type _IntoMap[K, V] = cabc.Mapping[K, V] | Iterable[tuple[K, V]]
 type IntoFields = _IntoMap[PyIdentifierSnake, Field]
 
+_E = t.TypeVar("_E", bound=Expr, default=Expr, covariant=True)
+
 
 @t.final
-class TypeAlias[E: Expr = Expr](Definition):
+class TypeAlias(Definition, t.Generic[_E]):  # ruff: ignore[non-pep695-generic-class]
     """A representation of a TypeAliasType."""
 
-    expr: RuntimeScope[E]
+    expr: t.Final[RuntimeScope[_E]]
     type_params: RuntimeScope[tuple[TypeVar, ...]] = ()
 
     _ALIAS: t.ClassVar[L["TypeAliasType", "TypeAlias"]] = "TypeAliasType"
@@ -231,8 +233,8 @@ class OpenDict(_Dict):
         )
 
     @classmethod
-    def format_name(cls, original_name: PyIdentifier, /) -> str:
-        return cls._FORMAT.format(name=original_name)
+    def format_name(cls, original_name: PyIdentifier, /) -> PyIdentifier:
+        return py_identifier(cls._FORMAT.format(name=original_name))
 
 
 @t.final
@@ -268,6 +270,16 @@ class ClosedDict(_Dict):
         fields = ds.frozenmap((k, v) for k, v in self.fields.items() if k not in parent_field_names)
         return OpenDict(
             name=py_identifier(name), fields=fields, bases=bases, total=self.total, doc=doc
+        )
+
+    def to_open(self) -> OpenDict:
+        """Return a new typed dict that will be a parent for this one."""
+        return OpenDict(
+            name=OpenDict.format_name(self.name),
+            fields=self.fields,
+            bases=self.bases,
+            total=self.total,
+            doc=self.doc,
         )
 
 

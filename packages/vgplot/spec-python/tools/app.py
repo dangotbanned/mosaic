@@ -220,10 +220,17 @@ class App:
         self.into_pyir(quiet=quiet)
         if not quiet:
             self.display_references()
+        self.resolve_all_references(quiet=quiet)
+        self._run_pyir_plugins(quiet=quiet)
         if options.preview_modules:
             self.preview_modules(*options.preview_modules, quiet=quiet)
-        else:
-            self.resolve_all_references(quiet=quiet)
+
+    def _run_pyir_plugins(self, *, quiet: bool = False) -> None:
+        import scripts.plugins.pyir_actions
+
+        if not quiet:
+            print("Running pyir plugins")
+        scripts.plugins.pyir_actions.run(self)
 
     @property
     def actions(self) -> Mapping[int, mlir.Action]:
@@ -382,20 +389,16 @@ class App:
     def preview_modules(
         self, *names: CanonicalPath | str, refresh: bool = False, quiet: bool = False
     ) -> None:
-        self.resolve_all_references(refresh=refresh, quiet=quiet)
         if not quiet:
             print(f"Previewing modules: {list(names)!r}")
 
         # NOTE: `quiet=True` will only silence previous steps, this one is about displaying stuff
-        if len(names) > 1:
-            for module in self._modules.values():
-                if module.name in names:
-                    module.preview()
+        multiple_modules = len(names) > 1
+        for module in self._modules.values():
+            if module.name in names:
+                module.preview()
+                if multiple_modules:
                     print("-" * 100)
-        else:
-            for module in self._modules.values():
-                if module.name in names:
-                    module.preview()
 
     def _read_sources(self) -> Iterator[InputSchema]:
         if not (sources := self.config.convert.sources):
