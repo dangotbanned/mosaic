@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 @final
-class Root(base.Root[Definition[MLIR]], kw_only=True):
+class Root(base.RootId[Definition[MLIR]], kw_only=True):
     @classmethod
     def from_json_wrapper(cls, source: jw.Root, config: JsonWrapperToMLIR, /) -> Root:
         source.ref_unwrap(config)

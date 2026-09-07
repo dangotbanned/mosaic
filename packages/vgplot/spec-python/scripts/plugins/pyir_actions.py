@@ -113,7 +113,7 @@ class _MarksRelations:
         """
         mark_defns = tuple(
             defn
-            for defn in module.definitions.values()
+            for defn in module.def_values()
             if isinstance(defn, ClosedDict) and defn.has_field("mark")
         )
         return _MarksRelations._from_marks(mark_defns, fmt_parent_name)

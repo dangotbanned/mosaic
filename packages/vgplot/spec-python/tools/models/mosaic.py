@@ -247,7 +247,7 @@ class JsonSchema(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
 
 
 @final
-class InputSchema(base.Root[Resolved[JsonSchema]], kw_only=True):
+class InputSchema(base.RootId[Resolved[JsonSchema]], kw_only=True):
     """Top level schema for `mosaic-schema.json`."""
 
     # TODO @dangotbanned: I want to migrate to 2020-12 (2 jumps from draft-07)

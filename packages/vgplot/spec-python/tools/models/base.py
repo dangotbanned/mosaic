@@ -26,7 +26,7 @@ Lit = NewType("Lit", str)
 
 if TYPE_CHECKING:
     # https://github.com/python/typeshed/pull/12309
-    from _collections_abc import dict_items, dict_keys
+    from _collections_abc import dict_items, dict_keys, dict_values
 
 
 class Struct(msgspec.Struct, omit_defaults=True, repr_omit_defaults=True):
@@ -128,18 +128,14 @@ type Predicate = Callable[[Any], bool]
 type Guard[T] = Callable[[Any], TypeIs[T]]
 """A predicate that provides type narrowing."""
 
-type Entry[T] = tuple[DefName, T]
-"""An named definition."""
 
-
-class Root[D](Struct, kw_only=True):
+class Root[K: DefName, D](Struct, kw_only=True):
     """A top-level context for managing definitions.
 
     Provides some common tools that any conversion stage can use for ergonomics.
     """
 
-    id: IdName = IdName("")
-    definitions: dict[DefName, D]
+    definitions: dict[K, D]
 
     def __repr__(self) -> str:
         # NOTE: Fallback used to keep bound method reprs small
@@ -148,18 +144,15 @@ class Root[D](Struct, kw_only=True):
         return f"{module_name}.{tp.__name__}{self._describe(names=False)}"
 
     def _describe(self, *, length: bool = True, names: bool = True) -> str:
-        header = f"<id: {self.id}, defs: {len(self.definitions)}>" if length else f"<id: {self.id}>"
-        if not names:
-            return header
-        return f"{header}\n    {list(self.definitions)!r}"
+        raise NotImplementedError(self._describe.__name__)
 
     @overload
-    def iter_defs[R](self, predicate: Guard[R], /) -> Iterator[Entry[R]]: ...
+    def iter_defs[R](self, predicate: Guard[R], /) -> Iterator[tuple[K, R]]: ...
     @overload
-    def iter_defs(self, predicate: Predicate | None = None, /) -> Iterator[Entry[D]]: ...
+    def iter_defs(self, predicate: Predicate | None = None, /) -> Iterator[tuple[K, D]]: ...
     def iter_defs[R](
         self, predicate: Guard[R] | Predicate | None = None, /
-    ) -> Iterator[Entry[R | D]]:
+    ) -> Iterator[tuple[K, R | D]]:
         """Iterate over the definitions in this context.
 
         Args:
@@ -174,26 +167,40 @@ class Root[D](Struct, kw_only=True):
             return
         yield from ((name, defn) for name, defn in entries if predicate(defn))
 
-    def __getitem__(self, name: DefName, /) -> D:
+    def __getitem__(self, name: K, /) -> D:
         """Get definition `name`."""
         return self.definitions.__getitem__(name)
 
-    def get_typed[R](self, name: DefName, tp: type[R], /) -> R:
+    def get_typed[R](self, name: K, tp: type[R], /) -> R:
         """Get definition `name`, raising if it is not of type `tp`."""
         return ensure_type(self[name], tp, name=name)
 
-    def pop(self, name: DefName, /) -> D:
+    def pop(self, name: K, /) -> D:
         """Remove definition `name` and return it.
 
         If `name` is not found, raise a KeyError.
         """
         return self.definitions.pop(name)
 
-    def def_names(self) -> dict_keys[DefName, D]:
+    def def_names(self) -> dict_keys[K, D]:
         return self.definitions.keys()
 
-    def def_items(self) -> dict_items[DefName, D]:
+    def def_values(self) -> dict_values[K, D]:
+        return self.definitions.values()
+
+    def def_items(self) -> dict_items[K, D]:
         return self.definitions.items()
 
-    def iter_defs_by_name(self, names: Collection[DefName], /) -> Iterator[Entry[D]]:
+    def iter_defs_by_name(self, names: Collection[K], /) -> Iterator[tuple[K, D]]:
         return select_items(self.definitions, names)
+
+
+class RootId[D](Root[DefName, D], kw_only=True):
+    id: IdName = IdName("")
+    """The unique name for a Root."""
+
+    def _describe(self, *, length: bool = True, names: bool = True) -> str:
+        header = f"<id: {self.id}, defs: {len(self.definitions)}>" if length else f"<id: {self.id}>"
+        if not names:
+            return header
+        return f"{header}\n    {list(self.definitions)!r}"

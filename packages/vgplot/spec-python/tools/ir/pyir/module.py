@@ -29,7 +29,7 @@ if t.TYPE_CHECKING:
 # ruff: file-ignore[print]
 # TODO @dangotbanned: `PyIR` needs to declare import dependencies
 @t.final
-class Module(base.Struct, kw_only=True):
+class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
     """A representation of a Python module.
 
     This is a stripped down version of [griffe.Module](https://mkdocstrings.github.io/griffe/reference/api/models/module/#griffe.Module).
@@ -38,9 +38,7 @@ class Module(base.Struct, kw_only=True):
     name: PyIdentifierSnake
     filepath: Path
     parent: Module | None = None
-    definitions: dict[PyIdentifier, Definition] = msgspec.field(
-        default_factory=dict[PyIdentifier, Definition]
-    )
+    definitions: dict[PyIdentifier | str, Definition] = msgspec.field(default_factory=dict)
 
     @property
     def is_init_module(self) -> bool:
@@ -78,10 +76,15 @@ class Module(base.Struct, kw_only=True):
             definitions={defn.name: defn for defn in definitions},
         )
 
-    def __repr__(self) -> str:
-        return (
-            f"Module<name: {self.name}, defs: {len(self.definitions)}, path:{self.canonical_path}>"
+    def _describe(self, *, length: bool = True, names: bool = True) -> str:
+        header = (
+            f"<name: {self.name}, defs: {len(self.definitions)}, path:{self.canonical_path}>"
+            if length
+            else f"<name: {self.name}, path:{self.canonical_path}>"
         )
+        if not names:
+            return header
+        return f"{header}\n    {list(self.definitions)!r}"
 
     def __rich_repr__(self) -> RichRepr:
         yield "name", self.name
@@ -105,19 +108,17 @@ class Module(base.Struct, kw_only=True):
         tps = UntypedRef, TypedRef
         graph = {
             defn.name: sorted({expr.ref for expr in defn.iter_exprs() if isinstance(expr, tps)})
-            for defn in self.definitions.values()
+            for defn in self.def_values()
         }
         yield from TopologicalSorter(graph).static_order()
 
     def with_refs(self, repl: RefRepl, /) -> Module:
         return self.__replace__(
-            definitions={
-                def_name: defn.with_refs(repl) for def_name, defn in self.definitions.items()
-            }
+            definitions={def_name: defn.with_refs(repl) for def_name, defn in self.def_items()}
         )
 
     def iter_exprs(self) -> IterExprs:
-        for defn in self.definitions.values():
+        for defn in self.def_values():
             yield from defn.iter_exprs()
 
     def unique_refs(self) -> set[UntypedRef]:
@@ -129,12 +130,12 @@ class Module(base.Struct, kw_only=True):
     def typed_ref(self, expr: UntypedRef) -> TypedRef:
         """Retrieve the type of a same-module reference."""
         name = expr.ref
-        return TypedRef(ref=name, type=type(self.definitions[name]))
+        return TypedRef(ref=name, type=type(self[name]))
 
     def import_ref(self, def_name: PyIdentifier | str, /) -> TypedExtRef:
         """Return a reference that another module can use to refer to a def from here."""
         name = PyIdentifier(def_name)
-        return TypedExtRef(ext=self.name, ref=name, type=type(self.definitions[name]))
+        return TypedExtRef(ext=self.name, ref=name, type=type(self[name]))
 
     def depends_ext(self) -> set[PyIdentifierSnake]:
         """Return the set of module names that this one depends on."""

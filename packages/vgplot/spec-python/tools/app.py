@@ -425,4 +425,4 @@ def typed_ext_ref(
     ref = expr.ref
     ext = expr.ext
     ext_module = modules[canonical_path(ext)]
-    return pyir.TypedExtRef(ext=ext, ref=ref, type=type(ext_module.definitions[ref]))
+    return pyir.TypedExtRef(ext=ext, ref=ref, type=type(ext_module[ref]))
