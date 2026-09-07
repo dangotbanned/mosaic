@@ -44,7 +44,7 @@ class TypeAlias[E: Expr = Expr](Definition):
     expr: RuntimeScope[E]
     type_params: RuntimeScope[tuple[TypeVar, ...]] = ()
 
-    _ALIAS: t.ClassVar[L["TypeAliasType"]] = "TypeAliasType"
+    _ALIAS: t.ClassVar[L["TypeAliasType", "TypeAlias"]] = "TypeAliasType"
 
     def iter_lines(self) -> Lines:
         params = f", {self.expr}"
@@ -204,6 +204,8 @@ class Source(enum.Enum):
 
 @t.final
 class OpenDict(_Dict):
+    _FORMAT: t.ClassVar[str] = "_{name}Open"
+
     def with_child_closed(
         self, name: PyIdentifier, *, doc: L[Source.SELF] | str = "", fields: IntoFields = ()
     ) -> ClosedDict:
@@ -227,6 +229,10 @@ class OpenDict(_Dict):
             total=self.total,
             doc=self.doc if doc is Source.SELF else doc,
         )
+
+    @classmethod
+    def format_name(cls, original_name: PyIdentifier, /) -> str:
+        return cls._FORMAT.format(name=original_name)
 
 
 @t.final

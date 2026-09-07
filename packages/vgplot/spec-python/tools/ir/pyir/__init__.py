@@ -10,6 +10,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from tools.ir.pyir import (
     base,
     convert,
@@ -33,6 +35,21 @@ from tools.ir.pyir.base import (
 )
 from tools.ir.pyir.field import Field
 from tools.ir.pyir.module import Module
+
+if TYPE_CHECKING:
+    from tools.models.config import PyIRConfig as _Config
+
+
+def configure(config: _Config, /) -> None:
+    name = config.name
+    aliases = name.aliases
+    typing = aliases.typing
+    expr.Sequence._ALIAS = aliases.collections.abc.Sequence
+    expr.Literal._ALIAS = typing.Literal
+    expr.Annotated._ALIAS = typing.Annotated
+    definition.TypeAlias._ALIAS = typing.TypeAliasType
+    definition.OpenDict._FORMAT = name.format_base
+
 
 __all__ = (
     "Definition",

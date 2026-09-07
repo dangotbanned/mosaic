@@ -7,15 +7,13 @@ import typing as t
 
 from tools.codegen.convert import py_identifier_snake
 from tools.common import prepend
-from tools.ir.pyir import dsl
-from tools.ir.pyir.definition import ClosedDict, supertype
+from tools.ir import pyir
+from tools.ir.pyir.definition import ClosedDict, OpenDict, supertype
 
 if t.TYPE_CHECKING:
     from collections.abc import Collection, Iterator
 
     from tools.app import App
-    from tools.ir import pyir
-    from tools.ir.pyir.definition import OpenDict
 
 
 def shrink_marks_build_spec(app: App) -> None:
@@ -83,9 +81,7 @@ class _MarksRelations:
     """(Parent, Child) class pairs."""
 
     @classmethod
-    def from_module(
-        cls, module: pyir.Module, *, fmt_parent_name: str = "_{name}Open"
-    ) -> _MarksRelations:
+    def from_module(cls, module: pyir.Module) -> _MarksRelations:
         """Generate a hierarchy from definitions with `mark` field in `module`.
 
         For `n` definitions, this operation returns `(n * 2) + 1` definitions.
@@ -116,7 +112,7 @@ class _MarksRelations:
             for defn in module.def_values()
             if isinstance(defn, ClosedDict) and defn.has_field("mark")
         )
-        return _MarksRelations._from_marks(mark_defns, fmt_parent_name)
+        return _MarksRelations._from_marks(mark_defns)
 
     def iter_defs(self) -> Iterator[OpenDict | ClosedDict]:
         yield self.mark_options
@@ -124,9 +120,7 @@ class _MarksRelations:
             yield from open_closed
 
     @classmethod
-    def _from_marks(
-        cls, definitions: Collection[ClosedDict], fmt_parent_name: str
-    ) -> _MarksRelations:
+    def _from_marks(cls, definitions: Collection[ClosedDict]) -> _MarksRelations:
         options = supertype(
             definitions,
             name="MarkOptions",
@@ -137,17 +131,16 @@ class _MarksRelations:
             # where `Spec` derives - and leave it in for the `PlotMark` classes
             exclude={"mark", "data"},
         )
-        return _MarksRelations(
-            options, tuple(cls._generate_pairs(definitions, options, fmt_parent_name))
-        )
+        return _MarksRelations(options, tuple(cls._generate_pairs(definitions, options)))
 
     @staticmethod
     def _generate_pairs(
-        definitions: Collection[ClosedDict], options: OpenDict, fmt_parent_name: str
+        definitions: Collection[ClosedDict], options: OpenDict
     ) -> Iterator[tuple[OpenDict, ClosedDict]]:
         data = py_identifier_snake("data")
+        fmt = OpenDict.format_name
         for mark in definitions:
             name = mark.name
-            parent = mark.with_parent(options, fmt_parent_name.format(name=name))
+            parent = mark.with_parent(options, fmt(name))
             child_fields = {data: f} if (f := mark.fields.get(data)) else ()
             yield parent, parent.with_child_closed(name, fields=child_fields)

@@ -110,4 +110,7 @@ def griffe_enhance(schema: dict[str, Any]) -> GriffeResult:
 
 
 if __name__ == "__main__":
+    from tools._colorize_install import install
+
+    install()
     main(fs.MOSAIC_SPEC_TOML_SCHEMA)

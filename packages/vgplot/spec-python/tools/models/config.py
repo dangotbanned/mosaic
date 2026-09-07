@@ -62,6 +62,9 @@ The python version is semantically the same, but uses named capture groups.
 ```
 """
 
+OPEN_DICT_BASE_PATTERN: Final = r"^([a-zA-Z_]+[a-zA-Z_0-9]*?)?\{name\}([a-zA-Z_0-9]*)?$"
+"""Regex pattern for `OpenDict.format`."""
+
 
 class ReferenceUnwrap(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """Override how each attribute is chosen when unwraping a ref.
@@ -440,6 +443,58 @@ class JsonWrapperToMLIR(base.FrozenStruct, frozen=True, forbid_unknown_fields=Tr
         return ReferenceUnwrap()
 
 
+class PyIRAliasesTyping(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    Literal: L["Literal", "L", "Lit"] = "Literal"
+    Annotated: L["Annotated", "A", "An", "Ann"] = "Annotated"
+    TypeAliasType: L["TypeAliasType", "TypeAlias"] = "TypeAliasType"
+
+
+class PyIRAliasesCollectionsAbc(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    Sequence: L["Sequence", "Seq"] = "Sequence"
+
+
+class PyIRAliasesCollections(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    abc: PyIRAliasesCollectionsAbc = field(default_factory=PyIRAliasesCollectionsAbc)
+
+
+class PyIRAliases(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    typing: PyIRAliasesTyping = field(default_factory=PyIRAliasesTyping)
+    """These aliases also apply for `typing_extensions`."""
+    collections: PyIRAliasesCollections = field(default_factory=PyIRAliasesCollections)
+
+
+class PyIRNameConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    aliases: PyIRAliases = field(default_factory=PyIRAliases)
+    """Import target aliases for standard library types."""
+
+    format_base: t.Final[A[str, msgspec.Meta(pattern=OPEN_DICT_BASE_PATTERN)]] = "_{name}Open"
+    """A format string that produces a name for synthesized `OpenDict` base classes.
+
+    Defaults to:
+
+    ```py
+    >>> format_base = "_{name}Open"
+    >>> format_base.format(name="Line")
+    '_LineOpen'
+    ```
+
+    An override must contain the `"{name}"` placeholder, and produce a [valid python identifier][1]:
+
+    ```py
+    "{name}Base"
+    "Base{name}"
+    "_{name}"
+    "{name}"
+    ```
+
+    [1]: https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords
+    """
+
+
+class PyIRConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    name: PyIRNameConfig = field(default_factory=PyIRNameConfig)
+
+
 class SourceConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """A schema source for conversion."""
 
@@ -452,11 +507,14 @@ class SourceConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """
 
 
+# TODO @dangotbanned: really should move everything to `tools/config/**`
+# Could use less verbose names
 class ConvertConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     """Top-level config for translation/codegen."""
 
     sources: cabc.Sequence[SourceConfig] = field(default_factory=list[SourceConfig])
     to_mlir: JsonWrapperToMLIR = field(default_factory=JsonWrapperToMLIR)
+    to_pyir: PyIRConfig = field(default_factory=PyIRConfig)
 
 
 @final

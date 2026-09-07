@@ -122,6 +122,9 @@
         },
         "to_mlir": {
           "$ref": "#/$defs/JsonWrapperToMLIR"
+        },
+        "to_pyir": {
+          "$ref": "#/$defs/PyIRConfig"
         }
       },
       "required": [],
@@ -433,6 +436,108 @@
       },
       "required": [],
       "title": "PluginScope",
+      "type": "object"
+    },
+    "PyIRAliases": {
+      "additionalProperties": false,
+      "properties": {
+        "collections": {
+          "$ref": "#/$defs/PyIRAliasesCollections"
+        },
+        "typing": {
+          "$ref": "#/$defs/PyIRAliasesTyping",
+          "description": "These aliases also apply for `typing_extensions`."
+        }
+      },
+      "required": [],
+      "title": "PyIRAliases",
+      "type": "object"
+    },
+    "PyIRAliasesCollections": {
+      "additionalProperties": false,
+      "properties": {
+        "abc": {
+          "$ref": "#/$defs/PyIRAliasesCollectionsAbc"
+        }
+      },
+      "required": [],
+      "title": "PyIRAliasesCollections",
+      "type": "object"
+    },
+    "PyIRAliasesCollectionsAbc": {
+      "additionalProperties": false,
+      "properties": {
+        "Sequence": {
+          "default": "Sequence",
+          "enum": [
+            "Seq",
+            "Sequence"
+          ]
+        }
+      },
+      "required": [],
+      "title": "PyIRAliasesCollectionsAbc",
+      "type": "object"
+    },
+    "PyIRAliasesTyping": {
+      "additionalProperties": false,
+      "properties": {
+        "Annotated": {
+          "default": "Annotated",
+          "enum": [
+            "A",
+            "An",
+            "Ann",
+            "Annotated"
+          ]
+        },
+        "Literal": {
+          "default": "Literal",
+          "enum": [
+            "L",
+            "Lit",
+            "Literal"
+          ]
+        },
+        "TypeAliasType": {
+          "default": "TypeAliasType",
+          "enum": [
+            "TypeAlias",
+            "TypeAliasType"
+          ]
+        }
+      },
+      "required": [],
+      "title": "PyIRAliasesTyping",
+      "type": "object"
+    },
+    "PyIRConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/PyIRNameConfig"
+        }
+      },
+      "required": [],
+      "title": "PyIRConfig",
+      "type": "object"
+    },
+    "PyIRNameConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "$ref": "#/$defs/PyIRAliases",
+          "description": "Import target aliases for standard library types."
+        },
+        "format_base": {
+          "default": "_{name}Open",
+          "description": "A format string that produces a name for synthesized `OpenDict` base classes.\n\nDefaults to:\n\n```py\n>>> format_base = \"_{name}Open\"\n>>> format_base.format(name=\"Line\")\n'_LineOpen'\n```\n\nAn override must contain the `\"{name}\"` placeholder, and produce a [valid python identifier][1]:\n\n```py\n\"{name}Base\"\n\"Base{name}\"\n\"_{name}\"\n\"{name}\"\n```\n\n[1]: https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords",
+          "pattern": "^([a-zA-Z_]+[a-zA-Z_0-9]*?)?\\{name\\}([a-zA-Z_0-9]*)?$",
+          "type": "string"
+        }
+      },
+      "required": [],
+      "title": "PyIRNameConfig",
       "type": "object"
     },
     "ReferenceUnwrap": {

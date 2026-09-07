@@ -202,3 +202,8 @@ scope.include.child.field_names = ["tip"]
 # TODO @dangotbanned: `SpecDeduplicate`
 # - Plot/PlotAttributes
 # - MarkData
+
+[convert.to_pyir]
+name.aliases.typing = { Annotated = "A", Literal = "L" }
+
+name.format_base = "_{name}Open"

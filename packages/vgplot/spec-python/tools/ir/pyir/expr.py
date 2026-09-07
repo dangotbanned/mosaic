@@ -57,11 +57,11 @@ type LiteralMember = base.Lit | value.PyTrue | value.PyFalse | PyNone
 # technically a special-form
 @t.final
 class Literal(Expr):
-    """A representation of an `typing.Literal`."""
+    """A representation of a `typing.Literal`."""
 
     members: tuple[LiteralMember, ...]
 
-    _ALIAS: t.ClassVar[L["Literal", "L", "Lit"]] = "L"
+    _ALIAS: t.ClassVar[L["Literal", "L", "Lit"]] = "Literal"
 
     def __str__(self) -> TypeExpr:
         members = sorted(repr(m) if isinstance(m, str) else m.value for m in self.members)
@@ -121,7 +121,7 @@ class Mapping(_HasExpr):
 class Sequence(_HasExpr):
     """A representation of a `collections.abc.Sequence`."""
 
-    _ALIAS: t.ClassVar[L["Sequence"]] = "Sequence"
+    _ALIAS: t.ClassVar[L["Sequence", "Seq"]] = "Sequence"
 
     def __str__(self) -> TypeExpr:
         return TypeExpr(f"{self._ALIAS}[{self.expr}]")
@@ -138,12 +138,12 @@ class HomogeneousTuple(_HasExpr):
 
 @t.final
 class Annotated(Expr):
-    """A representation of an `typing.Annotated`."""
+    """A representation of a `typing.Annotated`."""
 
     origin: Expr
     metadata: tuple[Expr, ...]
 
-    _ALIAS: t.ClassVar[L["Annotated", "A", "An", "Ann"]] = "A"
+    _ALIAS: t.ClassVar[L["Annotated", "A", "An", "Ann"]] = "Annotated"
 
     def __str__(self) -> TypeExpr:
         return TypeExpr(

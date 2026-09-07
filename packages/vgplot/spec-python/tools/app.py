@@ -269,6 +269,7 @@ class App:
 
     def into_pyir(self, *, refresh: bool = False, quiet: bool = False) -> None:
         """Lower MLIR into PyIR."""
+        pyir.configure(self.config.convert.to_pyir)
         if not self._modules or refresh:
             self.into_mlir(refresh=refresh, quiet=quiet)
             if not quiet:
