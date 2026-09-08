@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import enum
 import operator
 import typing as t
 from itertools import chain
@@ -19,6 +18,7 @@ from tools.ir.pyir.base import (
     Lines,
     RefRepl,
     RuntimeScope,
+    Source,
     TypedExtRef,
     TypedRef,
     join_comma,
@@ -208,15 +208,6 @@ class _Dict(Definition):
     def get[T](self, key: str, default: T | None = None, /) -> Field | T | None:
         """D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None."""
         return self.fields.get(PyIdentifierSnake(key), default)
-
-
-class Source(enum.Enum):
-    """Where to source a value from, for synthetic inheritance."""
-
-    PARENT = enum.auto()
-    """Derive the value from `parent.<identifier>`."""
-    SELF = enum.auto()
-    """Derive the value from `self.<identifier>`."""
 
 
 def _source_doc(doc: Source | str, self: Definition, parent: Definition) -> str:

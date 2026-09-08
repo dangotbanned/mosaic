@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+import enum
 import typing as t
 from typing import Annotated as A, Literal as L, LiteralString as LS, Self
 
@@ -198,3 +199,12 @@ class TypedExtRef[D: Definition = Definition](_ExtRef):
     def __str__(self) -> TypeExpr:
         # NOTE: later, it might make sense to be smarter about using `ext.ref` to avoid collisions
         return TypeExpr(self.ref)
+
+
+class Source(enum.Enum):
+    """Where to source a value from, for synthetic inheritance."""
+
+    PARENT = enum.auto()
+    """Derive the value from `parent.<identifier>`."""
+    SELF = enum.auto()
+    """Derive the value from `self.<identifier>`."""
