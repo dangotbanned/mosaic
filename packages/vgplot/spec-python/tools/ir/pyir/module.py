@@ -97,6 +97,7 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         yield "from __future__ import annotations\n"
         if deps := frozenset(self.iter_dependencies()):
             yield from resolver.iter_resolve(deps)
+            yield ""
         yield "\n".join(
             chain.from_iterable(get(def_name).iter_lines() for def_name in self.topological_sort())
         )
