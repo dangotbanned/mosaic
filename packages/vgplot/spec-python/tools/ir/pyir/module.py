@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing as t
 from graphlib import TopologicalSorter
+from itertools import chain
 from pathlib import Path  # ruff: ignore[typing-only-standard-library-import]
 
 import msgspec
@@ -12,12 +13,14 @@ from tools.ir.pyir import convert
 from tools.ir.pyir.base import (
     Definition,
     IterExprs,
+    Lines,
     RefRepl,
     TypedExtRef,
     TypedRef,
     UntypedExtRef,
     UntypedRef,
 )
+from tools.ir.pyir.dependencies import Dep, Resolver, iter_deps
 from tools.models import base
 
 if t.TYPE_CHECKING:
@@ -26,8 +29,6 @@ if t.TYPE_CHECKING:
     from tools.ir import mlir
 
 
-# ruff: file-ignore[print]
-# TODO @dangotbanned: `PyIR` needs to declare import dependencies
 @t.final
 class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
     """A representation of a Python module.
@@ -90,12 +91,15 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         yield "name", self.name
         yield "definitions", self.definitions
 
-    def preview(self) -> None:
-        print(f"# Generated: {self.canonical_path}\n")
+    def generate(self, resolver: Resolver) -> Lines:
         get = self.definitions.__getitem__
-        for def_name in self.topological_sort():
-            print("\n".join(get(def_name).iter_lines()))
-            print("\n")
+        yield f"# Generated: {self.canonical_path}"
+        yield "from __future__ import annotations\n"
+        if deps := frozenset(self.iter_dependencies()):
+            yield from resolver.iter_resolve(deps)
+        yield "\n".join(
+            chain.from_iterable(get(def_name).iter_lines() for def_name in self.topological_sort())
+        )
 
     def topological_sort(self) -> Iterator[PyIdentifier]:
         """Return an iterator over a deterministic, [topological sort] within the bounds of this module.
@@ -116,6 +120,10 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         return self.__replace__(
             definitions={def_name: defn.with_refs(repl) for def_name, defn in self.def_items()}
         )
+
+    def iter_dependencies(self) -> Iterator[Dep]:
+        for defn in self.def_values():
+            yield from iter_deps(defn)
 
     def iter_exprs(self) -> IterExprs:
         for defn in self.def_values():

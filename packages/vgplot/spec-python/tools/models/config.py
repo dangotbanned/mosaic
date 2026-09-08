@@ -2,6 +2,8 @@
 
 import collections.abc as cabc
 import typing as t
+from collections.abc import Callable
+from operator import attrgetter
 from pathlib import Path
 from typing import Annotated as A, Final, Literal as L, final
 
@@ -461,6 +463,13 @@ class PyIRAliases(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     typing: PyIRAliasesTyping = field(default_factory=PyIRAliasesTyping)
     """These aliases also apply for `typing_extensions`."""
     collections: PyIRAliasesCollections = field(default_factory=PyIRAliasesCollections)
+
+    def get_alias(self, module: L["typing", "collections.abc"], name: str) -> str:
+        return getattr(self._GET_SECTION[module](self), name, name)
+
+    _GET_SECTION: t.ClassVar[
+        t.Final[cabc.Mapping[L["typing", "collections.abc"], Callable[[t.Any], t.Any]]]
+    ] = {"typing": attrgetter("typing"), "collections.abc": attrgetter("collections.abc")}
 
 
 class PyIRNameConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):

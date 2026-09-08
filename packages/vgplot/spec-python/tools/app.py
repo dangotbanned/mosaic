@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Literal as L, Protocol, final
 from tools import fs, serde
 from tools.common import PyIdentifierSnake, into_repl_map
 from tools.ir import json_wrapper as jw, mlir, pyir
+from tools.ir.pyir.dependencies import Resolver
 from tools.models.config import MosaicSpecToml
 from tools.models.mosaic import InputSchema
 
@@ -393,12 +394,21 @@ class App:
             print(f"Previewing modules: {list(names)!r}")
 
         # NOTE: `quiet=True` will only silence previous steps, this one is about displaying stuff
+        resolver = Resolver(
+            {v.name: k for k, v in self._modules.items()}, self.config.convert.to_pyir.name
+        )
         multiple_modules = len(names) > 1
         for module in self._modules.values():
             if module.name in names:
-                module.preview()
+                print("\n".join(module.generate(resolver)))
                 if multiple_modules:
                     print("-" * 100)
+
+    # TODO @dangotbanned: Test writing to files
+    def generate_modules(self) -> None:
+        _resolver = Resolver(
+            {v.name: k for k, v in self._modules.items()}, self.config.convert.to_pyir.name
+        )
 
     def _read_sources(self) -> Iterator[InputSchema]:
         if not (sources := self.config.convert.sources):
