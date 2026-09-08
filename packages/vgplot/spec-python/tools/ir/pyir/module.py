@@ -105,7 +105,7 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
                 )
             )
             yield "\n"
-            yield f"__all__ = ({','.join(name.__repr__() for name in self.def_names() if not name.startswith('_'))})\n"
+            yield f"__all__ = ({','.join(name.__repr__() for name in self.iter_exports())})\n"
 
     def topological_sort(self) -> Iterator[PyIdentifier]:
         """Return an iterator over a deterministic, [topological sort] within the bounds of this module.
@@ -134,6 +134,10 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
     def iter_exprs(self) -> IterExprs:
         for defn in self.def_values():
             yield from defn.iter_exprs()
+
+    # TODO @dangotbanned: Re-use for package exports
+    def iter_exports(self) -> Iterator[str]:
+        yield from (name for name in self.def_names() if not name.startswith("_"))
 
     def unique_refs(self) -> set[UntypedRef]:
         return {expr for expr in self.iter_exprs() if isinstance(expr, UntypedRef)}
