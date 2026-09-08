@@ -14,29 +14,30 @@ if t.TYPE_CHECKING:
 
 
 @t.final
-class DynExpr(Expr):
-    """A simple, lightweight expression.
-
-    Represents some stdlib type with 0 or minimal configuration.
-    """
+class DynExpr(Expr, kw_only=False):
+    """A simple, lightweight expression that has zero dependencies."""
 
     tp_expr: TypeExpr
-    requires: tuple[str, ...] = ()
 
     def __str__(self) -> TypeExpr:
         return self.tp_expr
 
 
-def _expr(s: str, *requires: str) -> DynExpr:
-    return DynExpr(tp_expr=TypeExpr(s), requires=requires)
+@t.final
+class Any(Expr):
+    # NOTE: required `typing.Any`
+    _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("Any")
+
+    def __str__(self) -> TypeExpr:
+        return self._tp_expr
 
 
-EMPTY_TUPLE: t.Final = _expr("tuple[()]")
-ANY: t.Final = _expr("Any", "typing.Any")
-STR: t.Final = _expr("str")
-INT: t.Final = _expr("int")
-FLOAT: t.Final = _expr("float")
-BOOL: t.Final = _expr("bool")
+EMPTY_TUPLE: t.Final = DynExpr(TypeExpr("tuple[()]"))
+STR: t.Final = DynExpr(TypeExpr("str"))
+INT: t.Final = DynExpr(TypeExpr("int"))
+FLOAT: t.Final = DynExpr(TypeExpr("float"))
+BOOL: t.Final = DynExpr(TypeExpr("bool"))
+ANY: t.Final = Any()
 
 
 @t.final

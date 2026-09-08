@@ -19,7 +19,7 @@ if t.TYPE_CHECKING:
     from tools.models.base import DefName
 
 
-_MLIR_TO_EXPR_NO_ATTR: t.Final[Mapping[type[MLIR], expr.DynExpr | expr.PyNone]] = {
+_MLIR_TO_EXPR_NO_ATTR: t.Final[Mapping[type[MLIR], expr.DynExpr | expr.Any | expr.PyNone]] = {
     mlir.PyBool: expr.BOOL,
     mlir.PyInt: expr.INT,
     mlir.PyFloat: expr.FLOAT,
