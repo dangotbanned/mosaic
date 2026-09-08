@@ -167,7 +167,7 @@ class _Dict(Definition):
             chain((base.as_base() for base in self.bases), self.keywords())
         )
         class_statement = f"class {self.name}({inheritance_list}):"
-        if not self.doc or self.fields:
+        if not (self.doc or self.fields):
             yield f"{class_statement}..."
             return
         yield class_statement
