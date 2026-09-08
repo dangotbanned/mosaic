@@ -58,7 +58,12 @@ type LiteralMember = base.Lit | value.PyTrue | value.PyFalse | PyNone
 # technically a special-form
 @t.final
 class Literal(Expr):
-    """A representation of a `typing.Literal`."""
+    """A representation of a `typing.Literal`.
+
+    This form is more restricted than [Legal parameters for `Literal` at type check time][1].
+
+    [1]: https://typing.python.org/en/latest/spec/literal.html#legal-parameters-for-literal-at-type-check-time
+    """
 
     members: tuple[LiteralMember, ...]
 
