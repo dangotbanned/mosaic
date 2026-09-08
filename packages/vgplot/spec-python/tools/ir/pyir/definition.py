@@ -166,7 +166,11 @@ class _Dict(Definition):
         inheritance_list = join_comma(
             chain((base.as_base() for base in self.bases), self.keywords())
         )
-        yield f"class {self.name}({inheritance_list}):"
+        class_statement = f"class {self.name}({inheritance_list}):"
+        if not self.doc or self.fields:
+            yield f"{class_statement}..."
+            return
+        yield class_statement
         if self.doc:
             yield f'{INDENT}"""{self.doc}"""'
         for line in chain.from_iterable(
