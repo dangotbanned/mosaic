@@ -9,7 +9,7 @@ from __future__ import annotations
 def main() -> None:
     import argparse
     import dataclasses
-    from typing import TYPE_CHECKING
+    from typing import TYPE_CHECKING, Literal
 
     if TYPE_CHECKING:
         from collections.abc import Sequence
@@ -19,7 +19,7 @@ def main() -> None:
     class _CLIOptions:
         quiet: bool
         stage: RunUntil
-        preview_modules: Sequence[str]
+        preview_modules: Sequence[str | Literal["all"]]
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--quiet", action="store_true", help="Print less to stdout.")
@@ -31,7 +31,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--preview-modules",
-        help="Print the full generated code for these modules to stdout.",
+        help="Print the full generated code for these (or 'all') modules to stdout.",
         nargs="+",
         default=(),
     )

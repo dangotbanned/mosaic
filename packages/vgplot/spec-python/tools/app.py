@@ -31,7 +31,7 @@ class CLIOptions(Protocol):
     """Run until the end of a specific conversion stage."""
     quiet: bool
     "Print less to stdout."
-    preview_modules: Sequence[str]
+    preview_modules: Sequence[str | L["all"]]
     "Print the full generated code for these modules to stdout."
 
 
@@ -387,9 +387,9 @@ class App:
             print("Unique typed external references:")
             print("\n".join(f"  {ref.display()}" for ref in resolved_ext_refs.values()))
 
-    def preview_modules(
-        self, *names: CanonicalPath | str, refresh: bool = False, quiet: bool = False
-    ) -> None:
+    def preview_modules(self, *names: str, refresh: bool = False, quiet: bool = False) -> None:
+        if "all" in names:
+            names = tuple(module.name for module in self._modules.values())
         if not quiet:
             print(f"Previewing modules: {list(names)!r}")
 
