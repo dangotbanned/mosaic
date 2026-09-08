@@ -194,13 +194,9 @@ scope.include.id                = ["marks"]
 scope.include.definition.nodes  = ["ClosedDict"]
 scope.include.child.field_names = ["tip"]
 
-# TODO @dangotbanned: Deduplication in `TransformSplit`
-# - WindowOptions
-# - AggregateOptions
-# - Simplify `Arg`
-
-# TODO @dangotbanned: `SpecDeduplicate`
-# - MarkData
+# TODO @dangotbanned: Lower priority parts of `scripts.schema_mod
+# - Simplify `Arg` (TransformSplit)
+# - Add `MarkData(Optional)` (SpecDeduplicate)
 
 [convert.to_pyir]
 name.aliases.typing = { Annotated = "A", Literal = "L" }

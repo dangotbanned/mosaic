@@ -35,6 +35,10 @@ TYPED_DICT: t.Final = TypedDict()
 class Generic(PyIR):
     """A subscript of `Generic` in a base class list."""
 
+    def __post_init__(self) -> None:
+        msg = f"TODO: Support inheriting from a generic parent, got base:\n{self!r}"
+        raise NotImplementedError(msg)
+
     type_params: RuntimeScope[tuple[TypeVar, ...]]
 
     def as_base(self) -> str:

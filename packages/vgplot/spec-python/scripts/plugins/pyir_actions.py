@@ -9,8 +9,8 @@ from itertools import chain
 from tools.codegen.convert import py_identifier_snake
 from tools.common import PyIdentifier, ensure_type
 from tools.ir import pyir
-from tools.ir.pyir import TypedExtRef, definition as pyir_d, dsl, expr as pyir_e
-from tools.ir.pyir.definition import ClosedDict, OpenDict, supertype
+from tools.ir.pyir import TypedExtRef, TypedRef, definition as pyir_d, dsl, expr as pyir_e
+from tools.ir.pyir.definition import ClosedDict, OpenDict
 
 if t.TYPE_CHECKING:
     from collections.abc import Collection, Iterable, Iterator
@@ -211,9 +211,9 @@ class _MarksRelations:
 
     @classmethod
     def _from_marks(cls, definitions: Collection[ClosedDict]) -> _MarksRelations:
-        options = supertype(
+        options = dsl.supertype(
+            "MarkOptions",
             definitions,
-            name="MarkOptions",
             doc="Shared options for all marks.",
             # NOTE: This is a bug in the TS source:
             #   `SpecHead.data?: Data | (Data & PlotMarkData)`
@@ -231,11 +231,45 @@ class _MarksRelations:
         fmt = OpenDict.format_name
         for mark in definitions:
             name = mark.name
-            parent = mark.with_parent(options, fmt(name))
-            child_fields = {data: f} if (f := mark.fields.get(data)) else ()
+            parent = mark.with_parent_open(fmt(name), options)
+            child_fields = {data: f} if (f := mark.get(data)) else ()
             yield parent, parent.with_child_closed(name, fields=child_fields)
+
+
+def _synthesize_transform_hierarchy(app: App) -> None:
+    module = app.module("transform")
+    window_transforms = tuple(
+        module.get_typed(ensure_type(m, TypedRef).ref, ClosedDict)
+        for m in ensure_type(
+            ensure_type(module["WindowTransform"], pyir_d.TypeAlias).expr, pyir_e.Union
+        ).members
+    )
+    window_options = dsl.supertype(
+        "WindowOptions", window_transforms, doc="Window transform options."
+    )
+    distinct = dsl.field("distinct", pyir_e.BOOL)
+    agg_options = window_options.with_child_open(
+        "AggregateOptions", doc="Aggregate transform options.", fields={distinct.name: distinct}
+    )
+
+    aggregate_exclude = window_options.fields.keys() | agg_options.fields.keys()
+    name = dsl.Source.SELF
+
+    # NOTE: `AggregateOptions` children need to go first, as they iterate over the dictionary being updated
+    module.update_defs(
+        chain(
+            (
+                defn.with_parent_closed(name, agg_options, exclude=aggregate_exclude)
+                for defn in module.def_values()
+                if isinstance(defn, ClosedDict) and defn.has_field("distinct")
+            ),
+            (window_options, agg_options),
+            (defn.with_parent_closed(name, window_options) for defn in window_transforms),
+        )
+    )
 
 
 def run(app: App) -> None:
     """Run after typing all references."""
     massage_components(app)
+    _synthesize_transform_hierarchy(app)
