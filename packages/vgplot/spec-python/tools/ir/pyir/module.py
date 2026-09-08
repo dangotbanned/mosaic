@@ -98,9 +98,14 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         if deps := frozenset(self.iter_dependencies()):
             yield from resolver.iter_resolve(deps)
             yield ""
-        yield "\n".join(
-            chain.from_iterable(get(def_name).iter_lines() for def_name in self.topological_sort())
-        )
+        if self.definitions:
+            yield "\n".join(
+                chain.from_iterable(
+                    get(def_name).iter_lines() for def_name in self.topological_sort()
+                )
+            )
+            yield "\n"
+            yield f"__all__ = ({','.join(name.__repr__() for name in self.def_names() if not name.startswith('_'))})\n"
 
     def topological_sort(self) -> Iterator[PyIdentifier]:
         """Return an iterator over a deterministic, [topological sort] within the bounds of this module.
