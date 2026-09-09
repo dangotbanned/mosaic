@@ -20,13 +20,13 @@ from tools.ir.pyir.base import (
     UntypedExtRef,
     UntypedRef,
 )
-from tools.ir.pyir.dependencies import Dep, Resolver, iter_deps
 from tools.models import base
 
 if t.TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
 
     from tools.ir import mlir
+    from tools.ir.pyir.dependencies import Resolver
 
 
 @t.final
@@ -95,9 +95,8 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         get = self.definitions.__getitem__
         yield f"# Generated: {self.canonical_path}"
         yield "from __future__ import annotations\n"
-        if deps := frozenset(self.iter_dependencies()):
-            yield from resolver.iter_resolve(deps)
-            yield ""
+        yield from resolver.iter_imports(self.def_values())
+        yield ""
         if self.definitions:
             yield "\n".join(
                 chain.from_iterable(
@@ -126,10 +125,6 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         return self.__replace__(
             definitions={def_name: defn.with_refs(repl) for def_name, defn in self.def_items()}
         )
-
-    def iter_dependencies(self) -> Iterator[Dep]:
-        for defn in self.def_values():
-            yield from iter_deps(defn)
 
     def iter_exprs(self) -> IterExprs:
         for defn in self.def_values():

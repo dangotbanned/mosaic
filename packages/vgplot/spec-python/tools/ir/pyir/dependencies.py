@@ -1,27 +1,10 @@
-"""External dependencies for a module.
-
-## Notes
-- Only concerns import dependencies (within a module is handled by topological sorting)
-- `(Typed)ExtRef` is lossy
-    - It doesn't include the full canonical path
-    - Hasn't been an issue for my use case, but would be if any modules shared
-      the same name (but lived in different sub-packages)
-- Many `PyIR`s have implicit dependencies
-    - Most `Definition`s have 1 + their descendants
-        - `Excludes _Dict`, which can have a special form in bases
-    - `Qualifier`s and most `Expr` are their name + the same
-- Not all `PyIR`s have dependencies
-- Traversal is needed for many, but not all, cases
-- Partial dependencies
-    - `*ExtRef` needs the canonical path later
-    - originating from `_typing_compat` needs resolving later
-    - both are a known factor of the class (don't store on instances)
-"""
+"""External dependencies for a module."""
 
 from __future__ import annotations
 
 import functools
 import typing as t
+from itertools import chain
 from typing import Literal as L
 
 from tools.ir.pyir import definition, expr, special as sf
@@ -45,7 +28,11 @@ if t.TYPE_CHECKING:
 
     from tools.common import PyIdentifier, PyIdentifierSnake
 
+__all__ = ("Resolver",)
 
+type CanonicalPath = str
+type Dep = StdDep | PartialDep
+type Dependencies = cabc.Iterable[Dep]
 type _StdModule = L["typing", "collections.abc"]
 type _StdName = L[
     "Any",
@@ -82,13 +69,25 @@ class PartialDep(base.FrozenHashableStruct, kw_only=False):
         return resolver._resolve_partial_dep(self)
 
 
-type CanonicalPath = str
-
-
+# TODO @dangotbanned: `_missing_from_data_model` -> derive from some section of `PyIRConfig`
+# - Maybe `name`, but could be a new section entirely
+# TODO @dangotbanned: finalize attribute names, add `__slots__`
+# TODO @dangotbanned: finalize constructor, add to class doc
 class Resolver:
+    """Resolve the imports required for each module.
+
+    The lifetime of a `Resolved` is tied to a single run of an `App`.
+    If any changes are made to a module or configuration, a new `Resolver` should be created to avoid
+    invalid cache entries.
+    """
+
     def __init__(
-        self, modules: cabc.Mapping[PyIdentifierSnake, CanonicalPath], config: cfg.PyIRNameConfig
+        self, modules: cabc.Mapping[PyIdentifierSnake, CanonicalPath], config: cfg.PyIRNameConfig, /
     ) -> None:
+        # NOTE: `(Typed)ExtRef` is lossy
+        # - It doesn't include the full canonical path.
+        # - Hasn't been an issue for my use case, but would be if any modules shared
+        #   the same name (but lived in different sub-packages)
         self._canonical: cabc.Mapping[PyIdentifierSnake, CanonicalPath] = modules
         self._aliases: cfg.PyIRAliases = config.aliases
         self._missing_from_data_model: cabc.Mapping[_StdName, CanonicalPath] = {
@@ -99,6 +98,11 @@ class Resolver:
         }
         self._cache: dict[Dep, str] = {}
 
+    def iter_imports(self, definitions: cabc.Iterable[Definition], /) -> Lines:
+        """Yield every unique dependency in `definitions` as an import statement."""
+        if deps := frozenset(chain.from_iterable(_find_deps(defn) for defn in definitions)):
+            yield from self._iter_resolve(deps)
+
     def _resolve_partial_dep(self, dep: PartialDep, /) -> str:
         return f"from {self._canonical[dep.module]} import {dep.name}"
 
@@ -108,17 +112,12 @@ class Resolver:
         as_name = self._aliases.get_alias(dep.module, name)
         return f"from {module} import {name}{'' if as_name == name else f' as {as_name}'}"
 
-    def iter_resolve(self, deps: cabc.Iterable[Dep]) -> Lines:
+    def _iter_resolve(self, deps: cabc.Iterable[Dep], /) -> Lines:
         for dep in deps:
             if not (result := self._cache.get(dep)):
                 result = self._cache[dep] = dep.resolve(self)
             yield result
 
-
-type Dep = StdDep | PartialDep
-
-
-type Dependencies = cabc.Iterable[Dep]
 
 _CONSTANT: t.Final[cabc.Mapping[type[PyIR], Dependencies]] = {
     expr.Any: (StdDep("typing", "Any"),),
@@ -136,22 +135,6 @@ The question can be answered by the class alone.
 """
 
 
-_ONLY_DESCENDANTS = (
-    expr.HomogeneousTuple,
-    Field,
-    expr.ForwardRef,
-    expr.Union,
-    OpenDict,
-    ClosedDict,
-    ExtraDict,
-    expr.NamedTuple,
-)
-"""Types that do not introduce dependencies, beyond what may be required of their descendants.
-
-Answering the question means traversal-only.
-"""
-
-
 _CONSTANT_PLUS_DESCENDANTS: t.Final[cabc.Mapping[type[PyIR], StdDep]] = {
     expr.Mapping: StdDep("collections.abc", "Mapping"),
     expr.Sequence: StdDep("collections.abc", "Sequence"),
@@ -166,17 +149,9 @@ _CONSTANT_PLUS_DESCENDANTS: t.Final[cabc.Mapping[type[PyIR], StdDep]] = {
 """Types that introduce a constant dependency via the class and variable via the instance's descendants."""
 
 
-def find_deps(node: PyIR) -> frozenset[Dep]:
-    return frozenset(_find_deps(node))
-
-
-def iter_deps(node: Definition) -> cabc.Iterator[Dep]:
-    yield from _find_deps(node)
-
-
 @functools.singledispatch
 def _find_deps(node: PyIR) -> Dependencies:
-    msg = f"{find_deps.__qualname__}() is not yet implemented for {type(node).__name__}, got:\n{node!r}"
+    msg = f"_find_deps() is not yet implemented for {type(node).__name__}, got:\n{node!r}"
     raise NotImplementedError(msg)
 
 
@@ -220,10 +195,6 @@ def _from_ext_ref(node: UntypedExtRef | TypedExtRef, /) -> PartialDep:
 @_find_deps.register(TypedExtRef)
 @_find_deps.register(UntypedExtRef)
 def _(node: UntypedExtRef | TypedExtRef) -> Dependencies:
-    """Types that always have *one* singular dependency.
-
-    The answer changes per-instance, but the result can be cached and doesn't need to use descendant traversal.
-    """
     yield _from_ext_ref(node)
 
 
