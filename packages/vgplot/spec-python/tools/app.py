@@ -7,7 +7,7 @@ from collections import deque
 from typing import TYPE_CHECKING, Literal as L, Protocol, final
 
 from tools import fs, serde
-from tools.common import CanonicalPath, PyIdentifierSnake, into_repl_map
+from tools.common import CanonicalPath, PyIdentifier, into_repl_map
 from tools.ir import json_wrapper as jw, mlir, pyir
 from tools.ir.pyir.dependencies import Resolver
 from tools.models.config import MosaicSpecToml
@@ -281,7 +281,16 @@ class App:
             self.into_mlir(refresh=refresh, quiet=quiet)
             if not quiet:
                 print(f"Generating module representation from {len(self._mlirs)} root(s).")
-            pkg = pyir.Module(name=PyIdentifierSnake("mosaic_spec"), filepath=fs.MOSAIC_SPEC_INIT)
+
+            pkg = pyir.Module.root_package(
+                "mosaic_spec",
+                fs.MOSAIC_SPEC_INIT,
+                exports={
+                    CanonicalPath("mosaic_spec"): "child-modules",
+                    CanonicalPath("mosaic_spec._gen"): "child-exports",
+                    CanonicalPath("mosaic_spec.spec"): (PyIdentifier("Spec"),),
+                },
+            )
             sub_pkg = pkg.with_subpackage("_gen")
 
             self.update_modules(pkg, sub_pkg)

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import typing as t
+from collections.abc import Mapping
 from graphlib import TopologicalSorter
 from itertools import chain
 from pathlib import Path  # ruff: ignore[typing-only-standard-library-import]
+from typing import Literal as L
 
 import msgspec
 
@@ -29,17 +31,47 @@ if t.TYPE_CHECKING:
     from tools.ir.pyir.dependencies import Resolver
 
 
+type ExportKind = L["child-exports", "child-modules"]
+"""A filter to apply when determining symbols to re-export in a package.
+
+Either option will implicitly exclude `_`-prefixed names.
+
+- *"child-exports"*: all exports from each child module are re-exported (default).
+- *"child-modules"*: only the name of child modules are exported.
+"""
+
+type ExportSpec = Mapping[CanonicalPath, ExportKind | tuple[PyIdentifier, ...]]
+
+
+# TODO @dangotbanned: Separate `Package` from `Module`
+# - In Python's data model
+#   - A package is a module
+#   - but a module is not a package (excluding namespace packages)
+# - Griffe models this correctly
+#   - but it accounts for scenarios that I will never generate
+# - For codegen
+#   - A Package does not contain definitions
+#   - A Package must have children
+#   - The parent of a Module is a Package, and cannot be a Module or None
+#   - The parent of a Package is a Package, or None if it is the root
+#   - A Module exports all definitions that are not prefixed with `_`
+#       - This should be the only mechanism for export control that a Module has
+#   - A Package has full control of it's exports
+#       - Defaults to the sum of it's children's exports
+#       - Optionally, supports exporting Module(s) and subsets of Module exports
 @t.final
 class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
     """A representation of a Python module.
 
-    This is a stripped down version of [griffe.Module](https://mkdocstrings.github.io/griffe/reference/api/models/module/#griffe.Module).
+    This is loosely based on [griffe.Module](https://mkdocstrings.github.io/griffe/reference/api/models/module/#griffe.Module).
     """
 
     name: PyIdentifierSnake
     filepath: Path
     parent: Module | None = None
     definitions: dict[PyIdentifier | str, Definition] = msgspec.field(default_factory=dict)
+    export_spec: ExportSpec = msgspec.field(default_factory=dict)
+    """How to derive names exported from a package."""
 
     @property
     def is_init_module(self) -> bool:
@@ -57,6 +89,19 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
     def canonical_path(self) -> CanonicalPath:
         result = self.name if self.parent is None else f"{self.parent.canonical_path}.{self.name}"
         return CanonicalPath(result)
+
+    @classmethod
+    def root_package(
+        cls,
+        name: PyIdentifierSnake | str,
+        filepath: Path,
+        /,
+        exports: ExportKind | ExportSpec = "child-exports",
+    ) -> Module:
+        name = py_identifier_snake(name)
+        if not isinstance(exports, Mapping):
+            exports = {CanonicalPath(name): exports}
+        return Module(name=name, filepath=filepath, export_spec=exports)
 
     @classmethod
     def from_mlir(cls, source: mlir.Root, parent: Module, /) -> Module:
