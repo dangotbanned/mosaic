@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import functools
-
 # ruff: file-ignore[print]
 from collections import deque
 from typing import TYPE_CHECKING, Literal as L, Protocol, final
 
 from tools import fs, serde
-from tools.common import CanonicalPath, PyIdentifier, into_repl_map
+from tools.common import CanonicalPath, PyIdentifier, PyIdentifierSnake
 from tools.ir import json_wrapper as jw, mlir, pyir
 from tools.ir.pyir.dependencies import Resolver
 from tools.models.config import MosaicSpecToml
@@ -18,9 +16,6 @@ if TYPE_CHECKING:
 
     from tools.models.base import IdName
 
-
-type _PyIRRefMap = dict[pyir.UntypedRef | pyir.UntypedExtRef, pyir.TypedRef | pyir.TypedExtRef]
-"""Very long, unfortunate type."""
 
 type RunUntil = L["json_wrapper", "mlir", "pyir", "all"]
 
@@ -95,7 +90,7 @@ class App:
     ### Stage 4
 
     - Package: `tools.ir.pyir`
-    - Root: `pyir.Module`
+    - Root: `pyir.Module` / `pyir.Package`
     - Definition: `pyir.Definition`, 7 implementations
     - Nodes:
         - `pyir.Expr`, 14 implementations
@@ -189,7 +184,7 @@ class App:
     _inputs: deque[InputSchema]
     _wrappers: deque[jw.Root]
     _mlirs: deque[mlir.Root]
-    _modules: dict[CanonicalPath, pyir.Module]
+    _package: pyir.Package
 
     def __init__(self, config: MosaicSpecToml) -> None:
         self.config = config
@@ -198,7 +193,6 @@ class App:
         self._mlirs = deque[mlir.Root]()
         self._actions: dict[int, mlir.Action] = {}
         self._mlirs_inv: dict[IdName, int] = {}
-        self._modules: dict[CanonicalPath, pyir.Module] = {}
 
     @staticmethod
     def discover(path: fs.IntoPath = fs.MOSAIC_SPEC_TOML) -> App:
@@ -216,11 +210,7 @@ class App:
             method(quiet=quiet)
             return
 
-        # NOTE: `all` is  experimental stuff, which depends on `pyir`
         self.into_pyir(quiet=quiet)
-        if not quiet:
-            self.display_references()
-        self.resolve_all_references(quiet=quiet)
         self._run_pyir_plugins(quiet=quiet)
         if options.preview_modules:
             self.preview_modules(*options.preview_modules, quiet=quiet)
@@ -242,67 +232,55 @@ class App:
         msg = "Empty actions"
         raise NotImplementedError(msg)
 
-    def read_into_inputs(self, *, refresh: bool = False) -> None:
-        if not self._inputs or refresh:
-            it = self._read_sources()
-            if refresh:
-                self._inputs.clear()
-            self._inputs.extend(it)
+    def read_into_inputs(self) -> None:
+        self._inputs = deque(self._read_sources())
 
-    def into_json_wrapper(self, *, refresh: bool = False, quiet: bool = False) -> None:
-        if not self._wrappers or refresh:
-            self.read_into_inputs(refresh=refresh)
-            it = (jw.Root.from_input_schema(schema) for schema in self._inputs)
-            if refresh:
-                self._wrappers.clear()
-            self._wrappers.extend(it)
+    def into_json_wrapper(self, *, quiet: bool = False) -> None:
+        self.read_into_inputs()
+        self._wrappers = deque(jw.Root.from_input_schema(schema) for schema in self._inputs)
 
-    def into_mlir(self, *, refresh: bool = False, quiet: bool = False) -> None:
-        if not self._mlirs or refresh:
-            if self._mlirs:
-                self._mlirs.clear()
-                self._mlirs_inv.clear()
-            self.into_json_wrapper(refresh=refresh)
-            config = self.config.convert.to_mlir
-            fn = mlir.Root.from_json_wrapper
-            self._mlirs.extend(fn(root, config) for root in self._wrappers)
-            if not quiet:
-                print(f"Starting {len(self.actions)} actions on {len(self._mlirs)} root(s).")
-            self._mlirs = self._run_actions(self._mlirs, quiet=quiet)
-            self._mlirs_inv = {root.id: idx for idx, root in enumerate(self._mlirs)}
-            if not quiet:
-                print(f"Finished actions with {len(self._mlirs)} root(s).")
-                print("\n".join(root._describe() for root in self._mlirs))
+    def into_mlir(self, *, quiet: bool = False) -> None:
+        self.into_json_wrapper()
+        config = self.config.convert.to_mlir
+        fn = mlir.Root.from_json_wrapper
+        self._mlirs = deque(fn(root, config) for root in self._wrappers)
+        if not quiet:
+            print(f"Starting {len(self.actions)} actions on {len(self._mlirs)} root(s).")
+        self._mlirs = self._run_actions(self._mlirs, quiet=quiet)
+        self._mlirs_inv = {root.id: idx for idx, root in enumerate(self._mlirs)}
+        if not quiet:
+            print(f"Finished actions with {len(self._mlirs)} root(s).")
+            print("\n".join(root._describe() for root in self._mlirs))
 
-    def into_pyir(self, *, refresh: bool = False, quiet: bool = False) -> None:
+    def into_pyir(self, *, quiet: bool = False) -> None:
         """Lower MLIR into PyIR."""
         pyir.configure(self.config.convert.to_pyir)
-        if not self._modules or refresh:
-            self.into_mlir(refresh=refresh, quiet=quiet)
-            if not quiet:
-                print(f"Generating module representation from {len(self._mlirs)} root(s).")
 
-            pkg = pyir.Module.root_package(
-                "mosaic_spec",
-                fs.MOSAIC_SPEC_INIT,
-                exports={
-                    CanonicalPath("mosaic_spec"): "child-modules",
-                    CanonicalPath("mosaic_spec._gen"): "child-exports",
-                    CanonicalPath("mosaic_spec.spec"): (PyIdentifier("Spec"),),
-                },
+        self.into_mlir(quiet=quiet)
+        if not quiet:
+            print(f"Generating module representation from {len(self._mlirs)} root(s).")
+
+        self._package = pyir.Package.root_package(
+            "mosaic_spec",
+            fs.MOSAIC_SPEC_INIT,
+            exports={
+                CanonicalPath("mosaic_spec"): "child-modules",
+                CanonicalPath("mosaic_spec._gen"): "child-exports",
+                CanonicalPath("mosaic_spec.spec"): (PyIdentifier("Spec"),),
+            },
+        )
+        sub_pkg = self._package.with_subpackage("_gen")
+
+        if not quiet:
+            print("Added 2 packages.")
+
+        for root in self._mlirs:
+            sub_pkg.with_child(
+                root.id,
+                (pyir.convert.from_def(defn, def_name) for def_name, defn in root.def_items()),
             )
-            sub_pkg = pkg.with_subpackage("_gen")
-
-            self.update_modules(pkg, sub_pkg)
-            if not quiet:
-                print(f"Added {len(self._modules)} packages.")
-            self.update_modules(*(pyir.Module.from_mlir(root, sub_pkg) for root in self._mlirs))
-            if not quiet:
-                print(f"Finished generating with {len(self._modules)} modules(s).")
-                print("\n".join(f" - {m}" for m in self._modules))
-                print(
-                    f"Total definitions: {sum(len(m.definitions) for m in self._modules.values())}"
-                )
+        if not quiet:
+            self._package._summarize_into_pyir()
 
     def mlir_root(self, id: IdName, /) -> mlir.Root:
         """Return the `MLIR` representation of module `id`."""
@@ -312,100 +290,32 @@ class App:
         """Return the names of all `MLIR` modules."""
         return self._mlirs_inv.keys()
 
-    def module(self, name: CanonicalPath | str, /) -> pyir.Module:
+    def package(self, name: PyIdentifierSnake | str = "mosaic_spec") -> pyir.Package:
+        """Return the `PyIR` representation of package `name`."""
+        if name == "mosaic_spec":
+            return self._package
+        return self._package.package(name.removeprefix("mosaic_spec."))
+
+    def module(self, name: str) -> pyir.Module:
         """Return the `PyIR` representation of module `name`."""
-        return self._modules[canonical_path(name)]
+        return self._package.module(name.removeprefix("mosaic_spec."))
 
-    def update_modules(self, *modules: pyir.Module) -> None:
-        """Insert new modules or overwrite existing ones."""
-        self._modules.update((module.canonical_path, module) for module in modules)
+    def _iter_modules(self) -> Iterator[pyir.Module]:
+        return self._package.iter_modules()
 
-    def display_references(self) -> None:
-        print("Unique typed references:")
-        for module in self._modules.values():
-            unique_refs = sorted(module.unique_refs())
-            print(f"{module.canonical_path} ({len(unique_refs)}):")
-            if unique_refs:
-                print("\n".join(f"  {module.typed_ref(ref).display()}" for ref in unique_refs))
-
-        print("Module dependencies:")
-        for module in self._modules.values():
-            depends = module.depends_ext()
-            print(f"{module.canonical_path} ({len(depends)}):")
-            if depends:
-                print("\n".join(f"  {s}" for s in sorted(depends)))
-
-    def resolve_all_references(self, *, refresh: bool = False, quiet: bool = False) -> None:
-        """Convert all untyped references to typed references.
-
-        After this operation, every `PyIR` can be rendered.
-
-        ## Notes
-        - This is the most expensive version of what this *could be*
-            - **Takes around 20ms**
-        - Most places where it is *expected* to be needed are not ready yet
-            - `TypeVar`
-            - `TypedDict` bases
-            - `TypeAliasType` type params
-        """
-        # NOTE: Changes the state of `_modules`, so `refresh=False` cannot stop this step from running
-        # It should be a no-op though when already resolved
-        if not self._modules or refresh:
-            self.into_pyir(refresh=refresh, quiet=quiet)
-
-        if not quiet:
-            print("Resolving all dependency types")
-        modules = self._modules
-        done = {}
-        # typing is not strictly accurate, but this pleases invariance
-        resolved_ext_refs: _PyIRRefMap = {}
-        for canonical_path, module in modules.items():
-            # Fast path 1
-            if not module.definitions:
-                done[canonical_path] = module
-                continue
-
-            replace: _PyIRRefMap = {}
-            unique_refs = module.unique_refs()
-            unique_ext_refs = module.unique_ext_refs()
-            replace.update((ref, module.typed_ref(ref)) for ref in unique_refs)
-            if unique_ext_refs:
-                # NOTE: Takes advantage of dependencies being repetitive
-                # - 6 have no dependencies
-                # - 5 only depend on `params.ParamRef`
-                # - 4 remain (mosaic, marks, plot, layout)
-                replace_ext: _PyIRRefMap = {
-                    ref: resolved_ext_refs.get(ref) or typed_ext_ref(modules, ref)
-                    for ref in unique_ext_refs
-                }
-                replace.update(replace_ext)
-                resolved_ext_refs.update(replace_ext)
-
-            # Fast path 2
-            if not replace:
-                done[canonical_path] = module
-                continue
-
-            # NOTE: We have *some* work to do
-            done[canonical_path] = module.with_refs(into_repl_map(replace))
-
-        self._modules = done
-        if not quiet:
-            print("Unique typed external references:")
-            print("\n".join(f"  {ref.display()}" for ref in resolved_ext_refs.values()))
-
-    def preview_modules(self, *names: str, refresh: bool = False, quiet: bool = False) -> None:
+    def preview_modules(self, *names: str, quiet: bool = False) -> None:
         if "all" in names:
-            names = tuple(module.name for module in self._modules.values())
+            names = tuple(module.name for module in self._iter_modules())
         if not quiet:
             print(f"Previewing modules: {list(names)!r}")
 
         # NOTE: `quiet=True` will only silence previous steps, this one is about displaying stuff
         resolver = Resolver(
-            {v.name: k for k, v in self._modules.items()}, self.config.convert.to_pyir.name
+            {module.name: module.canonical_path for module in self._package.iter_modules()},
+            self.config.convert.to_pyir.name,
         )
         multiple_modules = len(names) > 1
-        for module in self._modules.values():
+        for module in self._package.iter_modules():
             if module.name in names:
                 print("\n".join(module.generate(resolver)))
                 if multiple_modules:
@@ -414,7 +324,8 @@ class App:
     # TODO @dangotbanned: Test writing to files
     def generate_modules(self) -> None:
         _resolver = Resolver(
-            {v.name: k for k, v in self._modules.items()}, self.config.convert.to_pyir.name
+            {module.name: module.canonical_path for module in self._package.iter_modules()},
+            self.config.convert.to_pyir.name,
         )
 
     def _read_sources(self) -> Iterator[InputSchema]:
@@ -433,17 +344,3 @@ class App:
                 print(f"  Running action {idx} {action!r}")
             roots = deque(action.run(roots))
         return roots
-
-
-@functools.cache
-def canonical_path(name: CanonicalPath | str, /) -> CanonicalPath:
-    return CanonicalPath(name if name.startswith("mosaic_spec") else f"mosaic_spec._gen.{name}")
-
-
-def typed_ext_ref(
-    modules: dict[CanonicalPath, pyir.Module], expr: pyir.UntypedExtRef, /
-) -> pyir.TypedExtRef:
-    ref = expr.ref
-    ext = expr.ext
-    ext_module = modules[canonical_path(ext)]
-    return pyir.TypedExtRef(ext=ext, ref=ref, type=type(ext_module[ref]))

@@ -11,23 +11,12 @@ import msgspec
 
 from tools.codegen.convert import py_identifier_snake
 from tools.common import CanonicalPath, PyIdentifier, PyIdentifierSnake, RichRepr
-from tools.ir.pyir import convert
-from tools.ir.pyir.base import (
-    Definition,
-    IterExprs,
-    Lines,
-    RefRepl,
-    TypedExtRef,
-    TypedRef,
-    UntypedExtRef,
-    UntypedRef,
-)
+from tools.ir.pyir.base import Definition, Lines, Ref, TypedExtRef, TypedRef
 from tools.models import base
 
 if t.TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
 
-    from tools.ir import mlir
     from tools.ir.pyir.dependencies import Resolver
 
 
@@ -43,7 +32,7 @@ Either option will implicitly exclude `_`-prefixed names.
 type ExportSpec = Mapping[CanonicalPath, ExportKind | tuple[PyIdentifier, ...]]
 
 
-# TODO @dangotbanned: Separate `Package` from `Module`
+# NOTE: Why is `Package` separated from `Module`?
 # - In Python's data model
 #   - A package is a module
 #   - but a module is not a package (excluding namespace packages)
@@ -60,35 +49,73 @@ type ExportSpec = Mapping[CanonicalPath, ExportKind | tuple[PyIdentifier, ...]]
 #       - Defaults to the sum of it's children's exports
 #       - Optionally, supports exporting Module(s) and subsets of Module exports
 @t.final
-class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
-    """A representation of a Python module.
-
-    This is loosely based on [griffe.Module](https://mkdocstrings.github.io/griffe/reference/api/models/module/#griffe.Module).
-    """
+class Package(base.Struct, kw_only=True):
+    """A collection of `Module`s and/or `Package`s."""
 
     name: PyIdentifierSnake
     filepath: Path
-    parent: Module | None = None
-    definitions: dict[PyIdentifier | str, Definition] = msgspec.field(default_factory=dict)
+    canonical_path: CanonicalPath
+
     export_spec: ExportSpec = msgspec.field(default_factory=dict)
     """How to derive names exported from a package."""
 
-    @property
-    def is_init_module(self) -> bool:
-        return self.filepath.stem == "__init__"
+    _modules: dict[PyIdentifierSnake, Module] = msgspec.field(default_factory=dict)
+    _packages: dict[PyIdentifierSnake, Package] = msgspec.field(default_factory=dict)
 
-    @property
-    def is_package(self) -> bool:
-        return (not self.parent) and self.is_init_module
+    def __repr__(self) -> str:
+        # NOTE: Fallback used to keep bound method reprs small
+        tp = self.__class__
+        return f"pyir.{tp.__name__}<name: {self.name}, modules: {len(self._modules)}, packages: {len(self._packages)}, path: {self.canonical_path}>"
 
-    @property
-    def is_subpackage(self) -> bool:
-        return bool(self.parent) and self.is_init_module
+    def __rich_repr__(self) -> RichRepr:
+        yield "name", self.name
+        if self.export_spec:
+            yield "export_spec", self.export_spec
+        if self._modules:
+            yield "modules", self._modules
+        if self._packages:
+            yield "packages", self._packages
 
-    @property
-    def canonical_path(self) -> CanonicalPath:
-        result = self.name if self.parent is None else f"{self.parent.canonical_path}.{self.name}"
-        return CanonicalPath(result)
+    def package(self, name: PyIdentifierSnake | str) -> Package:
+        parts = t.cast("list[PyIdentifierSnake]", name.split("."))
+        if not parts:
+            msg = "Empty strings are not a valid identifier"
+            raise TypeError(msg)
+        package = self
+        for part in parts:
+            package = package._packages[part]
+        return package
+
+    def module(self, name: PyIdentifierSnake | str) -> Module:
+        if module := self._modules.get(PyIdentifierSnake(name)):
+            return module
+        parts = t.cast("list[PyIdentifierSnake]", name.split("."))
+        if not parts:
+            msg = "Empty strings are not a valid identifier"
+            raise TypeError(msg)
+        if len(parts) == 2:
+            return self._packages[parts[0]]._modules[parts[1]]
+        *package_parts, module_name = parts
+        package = self
+        for part in package_parts:
+            package = package._packages[part]
+        return package._modules[module_name]
+
+    def iter_modules(self) -> Iterator[Module]:
+        yield from self._modules.values()
+        for package in self._packages.values():
+            yield from package.iter_modules()
+
+    def _summarize_into_pyir(self) -> None:
+        total_modules = 1
+        total_defs = 0
+        module_listing = []
+        for total_modules, module in enumerate(self.iter_modules(), 1):  # ruff: ignore[unused-loop-control-variable]
+            total_defs += len(module.definitions)
+            module_listing.append(f" - {module}")
+
+        print(f"Finished generating with {total_modules} modules(s).")  # ruff: ignore[print]
+        print("\n".join(module_listing) + f"\nTotal definitions: {total_defs}")  # ruff: ignore[print]
 
     @classmethod
     def root_package(
@@ -97,37 +124,52 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         filepath: Path,
         /,
         exports: ExportKind | ExportSpec = "child-exports",
-    ) -> Module:
+    ) -> Package:
         name = py_identifier_snake(name)
+        root_name = CanonicalPath(name)
         if not isinstance(exports, Mapping):
-            exports = {CanonicalPath(name): exports}
-        return Module(name=name, filepath=filepath, export_spec=exports)
-
-    @classmethod
-    def from_mlir(cls, source: mlir.Root, parent: Module, /) -> Module:
-        it = (convert.from_def(defn, def_name) for def_name, defn in source.def_items())
-        return parent.with_child(source.id, it)
+            exports = {root_name: exports}
+        return Package(name=name, filepath=filepath, export_spec=exports, canonical_path=root_name)
 
     def with_child(self, name: str, definitions: Iterable[Definition]) -> Module:
         """Return a new module, with this package a parent."""
         name = py_identifier_snake(name)
-        if not self.is_init_module:
-            msg = f"{self.filepath.name!r} cannot be used as a parent for {name!r}, as it is not a package."
-            raise TypeError(msg)
-        return Module(
+        canonical_path = CanonicalPath(f"{self.canonical_path}.{name}")
+        module = self._modules[name] = Module(
             name=name,
             filepath=self.filepath.parent / f"{name}.py",
-            parent=self,
+            canonical_path=canonical_path,
             definitions={defn.name: defn for defn in definitions},
         )
+        return module
 
-    def with_subpackage(self, name: str) -> Module:
+    def with_subpackage(self, name: str) -> Package:
         """Return a new subpackage, with this package a parent."""
         name = py_identifier_snake(name)
-        if not self.is_init_module:
-            msg = f"{self.filepath.name!r} cannot be used as a parent for {name!r}, as it is not a package."
-            raise TypeError(msg)
-        return Module(name=name, filepath=self.filepath.parent / name / "__init__.py", parent=self)
+        canonical_path = CanonicalPath(f"{self.canonical_path}.{name}")
+        subpackage = self._packages[name] = Package(
+            name=name,
+            filepath=self.filepath.parent / name / "__init__.py",
+            canonical_path=canonical_path,
+        )
+        return subpackage
+
+    def generate(self, resolver: Resolver) -> Lines:
+        msg = "Package.generate() is not yet implemented"
+        raise NotImplementedError(msg)
+
+
+@t.final
+class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
+    """A representation of a Python module.
+
+    This is loosely based on [griffe.Module](https://mkdocstrings.github.io/griffe/reference/api/models/module/#griffe.Module).
+    """
+
+    name: PyIdentifierSnake
+    filepath: Path
+    canonical_path: CanonicalPath
+    definitions: dict[PyIdentifier | str, Definition] = msgspec.field(default_factory=dict)
 
     def _describe(self, *, length: bool = True, names: bool = True) -> str:
         header = (
@@ -144,19 +186,19 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         yield "definitions", self.definitions
 
     def generate(self, resolver: Resolver) -> Lines:
+        if not self.definitions:
+            msg = f"Module {self.canonical_path!r} does not have any definitions to generate."
+            raise TypeError(msg)
         get = self.definitions.__getitem__
         yield f"# Generated: {self.canonical_path}"
         yield "from __future__ import annotations\n"
         yield from resolver.iter_imports(self.def_values())
         yield ""
-        if self.definitions:
-            yield "\n".join(
-                chain.from_iterable(
-                    get(def_name).iter_lines() for def_name in self.topological_sort()
-                )
-            )
-            yield "\n"
-            yield f"__all__ = ({','.join(name.__repr__() for name in self.iter_exports())})\n"
+        yield "\n".join(
+            chain.from_iterable(get(def_name).iter_lines() for def_name in self.topological_sort())
+        )
+        yield "\n"
+        yield f"__all__ = ({','.join(name.__repr__() for name in self.iter_exports())})\n"
 
     def topological_sort(self) -> Iterator[PyIdentifier]:
         """Return an iterator over a deterministic, [topological sort] within the bounds of this module.
@@ -166,46 +208,21 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
 
         [topological sort]: https://docs.python.org/3/library/graphlib.html#graphlib.TopologicalSorter
         """
-        tps = UntypedRef, TypedRef
+        tps = Ref, TypedRef
         graph = {
             defn.name: sorted({expr.ref for expr in defn.iter_exprs() if isinstance(expr, tps)})
             for defn in self.def_values()
         }
         yield from TopologicalSorter(graph).static_order()
 
-    def with_refs(self, repl: RefRepl, /) -> Module:
-        return self.__replace__(
-            definitions={def_name: defn.with_refs(repl) for def_name, defn in self.def_items()}
-        )
-
-    def iter_exprs(self) -> IterExprs:
-        for defn in self.def_values():
-            yield from defn.iter_exprs()
-
     # TODO @dangotbanned: Re-use for package exports
     def iter_exports(self) -> Iterator[str]:
         yield from (name for name in self.def_names() if not name.startswith("_"))
-
-    def unique_refs(self) -> set[UntypedRef]:
-        return {expr for expr in self.iter_exprs() if isinstance(expr, UntypedRef)}
-
-    def unique_ext_refs(self) -> set[UntypedExtRef]:
-        return {expr for expr in self.iter_exprs() if isinstance(expr, UntypedExtRef)}
-
-    def typed_ref(self, expr: UntypedRef) -> TypedRef:
-        """Retrieve the type of a same-module reference."""
-        name = expr.ref
-        return TypedRef(ref=name, type=type(self[name]))
 
     def import_ref(self, def_name: PyIdentifier | str, /) -> TypedExtRef:
         """Return a reference that another module can use to refer to a def from here."""
         name = PyIdentifier(def_name)
         return TypedExtRef(ext=self.name, ref=name, type=type(self[name]))
-
-    def depends_ext(self) -> set[PyIdentifierSnake]:
-        """Return the set of module names that this one depends on."""
-        tps = UntypedExtRef, TypedExtRef
-        return {expr.ext for expr in self.iter_exprs() if isinstance(expr, tps)}
 
     def update_defs(self, definitions: Iterable[Definition], /) -> None:
         """Insert new definitions or overwrite existing ones."""

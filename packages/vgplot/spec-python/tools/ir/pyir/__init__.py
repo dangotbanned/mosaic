@@ -24,17 +24,9 @@ from tools.ir.pyir import (
     type_param,
     value,
 )
-from tools.ir.pyir.base import (
-    Definition,
-    Expr,
-    PyIR,
-    TypedExtRef,
-    TypedRef,
-    UntypedExtRef,
-    UntypedRef,
-)
+from tools.ir.pyir.base import Definition, Expr, ExtRef, PyIR, Ref, TypedExtRef, TypedRef
 from tools.ir.pyir.field import Field
-from tools.ir.pyir.module import Module
+from tools.ir.pyir.module import Module, Package
 
 if TYPE_CHECKING:
     from tools.models.config import PyIRConfig as _Config
@@ -54,13 +46,14 @@ def configure(config: _Config, /) -> None:
 __all__ = (
     "Definition",
     "Expr",
+    "ExtRef",
     "Field",
     "Module",
+    "Package",
     "PyIR",
+    "Ref",
     "TypedExtRef",
     "TypedRef",
-    "UntypedExtRef",
-    "UntypedRef",
     "base",
     "convert",
     "definition",

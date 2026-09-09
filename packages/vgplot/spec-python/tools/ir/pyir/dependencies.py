@@ -9,15 +9,7 @@ from typing import Literal as L
 
 from tools.common import CanonicalPath
 from tools.ir.pyir import definition, expr, special as sf
-from tools.ir.pyir.base import (
-    Definition,
-    Lines,
-    PyIR,
-    TypedExtRef,
-    TypedRef,
-    UntypedExtRef,
-    UntypedRef,
-)
+from tools.ir.pyir.base import Definition, ExtRef, Lines, PyIR, Ref, TypedExtRef, TypedRef
 from tools.ir.pyir.definition import ClosedDict, ExtraDict, OpenDict
 from tools.ir.pyir.field import Field
 from tools.ir.pyir.qualifier import ReadOnly, Required
@@ -128,7 +120,7 @@ _CONSTANT: t.Final[cabc.Mapping[type[PyIR], Dependencies]] = {
     expr.PyNone: (),
     expr.DynExpr: (),
     TypedRef: (),
-    UntypedRef: (),
+    Ref: (),
 }
 """Types that always have *the same* dependency.
 
@@ -189,13 +181,13 @@ def _(node: sf.Generic) -> Dependencies:
 
 
 @functools.cache
-def _from_ext_ref(node: UntypedExtRef | TypedExtRef, /) -> PartialDep:
+def _from_ext_ref(node: ExtRef | TypedExtRef, /) -> PartialDep:
     return PartialDep(node.ext, node.ref)
 
 
 @_find_deps.register(TypedExtRef)
-@_find_deps.register(UntypedExtRef)
-def _(node: UntypedExtRef | TypedExtRef) -> Dependencies:
+@_find_deps.register(ExtRef)
+def _(node: ExtRef | TypedExtRef) -> Dependencies:
     yield _from_ext_ref(node)
 
 

@@ -68,7 +68,7 @@ definition order and cyclic references.
 [ForwardRef]: https://docs.python.org/3/library/typing.html#typing.ForwardRef
 """
 
-type RefRepl = tools.common.ReplMap[UntypedRef | UntypedExtRef, TypedRef | TypedExtRef]
+type RefRepl = tools.common.ReplMap[Ref | ExtRef, TypedRef | TypedExtRef]
 
 INDENT: t.Final = " " * 4
 
@@ -140,18 +140,24 @@ class _ExtRef(Expr):
     ref: PyIdentifier
 
 
-class UntypedRef(_Ref, order=True):
+class Ref(_Ref, order=True):
     """Placeholder for `TypedRef`."""
 
     def with_refs(self, repl: RefRepl, /) -> Self | TypedRef | TypedExtRef:
         return repl(self) or self
 
+    def __str__(self) -> TypeExpr:
+        return TypeExpr(self.ref)
 
-class UntypedExtRef(_ExtRef, order=True):
+
+class ExtRef(_ExtRef, order=True):
     """Placeholder for `TypedExtRef`."""
 
     def with_refs(self, repl: RefRepl, /) -> Self | TypedRef | TypedExtRef:
         return repl(self) or self
+
+    def __str__(self) -> TypeExpr:
+        return TypeExpr(self.ref)
 
 
 @t.final

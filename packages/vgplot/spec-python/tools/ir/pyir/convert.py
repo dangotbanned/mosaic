@@ -7,7 +7,7 @@ from tools import ds
 from tools.codegen.convert import py_identifier, py_identifier_snake
 from tools.ir.mlir import MLIR, Definition as mlir_Definition, nodes as mlir
 from tools.ir.pyir import definition as d, expr, qualifier as q, value
-from tools.ir.pyir.base import UntypedExtRef, UntypedRef
+from tools.ir.pyir.base import ExtRef, Ref
 from tools.ir.pyir.field import Field
 
 if t.TYPE_CHECKING:
@@ -55,8 +55,8 @@ def into_expr(obj: MLIR) -> Expr:
 # - Reality   : `CacheInfo(hits=1584, misses=181, maxsize=None, currsize=181)`
 @into_expr.register(mlir.Reference)
 @functools.cache
-def _ref(obj: mlir.Reference) -> UntypedRef:
-    return UntypedRef(ref=py_identifier(obj.ref))
+def _ref(obj: mlir.Reference) -> Ref:
+    return Ref(ref=py_identifier(obj.ref))
 
 
 # NOTE: SAFETY: Cache size bounds
@@ -64,8 +64,8 @@ def _ref(obj: mlir.Reference) -> UntypedRef:
 # - Reality   : `CacheInfo(hits=3789, misses=44, maxsize=None, currsize=44)`
 @into_expr.register(mlir.ExtReference)
 @functools.cache
-def _ext_ref(obj: mlir.ExtReference) -> UntypedExtRef:
-    return UntypedExtRef(ext=py_identifier_snake(obj.ext), ref=py_identifier(obj.ref))
+def _ext_ref(obj: mlir.ExtReference) -> ExtRef:
+    return ExtRef(ext=py_identifier_snake(obj.ext), ref=py_identifier(obj.ref))
 
 
 @into_expr.register(mlir.Literal)

@@ -7,9 +7,9 @@ import typing as t
 from itertools import chain
 
 from tools.codegen.convert import py_identifier_snake
-from tools.common import PyIdentifier, ensure_type
+from tools.common import PyIdentifier, PyIdentifierSnake, ensure_type
 from tools.ir import pyir
-from tools.ir.pyir import TypedExtRef, TypedRef, definition as pyir_d, dsl, expr as pyir_e
+from tools.ir.pyir import Ref, TypedExtRef, definition as pyir_d, dsl, expr as pyir_e
 from tools.ir.pyir.definition import ClosedDict, OpenDict
 
 if t.TYPE_CHECKING:
@@ -42,14 +42,13 @@ def massage_components(app: App) -> None:
     [3]: https://github.com/uwdata/mosaic/blob/5f393469e0d1fba8c46e727b4b9f7bbab565ca94/packages/vgplot/spec/src/spec/marks/Marks.ts#L223-L613
     [4]: https://github.com/dangotbanned/mosaic/commit/d0f225cddfb173da0aea024ad6d03ce4a5041f51
     """
-    module_marks = app.module("marks")
+    module_marks = app.module("mosaic_spec._gen.marks")
     marks_rels = _MarksRelations.from_module(module_marks)
     module_marks.update_defs(marks_rels.iter_defs())
 
     spec_targets = _non_mark_components(app)
     spec_targets = chain(spec_targets, marks_rels.iter_spec_targets())
-
-    app.update_modules(_build_spec_module(app, spec_targets))
+    _build_spec_module(app, spec_targets)
 
 
 def _non_mark_components(app: App) -> Iterable[SpecTarget]:
@@ -82,28 +81,26 @@ def _non_mark_components(app: App) -> Iterable[SpecTarget]:
     class Plot(SpecHead, _PlotOpen, closed=True): ...
     ```
     """
-    module_mosaic = app.module("mosaic")
-    module_plot = app.module("plot")
+    pkg_gen = app.package("mosaic_spec._gen")
+    module_plot = pkg_gen.module("plot")
 
-    component = ensure_type(module_mosaic["Component"], pyir_d.TypeAlias)
+    component = ensure_type(app.module("mosaic_spec._gen.mosaic")["Component"], pyir_d.TypeAlias)
     union = ensure_type(component.expr, pyir_e.Union)
-    found = {}
+    found: dict[tuple[PyIdentifierSnake, PyIdentifier], ClosedDict] = {}
     for m in union.members:
-        if isinstance(m, pyir.TypedExtRef):
+        if isinstance(m, pyir.ExtRef):
             if m.ref != "PlotMark":
-                # TODO @dangotbanned: Don't store the keys like this, it is more work later
-                found[f"{m.ext}.{m.ref}"] = ensure_type(app.module(m.ext)[m.ref], ClosedDict)
+                found[m.ext, m.ref] = ensure_type(pkg_gen.module(m.ext)[m.ref], ClosedDict)
         else:
             # NOTE: I don't have any cases like this here, but it would complicate things if I did
-            raise NotImplementedError(m)
+            raise NotImplementedError(type(m))
 
-    plot = found.pop("plot.Plot")
+    plot_name = py_identifier_snake("plot")
+    plot = found.pop((plot_name, PyIdentifier("Plot")))
     plot_attrs = module_plot.get_typed("PlotAttributes", ClosedDict)
 
     plot_attrs_base = plot_attrs.to_open()
     plot_attrs = plot_attrs_base.with_child_closed(plot_attrs.name)
-
-    plot_name = py_identifier_snake("plot")
 
     plot_base = plot_attrs_base.with_child_open(
         OpenDict.format_name(plot.name), doc=plot.doc, fields={plot_name: plot.fields["plot"]}
@@ -115,42 +112,45 @@ def _non_mark_components(app: App) -> Iterable[SpecTarget]:
         plot.name: TypedExtRef(ext=plot_name, ref=plot_base.name, type=plot_base.__class__)
     }
 
-    for k, v in found.items():
-        v_name = v.name
+    for (module_name, name), v in found.items():
         v_base = v.to_open()
-        v_closed = v_base.with_child_closed(v_name)
-        module_name = py_identifier_snake(k.split(".")[0])
-        spec_targets[v_name] = TypedExtRef(ext=module_name, ref=v_base.name, type=v_base.__class__)
-        app.module(module_name).update_defs((v_base, v_closed))
+        v_closed = v_base.with_child_closed(name)
+        spec_targets[name] = TypedExtRef(
+            ext=py_identifier_snake(module_name), ref=v_base.name, type=v_base.__class__
+        )
+        pkg_gen.module(module_name).update_defs((v_base, v_closed))
     return spec_targets.items()
 
 
-def _build_spec_module(app: App, targets: Iterable[SpecTarget]) -> pyir.Module:
-    module_mosaic = app.module("mosaic")
+def _build_spec_module(app: App, targets: Iterable[SpecTarget]) -> None:
+    mosaic_spec = app.package()
+    pkg_gen = mosaic_spec.package("_gen")
+    module_mosaic = pkg_gen.module("mosaic")
     td_spec_head = dsl.dict(
         "SpecHead",
         dsl.field("config", module_mosaic.import_ref("Config"), "Configuration options."),
         dsl.field("meta", module_mosaic.import_ref("Meta"), "Specification metadata."),
         dsl.field(
-            "params", app.module("params").import_ref("Params"), "Param and Selection definitions."
+            "params",
+            pkg_gen.module("params").import_ref("Params"),
+            "Param and Selection definitions.",
         ),
         dsl.field(
             "plot_defaults",
-            app.module("plot").import_ref("PlotAttributes"),
+            pkg_gen.module("plot").import_ref("PlotAttributes"),
             "A default set of attributes to apply to all plot components.",
         ),
-        dsl.field("data", app.module("data").import_ref("Data"), "Dataset definitions."),
+        dsl.field("data", pkg_gen.module("data").import_ref("Data"), "Dataset definitions."),
     )
     td_spec_head_ref = td_spec_head.to_typed_ref()
     spec_defns = (
         dsl.dict(name, closed=True, bases=(td_spec_head_ref, base_ref))
         for name, base_ref in targets
     )
-    module_spec = app.module("mosaic_spec").with_child("spec", spec_defns)
+    module_spec = mosaic_spec.with_child("spec", spec_defns)
     alias_members = (defn.to_typed_ref() for defn in module_spec.def_values())
     spec_union = dsl.alias("Spec", *alias_members, doc="A declarative Mosaic specification.")
     module_spec.update_defs((spec_union, td_spec_head))
-    return module_spec
 
 
 @dataclasses.dataclass
@@ -237,9 +237,9 @@ class _MarksRelations:
 
 
 def _synthesize_transform_hierarchy(app: App) -> None:
-    module = app.module("transform")
+    module = app.module("mosaic_spec._gen.transform")
     window_transforms = tuple(
-        module.get_typed(ensure_type(m, TypedRef).ref, ClosedDict)
+        module.get_typed(ensure_type(m, Ref).ref, ClosedDict)
         for m in ensure_type(
             ensure_type(module["WindowTransform"], pyir_d.TypeAlias).expr, pyir_e.Union
         ).members
