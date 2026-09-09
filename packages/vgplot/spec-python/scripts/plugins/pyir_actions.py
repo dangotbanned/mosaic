@@ -146,7 +146,7 @@ def _build_spec_module(app: App, targets: Iterable[SpecTarget]) -> pyir.Module:
         dsl.dict(name, closed=True, bases=(td_spec_head_ref, base_ref))
         for name, base_ref in targets
     )
-    module_spec = app.module("mosaic_spec").child("spec", spec_defns)
+    module_spec = app.module("mosaic_spec").with_child("spec", spec_defns)
     alias_members = (defn.to_typed_ref() for defn in module_spec.def_values())
     spec_union = dsl.alias("Spec", *alias_members, doc="A declarative Mosaic specification.")
     module_spec.update_defs((spec_union, td_spec_head))

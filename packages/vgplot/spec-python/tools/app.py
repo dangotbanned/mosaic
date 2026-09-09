@@ -283,9 +283,8 @@ class App:
             if not quiet:
                 print(f"Generating module representation from {len(self._mlirs)} root(s).")
             pkg = pyir.Module(name=PyIdentifierSnake("mosaic_spec"), filepath=fs.MOSAIC_SPEC_INIT)
-            sub_pkg = pyir.Module(
-                name=PyIdentifierSnake("_gen"), filepath=fs.MOSAIC_SPEC_GEN_INIT, parent=pkg
-            )
+            sub_pkg = pkg.with_subpackage("_gen")
+
             self.update_modules(pkg, sub_pkg)
             if not quiet:
                 print(f"Added {len(self._modules)} packages.")

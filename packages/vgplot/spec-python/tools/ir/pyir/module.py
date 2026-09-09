@@ -62,10 +62,10 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
     @classmethod
     def from_mlir(cls, source: mlir.Root, parent: Module, /) -> Module:
         it = (convert.from_def(defn, def_name) for def_name, defn in source.def_items())
-        return parent.child(source.id, it)
+        return parent.with_child(source.id, it)
 
-    def child(self, name: str, definitions: Iterable[Definition]) -> Module:
-        """Add a new module to this package."""
+    def with_child(self, name: str, definitions: Iterable[Definition]) -> Module:
+        """Return a new module, with this package a parent."""
         name = py_identifier_snake(name)
         if not self.is_init_module:
             msg = f"{self.filepath.name!r} cannot be used as a parent for {name!r}, as it is not a package."
@@ -76,6 +76,14 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
             parent=self,
             definitions={defn.name: defn for defn in definitions},
         )
+
+    def with_subpackage(self, name: str) -> Module:
+        """Return a new subpackage, with this package a parent."""
+        name = py_identifier_snake(name)
+        if not self.is_init_module:
+            msg = f"{self.filepath.name!r} cannot be used as a parent for {name!r}, as it is not a package."
+            raise TypeError(msg)
+        return Module(name=name, filepath=self.filepath.parent / name / "__init__.py", parent=self)
 
     def _describe(self, *, length: bool = True, names: bool = True) -> str:
         header = (
