@@ -30,6 +30,14 @@ PyIdentifierSnake = NewType("PyIdentifierSnake", str)
 [1]: https://docs.python.org/3/reference/lexical_analysis.html#names-identifiers-and-keywords
 """
 
+CanonicalPath = NewType("CanonicalPath", str)
+"""The full dotted path to where an object is defined.
+
+This term is borrowed from [griffe.Object.canonical_path].
+
+[griffe.Object.canonical_path]: https://mkdocstrings.github.io/griffe/reference/api/models/#griffe.Object.canonical_path
+"""
+
 type Incomplete = t.Any
 
 type RichRepr = Iterable[tuple[str, t.Any]]

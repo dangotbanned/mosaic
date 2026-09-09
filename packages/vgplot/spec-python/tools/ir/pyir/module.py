@@ -8,7 +8,7 @@ from pathlib import Path  # ruff: ignore[typing-only-standard-library-import]
 import msgspec
 
 from tools.codegen.convert import py_identifier_snake
-from tools.common import PyIdentifier, PyIdentifierSnake, RichRepr
+from tools.common import CanonicalPath, PyIdentifier, PyIdentifierSnake, RichRepr
 from tools.ir.pyir import convert
 from tools.ir.pyir.base import (
     Definition,
@@ -54,10 +54,9 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         return bool(self.parent) and self.is_init_module
 
     @property
-    def canonical_path(self) -> str:
-        if self.parent is None:
-            return self.name
-        return f"{self.parent.canonical_path}.{self.name}"
+    def canonical_path(self) -> CanonicalPath:
+        result = self.name if self.parent is None else f"{self.parent.canonical_path}.{self.name}"
+        return CanonicalPath(result)
 
     @classmethod
     def from_mlir(cls, source: mlir.Root, parent: Module, /) -> Module:

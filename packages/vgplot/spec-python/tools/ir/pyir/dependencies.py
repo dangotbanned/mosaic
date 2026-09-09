@@ -7,6 +7,7 @@ import typing as t
 from itertools import chain
 from typing import Literal as L
 
+from tools.common import CanonicalPath
 from tools.ir.pyir import definition, expr, special as sf
 from tools.ir.pyir.base import (
     Definition,
@@ -30,7 +31,6 @@ if t.TYPE_CHECKING:
 
 __all__ = ("Resolver",)
 
-type CanonicalPath = str
 type Dep = StdDep | PartialDep
 type Dependencies = cabc.Iterable[Dep]
 type _StdModule = L["typing", "collections.abc"]
@@ -90,11 +90,12 @@ class Resolver:
         #   the same name (but lived in different sub-packages)
         self._canonical: cabc.Mapping[PyIdentifierSnake, CanonicalPath] = modules
         self._aliases: cfg.PyIRAliases = config.aliases
+        typing_compat = CanonicalPath("mosaic_spec._typing_compat")
         self._missing_from_data_model: cabc.Mapping[_StdName, CanonicalPath] = {
-            "Required": "mosaic_spec._typing_compat",
-            "TypeAliasType": "mosaic_spec._typing_compat",
-            "TypeVar": "mosaic_spec._typing_compat",
-            "TypedDict": "mosaic_spec._typing_compat",
+            "Required": typing_compat,
+            "TypeAliasType": typing_compat,
+            "TypeVar": typing_compat,
+            "TypedDict": typing_compat,
         }
         self._cache: dict[Dep, str] = {}
 

@@ -7,7 +7,7 @@ from collections import deque
 from typing import TYPE_CHECKING, Literal as L, Protocol, final
 
 from tools import fs, serde
-from tools.common import PyIdentifierSnake, into_repl_map
+from tools.common import CanonicalPath, PyIdentifierSnake, into_repl_map
 from tools.ir import json_wrapper as jw, mlir, pyir
 from tools.ir.pyir.dependencies import Resolver
 from tools.models.config import MosaicSpecToml
@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
     from tools.models.base import IdName
 
-type CanonicalPath = str
 
 type _PyIRRefMap = dict[pyir.UntypedRef | pyir.UntypedExtRef, pyir.TypedRef | pyir.TypedExtRef]
 """Very long, unfortunate type."""
@@ -429,7 +428,7 @@ class App:
 
 @functools.cache
 def canonical_path(name: CanonicalPath | str, /) -> CanonicalPath:
-    return name if name.startswith("mosaic_spec") else f"mosaic_spec._gen.{name}"
+    return CanonicalPath(name if name.startswith("mosaic_spec") else f"mosaic_spec._gen.{name}")
 
 
 def typed_ext_ref(
