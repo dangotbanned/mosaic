@@ -443,7 +443,7 @@ class RenameFields(_Base[L["definitions"]]):
     __slots__ = ("overrides",)
     overrides: Mapping[str, str]
 
-    _SUPPORTED: Final = nodes.ClosedDict, nodes.ExtraDict, nodes.OpenDict, nodes.NamedTuple
+    _SUPPORTED: Final = nodes.ClosedDict, nodes.ExtraDict, nodes.OpenDict
 
     @property
     def over(self) -> L["definitions"]:

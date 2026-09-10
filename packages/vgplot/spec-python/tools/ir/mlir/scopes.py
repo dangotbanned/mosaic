@@ -41,8 +41,8 @@ type ChildIter[D: MLIR, S] = GroupByIter[tuple[DefName, Definition[D]], S]
 - Each `Definition` is guaranteed to have at-least one matching child
 """
 
-type HasFields = mlir.ClosedDict | mlir.ExtraDict | mlir.OpenDict | mlir.NamedTuple
-_HAS_FIELDS: Final = mlir.ClosedDict, mlir.ExtraDict, mlir.OpenDict, mlir.NamedTuple
+type HasFields = mlir.ClosedDict | mlir.ExtraDict | mlir.OpenDict
+_HAS_FIELDS: Final = mlir.ClosedDict, mlir.ExtraDict, mlir.OpenDict
 
 # HACK: Forcing `pyrefly` to not infer `0` as `int`
 _ZERO: Final[L[0]] = 0  # ruff: ignore[redundant-final-literal]
@@ -50,7 +50,7 @@ _ZERO: Final[L[0]] = 0  # ruff: ignore[redundant-final-literal]
 
 # NOTE: `ty` reports `Unknown`, but `pyrefly` understands
 is_inner_fields: Callable[[Definition[Any]], TypeIs[Definition[HasFields]]] = inner_type_is(
-    mlir.ClosedDict, mlir.ExtraDict, mlir.OpenDict, mlir.NamedTuple
+    mlir.ClosedDict, mlir.ExtraDict, mlir.OpenDict
 )
 is_inner_union: Callable[[Definition[Any]], TypeIs[Definition[mlir.Union]]] = inner_type_is(
     mlir.Union

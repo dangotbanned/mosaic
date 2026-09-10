@@ -108,8 +108,7 @@ def _(obj: mlir.Union) -> expr.Union:
 @into_expr.register(mlir.NamedTuple)
 def _named_tuple_expr(obj: mlir.NamedTuple) -> expr.NamedTuple:
     fields = tuple(
-        Field(name=py_identifier_snake(name), expr=into_expr(f.type), doc="")
-        for name, f in obj.iter_fields_items()
+        Field(name=py_identifier_snake(name), expr=into_expr(tp), doc="") for name, tp in obj.fields
     )
     return expr.NamedTuple(fields=fields)
 
@@ -132,8 +131,7 @@ for tp in into_expr.registry:
 @_from_def.register(mlir.NamedTuple)
 def _(obj: mlir.NamedTuple, name: PyIdentifier) -> d.NamedTuple:
     fields = tuple(
-        Field(name=py_identifier_snake(name), expr=into_expr(f.type), doc=f.doc)
-        for name, f in obj.iter_fields_items()
+        Field(name=py_identifier_snake(name), expr=into_expr(tp)) for name, tp in obj.fields
     )
     return d.NamedTuple(name=name, fields=fields, doc=obj.doc)
 

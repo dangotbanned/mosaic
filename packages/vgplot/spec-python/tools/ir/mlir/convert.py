@@ -128,9 +128,7 @@ def _(
 
 @_from_json_dispatch.register(jw.NamedSequence)
 def _(obj: jw.NamedSequence, owner: DefName, /) -> mlir.NamedTuple:
-    fields = ds.frozenmap(
-        field(owner, f_name, f_type, required=True) for f_name, f_type in obj.fields.items()
-    )
+    fields = tuple((f_name, from_json(f_type, owner)) for f_name, f_type in obj.fields.items())
     return mlir.NamedTuple(fields=fields, doc=obj.description)
 
 

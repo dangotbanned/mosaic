@@ -217,7 +217,7 @@ class _BaseType[T: MLIR](_HasChildren):
 
 @final
 class Field[T: MLIR = MLIR](_BaseType[T]):
-    """An entry in a `*Dict` or `NamedTuple`."""
+    """An entry in a `*Dict`."""
 
     required: bool = False
 
@@ -332,8 +332,29 @@ class VariantHomogeneousTuple[T: MLIR, Ns: tuple[int, ...]](_BaseSeq[T]):
 
 
 @final
-class NamedTuple(_BaseFields):
+class NamedTuple(_HasChildren):
     """A tuple with `Annotated` field names."""
+
+    fields: tuple[tuple[str, MLIR], ...]
+    doc: str = ""
+
+    def iter_children(self) -> Iterator[MLIR]:
+        for _, tp in self.fields:
+            yield tp
+
+    def with_ext_refs(self, ref_map: RefMap, /) -> NamedTuple:
+        changed = tuple((name, tp.with_ext_refs(ref_map)) for name, tp in self.fields)
+        if self.fields == changed:
+            return self
+        return self.__replace__(fields=changed)
+
+    def find_replace(self, repl: cabc.Mapping[MLIR, MLIR], /) -> Self | MLIR:
+        if replaced := repl.get(self):
+            return replaced
+        changed = tuple((name, tp.find_replace(repl)) for name, tp in self.fields)
+        if self.fields == changed:
+            return self
+        return self.__replace__(fields=changed)
 
 
 @final
