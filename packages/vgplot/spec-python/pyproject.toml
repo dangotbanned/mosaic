@@ -38,7 +38,7 @@ tests  = [
 ]
 typing = [
   "pyrefly>=1.2.0",
-  "pyright>=1.1.413",
+  "pyright>=1.1.414",
   "ty>=0.0.80",
   "types-pyyaml>=6.0.12.20260724",
 ]
