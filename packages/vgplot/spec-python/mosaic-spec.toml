@@ -204,5 +204,5 @@ scope.include.child.field_names = ["tip"]
 
 [convert.to_pyir]
 name.aliases.typing = { Annotated = "A", Literal = "L" }
-
-name.format_base = "_{name}Open"
+name.format_base    = "_{name}Open"
+type.str            = "TypeAliasType"

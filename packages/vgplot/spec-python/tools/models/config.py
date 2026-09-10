@@ -507,8 +507,50 @@ class PyIRNameConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True)
     """
 
 
+class PyIRTypeConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
+    str: L["NewType", "TypeAliasType"] = "TypeAliasType"
+    """How to represent direct aliases of `str`.
+
+    By default, an alias of `str` is represented as:
+
+    ```py
+    MyCoolString = TypeAliasType("MyCoolString", str)
+    ```
+
+    This is problematic when it appears in a union with a literal, as `str` swallows it:
+
+    ```py
+    def in_a_pickle(arg: Literal["1", "2", "3"] | MyCoolString) -> None:
+        reveal_type(arg)  #  Revealed type: `str`
+    ```
+
+    `"NewType"` resolves this issue, but [requires more of the caller](https://typing.python.org/en/latest/spec/aliases.html#newtype):
+
+    ```py
+    MyCoolString = NewType("MyCoolString", str)
+
+    def all good(arg: Literal["1", "2", "3"] | MyCoolString) -> None:
+        reveal_type(arg)  #  Revealed type: `Literal["1", "2", "3"] | MyCoolString`
+
+    all_good(MyCoolString("bad"))
+
+    all_good("bad")  # Argument to function `all_good` is incorrect
+    #        ^^^^^ Expected `Literal["1", "2", "3"] | MyCoolString`, found `Literal["bad"]`
+    ```
+    """
+
+    NamedTuple: L["Annotated", "NamedTuple"] = "Annotated"
+    """How to represent tuples that have names for each position."""
+
+
 class PyIRConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):
     name: PyIRNameConfig = field(default_factory=PyIRNameConfig)
+    """Naming conventions for generated code."""
+    type: PyIRTypeConfig = field(default_factory=PyIRTypeConfig)
+    """Opinionated type configuration.
+
+    These are edge cases where both options have trade-offs.
+    """
 
 
 class SourceConfig(base.FrozenStruct, frozen=True, forbid_unknown_fields=True):

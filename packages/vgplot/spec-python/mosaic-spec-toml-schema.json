@@ -520,7 +520,12 @@
       "additionalProperties": false,
       "properties": {
         "name": {
-          "$ref": "#/$defs/PyIRNameConfig"
+          "$ref": "#/$defs/PyIRNameConfig",
+          "description": "Naming conventions for generated code."
+        },
+        "type": {
+          "$ref": "#/$defs/PyIRTypeConfig",
+          "description": "Opinionated type configuration.\n\nThese are edge cases where both options have trade-offs."
         }
       },
       "required": [],
@@ -543,6 +548,30 @@
       },
       "required": [],
       "title": "PyIRNameConfig",
+      "type": "object"
+    },
+    "PyIRTypeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "NamedTuple": {
+          "default": "Annotated",
+          "description": "How to represent tuples that have names for each position.",
+          "enum": [
+            "Annotated",
+            "NamedTuple"
+          ]
+        },
+        "str": {
+          "default": "TypeAliasType",
+          "description": "How to represent direct aliases of `str`.\n\nBy default, an alias of `str` is represented as:\n\n```py\nMyCoolString = TypeAliasType(\"MyCoolString\", str)\n```\n\nThis is problematic when it appears in a union with a literal, as `str` swallows it:\n\n```py\ndef in_a_pickle(arg: Literal[\"1\", \"2\", \"3\"] | MyCoolString) -> None:\n    reveal_type(arg)  #  Revealed type: `str`\n```\n\n`\"NewType\"` resolves this issue, but [requires more of the caller](https://typing.python.org/en/latest/spec/aliases.html#newtype):\n\n```py\nMyCoolString = NewType(\"MyCoolString\", str)\n\ndef all good(arg: Literal[\"1\", \"2\", \"3\"] | MyCoolString) -> None:\n    reveal_type(arg)  #  Revealed type: `Literal[\"1\", \"2\", \"3\"] | MyCoolString`\n\nall_good(MyCoolString(\"bad\"))\n\nall_good(\"bad\")  # Argument to function `all_good` is incorrect\n#        ^^^^^ Expected `Literal[\"1\", \"2\", \"3\"] | MyCoolString`, found `Literal[\"bad\"]`\n```",
+          "enum": [
+            "NewType",
+            "TypeAliasType"
+          ]
+        }
+      },
+      "required": [],
+      "title": "PyIRTypeConfig",
       "type": "object"
     },
     "ReferenceUnwrap": {
