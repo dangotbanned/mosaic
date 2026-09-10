@@ -231,9 +231,10 @@ class _MarksRelations:
     ) -> Iterator[tuple[OpenDict, ClosedDict]]:
         data = py_identifier_snake("data")
         fmt = OpenDict.format_name
+        exclude = frozenset((*options.fields, data))
         for mark in definitions:
             name = mark.name
-            parent = mark.with_parent_open(fmt(name), options)
+            parent = mark.with_parent_open(fmt(name), options, exclude=exclude)
             child_fields = {data: f} if (f := mark.get(data)) else ()
             yield parent, parent.with_child_closed(name, fields=child_fields)
 
