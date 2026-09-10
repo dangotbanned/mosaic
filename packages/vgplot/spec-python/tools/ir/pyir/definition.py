@@ -335,7 +335,7 @@ class ExtraDict(_Dict):
 
     def keywords(self) -> Iterator[str]:
         yield from super().keywords()
-        yield from self.extra_items.iter_lines()
+        yield f"extra_items={self.extra_items}"
 
     def iter_exprs(self) -> IterExprs:
         yield from super().iter_exprs()
