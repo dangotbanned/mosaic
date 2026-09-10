@@ -211,9 +211,6 @@ class App:
             return
 
         self.into_pyir(quiet=quiet)
-        # TODO @dangotbanned: move inside `into_pyir`
-        self._run_pyir_plugins(quiet=quiet)
-
         # TODO @dangotbanned: Make generate/preview a distinct stage
         if options.preview_modules:
             self.preview_modules(*options.preview_modules, quiet=quiet)
@@ -228,6 +225,8 @@ class App:
         if not quiet:
             print("Running pyir plugins")
         scripts.plugins.pyir_actions.run(self)
+        if not quiet:
+            print("Finished pyir plugins")
 
     @property
     def actions(self) -> Mapping[int, mlir.Action]:
@@ -288,6 +287,7 @@ class App:
             )
         if not quiet:
             self._package._summarize_into_pyir()
+        self._run_pyir_plugins(quiet=quiet)
 
     def mlir_root(self, id: IdName, /) -> mlir.Root:
         """Return the `MLIR` representation of module `id`."""
