@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing as t
+from collections import deque
 from collections.abc import Mapping
 from graphlib import TopologicalSorter
 from itertools import chain
@@ -30,6 +31,7 @@ Either option will implicitly exclude `_`-prefixed names.
 """
 
 type ExportSpec = Mapping[CanonicalPath, ExportKind | tuple[PyIdentifier, ...]]
+type PyIdentifierAny = PyIdentifier | PyIdentifierSnake
 
 
 # NOTE: Why is `Package` separated from `Module`?
@@ -101,16 +103,19 @@ class Package(base.Struct, kw_only=True):
             package = package._packages[part]
         return package._modules[module_name]
 
-    def iter_modules(self) -> Iterator[Module]:
+    def iter_modules_descendants(self) -> Iterator[Module]:
         yield from self._modules.values()
         for package in self._packages.values():
-            yield from package.iter_modules()
+            yield from package.iter_modules_descendants()
+
+    def iter_modules_children(self) -> Iterator[Module]:
+        yield from self._modules.values()
 
     def _summarize_into_pyir(self) -> None:
         total_modules = 1
         total_defs = 0
         module_listing = []
-        for total_modules, module in enumerate(self.iter_modules(), 1):  # ruff: ignore[unused-loop-control-variable]
+        for total_modules, module in enumerate(self.iter_modules_descendants(), 1):  # ruff: ignore[unused-loop-control-variable]
             total_defs += len(module.definitions)
             module_listing.append(f" - {module}")
 
@@ -155,8 +160,44 @@ class Package(base.Struct, kw_only=True):
         return subpackage
 
     def generate(self, resolver: Resolver) -> Lines:
-        msg = "Package.generate() is not yet implemented"
-        raise NotImplementedError(msg)
+        # NOTE: Pretend that this doesn't need to handle `Module`s for now.
+        # `Module.generate` is called independently to allow sharing a cache of imports between all modules
+        self_canonical = self.canonical_path
+        yield f"# Generated: `{self_canonical}`"
+        yield "from __future__ import annotations\n"
+        exporter = Exporter()
+        if not (export_spec := self.export_spec):
+            yield from exporter.from_submodules(self)
+            yield exporter.dunder_all()
+            return
+
+        for canonical, options in export_spec.items():
+            if isinstance(options, tuple):
+                yield from exporter.import_from(canonical, options)
+            elif canonical == self_canonical:
+                fn = exporter.submodules if options == "child-modules" else exporter.from_submodules
+                yield from fn(self)
+            elif child := self._packages.get(_child_package_name(self_canonical, canonical)):
+                fn = exporter.submodules if options == "child-modules" else exporter.from_subpackage
+                yield from fn(child)
+            else:
+                msg = f"{options!r} can only be used with a package, but {canonical!r} is a module"
+                raise TypeError(msg)
+
+
+# TODO @dangotbanned: Think about changing `ExportSpec` so that this isn't needed
+# - That idea came before the `Package`/`Module` split
+# - Now, `CanonicalPath` isn't used as a key - so this is more verbose and requires more work to support
+def _child_package_name(parent: CanonicalPath, child: CanonicalPath) -> PyIdentifierSnake:
+    child_id = child.removeprefix(parent + ".")
+    if child_id == child:
+        msg_0 = f"Exports must come from within {parent!r}, but got: {child!r}"
+        raise NotImplementedError(msg_0)
+    if "." in child_id:
+        msg_1 = f"TODO: Handle multiple levels of nesting, got: {child_id!r}"
+        raise NotImplementedError(msg_1)
+
+    return py_identifier_snake(child_id)
 
 
 @t.final
@@ -190,7 +231,7 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
             msg = f"Module {self.canonical_path!r} does not have any definitions to generate."
             raise TypeError(msg)
         get = self.definitions.__getitem__
-        yield f"# Generated: {self.canonical_path}"
+        yield f"# Generated: `{self.canonical_path}`"
         yield "from __future__ import annotations\n"
         yield from resolver.iter_imports(self.def_values())
         yield ""
@@ -198,7 +239,7 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
             chain.from_iterable(get(def_name).iter_lines() for def_name in self.topological_sort())
         )
         yield "\n"
-        yield f"__all__ = ({','.join(name.__repr__() for name in self.iter_exports())})\n"
+        yield f"__all__ = ({','.join(f'"{s}"' for s in self.iter_exports())},)\n"
 
     def topological_sort(self) -> Iterator[PyIdentifier]:
         """Return an iterator over a deterministic, [topological sort] within the bounds of this module.
@@ -215,9 +256,8 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         }
         yield from TopologicalSorter(graph).static_order()
 
-    # TODO @dangotbanned: Re-use for package exports
-    def iter_exports(self) -> Iterator[str]:
-        yield from (name for name in self.def_names() if not name.startswith("_"))
+    def iter_exports(self) -> Iterator[PyIdentifier]:
+        yield from (defn.name for defn in self.def_values() if not defn.name.startswith("_"))
 
     def import_ref(self, def_name: PyIdentifier | str, /) -> TypedExtRef:
         """Return a reference that another module can use to refer to a def from here."""
@@ -227,3 +267,32 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
     def update_defs(self, definitions: Iterable[Definition], /) -> None:
         """Insert new definitions or overwrite existing ones."""
         self.definitions.update((defn.name, defn) for defn in definitions)
+
+
+class Exporter:
+    """Tool for collecting imported names, while generating re-export statements."""
+
+    __slots__ = ("_seen",)
+
+    def __init__(self) -> None:
+        self._seen: deque[PyIdentifierAny] = deque()
+
+    def import_from(self, module_name: CanonicalPath, names: Iterable[PyIdentifierAny], /) -> Lines:
+        export_names = deque(names)
+        self._seen.extend(export_names)
+        yield f"from {module_name} import {','.join(export_names)}"
+
+    def from_submodules(self, package: Package, /) -> Lines:
+        for module in package.iter_modules_children():
+            yield from self.import_from(module.canonical_path, module.iter_exports())
+
+    def from_subpackage(self, sub: Package, /) -> Lines:
+        it = chain.from_iterable(m.iter_exports() for m in sub.iter_modules_children())
+        yield from self.import_from(sub.canonical_path, it)
+
+    def submodules(self, package: Package, /) -> Lines:
+        it = (m.name for m in package.iter_modules_children() if not m.name.startswith("_"))
+        yield from self.import_from(package.canonical_path, it)
+
+    def dunder_all(self) -> str:
+        return f"\n__all__ = ({','.join(f'"{s}"' for s in self._seen)},)\n"

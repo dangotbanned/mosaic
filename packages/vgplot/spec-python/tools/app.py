@@ -211,9 +211,16 @@ class App:
             return
 
         self.into_pyir(quiet=quiet)
+        # TODO @dangotbanned: move inside `into_pyir`
         self._run_pyir_plugins(quiet=quiet)
+
+        # TODO @dangotbanned: Make generate/preview a distinct stage
         if options.preview_modules:
             self.preview_modules(*options.preview_modules, quiet=quiet)
+        else:
+            if not quiet:
+                print("Generating modules")
+            self.generate_modules()
 
     def _run_pyir_plugins(self, *, quiet: bool = False) -> None:
         import scripts.plugins.pyir_actions
@@ -301,7 +308,7 @@ class App:
         return self._package.module(name.removeprefix("mosaic_spec."))
 
     def _iter_modules(self) -> Iterator[pyir.Module]:
-        return self._package.iter_modules()
+        return self._package.iter_modules_descendants()
 
     def preview_modules(self, *names: str, quiet: bool = False) -> None:
         if "all" in names:
@@ -311,22 +318,29 @@ class App:
 
         # NOTE: `quiet=True` will only silence previous steps, this one is about displaying stuff
         resolver = Resolver(
-            {module.name: module.canonical_path for module in self._package.iter_modules()},
+            {module.name: module.canonical_path for module in self._iter_modules()},
             self.config.convert.to_pyir.name,
         )
         multiple_modules = len(names) > 1
-        for module in self._package.iter_modules():
+        for module in self._iter_modules():
             if module.name in names:
                 print("\n".join(module.generate(resolver)))
                 if multiple_modules:
                     print("-" * 100)
 
-    # TODO @dangotbanned: Test writing to files
     def generate_modules(self) -> None:
-        _resolver = Resolver(
-            {module.name: module.canonical_path for module in self._package.iter_modules()},
+        resolver = Resolver(
+            {module.name: module.canonical_path for module in self._iter_modules()},
             self.config.convert.to_pyir.name,
         )
+        for module in self._iter_modules():
+            fs.write_lines(module.filepath, module.generate(resolver), "Generated module")
+
+        root = self._package
+        for package in root._packages.values():
+            fs.write_lines(package.filepath, package.generate(resolver), "Generated subpackage")
+
+        fs.write_lines(root.filepath, root.generate(resolver), "Generated package")
 
     def _read_sources(self) -> Iterator[InputSchema]:
         if not (sources := self.config.convert.sources):
