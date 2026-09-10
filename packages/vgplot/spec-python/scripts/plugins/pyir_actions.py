@@ -219,7 +219,9 @@ class _MarksRelations:
             #   `SpecHead.data?: Data | (Data & PlotMarkData)`
             # The runtime code doesn't expect the rhs, so here we will exclude it from
             # where `Spec` derives - and leave it in for the `PlotMark` classes
-            exclude={"mark", "data"},
+            # NOTE: `opacity` has different docs for `GridOptions`
+            # https://github.com/dangotbanned/mosaic/blob/510eeaf8bed2fdc97aa7dfa78a3475ea92c8e2a1/packages/vgplot/spec/src/spec/marks/Axis.ts#L131-L137
+            exclude={"mark", "data", "opacity"},
         )
         return _MarksRelations(options, tuple(cls._generate_pairs(definitions, options)))
 
