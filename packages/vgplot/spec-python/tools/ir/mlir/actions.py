@@ -11,8 +11,9 @@ from typing import TYPE_CHECKING, Any, ClassVar, Final, Literal as L, Protocol, 
 from tools.codegen.convert import kebab_case
 from tools.common import ensure_type
 from tools.ir.mlir import nodes
-from tools.ir.mlir.common import into_name_map, into_ref_map
+from tools.ir.mlir.common import into_name_map, into_ref_map, sort_key_dict
 from tools.ir.mlir.definition import Definition
+from tools.ir.mlir.nodes import ClosedDict, Union
 from tools.ir.mlir.root import Root
 from tools.ir.mlir.scopes import Matcher, is_inner_union
 from tools.models import config as cfg
@@ -20,6 +21,7 @@ from tools.models import config as cfg
 if TYPE_CHECKING:
     from collections.abc import Callable, Collection, Iterable, Iterator, Mapping, Sequence, Set
 
+    from tools.ir.mlir.nodes import MLIR
     from tools.models.base import DefName, IdName
 
 type RootsMut = deque[Root]
@@ -300,39 +302,86 @@ class Remove(_Base[L["definitions"]]):
 
 
 class AsDefs(_Base[L["children"]]):
-    __slots__ = ()
+    __slots__ = ("discriminator",)
+    discriminator: str
 
     @property
     def over(self) -> L["children"]:
         return "children"
 
-    def __init__(self, matcher: Matcher) -> None:
+    def __init__(self, matcher: Matcher, discriminator: str) -> None:
         self.matcher = matcher
+        self.discriminator = discriminator
 
     def run(self, roots: RootsMut) -> Iterator[Root]:
         matcher = self.matcher
         for root in roots:
             if matcher.id.matches(root.id):
-                new_defs = {}
-                for (def_name, defn), children in matcher.matching_children(root):
-                    # NOTE: Simpler to just handle the case I have, before generalizing to anything
-                    defn_inner = ensure_type(
-                        defn.inner,
-                        nodes.Union,
-                        name="defn.inner",
-                        explain=f"TODO: Support non-union parent types in {self.kind!r}",
-                    )
-                    new_members = []
-                    for idx, child in enumerate(children, 1):
-                        child_name = f"{def_name}{idx}"
-                        new_defs[child_name] = Definition.from_mlir(child.with_doc(defn_inner.doc))
-                        new_members.append(nodes.ref(child_name))
-                    new_defs[def_name] = Definition.from_mlir(
-                        defn_inner.__replace__(members=tuple(new_members))
-                    )
-                if new_defs:
-                    root.definitions.update(new_defs)
-            yield root
+                yield self._on_root(root)
+            else:
+                yield root
+
+    def _on_root(self, root: Root) -> Root:
+        new_defs = {}
+        for (def_name, defn), children in self.matcher.matching_children(root):
+            # NOTE: Simpler to just handle the case I have, before generalizing to anything
+            defn_inner = ensure_type(
+                defn.inner, Union, explain=f"TODO: Support non-union parent types in {self.kind!r}"
+            )
+            if self.discriminator:
+                it = self._name_via_discriminator(def_name, defn_inner, children)
+            else:
+                it = self._name_infer(def_name, defn_inner, children)
+            new_defs.update(((name, Definition.from_mlir(node)) for name, node in it))
+        if new_defs:
+            root.definitions.update(new_defs)
+        return root
+
+    def _name_via_discriminator(
+        self, def_name: DefName, defn_inner: Union, children: Iterable[MLIR]
+    ) -> Iterator[tuple[DefName, MLIR]]:
+        field = self.discriminator
+        new_members = []
+        for child in children:
+            field_type = ensure_type(
+                ensure_type(child, ClosedDict).fields[field].type, nodes.Literal
+            )
+            value = str(field_type.members[0])
+            name = f"{def_name}{value[0].upper()}{value[1:]}"
+            new_members.append(nodes.ref(name))
+            yield name, child.with_doc(defn_inner.doc)
+        yield def_name, defn_inner.__replace__(members=tuple(new_members))
+
+    def _name_infer(
+        self, def_name: DefName, defn_inner: Union, children: Iterable[MLIR]
+    ) -> Iterator[tuple[DefName, MLIR]]:
+        # Need to hold off on naming them until I've seen all the field names, which can then be used to sort
+        # NOTE: Any other type must passthrough as-is
+        todo = []
+        new_members = []
+        for child in children:
+            if isinstance(child, ClosedDict):
+                todo.append(child)
+            else:
+                new_members.append(child)
+        if len(todo) != 1:
+            todo.sort(key=sort_key_dict)
+        for idx, child in enumerate(todo, 1):
+            name = f"{def_name}{idx}"
+            new_members.append(nodes.ref(name))
+            yield name, child.with_doc(defn_inner.doc)
+        yield def_name, defn_inner.__replace__(members=tuple(new_members))
+
+    def _name_children(
+        self, def_name: DefName, children: Iterable[MLIR]
+    ) -> Iterator[tuple[DefName, MLIR]]:
+        field = self.discriminator
+        for child in children:
+            field_type = ensure_type(
+                ensure_type(child, nodes.ClosedDict).fields[field].type, nodes.Literal
+            )
+            value = str(field_type.members[0])
+            yield f"{def_name}{value[0].upper()}{value[1:]}", child
 
 
 class AsDefsField(_Base[L["children"]]):
@@ -453,8 +502,8 @@ def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]
                 item = Remove(Matcher.from_scopes(scope), preserve_children=preserve)
             case cfg.NewTreeAction(scope=scope, id=id, into_ext_ref=into_ext_ref):
                 item = NewTree(Matcher.from_scopes(scope), scope.over, id, into_ext_ref)
-            case cfg.AsDefsAction(scope=scope):
-                item = AsDefs(Matcher.from_scopes(scope))
+            case cfg.AsDefsAction(scope=scope, discriminator=discriminator):
+                item = AsDefs(Matcher.from_scopes(scope), discriminator)
             case cfg.RenameFieldsAction(scope=scope, overrides=overrides):
                 item = RenameFields(Matcher.from_scopes(scope), overrides)
             case cfg.AsDefsFieldAction(scope=scope):

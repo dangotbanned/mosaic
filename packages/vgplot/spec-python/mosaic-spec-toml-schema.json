@@ -10,6 +10,11 @@
             "as-defs"
           ]
         },
+        "discriminator": {
+          "default": "",
+          "description": "The name of a discriminator field, if this action targets a [discriminated union][1].\n\nEach member will be named based on the single literal type allowed for this field.\n\n[1]: https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions",
+          "type": "string"
+        },
         "scope": {
           "$ref": "#/$defs/ChildrenScope"
         }

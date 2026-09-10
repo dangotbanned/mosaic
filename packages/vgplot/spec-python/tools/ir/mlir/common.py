@@ -6,8 +6,11 @@ from collections.abc import Callable, Iterable, Mapping
 from tools.models.base import DefName, IdName
 
 if t.TYPE_CHECKING:
+    from _typeshed import SupportsRichComparison
+
     from tools.ir.mlir.definition import Definition
-    from tools.ir.mlir.nodes import MLIR
+    from tools.ir.mlir.nodes import MLIR, ClosedDict
+
 
 type NameMap[T: str = str, R: str = str] = Callable[[T], R | None]
 """A function that returns a replacement name iff a match was found."""
@@ -74,3 +77,19 @@ def inner_type_is(
         return isinstance(obj.inner, inner_type)
 
     return guard
+
+
+def sort_key_any(node: MLIR, /) -> SupportsRichComparison:
+    """Deterministic-ish sort for all `MLIR` nodes.
+
+    Stable within a single process, see [`object.__hash__`](https://docs.python.org/3/reference/datamodel.html#object.__hash__).
+    """
+    return node.__class__.__name__, node.__hash__()
+
+
+def sort_key_dict(node: ClosedDict, /) -> SupportsRichComparison:
+    """A cheap, approximate stable sort for a union of `ClosedDict` types.
+
+    If multiple members have the same set of field names, this function cannot provide stability.
+    """  # ruff: ignore[non-imperative-mood]
+    return sorted(iter(node.fields))

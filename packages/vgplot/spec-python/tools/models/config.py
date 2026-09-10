@@ -305,6 +305,13 @@ class AsDefsAction(
     """Lift one or more anonymous types, within a union, into new definitions."""
 
     scope: ChildrenScope = field(default_factory=ChildrenScope)
+    discriminator: str = ""
+    """The name of a discriminator field, if this action targets a [discriminated union][1].
+
+    Each member will be named based on the single literal type allowed for this field.
+
+    [1]: https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions
+    """
 
 
 @final

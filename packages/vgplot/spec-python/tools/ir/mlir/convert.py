@@ -9,13 +9,12 @@ from tools import ds
 from tools.common import POUND_DEFS
 from tools.ir.json_wrapper import nodes as jw
 from tools.ir.mlir import nodes as mlir
+from tools.ir.mlir.common import sort_key_any
 from tools.ir.mlir.nodes import MLIR
 from tools.models.base import DefName, IdName, Lit
 
 if typing.TYPE_CHECKING:
     from collections.abc import Mapping
-
-    from _typeshed import SupportsRichComparison
 
 
 _JSON_PY_INST: Final[Mapping[jw.Scalar, mlir.PyBuiltin]] = {
@@ -184,9 +183,4 @@ def _(obj: jw.Union, owner: DefName, /) -> mlir.Union:
     if merge_literals:
         members.add(mlir.Literal(members=tuple(sorted(merge_literals, key=str))))
 
-    return mlir.Union(members=tuple(sorted(members, key=sort_key)), doc=obj.description)
-
-
-def sort_key(node: MLIR, /) -> SupportsRichComparison:
-    """Determinitic sort for all `MLIR` nodes."""
-    return node.__class__.__name__, node.__hash__()
+    return mlir.Union(members=tuple(sorted(members, key=sort_key_any)), doc=obj.description)

@@ -133,14 +133,18 @@ scope.include.definition.names = ["PlotAttributes", "Plot"]
 action                         = "as-defs"
 scope.include.id               = ["marks"]
 scope.include.definition.names = [
-  "DensityX",
-  "DensityY",
   "SortOrder",
   "ChannelDomainValueSpec",
   "ChannelValueSpec",
   "ChannelValueIntervalSpec",
 ]
+
+[[convert.to_mlir.actions]]
+action                         = "as-defs"
+scope.include.id               = ["marks"]
+scope.include.definition.names = ["DensityX", "DensityY"]
 scope.include.child.nodes      = ["ClosedDict"]
+discriminator                  = "type"
 
 [[convert.to_mlir.actions]]
 action                         = "remove"
