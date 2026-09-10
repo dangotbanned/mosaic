@@ -86,7 +86,7 @@ class Union(Expr):
     members: tuple[Expr, ...]
 
     def __str__(self) -> TypeExpr:
-        return join_or(m.__str__() for m in self.members)
+        return join_or(sorted(m.__str__() for m in self.members))
 
     def iter_exprs(self) -> IterExprs:
         yield self

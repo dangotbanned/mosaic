@@ -5,6 +5,7 @@ from collections import deque
 from collections.abc import Mapping
 from graphlib import TopologicalSorter
 from itertools import chain
+from operator import itemgetter
 from pathlib import Path  # ruff: ignore[typing-only-standard-library-import]
 from typing import Literal as L
 
@@ -167,22 +168,25 @@ class Package(base.Struct, kw_only=True):
         yield "from __future__ import annotations\n"
         exporter = Exporter()
         if not (export_spec := self.export_spec):
-            yield from exporter.from_submodules(self)
+            yield from sorted(exporter.from_submodules(self))
             yield exporter.dunder_all()
             return
 
+        iter_stack: deque[Lines] = deque()
         for canonical, options in export_spec.items():
             if isinstance(options, tuple):
-                yield from exporter.import_from(canonical, options)
+                iter_stack.append(exporter.import_from(canonical, options))
             elif canonical == self_canonical:
                 fn = exporter.submodules if options == "child-modules" else exporter.from_submodules
-                yield from fn(self)
+                iter_stack.append(fn(self))
             elif child := self._packages.get(_child_package_name(self_canonical, canonical)):
                 fn = exporter.submodules if options == "child-modules" else exporter.from_subpackage
-                yield from fn(child)
+                iter_stack.append(fn(child))
             else:
                 msg = f"{options!r} can only be used with a package, but {canonical!r} is a module"
                 raise TypeError(msg)
+        yield from sorted(chain.from_iterable(iter_stack))
+        yield exporter.dunder_all()
 
 
 # TODO @dangotbanned: Think about changing `ExportSpec` so that this isn't needed
@@ -198,6 +202,9 @@ def _child_package_name(parent: CanonicalPath, child: CanonicalPath) -> PyIdenti
         raise NotImplementedError(msg_1)
 
     return py_identifier_snake(child_id)
+
+
+_get_name = itemgetter(0)
 
 
 @t.final
@@ -233,15 +240,15 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         get = self.definitions.__getitem__
         yield f"# Generated: `{self.canonical_path}`"
         yield "from __future__ import annotations\n"
-        yield from resolver.iter_imports(self.def_values())
+        yield from sorted(resolver.iter_imports(self.def_values()))
         yield ""
         yield "\n".join(
             chain.from_iterable(get(def_name).iter_lines() for def_name in self.topological_sort())
         )
         yield "\n"
-        yield f"__all__ = ({','.join(f'"{s}"' for s in self.iter_exports())},)\n"
+        yield f"__all__ = ({','.join(f'"{s}"' for s in sorted(self.iter_exports()))},)\n"
 
-    def topological_sort(self) -> Iterator[PyIdentifier]:
+    def topological_sort(self) -> Iterator[PyIdentifier | str]:
         """Return an iterator over a deterministic, [topological sort] within the bounds of this module.
 
         In other words, return definition names before the names they depend on;
@@ -251,8 +258,8 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
         """
         tps = Ref, TypedRef
         graph = {
-            defn.name: sorted({expr.ref for expr in defn.iter_exprs() if isinstance(expr, tps)})
-            for defn in self.def_values()
+            defn_name: sorted({expr.ref for expr in defn.iter_exprs() if isinstance(expr, tps)})
+            for defn_name, defn in sorted(self.def_items(), key=_get_name)
         }
         yield from TopologicalSorter(graph).static_order()
 
@@ -280,7 +287,7 @@ class Exporter:
     def import_from(self, module_name: CanonicalPath, names: Iterable[PyIdentifierAny], /) -> Lines:
         export_names = deque(names)
         self._seen.extend(export_names)
-        yield f"from {module_name} import {','.join(export_names)}"
+        yield f"from {module_name} import {','.join(sorted(export_names))}"
 
     def from_submodules(self, package: Package, /) -> Lines:
         for module in package.iter_modules_children():
@@ -295,4 +302,4 @@ class Exporter:
         yield from self.import_from(package.canonical_path, it)
 
     def dunder_all(self) -> str:
-        return f"\n__all__ = ({','.join(f'"{s}"' for s in self._seen)},)\n"
+        return f"\n__all__ = ({','.join(f'"{s}"' for s in sorted(self._seen))},)\n"
