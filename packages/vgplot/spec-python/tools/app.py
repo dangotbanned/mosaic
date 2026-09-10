@@ -260,8 +260,6 @@ class App:
 
     def into_pyir(self, *, quiet: bool = False) -> None:
         """Lower MLIR into PyIR."""
-        pyir.configure(self.config.convert.to_pyir)
-
         self.into_mlir(quiet=quiet)
         if not quiet:
             print(f"Generating module representation from {len(self._mlirs)} root(s).")
@@ -279,15 +277,15 @@ class App:
 
         if not quiet:
             print("Added 2 packages.")
-
-        for root in self._mlirs:
-            sub_pkg.with_child(
-                root.id,
-                (pyir.convert.from_def(defn, def_name) for def_name, defn in root.def_items()),
-            )
-        if not quiet:
-            self._package._summarize_into_pyir()
-        self._run_pyir_plugins(quiet=quiet)
+        with pyir.configure(self.config.convert.to_pyir):
+            for root in self._mlirs:
+                sub_pkg.with_child(
+                    root.id,
+                    (pyir.convert.from_def(defn, def_name) for def_name, defn in root.def_items()),
+                )
+            if not quiet:
+                self._package._summarize_into_pyir()
+            self._run_pyir_plugins(quiet=quiet)
 
     def mlir_root(self, id: IdName, /) -> mlir.Root:
         """Return the `MLIR` representation of module `id`."""

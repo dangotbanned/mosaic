@@ -5,6 +5,7 @@ import typing as t
 
 from tools import ds
 from tools.codegen.convert import py_identifier, py_identifier_snake
+from tools.dispatch import just_dispatch
 from tools.ir.mlir import MLIR, Definition as mlir_Definition, nodes as mlir
 from tools.ir.pyir import definition as d, expr, qualifier as q, value
 from tools.ir.pyir.base import ExtRef, Ref
@@ -24,7 +25,7 @@ _MLIR_TO_EXPR_NO_ATTR: t.Final[Mapping[type[MLIR], expr.DynExpr | expr.Any | exp
     mlir.PyInt: expr.INT,
     mlir.PyFloat: expr.FLOAT,
     mlir.Unknown: expr.ANY,
-    mlir.PyStr: expr.STR,  # TODO @dangotbanned: handle configuration later (default)
+    mlir.PyStr: expr.STR,
     mlir.Any: expr.ANY,
     mlir.EmptyTuple: expr.EMPTY_TUPLE,
     mlir.PyNone: expr.PyNone(),
@@ -36,12 +37,22 @@ _PY_LITERAL: t.Final[Mapping[mlir.LiteralMember, expr.LiteralMember]] = {
 }
 
 
+def _patch_type_alias_type[R: dict[type[t.Any], t.Any]](reg: R, /) -> R:
+    reg.pop(mlir.PyStr)
+    return reg
+
+
+def _patch_named_tuple[R: dict[type[t.Any], t.Any]](reg: R, /) -> R:
+    reg.pop(mlir.NamedTuple)
+    return reg
+
+
 def from_def(obj: mlir_Definition[MLIR], name: DefName) -> pyir.Definition:
     """Convert an `mlir.Definition` into a `pyir.Definition`."""
     return _from_def(obj.inner, py_identifier(name))
 
 
-@functools.singledispatch
+@just_dispatch
 def into_expr(obj: MLIR) -> Expr:
     """Try to convert an `mlir.MLIR` into a `pyir.Expr`."""
     if e := _MLIR_TO_EXPR_NO_ATTR.get(obj.__class__):
@@ -104,7 +115,6 @@ def _(obj: mlir.Union) -> expr.Union:
     return expr.Union(members=tuple(into_expr(member) for member in obj.members))
 
 
-# TODO @dangotbanned: handle configuration later (default)
 @into_expr.register(mlir.NamedTuple)
 def _named_tuple_expr(obj: mlir.NamedTuple) -> expr.NamedTuple:
     fields = tuple(
@@ -113,21 +123,17 @@ def _named_tuple_expr(obj: mlir.NamedTuple) -> expr.NamedTuple:
     return expr.NamedTuple(fields=fields)
 
 
-@functools.singledispatch
+@just_dispatch
 def _from_def(obj: MLIR, name: PyIdentifier) -> pyir.Definition:
     msg = f"{name!r}: {type(obj).__name__} could not be converted into a PyIR definition, got:\n{obj!r}"
     raise NotImplementedError(msg)
 
 
+@_from_def.register(*into_expr.registry)
 def _expr_alias(obj: mlir.MLIR, name: PyIdentifier) -> d.TypeAlias[Expr]:
     return d.TypeAlias(name=name, expr=into_expr(obj), doc=obj.doc)
 
 
-for tp in into_expr.registry:
-    _from_def.register(tp, _expr_alias)
-
-
-# TODO @dangotbanned: handle configuration later (not default)
 @_from_def.register(mlir.NamedTuple)
 def _(obj: mlir.NamedTuple, name: PyIdentifier) -> d.NamedTuple:
     fields = tuple(
@@ -135,20 +141,20 @@ def _(obj: mlir.NamedTuple, name: PyIdentifier) -> d.NamedTuple:
     )
     return d.NamedTuple(name=name, fields=fields, doc=obj.doc)
 
-
-# TODO @dangotbanned: handle configuration later (not default)
 @_from_def.register(mlir.PyStr)
 def _(obj: mlir.PyStr, name: PyIdentifier) -> d.NewTypeStr:
     return d.NewTypeStr(name=name, doc=obj.doc)
 
 
-@_from_def.register(mlir.PyFalse)
-@_from_def.register(mlir.PyTrue)
-@_from_def.register(mlir.EmptyTuple)
-@_from_def.register(mlir.PyNone)
-@_from_def.register(mlir.Reference)
-@_from_def.register(mlir.ExtReference)
-@_from_def.register(mlir.Field)
+@_from_def.register(
+    mlir.PyFalse,
+    mlir.PyTrue,
+    mlir.EmptyTuple,
+    mlir.PyNone,
+    mlir.Reference,
+    mlir.ExtReference,
+    mlir.Field,
+)
 def _(obj: mlir.MLIR, name: PyIdentifier) -> t.Never:
     msg = f"{name!r}: {type(obj).__name__} is not supported as a PyIR definition, got:\n{obj!r}"
     raise NotImplementedError(msg)
@@ -163,8 +169,7 @@ def _td_fields(
         yield (snake, Field(name=snake, expr=expr, doc=f.doc))
 
 
-@_from_def.register(mlir.OpenDict)
-@_from_def.register(mlir.ClosedDict)
+@_from_def.register(mlir.OpenDict, mlir.ClosedDict)
 def _(obj: mlir.OpenDict | mlir.ClosedDict, name: PyIdentifier) -> d.OpenDict | d.ClosedDict:
     tp_pyir = d.ClosedDict if obj.__class__ is mlir.ClosedDict else d.OpenDict
     return tp_pyir(name=name, fields=ds.frozenmap(_td_fields(obj)), doc=obj.doc)
