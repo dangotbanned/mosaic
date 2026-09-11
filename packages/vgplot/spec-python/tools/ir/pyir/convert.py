@@ -117,9 +117,7 @@ def _(obj: mlir.Union) -> expr.Union:
 
 @into_expr.register(mlir.NamedTuple)
 def _named_tuple_expr(obj: mlir.NamedTuple) -> expr.NamedTuple:
-    fields = tuple(
-        Field(name=py_identifier_snake(name), expr=into_expr(tp), doc="") for name, tp in obj.fields
-    )
+    fields = tuple(expr.Annotated.field(name, into_expr(tp)) for name, tp in obj.fields)
     return expr.NamedTuple(fields=fields)
 
 

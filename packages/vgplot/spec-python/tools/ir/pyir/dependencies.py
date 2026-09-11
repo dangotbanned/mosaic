@@ -206,11 +206,8 @@ def _(node: expr.Union) -> Dependencies:
 
 @_find_deps.register(expr.NamedTuple)
 def _(node: expr.NamedTuple) -> Dependencies:
-    # NOTE: complicated, this does a transformation at render-time
-    # that was clever, but not consistent with how I handled `VariantHomogeneousTuple` expansion
-    yield from (StdDep("typing", "Annotated"), StdDep("typing", "Literal"))
     for f in node.fields:
-        yield from _find_deps(f.expr)
+        yield from _find_deps(f)
 
 
 @_find_deps.register(definition.NamedTuple)

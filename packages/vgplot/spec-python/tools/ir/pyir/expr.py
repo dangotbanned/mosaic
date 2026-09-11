@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing as t
 from typing import Literal as L, Self
 
+from tools.codegen.convert import py_identifier_snake
 from tools.common import copy_replace
 from tools.ir.pyir.base import Expr, IterExprs, RefRepl, TypeExpr, join_comma, join_or
 from tools.models import base
@@ -10,7 +11,6 @@ from tools.models import base
 if t.TYPE_CHECKING:
     from tools.common import PyIdentifierSnake
     from tools.ir.pyir import value
-    from tools.ir.pyir.field import Field
 
 
 @t.final
@@ -174,8 +174,12 @@ class Annotated(Expr):
             return self
         return self.__replace__(**changes)
 
+    @classmethod
+    def field(cls, name: PyIdentifierSnake | str, expr: Expr) -> Annotated:
+        """Construct a field to use in a structural named tuple."""
+        return Annotated(origin=expr, metadata=(Literal.from_name(py_identifier_snake(name)),))
 
-# TODO @dangotbanned: Need to redo this entirely, it complicates dependencies, that it does a transform later
+
 # NOTE: A new invention?
 @t.final
 class NamedTuple(Expr):
@@ -212,14 +216,10 @@ class NamedTuple(Expr):
     ```
     """
 
-    fields: tuple[Field[Expr], ...]
+    fields: tuple[Annotated, ...]
 
     def __str__(self) -> TypeExpr:
-        exprs = (
-            Annotated(origin=fld.expr, metadata=(Literal.from_name(fld.name),))
-            for fld in self.fields
-        )
-        return TypeExpr(f"tuple[{join_comma(e.__str__() for e in exprs)}]")
+        return TypeExpr(f"tuple[{join_comma(e.__str__() for e in self.fields)}]")
 
     def iter_exprs(self) -> IterExprs:
         yield self
