@@ -71,7 +71,10 @@ ChannelValue = TypeAliasType(
 
 
 class Format(TypedDict, total=False, closed=True):
-    """How channel values are formatted for display. If a format is a string, it is interpreted as a (UTC) time format for temporal channels, and otherwise a number format."""
+    """How channel values are formatted for display.
+
+    If a format is a string, it is interpreted as a (UTC) time format for temporal channels, and otherwise a number format.
+    """
 
     aria_label: ParamRef | bool | str
     fill: ParamRef | bool | str

@@ -28,7 +28,10 @@ if TYPE_CHECKING:
 
 
 class Margins(TypedDict, total=False, closed=True):
-    """A shorthand object notation for setting multiple margin values. The object keys are margin names (top, right, etc)."""
+    """A shorthand object notation for setting multiple margin values.
+
+    The object keys are margin names (top, right, etc).
+    """
 
     bottom: ParamRef | float
     left: ParamRef | float

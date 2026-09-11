@@ -170,11 +170,18 @@ class _Dict(Definition):
             return
         yield class_statement
         if self.doc:
-            yield f'{INDENT}"""{self.doc}"""'
+            yield f'{INDENT}"""{self._render_doc_class()}"""'
         for line in chain.from_iterable(
             f.iter_lines() for _, f in sorted(self.fields.items(), key=_get_key)
         ):
             yield f"{INDENT}{line}"
+
+    def _render_doc_class(self) -> str:
+        """Insert newlines into the class-level docstring to produce a single-sentence summary."""
+        doc = self.doc
+        if doc.count(".") >= 2 and doc[doc.index(".") + 1] == " ":
+            return doc.replace(". ", ".\n\n", count=1)
+        return doc
 
     def iter_exprs(self) -> IterExprs:
         for f in self.iter_fields_types():
