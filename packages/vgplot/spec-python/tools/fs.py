@@ -198,7 +198,9 @@ def write_lines(target: IntoPath, lines: Iterable[str], /, message: str | None =
 
 # TODO @dangotbanned: Change `cwd` to use an enum instead of `None` to represent "leave me alone"
 @overload
-def run(tool: Tool, *args: LS, output: L["pipe"] = "pipe", cwd: IntoPath | None = ...) -> None: ...
+def run(
+    tool: Tool, *args: LS, output: L["pipe", "quiet"] = "pipe", cwd: IntoPath | None = ...
+) -> None: ...
 @overload
 def run(
     tool: Tool, *args: LS, input: str | None = ..., output: L["capture"], cwd: IntoPath | None = ...
@@ -207,7 +209,7 @@ def run(
     tool: Tool,
     *args: LS,
     input: str | None = None,
-    output: L["capture", "pipe"] = "pipe",
+    output: L["capture", "pipe", "quiet"] = "pipe",
     cwd: IntoPath | None = SPEC_PYTHON,
 ) -> sp.CompletedProcess[str] | None:
     """Run a command in a subprocess.
@@ -220,6 +222,7 @@ def run(
 
             - *"pipe"*: (default) feed it directly into stdout.
             - *"capture"*: wrap it and return the result.
+            - *"quiet"*: ignore stdout and avoid printing the command before a run.
         cwd: Set the current working directory for the subprocess.
 
             Defaults to `"mosaic/packages/vgplot/spec-python"`
@@ -230,10 +233,11 @@ def run(
     import shutil
     import subprocess as sp
 
-    format_cmd = " ".join((tool, *args))
-    if len(format_cmd) > 80:
-        format_cmd = format_cmd[:50] + "..." + format_cmd[-30:]
-    print(f"$ {format_cmd}")
+    if output != "quiet":
+        format_cmd = " ".join((tool, *args))
+        if len(format_cmd) > 80:
+            format_cmd = format_cmd[:50] + "..." + format_cmd[-30:]
+        print(f"$ {format_cmd}")
     args_ = ((shutil.which(tool) or tool), *args)
 
     if output == "capture":
@@ -243,7 +247,7 @@ def run(
 
     with sp.Popen(args_, stdout=sp.PIPE, stderr=sp.STDOUT, encoding="utf-8", cwd=cwd) as process:
         # TODO @dangotbanned: Is there a more direct way to do this?
-        if process.stdout is not None:
+        if process.stdout is not None and output != "quiet":
             for chunk in process.stdout:
                 print(chunk, end="")
     if retcode := process.poll():

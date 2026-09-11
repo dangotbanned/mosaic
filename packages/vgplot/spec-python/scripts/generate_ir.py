@@ -26,7 +26,7 @@ def main() -> None:
     parser.add_argument(
         "--stage",
         choices=get_args(RunUntil.__value__),
-        default="all",
+        default="lint",
         help="Run until the end of a specific stage.",
     )
     parser.add_argument(

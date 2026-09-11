@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from tools.models.base import IdName
 
 
-type RunUntil = L["json_wrapper", "mlir", "pyir", "codegen", "lint", "all"]
+type RunUntil = L["json_wrapper", "mlir", "pyir", "codegen", "lint"]
 
 
 class CLIOptions(Protocol):
@@ -205,17 +205,14 @@ class App:
         if options.preview_modules:
             self.preview_modules(*options.preview_modules, quiet=quiet)
             return
-        if method := {
+        method = {
             "pyir": self.into_pyir,
             "mlir": self.into_mlir,
             "json_wrapper": self.into_json_wrapper,
             "codegen": self.codegen,
-        }.get(stage):
-            method(quiet=quiet)
-            return
-
-        # TODO @dangotbanned: Implement `lint`
-        self.codegen(quiet=quiet)
+            "lint": self.lint,
+        }[stage]
+        method(quiet=quiet)
 
     @property
     def actions(self) -> Mapping[int, mlir.Action]:
@@ -317,6 +314,12 @@ class App:
             fs.write_lines(package.filepath, package.generate(resolver), messages[1])
 
         fs.write_lines(root.filepath, root.generate(resolver), messages[2])
+
+    def lint(self, *, quiet: bool = False) -> None:
+        self.codegen(quiet=quiet)
+        output = "quiet" if quiet else "pipe"
+        fs.run("uv", "run", "ruff", "check", output=output)
+        fs.run("uv", "run", "ruff", "format", output=output)
 
     def mlir_root(self, id: IdName, /) -> mlir.Root:
         """Return the `MLIR` representation of module `id`."""
