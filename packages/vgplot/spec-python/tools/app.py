@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from tools.models.base import IdName
 
 
-type RunUntil = L["json_wrapper", "mlir", "pyir", "all"]
+type RunUntil = L["json_wrapper", "mlir", "pyir", "codegen", "lint", "all"]
 
 
 class CLIOptions(Protocol):
@@ -202,31 +202,20 @@ class App:
     def run(self, options: CLIOptions) -> None:
         stage = options.stage
         quiet = options.quiet
+        if options.preview_modules:
+            self.preview_modules(*options.preview_modules, quiet=quiet)
+            return
         if method := {
             "pyir": self.into_pyir,
             "mlir": self.into_mlir,
             "json_wrapper": self.into_json_wrapper,
+            "codegen": self.codegen,
         }.get(stage):
             method(quiet=quiet)
             return
 
-        self.into_pyir(quiet=quiet)
-        # TODO @dangotbanned: Make generate/preview a distinct stage
-        if options.preview_modules:
-            self.preview_modules(*options.preview_modules, quiet=quiet)
-        else:
-            if not quiet:
-                print("Generating modules")
-            self.generate_modules()
-
-    def _run_pyir_plugins(self, *, quiet: bool = False) -> None:
-        import scripts.plugins.pyir_actions
-
-        if not quiet:
-            print("Running pyir plugins")
-        scripts.plugins.pyir_actions.run(self)
-        if not quiet:
-            print("Finished pyir plugins")
+        # TODO @dangotbanned: Implement `lint`
+        self.codegen(quiet=quiet)
 
     @property
     def actions(self) -> Mapping[int, mlir.Action]:
@@ -287,6 +276,48 @@ class App:
                 self._package._summarize_into_pyir()
             self._run_pyir_plugins(quiet=quiet)
 
+    def preview_modules(self, *names: str, quiet: bool = False) -> None:
+        self.into_pyir(quiet=quiet)
+        if "all" in names:
+            names = tuple(module.name for module in self._iter_modules())
+        if not quiet:
+            print(f"Previewing modules: {list(names)!r}")
+
+        # NOTE: `quiet=True` will only silence previous steps, this one is about displaying stuff
+        resolver = Resolver(
+            {module.name: module.canonical_path for module in self._iter_modules()},
+            self.config.convert.to_pyir.name,
+        )
+        multiple_modules = len(names) > 1
+        for module in self._iter_modules():
+            if module.name in names:
+                print("\n".join(module.generate(resolver)))
+                if multiple_modules:
+                    print("-" * 100)
+
+    def codegen(self, *, quiet: bool = False) -> None:
+        self.into_pyir(quiet=quiet)
+        if not quiet:
+            print("Starting codegen")
+
+        resolver = Resolver(
+            {module.name: module.canonical_path for module in self._iter_modules()},
+            self.config.convert.to_pyir.name,
+        )
+        messages = {
+            True: (None, None, None),
+            False: ("Generated module", "Generated subpackage", "Generated package"),
+        }[quiet]
+
+        for module in self._iter_modules():
+            fs.write_lines(module.filepath, module.generate(resolver), messages[0])
+
+        root = self._package
+        for package in root._packages.values():
+            fs.write_lines(package.filepath, package.generate(resolver), messages[1])
+
+        fs.write_lines(root.filepath, root.generate(resolver), messages[2])
+
     def mlir_root(self, id: IdName, /) -> mlir.Root:
         """Return the `MLIR` representation of module `id`."""
         return self._mlirs[self._mlirs_inv[id]]
@@ -308,38 +339,6 @@ class App:
     def _iter_modules(self) -> Iterator[pyir.Module]:
         return self._package.iter_modules_descendants()
 
-    def preview_modules(self, *names: str, quiet: bool = False) -> None:
-        if "all" in names:
-            names = tuple(module.name for module in self._iter_modules())
-        if not quiet:
-            print(f"Previewing modules: {list(names)!r}")
-
-        # NOTE: `quiet=True` will only silence previous steps, this one is about displaying stuff
-        resolver = Resolver(
-            {module.name: module.canonical_path for module in self._iter_modules()},
-            self.config.convert.to_pyir.name,
-        )
-        multiple_modules = len(names) > 1
-        for module in self._iter_modules():
-            if module.name in names:
-                print("\n".join(module.generate(resolver)))
-                if multiple_modules:
-                    print("-" * 100)
-
-    def generate_modules(self) -> None:
-        resolver = Resolver(
-            {module.name: module.canonical_path for module in self._iter_modules()},
-            self.config.convert.to_pyir.name,
-        )
-        for module in self._iter_modules():
-            fs.write_lines(module.filepath, module.generate(resolver), "Generated module")
-
-        root = self._package
-        for package in root._packages.values():
-            fs.write_lines(package.filepath, package.generate(resolver), "Generated subpackage")
-
-        fs.write_lines(root.filepath, root.generate(resolver), "Generated package")
-
     def _read_sources(self) -> Iterator[InputSchema]:
         if not (sources := self.config.convert.sources):
             msg = "Empty sources"
@@ -356,3 +355,12 @@ class App:
                 print(f"  Running action {idx} {action!r}")
             roots = deque(action.run(roots))
         return roots
+
+    def _run_pyir_plugins(self, *, quiet: bool = False) -> None:
+        import scripts.plugins.pyir_actions
+
+        if not quiet:
+            print("Running pyir plugins")
+        scripts.plugins.pyir_actions.run(self)
+        if not quiet:
+            print("Finished pyir plugins")

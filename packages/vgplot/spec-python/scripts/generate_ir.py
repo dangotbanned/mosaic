@@ -9,7 +9,7 @@ from __future__ import annotations
 def main() -> None:
     import argparse
     import dataclasses
-    from typing import TYPE_CHECKING, Literal
+    from typing import TYPE_CHECKING, Literal, get_args
 
     if TYPE_CHECKING:
         from collections.abc import Sequence
@@ -25,9 +25,9 @@ def main() -> None:
     parser.add_argument("--quiet", action="store_true", help="Print less to stdout.")
     parser.add_argument(
         "--stage",
-        choices=("json_wrapper", "mlir", "pyir", "all"),
+        choices=get_args(RunUntil.__value__),
         default="all",
-        help="Run until the end of a specific conversion stage.",
+        help="Run until the end of a specific stage.",
     )
     parser.add_argument(
         "--preview-modules",
