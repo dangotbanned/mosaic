@@ -1,12 +1,9 @@
-# NOTE: DO NOT EDIT.
-# Regenerate with: pnpm generate
-
+# Generated: `mosaic_spec._gen.css_styles`
 from __future__ import annotations
 
 from mosaic_spec._typing_compat import TypedDict
 
-
-class CSSStyles(TypedDict, total=False, extra_items=str):
+class CSSStyles(TypedDict,total=False,extra_items=str):
     accent_color: str
     align_content: str
     align_items: str
@@ -515,3 +512,6 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     y: str
     z_index: str
     zoom: str
+
+
+__all__ = ("CSSStyles",)
