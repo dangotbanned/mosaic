@@ -69,7 +69,7 @@ class PlotLegend(TypedDict, total=False, closed=True):
     """The width of a continuous legend, in pixels."""
 
 
-class Legend(_LegendOpen, total=False, closed=True): ...
+class Legend(_LegendOpen, closed=True): ...
 
 
 __all__ = ("Legend", "PlotLegend")

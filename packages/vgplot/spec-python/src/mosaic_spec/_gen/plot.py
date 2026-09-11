@@ -743,17 +743,17 @@ For quantitative data (numbers), defaults to *linear*; for temporal data (dates)
 For quantitative scales only."""
 
 
-class PlotAttributes(_PlotAttributesOpen, total=False, closed=True): ...
+class PlotAttributes(_PlotAttributesOpen, closed=True): ...
 
 
-class _PlotOpen(_PlotAttributesOpen, total=False):
+class _PlotOpen(_PlotAttributesOpen):
     """A plot component."""
 
     plot: Required[Sequence[PlotInteractor | PlotLegend | PlotMark]]
     """An array of plot marks, interactors, or legends. Marks are graphical elements that make up plot layers. Unless otherwise configured, interactors will use the nearest previous mark as a basis for which data fields to select."""
 
 
-class Plot(_PlotOpen, total=False, closed=True): ...
+class Plot(_PlotOpen, closed=True): ...
 
 
 __all__ = ("Margins", "Plot", "PlotAttributes")

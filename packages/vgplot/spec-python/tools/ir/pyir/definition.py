@@ -152,7 +152,7 @@ class _Dict(Definition):
 
     def keywords(self) -> Iterator[str]:
         """Keyword arguments, as defined [here](https://typing.python.org/en/latest/spec/typeddict.html#class-based-syntax)."""
-        if not self.total:
+        if (not self.total) and any(isinstance(f.expr, Expr) for f in self.fields.values()):
             yield "total=False"
 
     def has_field(self, name: str, /) -> bool:

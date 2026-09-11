@@ -158,7 +158,7 @@ ChannelDomainValueSpec = TypeAliasType(
 """How to derive a scale's domain from a channel's values."""
 
 
-class ChannelValueIntervalSpec1(TypedDict, total=False, closed=True):
+class ChannelValueIntervalSpec1(TypedDict, closed=True):
     """In some contexts, when specifying a mark channel's value, you can provide a {value, interval} object to specify an associated interval."""
 
     interval: Required[Interval]
@@ -5315,255 +5315,255 @@ If *y* represents ordinal values, use a cell mark instead."""
 **z** values."""
 
 
-class Area(_AreaOpen, total=False, closed=True):
+class Area(_AreaOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class AreaX(_AreaXOpen, total=False, closed=True):
+class AreaX(_AreaXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class AreaY(_AreaYOpen, total=False, closed=True):
+class AreaY(_AreaYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Arrow(_ArrowOpen, total=False, closed=True):
+class Arrow(_ArrowOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class AxisFx(_AxisFxOpen, total=False, closed=True): ...
+class AxisFx(_AxisFxOpen, closed=True): ...
 
 
-class AxisFy(_AxisFyOpen, total=False, closed=True): ...
+class AxisFy(_AxisFyOpen, closed=True): ...
 
 
-class AxisX(_AxisXOpen, total=False, closed=True): ...
+class AxisX(_AxisXOpen, closed=True): ...
 
 
-class AxisY(_AxisYOpen, total=False, closed=True): ...
+class AxisY(_AxisYOpen, closed=True): ...
 
 
-class BarX(_BarXOpen, total=False, closed=True):
+class BarX(_BarXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class BarY(_BarYOpen, total=False, closed=True):
+class BarY(_BarYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Cell(_CellOpen, total=False, closed=True):
+class Cell(_CellOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class CellX(_CellXOpen, total=False, closed=True):
+class CellX(_CellXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class CellY(_CellYOpen, total=False, closed=True):
+class CellY(_CellYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Circle(_CircleOpen, total=False, closed=True):
+class Circle(_CircleOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Contour(_ContourOpen, total=False, closed=True):
+class Contour(_ContourOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DelaunayLink(_DelaunayLinkOpen, total=False, closed=True):
+class DelaunayLink(_DelaunayLinkOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DelaunayMesh(_DelaunayMeshOpen, total=False, closed=True):
+class DelaunayMesh(_DelaunayMeshOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DenseLine(_DenseLineOpen, total=False, closed=True):
+class DenseLine(_DenseLineOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Density(_DensityOpen, total=False, closed=True):
+class Density(_DensityOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DensityXAreaX(_DensityXAreaXOpen, total=False, closed=True):
+class DensityXAreaX(_DensityXAreaXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DensityXDotX(_DensityXDotXOpen, total=False, closed=True):
+class DensityXDotX(_DensityXDotXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DensityXLineX(_DensityXLineXOpen, total=False, closed=True):
+class DensityXLineX(_DensityXLineXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DensityXTextX(_DensityXTextXOpen, total=False, closed=True):
+class DensityXTextX(_DensityXTextXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DensityYAreaY(_DensityYAreaYOpen, total=False, closed=True):
+class DensityYAreaY(_DensityYAreaYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DensityYDot(_DensityYDotOpen, total=False, closed=True):
+class DensityYDot(_DensityYDotOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DensityYLineY(_DensityYLineYOpen, total=False, closed=True):
+class DensityYLineY(_DensityYLineYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DensityYText(_DensityYTextOpen, total=False, closed=True):
+class DensityYText(_DensityYTextOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Dot(_DotOpen, total=False, closed=True):
+class Dot(_DotOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DotX(_DotXOpen, total=False, closed=True):
+class DotX(_DotXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class DotY(_DotYOpen, total=False, closed=True):
+class DotY(_DotYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class ErrorBarX(_ErrorBarXOpen, total=False, closed=True):
+class ErrorBarX(_ErrorBarXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class ErrorBarY(_ErrorBarYOpen, total=False, closed=True):
+class ErrorBarY(_ErrorBarYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Frame(_FrameOpen, total=False, closed=True): ...
+class Frame(_FrameOpen, closed=True): ...
 
 
-class Geo(_GeoOpen, total=False, closed=True):
+class Geo(_GeoOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Graticule(_GraticuleOpen, total=False, closed=True): ...
+class Graticule(_GraticuleOpen, closed=True): ...
 
 
-class GridFx(_GridFxOpen, total=False, closed=True): ...
+class GridFx(_GridFxOpen, closed=True): ...
 
 
-class GridFy(_GridFyOpen, total=False, closed=True): ...
+class GridFy(_GridFyOpen, closed=True): ...
 
 
-class GridX(_GridXOpen, total=False, closed=True): ...
+class GridX(_GridXOpen, closed=True): ...
 
 
-class GridY(_GridYOpen, total=False, closed=True): ...
+class GridY(_GridYOpen, closed=True): ...
 
 
-class Heatmap(_HeatmapOpen, total=False, closed=True):
+class Heatmap(_HeatmapOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Hexagon(_HexagonOpen, total=False, closed=True):
+class Hexagon(_HexagonOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Hexbin(_HexbinOpen, total=False, closed=True):
+class Hexbin(_HexbinOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Hexgrid(_HexgridOpen, total=False, closed=True): ...
+class Hexgrid(_HexgridOpen, closed=True): ...
 
 
-class Hull(_HullOpen, total=False, closed=True):
+class Hull(_HullOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Image(_ImageOpen, total=False, closed=True):
+class Image(_ImageOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Line(_LineOpen, total=False, closed=True):
+class Line(_LineOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class LineX(_LineXOpen, total=False, closed=True):
+class LineX(_LineXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class LineY(_LineYOpen, total=False, closed=True):
+class LineY(_LineYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Link(_LinkOpen, total=False, closed=True):
+class Link(_LinkOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Raster(_RasterOpen, total=False, closed=True):
+class Raster(_RasterOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class RasterTile(_RasterTileOpen, total=False, closed=True):
+class RasterTile(_RasterTileOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Rect(_RectOpen, total=False, closed=True):
+class Rect(_RectOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class RectX(_RectXOpen, total=False, closed=True):
+class RectX(_RectXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class RectY(_RectYOpen, total=False, closed=True):
+class RectY(_RectYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class RegressionY(_RegressionYOpen, total=False, closed=True):
+class RegressionY(_RegressionYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
@@ -5578,10 +5578,10 @@ class RuleY(_RuleYOpen, total=False, closed=True):
     """The data source for the mark."""
 
 
-class Sphere(_SphereOpen, total=False, closed=True): ...
+class Sphere(_SphereOpen, closed=True): ...
 
 
-class Spike(_SpikeOpen, total=False, closed=True):
+class Spike(_SpikeOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
@@ -5601,47 +5601,47 @@ class TextY(_TextYOpen, total=False, closed=True):
     """The data source for the mark."""
 
 
-class TickX(_TickXOpen, total=False, closed=True):
+class TickX(_TickXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class TickY(_TickYOpen, total=False, closed=True):
+class TickY(_TickYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Vector(_VectorOpen, total=False, closed=True):
+class Vector(_VectorOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class VectorX(_VectorXOpen, total=False, closed=True):
+class VectorX(_VectorXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class VectorY(_VectorYOpen, total=False, closed=True):
+class VectorY(_VectorYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class VoronoiMesh(_VoronoiMeshOpen, total=False, closed=True):
+class VoronoiMesh(_VoronoiMeshOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class Voronoi(_VoronoiOpen, total=False, closed=True):
+class Voronoi(_VoronoiOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class WaffleX(_WaffleXOpen, total=False, closed=True):
+class WaffleX(_WaffleXOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
 
-class WaffleY(_WaffleYOpen, total=False, closed=True):
+class WaffleY(_WaffleYOpen, closed=True):
     data: Required[PlotMarkData]
     """The data source for the mark."""
 
