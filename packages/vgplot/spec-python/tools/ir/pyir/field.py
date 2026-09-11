@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing as t
 
-from tools.codegen.docstrings import doc
 from tools.common import copy_replace
 from tools.ir.pyir.base import Expr, IterExprs, Lines, PyIR, RefRepl
 from tools.ir.pyir.qualifier import Required
@@ -24,8 +23,15 @@ class Field(PyIR, t.Generic[_T]):  # ruff: ignore[non-pep695-generic-class]
 
     def iter_lines(self) -> Lines:
         yield f"{self.name}: {self.expr}"
-        if self.doc:
-            yield doc(self.doc)
+        if doc := self.doc:
+            lines = doc.splitlines()
+            if len(lines) == 1:
+                yield f'"""{doc}"""'
+            else:
+                it = iter(lines)
+                yield f'"""{next(it)}'
+                yield from it
+                yield '"""'
 
     def iter_exprs(self) -> IterExprs:
         yield from self.expr.iter_exprs()  # ty: ignore[invalid-argument-type]

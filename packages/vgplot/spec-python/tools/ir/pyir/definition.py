@@ -174,7 +174,8 @@ class _Dict(Definition):
         for line in chain.from_iterable(
             f.iter_lines() for _, f in sorted(self.fields.items(), key=_get_key)
         ):
-            yield f"{INDENT}{line}"
+            # TODO @dangotbanned: Move field rendering here, then avoid some Required's
+            yield f"{INDENT}{line}" if line else ""
 
     def _render_doc_class(self) -> str:
         """Insert newlines into the class-level docstring to produce a single-sentence summary."""

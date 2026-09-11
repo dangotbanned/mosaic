@@ -27,11 +27,12 @@ class DataCSV(TypedDict, total=False, closed=True):
     """Flag (default `true`) to generate a temporary view or table."""
     type: Required[L["csv"]]
     """The data source type. One of:
-- `"table"`: Define a new table based on a SQL query.
-- `"csv"`: Load a comma-separated values (CSV) file.
-- `"json"`: Load JavaScript Object Notation (json) data.
-- `"parquet"`: Load a Parquet file.
-- `"spatial"`: Load a spatial data file format via `ST_Read`."""
+    - `"table"`: Define a new table based on a SQL query.
+    - `"csv"`: Load a comma-separated values (CSV) file.
+    - `"json"`: Load JavaScript Object Notation (json) data.
+    - `"parquet"`: Load a Parquet file.
+    - `"spatial"`: Load a spatial data file format via `ST_Read`.
+    """
     view: bool
     """Flag (default `false`) to generate a view instead of a table."""
     where: Sequence[str] | str
@@ -66,11 +67,12 @@ class DataJSON(TypedDict, total=False, closed=True):
     """Flag (default `true`) to generate a temporary view or table."""
     type: Required[L["json"]]
     """The data source type. One of:
-- `"table"`: Define a new table based on a SQL query.
-- `"csv"`: Load a comma-separated values (CSV) file.
-- `"json"`: Load JavaScript Object Notation (json) data.
-- `"parquet"`: Load a Parquet file.
-- `"spatial"`: Load a spatial data file format via `ST_Read`."""
+    - `"table"`: Define a new table based on a SQL query.
+    - `"csv"`: Load a comma-separated values (CSV) file.
+    - `"json"`: Load JavaScript Object Notation (json) data.
+    - `"parquet"`: Load a Parquet file.
+    - `"spatial"`: Load a spatial data file format via `ST_Read`.
+    """
     view: bool
     """Flag (default `false`) to generate a view instead of a table."""
     where: Sequence[str] | str
@@ -88,11 +90,12 @@ class DataJSONObjects(TypedDict, total=False, closed=True):
     """Flag (default `true`) to generate a temporary view or table."""
     type: L["json"]
     """The data source type. One of:
-- `"table"`: Define a new table based on a SQL query.
-- `"csv"`: Load a comma-separated values (CSV) file.
-- `"json"`: Load JavaScript Object Notation (json) data.
-- `"parquet"`: Load a Parquet file.
-- `"spatial"`: Load a spatial data file format via `ST_Read`."""
+    - `"table"`: Define a new table based on a SQL query.
+    - `"csv"`: Load a comma-separated values (CSV) file.
+    - `"json"`: Load JavaScript Object Notation (json) data.
+    - `"parquet"`: Load a Parquet file.
+    - `"spatial"`: Load a spatial data file format via `ST_Read`.
+    """
     view: bool
     """Flag (default `false`) to generate a view instead of a table."""
     where: Sequence[str] | str
@@ -112,11 +115,12 @@ class DataParquet(TypedDict, total=False, closed=True):
     """Flag (default `true`) to generate a temporary view or table."""
     type: Required[L["parquet"]]
     """The data source type. One of:
-- `"table"`: Define a new table based on a SQL query.
-- `"csv"`: Load a comma-separated values (CSV) file.
-- `"json"`: Load JavaScript Object Notation (json) data.
-- `"parquet"`: Load a Parquet file.
-- `"spatial"`: Load a spatial data file format via `ST_Read`."""
+    - `"table"`: Define a new table based on a SQL query.
+    - `"csv"`: Load a comma-separated values (CSV) file.
+    - `"json"`: Load JavaScript Object Notation (json) data.
+    - `"parquet"`: Load a Parquet file.
+    - `"spatial"`: Load a spatial data file format via `ST_Read`.
+    """
     view: bool
     """Flag (default `false`) to generate a view instead of a table."""
     where: Sequence[str] | str
@@ -133,7 +137,8 @@ class DataSpatial(TypedDict, total=False, closed=True):
     file: Required[str]
     """The file path for the spatial dataset to load. See the [DuckDB spatial documentation][1] for more information on supported file types.
 
-[1]: https://duckdb.org/docs/extensions/spatial.html#st_read--read-spatial-data-from-files"""
+    [1]: https://duckdb.org/docs/extensions/spatial.html#st_read--read-spatial-data-from-files
+    """
     layer: str
     """The named layer to load from the file. For example, in a TopoJSON file the layer is the named object to extract. For Excel spreadsheet files, the layer is the name of the worksheet to extract."""
     replace: bool
@@ -144,11 +149,12 @@ class DataSpatial(TypedDict, total=False, closed=True):
     """Flag (default `true`) to generate a temporary view or table."""
     type: Required[L["spatial"]]
     """The data source type. One of:
-- `"table"`: Define a new table based on a SQL query.
-- `"csv"`: Load a comma-separated values (CSV) file.
-- `"json"`: Load JavaScript Object Notation (json) data.
-- `"parquet"`: Load a Parquet file.
-- `"spatial"`: Load a spatial data file format via `ST_Read`."""
+    - `"table"`: Define a new table based on a SQL query.
+    - `"csv"`: Load a comma-separated values (CSV) file.
+    - `"json"`: Load JavaScript Object Notation (json) data.
+    - `"parquet"`: Load a Parquet file.
+    - `"spatial"`: Load a spatial data file format via `ST_Read`.
+    """
     view: bool
     """Flag (default `false`) to generate a view instead of a table."""
     where: Sequence[str] | str
@@ -168,11 +174,12 @@ class DataTable(TypedDict, total=False, closed=True):
     """Flag (default `true`) to generate a temporary view or table."""
     type: Required[L["table"]]
     """The data source type. One of:
-- `"table"`: Define a new table based on a SQL query.
-- `"csv"`: Load a comma-separated values (CSV) file.
-- `"json"`: Load JavaScript Object Notation (json) data.
-- `"parquet"`: Load a Parquet file.
-- `"spatial"`: Load a spatial data file format via `ST_Read`."""
+    - `"table"`: Define a new table based on a SQL query.
+    - `"csv"`: Load a comma-separated values (CSV) file.
+    - `"json"`: Load JavaScript Object Notation (json) data.
+    - `"parquet"`: Load a Parquet file.
+    - `"spatial"`: Load a spatial data file format via `ST_Read`.
+    """
     view: bool
     """Flag (default `false`) to generate a view instead of a table."""
     where: Sequence[str] | str
