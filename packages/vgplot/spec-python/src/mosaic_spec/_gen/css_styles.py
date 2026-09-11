@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from mosaic_spec._typing_compat import TypedDict
 
-class CSSStyles(TypedDict,total=False,extra_items=str):
+
+class CSSStyles(TypedDict, total=False, extra_items=str):
     accent_color: str
     align_content: str
     align_items: str

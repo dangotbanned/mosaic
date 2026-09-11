@@ -260,7 +260,9 @@ extend-safe-fixes                        = [
   "TRY",
   "literal-membership",
   "unspecified-encoding",
-  "unnecessary-multiline-docstring"
+  "unnecessary-multiline-docstring",
+  "redundant-none-literal",
+  "none-not-at-end-of-union",
 ]
 future-annotations                       = true
 flake8-builtins.ignorelist               = ["format", "input", "id"]
