@@ -91,12 +91,10 @@ class NewTypeStr(Definition):
         yield from ()
 
 
-# TODO @dangotbanned: Fix the field order being broken from the first `FrozenMap`
 @t.final
 class NamedTuple(Definition):
     """A representation of a `typing.NamedTuple`."""
 
-    # requires `typing.NamedTuple` import
     fields: tuple[Field[Expr], ...]
 
     def iter_lines(self) -> Lines:
@@ -296,7 +294,6 @@ class ClosedDict(_Dict):
     ) -> OpenDict:
         """Return a new typed dict that inherits from `parent`.
 
-        Field names which are shared with `parent` will be dropped in the result.
         By default, field names which are shared with `parent` will be dropped in the result.
         `exclude` can be specified to provide an alternative set of names to drop.
         """

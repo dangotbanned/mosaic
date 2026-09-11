@@ -25,7 +25,6 @@ class DynExpr(Expr, kw_only=False):
 
 @t.final
 class Any(Expr):
-    # NOTE: required `typing.Any`
     _tp_expr: t.ClassVar[TypeExpr] = TypeExpr("Any")
 
     def __str__(self) -> TypeExpr:
@@ -82,7 +81,6 @@ class Literal(Expr):
 class Union(Expr):
     """A representation of an implicit `typing.Union`."""
 
-    # this will get the converted `VariantHomogeneousTuple`
     members: tuple[Expr, ...]
 
     def __str__(self) -> TypeExpr:
