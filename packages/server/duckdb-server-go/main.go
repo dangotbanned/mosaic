@@ -27,11 +27,11 @@ func run() int {
 	address := flag.String("address", "localhost", "HTTP Address")
 	port := flag.String("port", "3000", "HTTP Port")
 	poolSize := flag.Int("connection-pool-size", 10, "Max connection pool size")
-	maxCacheEntries := flag.Int("max-cache-entries", 1000, "Max number of cache entries")
-	maxCacheBytes := flag.Int("max-cache-bytes", 0, "Max number of cache size in bytes (overrides max-cache-entries if both are set)")
-	ttlStr := flag.String("cache-ttl", "0s", "Time-to-live for cache entries as a Go duration. 0s means no expiration (e.g., '10m', '1h'). Defaults to 0s.")
 	certFile := flag.String("cert", "", "Path to TLS certificate file (optional, enables HTTPS)")
 	keyFile := flag.String("key", "", "Path to TLS private key file (optional, enables HTTPS)")
+	cacheControl := flag.String("cache-control", "", "Cache-Control value for successful GET arrow responses; enables ETag validation for those queries")
+	var varyHeaders optionalCommaListFlag
+	flag.Var(&varyHeaders, "vary", "Comma-separated request header names to append to Vary; may be repeated")
 	schemaMatchHeadersStr := flag.String("schema-match-headers", "", "Comma-separated list of headers to match against schema names for multi-tenant access control (e.g., \"X-Tenant-Id,verified-user-id\")")
 	extensionsStr := flag.String("load-extensions", "", "Comma-separated list of extensions to install and load at startup. Use a pipe after the extension name to specify a DuckDB repository alias. Unspecified repositories use DuckDB's default (e.g. mysql_scanner,netquack|community,aws|core_nightly).")
 	functionBlocklistStr := flag.String("function-blocklist", "", "Comma-separated list of functions to block, useful for blocking functions that may pose security or performance risks. (e.g., 'bigquery_query,read_parquet')")
@@ -87,17 +87,8 @@ func run() int {
 		}
 	}()
 
-	ttl, err := time.ParseDuration(*ttlStr)
-	if err != nil {
-		logger.Error("main: invalid cache-ttl", "error", err)
-		return 1
-	}
-
 	queryOptions := []query.OptionFunc{
 		query.WithMaxConnections(*poolSize),
-		query.WithMaxCacheEntries(*maxCacheEntries),
-		query.WithMaxCacheBytes(*maxCacheBytes),
-		query.WithTTL(ttl),
 		query.WithLogger(logger),
 		query.WithFunctionBlocklist(functionBlocklist),
 	}
@@ -115,6 +106,8 @@ func run() int {
 	defer db.Close()
 
 	s, err := server.New(db,
+		server.WithCacheControl(*cacheControl),
+		server.WithVary(varyHeaders.values...),
 		server.WithSchemaMatchHeaders(schemaMatchHeaders...),
 		server.WithLogger(logger),
 		server.WithCORS(server.CORSOptions{
@@ -135,12 +128,11 @@ func run() int {
 		"address":              *address,
 		"port":                 *port,
 		"connection_pool_size": *poolSize,
-		"cache_size":           *maxCacheEntries,
 		"cert_file":            *certFile,
 		"key_file":             *keyFile,
 		"schema_match_headers": *schemaMatchHeadersStr,
-		"ttl":                  ttl,
-		"max_cache_bytes":      *maxCacheBytes,
+		"cache_control":        *cacheControl,
+		"vary":                 varyHeaders.String(),
 		"load_extensions":      *extensionsStr,
 		"function_blocklist":   *functionBlocklistStr,
 		"function_allowlist":   functionAllowlist.String(),
