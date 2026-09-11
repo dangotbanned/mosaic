@@ -34,7 +34,9 @@ class _SearchOpen(TypedDict, total=False):
     source: str
     """The name of a database table to use as an autocomplete data source for this widget. Used in conjunction with the `column` property."""
     type: L["contains", "prefix", "regexp", "suffix"]
-    """The type of text search query to perform. One of:
+    """The type of text search query to perform.
+
+    One of:
     - `"contains"` (default): the query string may appear anywhere in the text
     - `"prefix"`: the query string must appear at the start of the text
     - `"suffix"`: the query string must appear at the end of the text

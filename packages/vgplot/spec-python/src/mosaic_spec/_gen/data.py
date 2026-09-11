@@ -26,7 +26,9 @@ class DataCSV(TypedDict, total=False, closed=True):
     temp: bool
     """Flag (default `true`) to generate a temporary view or table."""
     type: Required[L["csv"]]
-    """The data source type. One of:
+    """The data source type.
+
+    One of:
     - `"table"`: Define a new table based on a SQL query.
     - `"csv"`: Load a comma-separated values (CSV) file.
     - `"json"`: Load JavaScript Object Notation (json) data.
@@ -66,7 +68,9 @@ class DataJSON(TypedDict, total=False, closed=True):
     temp: bool
     """Flag (default `true`) to generate a temporary view or table."""
     type: Required[L["json"]]
-    """The data source type. One of:
+    """The data source type.
+
+    One of:
     - `"table"`: Define a new table based on a SQL query.
     - `"csv"`: Load a comma-separated values (CSV) file.
     - `"json"`: Load JavaScript Object Notation (json) data.
@@ -89,7 +93,9 @@ class DataJSONObjects(TypedDict, total=False, closed=True):
     temp: bool
     """Flag (default `true`) to generate a temporary view or table."""
     type: L["json"]
-    """The data source type. One of:
+    """The data source type.
+
+    One of:
     - `"table"`: Define a new table based on a SQL query.
     - `"csv"`: Load a comma-separated values (CSV) file.
     - `"json"`: Load JavaScript Object Notation (json) data.
@@ -114,7 +120,9 @@ class DataParquet(TypedDict, total=False, closed=True):
     temp: bool
     """Flag (default `true`) to generate a temporary view or table."""
     type: Required[L["parquet"]]
-    """The data source type. One of:
+    """The data source type.
+
+    One of:
     - `"table"`: Define a new table based on a SQL query.
     - `"csv"`: Load a comma-separated values (CSV) file.
     - `"json"`: Load JavaScript Object Notation (json) data.
@@ -148,7 +156,9 @@ class DataSpatial(TypedDict, total=False, closed=True):
     temp: bool
     """Flag (default `true`) to generate a temporary view or table."""
     type: Required[L["spatial"]]
-    """The data source type. One of:
+    """The data source type.
+
+    One of:
     - `"table"`: Define a new table based on a SQL query.
     - `"csv"`: Load a comma-separated values (CSV) file.
     - `"json"`: Load JavaScript Object Notation (json) data.
@@ -173,7 +183,9 @@ class DataTable(TypedDict, total=False, closed=True):
     temp: bool
     """Flag (default `true`) to generate a temporary view or table."""
     type: Required[L["table"]]
-    """The data source type. One of:
+    """The data source type.
+
+    One of:
     - `"table"`: Define a new table based on a SQL query.
     - `"csv"`: Load a comma-separated values (CSV) file.
     - `"json"`: Load JavaScript Object Notation (json) data.

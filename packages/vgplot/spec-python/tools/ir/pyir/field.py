@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import typing as t
 
 from tools.common import copy_replace
@@ -11,6 +12,24 @@ if t.TYPE_CHECKING:
 
 
 _T = t.TypeVar("_T", bound=Expr | Required, default=Expr | Required, covariant=True)
+
+
+_INDENT = "    "
+
+_THE_INTERVAL_MAY_BE = r"[a-zA-Z ]+"
+"""An edge case for [ScaleOptions.interval][1].
+
+[1]: https://github.com/dangotbanned/mosaic/blob/f625cb34644a16b1f55fd9b52eb0706939e33a0e/packages/vgplot/spec/src/spec/marks/Axis.ts#L9-L22
+"""
+
+_PATTERN_ONE_OF = re.compile(rf"[\.;,]({_THE_INTERVAL_MAY_BE})? one of:$", re.IGNORECASE)
+"""Many (193) docs end with this on their first line.
+
+Following that, there's an unordered list - which may or may not be separated by newlines.
+"""
+
+_REPLACE_ONE_OF = f".\n\n{_INDENT}One of:"
+"""So we make all variations of it the same."""
 
 
 @t.final
@@ -29,7 +48,13 @@ class Field(PyIR, t.Generic[_T]):  # ruff: ignore[non-pep695-generic-class]
                 yield f'"""{doc}"""'
             else:
                 it = iter(lines)
-                yield f'"""{next(it)}'
+                first = next(it)
+                if _PATTERN_ONE_OF.search(first):
+                    yield f'"""{_PATTERN_ONE_OF.sub(_REPLACE_ONE_OF, first)}'
+                    if second := next(it):
+                        yield second
+                else:
+                    yield f'"""{first}'
                 yield from it
                 yield '"""'
 

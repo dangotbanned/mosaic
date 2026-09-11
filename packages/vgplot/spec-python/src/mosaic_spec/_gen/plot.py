@@ -137,8 +137,9 @@ class _PlotAttributesOpen(TypedDict, total=False):
     **pivot** are represented proportionally. Otherwise if false, the full output **range** will be used; this increases contrast but values on opposite sides of the **pivot** may not be meaningfully compared.
     """
     color_tick_format: ParamRef | str | None
-    """How to format inputs (abstract values) for axis tick labels; one of:
+    """How to format inputs (abstract values) for axis tick labels.
 
+    One of:
     - a [d3-format][1] string for numeric scales
     - a [d3-time-format][2] string for temporal scales
 
@@ -235,8 +236,9 @@ class _PlotAttributesOpen(TypedDict, total=False):
     For position scales only.
     """
     fx_tick_format: ParamRef | str | None
-    """How to format inputs (abstract values) for axis tick labels; one of:
+    """How to format inputs (abstract values) for axis tick labels.
 
+    One of:
     - a [d3-format][1] string for numeric scales
     - a [d3-time-format][2] string for temporal scales
 
@@ -328,8 +330,9 @@ class _PlotAttributesOpen(TypedDict, total=False):
     For position scales only.
     """
     fy_tick_format: ParamRef | str | None
-    """How to format inputs (abstract values) for axis tick labels; one of:
+    """How to format inputs (abstract values) for axis tick labels.
 
+    One of:
     - a [d3-format][1] string for numeric scales
     - a [d3-time-format][2] string for temporal scales
 
@@ -457,8 +460,9 @@ class _PlotAttributesOpen(TypedDict, total=False):
     opacity_scale: ContinuousScaleType | ParamRef | None
     """The *opacity* scale type, affecting how the scale encodes abstract data, say by applying a mathematical transformation. If null, the scale is disabled. The opacity scale defaults to *linear*; this scales is intended for quantitative data."""
     opacity_tick_format: ParamRef | str | None
-    """How to format inputs (abstract values) for axis tick labels; one of:
+    """How to format inputs (abstract values) for axis tick labels.
 
+    One of:
     - a [d3-format][1] string for numeric scales
     - a [d3-time-format][2] string for temporal scales
 
@@ -475,8 +479,9 @@ class _PlotAttributesOpen(TypedDict, total=False):
     For ordinal position scales only.
     """
     projection_clip: L["frame"] | ParamRef | bool | float | None
-    """The projection's clipping method; one of:
+    """The projection's clipping method.
 
+    One of:
     - *frame* or true (default) - clip to the plot's frame (including margins but not insets)
     - a number - clip to a circle of the given radius in degrees centered around the origin
     - null or false - do not clip
@@ -518,8 +523,9 @@ class _PlotAttributesOpen(TypedDict, total=False):
     )
     """A rotation of the sphere before projection; defaults to [0, 0, 0]. Specified as Euler angles λ (yaw, or reference longitude), φ (pitch, or reference latitude), and optionally γ (roll), in degrees."""
     projection_type: ParamRef | ProjectionName | None
-    """The desired projection; one of:
+    """The desired projection.
 
+    One of:
     - a named built-in projection such as *albers-usa*
     - null, for no projection
 
@@ -687,8 +693,9 @@ class _PlotAttributesOpen(TypedDict, total=False):
     For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales, *categorical* for color scales, and otherwise *ordinal*. However, the radius scale defaults to *sqrt*, and the length and opacity scales default to *linear*; these scales are intended for quantitative data. The plot's marks may also impose a scale type; for example, the barY mark requires that *x* is a *band* scale.
     """
     x_tick_format: ParamRef | str | None
-    """How to format inputs (abstract values) for axis tick labels; one of:
+    """How to format inputs (abstract values) for axis tick labels.
 
+    One of:
     - a [d3-format][1] string for numeric scales
     - a [d3-time-format][2] string for temporal scales
 
@@ -820,8 +827,9 @@ class _PlotAttributesOpen(TypedDict, total=False):
     For quantitative data (numbers), defaults to *linear*; for temporal data (dates), defaults to *utc*; for ordinal data (strings or booleans), defaults to *point* for position scales,  The plot's marks may also impose a scale type; for example, the barY mark requires that *x* is a *band* scale.
     """
     y_tick_format: ParamRef | str | None
-    """How to format inputs (abstract values) for axis tick labels; one of:
+    """How to format inputs (abstract values) for axis tick labels.
 
+    One of:
     - a [d3-format][1] string for numeric scales
     - a [d3-time-format][2] string for temporal scales
 

@@ -13,7 +13,9 @@ class ParamDate(TypedDict, total=False, closed=True):
     date: Required[str]
     """The initial parameter value as an ISO date/time string to be parsed to a Date object."""
     select: L["value"]
-    """The type of reactive parameter. One of:
+    """The type of reactive parameter.
+
+    One of:
     - `"value"` (default) for a standard `Param`
     - `"intersect"` for a `Selection` that intersects clauses (logical "and")
     - `"union"` for a `Selection` that unions clauses (logical "or")
@@ -39,7 +41,9 @@ class Selection(TypedDict, total=False, closed=True):
     include: ParamRef | Sequence[ParamRef]
     """Upstream selections whose clauses should be included as part of this selection. Any clauses or activations published to the upstream selections will be relayed to this selection."""
     select: Required[L["crossfilter", "intersect", "single", "union"]]
-    """The type of reactive parameter. One of:
+    """The type of reactive parameter.
+
+    One of:
     - `"value"` (default) for a standard `Param`
     - `"intersect"` for a `Selection` that intersects clauses (logical "and")
     - `"union"` for a `Selection` that unions clauses (logical "or")
@@ -52,7 +56,9 @@ class Param(TypedDict, total=False, closed=True):
     """A Param definition."""
 
     select: L["value"]
-    """The type of reactive parameter. One of:
+    """The type of reactive parameter.
+
+    One of:
     - `"value"` (default) for a standard `Param`
     - `"intersect"` for a `Selection` that intersects clauses (logical "and")
     - `"union"` for a `Selection` that unions clauses (logical "or")

@@ -46,8 +46,9 @@ class ChannelDomainValueSpec1(TypedDict, total=False, closed=True):
     order: L["ascending", "descending"] | None
     """How to order reduced values."""
     reduce: Reducer | bool | None
-    """How to produce a singular value (for subsequent sorting) from aggregated channel values; one of:
+    """How to produce a singular value (for subsequent sorting) from aggregated channel values.
 
+    One of:
     - true (default) - alias for *max*
     - false or null - disabled; don't impute the scale domain
     - a named reducer implementation such as *count* or *sum*
@@ -213,8 +214,9 @@ class ChannelDomainSort(TypedDict, total=False, closed=True):
     """How to order reduced values."""
     r: ChannelDomainValueSpec
     reduce: Reducer | bool | None
-    """How to produce a singular value (for subsequent sorting) from aggregated channel values; one of:
+    """How to produce a singular value (for subsequent sorting) from aggregated channel values.
 
+    One of:
     - true (default) - alias for *max*
     - false or null - disabled; don't impute the scale domain
     - a named reducer implementation such as *count* or *sum*
@@ -316,8 +318,9 @@ class Tip(TypedDict, total=False, closed=True):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -364,8 +367,9 @@ class MarkOptions(TypedDict, total=False):
     channels: Mapping[str, str]
     """Additional named channels, for example to include in a tooltip. Consists of (channel name, data field name) key-value pairs."""
     clip: L["frame", "sphere"] | ParamRef | bool | None
-    """How to clip the mark; one of:
+    """How to clip the mark.
 
+    One of:
     - *frame* or true - clip to the plot's frame (inner area)
     - *sphere* - clip to the projected sphere (*e.g.*, front hemisphere)
     - null or false - do not clip
@@ -377,8 +381,9 @@ class MarkOptions(TypedDict, total=False):
     dy: ParamRef | float
     """The vertical offset in pixels; a constant option. On low-density screens, an additional 0.5px offset may be applied for crisp edges."""
     facet: L["auto", "exclude", "include", "super"] | ParamRef | bool | None
-    """Whether to enable or disable faceting; one of:
+    """Whether to enable or disable faceting.
 
+    One of:
     - *auto* (default) - automatically determine if this mark should be faceted
     - *include* (or true) - draw the subset of the mark's data in the current facet
     - *exclude* - draw the subset of the mark's data *not* in the current facet
@@ -413,8 +418,9 @@ class MarkOptions(TypedDict, total=False):
         | ParamRef
         | None
     )
-    """How to place the mark with respect to facets; one of:
+    """How to place the mark with respect to facets.
 
+    One of:
     - null (default for most marks) - display the mark in each non-empty facet
     - *top*, *right*, *bottom*, or *left* - display the mark only in facets on   the given side
     - *top-empty*, *right-empty*, *bottom-empty*, or *left-empty* (default for   axis marks) - display the mark only in facets that have empty space on   the given side: either the margin, or an empty facet
@@ -567,8 +573,9 @@ class _AreaOpen(MarkOptions, total=False):
     """The area mark."""
 
     curve: Curve | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -600,8 +607,9 @@ class _AreaOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -634,8 +642,9 @@ class _AreaXOpen(MarkOptions, total=False):
     """The areaX mark."""
 
     curve: Curve | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -676,8 +685,9 @@ class _AreaXOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -713,8 +723,9 @@ class _AreaYOpen(MarkOptions, total=False):
     """The areaY mark."""
 
     curve: Curve | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -755,8 +766,9 @@ class _AreaYOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -884,8 +896,9 @@ class _AxisFxOpen(MarkOptions, total=False):
     inset_top: ParamRef | float
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
     interval: Interval | ParamRef
-    """Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
+    """Enforces uniformity for data at regular intervals, such as integer values or daily samples.
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -935,24 +948,27 @@ class _AxisFxOpen(MarkOptions, total=False):
     **textOverflow** and **lineWidth** options to clip.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -960,8 +976,9 @@ class _AxisFxOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -994,8 +1011,9 @@ class _AxisFxOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -1012,8 +1030,9 @@ class _AxisFxOpen(MarkOptions, total=False):
     text_stroke_width: ChannelValueSpec
     """The tick text **strokeWidth**; defaults to 4; has no effect unless **textStroke** is set."""
     tick_format: ParamRef | str | None
-    """How to format inputs (abstract values) for axis tick labels; one of:
+    """How to format inputs (abstract values) for axis tick labels.
 
+    One of:
     - a [d3-format][1] string for numeric scales
     - a [d3-time-format][2] string for temporal scales
 
@@ -1097,8 +1116,9 @@ class _AxisFyOpen(MarkOptions, total=False):
     inset_right: ParamRef | float
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     interval: Interval | ParamRef
-    """Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
+    """Enforces uniformity for data at regular intervals, such as integer values or daily samples.
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -1147,24 +1167,27 @@ class _AxisFyOpen(MarkOptions, total=False):
     For simplicity, and for consistent layout across plots, default axis margins are not affected by tick labels. If tick labels are too long, either increase the margin or shorten the labels: use the *k* SI-prefix tick format; or use the **textOverflow** and **lineWidth** options to clip.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -1172,8 +1195,9 @@ class _AxisFyOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -1206,8 +1230,9 @@ class _AxisFyOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -1224,8 +1249,9 @@ class _AxisFyOpen(MarkOptions, total=False):
     text_stroke_width: ChannelValueSpec
     """The tick text **strokeWidth**; defaults to 4; has no effect unless **textStroke** is set."""
     tick_format: ParamRef | str | None
-    """How to format inputs (abstract values) for axis tick labels; one of:
+    """How to format inputs (abstract values) for axis tick labels.
 
+    One of:
     - a [d3-format][1] string for numeric scales
     - a [d3-time-format][2] string for temporal scales
 
@@ -1309,8 +1335,9 @@ class _AxisXOpen(MarkOptions, total=False):
     inset_top: ParamRef | float
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
     interval: Interval | ParamRef
-    """Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
+    """Enforces uniformity for data at regular intervals, such as integer values or daily samples.
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -1361,24 +1388,27 @@ class _AxisXOpen(MarkOptions, total=False):
     **textOverflow** and **lineWidth** options to clip.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -1386,8 +1416,9 @@ class _AxisXOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -1420,8 +1451,9 @@ class _AxisXOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -1438,8 +1470,9 @@ class _AxisXOpen(MarkOptions, total=False):
     text_stroke_width: ChannelValueSpec
     """The tick text **strokeWidth**; defaults to 4; has no effect unless **textStroke** is set."""
     tick_format: ParamRef | str | None
-    """How to format inputs (abstract values) for axis tick labels; one of:
+    """How to format inputs (abstract values) for axis tick labels.
 
+    One of:
     - a [d3-format][1] string for numeric scales
     - a [d3-time-format][2] string for temporal scales
 
@@ -1523,8 +1556,9 @@ class _AxisYOpen(MarkOptions, total=False):
     inset_right: ParamRef | float
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     interval: Interval | ParamRef
-    """Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
+    """Enforces uniformity for data at regular intervals, such as integer values or daily samples.
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -1573,24 +1607,27 @@ class _AxisYOpen(MarkOptions, total=False):
     For simplicity, and for consistent layout across plots, default axis margins are not affected by tick labels. If tick labels are too long, either increase the margin or shorten the labels: use the *k* SI-prefix tick format; or use the **textOverflow** and **lineWidth** options to clip.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -1598,8 +1635,9 @@ class _AxisYOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -1632,8 +1670,9 @@ class _AxisYOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -1650,8 +1689,9 @@ class _AxisYOpen(MarkOptions, total=False):
     text_stroke_width: ChannelValueSpec
     """The tick text **strokeWidth**; defaults to 4; has no effect unless **textStroke** is set."""
     tick_format: ParamRef | str | None
-    """How to format inputs (abstract values) for axis tick labels; one of:
+    """How to format inputs (abstract values) for axis tick labels.
 
+    One of:
     - a [d3-format][1] string for numeric scales
     - a [d3-time-format][2] string for temporal scales
 
@@ -1695,8 +1735,9 @@ class _BarXOpen(MarkOptions, total=False):
     inset_top: ParamRef | float
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
     interval: Interval | ParamRef
-    """How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY); one of:
+    """How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY).
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -1720,8 +1761,9 @@ class _BarXOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -1783,8 +1825,9 @@ class _BarYOpen(MarkOptions, total=False):
     inset_top: ParamRef | float
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
     interval: Interval | ParamRef
-    """How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY); one of:
+    """How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY).
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -1808,8 +1851,9 @@ class _BarYOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -2039,8 +2083,9 @@ class _ContourOpen(MarkOptions, total=False):
     height: ParamRef | float
     """The height (number of rows) of the grid, in actual pixels."""
     interpolate: GridInterpolate | ParamRef | None
-    """The spatial interpolation method; one of:
+    """The spatial interpolation method.
 
+    One of:
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
     - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
@@ -2059,8 +2104,9 @@ class _ContourOpen(MarkOptions, total=False):
     pixel_size: ParamRef | float
     """The effective screen size of a raster pixel, used to determine the height and width of the raster from the frame's dimensions; defaults to 1."""
     thresholds: ParamRef | Sequence[float] | float
-    """The number of contour thresholds to subdivide the domain into discrete level sets; defaults to 10. One of:
+    """The number of contour thresholds to subdivide the domain into discrete level sets; defaults to 10.
 
+    One of:
     - a count representing the desired number of bins
     - an array of *n* threshold values for *n* - 1 bins
     """
@@ -2076,8 +2122,9 @@ class _DelaunayLinkOpen(MarkOptions, total=False):
     """The delaunayLink mark."""
 
     curve: Curve | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -2106,24 +2153,27 @@ class _DelaunayLinkOpen(MarkOptions, total=False):
     If **z** is specified, the input points are grouped by *z*, producing a separate Delaunay triangulation for each group.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -2131,8 +2181,9 @@ class _DelaunayLinkOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -2161,8 +2212,9 @@ class _DelaunayMeshOpen(MarkOptions, total=False):
     """The delaunayMesh mark."""
 
     curve: Curve | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -2191,24 +2243,27 @@ class _DelaunayMeshOpen(MarkOptions, total=False):
     If **z** is specified, the input points are grouped by *z*, producing a separate Delaunay triangulation for each group.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -2216,8 +2271,9 @@ class _DelaunayMeshOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -2255,8 +2311,9 @@ class _DenseLineOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/image-rendering
     """
     interpolate: GridInterpolate | ParamRef | None
-    """The spatial interpolation method; one of:
+    """The spatial interpolation method.
 
+    One of:
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
     - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
@@ -2325,8 +2382,9 @@ class _DensityOpen(MarkOptions, total=False):
     height: ParamRef | float
     """The height (number of rows) of the grid, in actual pixels."""
     interpolate: GridInterpolate | ParamRef | None
-    """The spatial interpolation method; one of:
+    """The spatial interpolation method.
 
+    One of:
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
     - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
@@ -2385,8 +2443,9 @@ class _DensityOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -2416,8 +2475,9 @@ class _DensityXAreaXOpen(MarkOptions, total=False):
     bins: ParamRef | float
     """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
     curve: Curve | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -2455,8 +2515,9 @@ class _DensityXAreaXOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -2535,8 +2596,9 @@ class _DensityXLineXOpen(MarkOptions, total=False):
     bins: ParamRef | float
     """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
     curve: Curve | L["auto"] | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -2568,24 +2630,27 @@ class _DensityXLineXOpen(MarkOptions, total=False):
     Set the *type* property to use a different base mark type.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -2593,8 +2658,9 @@ class _DensityXLineXOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -2709,8 +2775,9 @@ class _DensityXTextXOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -2736,8 +2803,9 @@ class _DensityYAreaYOpen(MarkOptions, total=False):
     bins: ParamRef | float
     """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
     curve: Curve | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -2775,8 +2843,9 @@ class _DensityYAreaYOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -2855,8 +2924,9 @@ class _DensityYLineYOpen(MarkOptions, total=False):
     bins: ParamRef | float
     """The number of bins over which to discretize the data prior to smoothing. Defaults to 1024."""
     curve: Curve | L["auto"] | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -2888,24 +2958,27 @@ class _DensityYLineYOpen(MarkOptions, total=False):
     Set the *type* property to use a different base mark type.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -2913,8 +2986,9 @@ class _DensityYLineYOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3029,8 +3103,9 @@ class _DensityYTextOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -3184,24 +3259,27 @@ class _ErrorBarXOpen(MarkOptions, total=False):
     [1]: https://en.wikipedia.org/wiki/Normal_distribution#Confidence_intervals
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3209,8 +3287,9 @@ class _ErrorBarXOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3246,24 +3325,27 @@ class _ErrorBarYOpen(MarkOptions, total=False):
     [1]: https://en.wikipedia.org/wiki/Normal_distribution#Confidence_intervals
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3271,8 +3353,9 @@ class _ErrorBarYOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3393,8 +3476,9 @@ class _GridFxOpen(MarkOptions, total=False):
     inset_top: ParamRef | float
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
     interval: Interval | ParamRef
-    """Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
+    """Enforces uniformity for data at regular intervals, such as integer values or daily samples.
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -3404,24 +3488,27 @@ class _GridFxOpen(MarkOptions, total=False):
     mark: Required[L["gridFx"]]
     """A horizontally-positioned ruleX mark (a vertical line, |) that renders a grid for the *fx* scale. The data defaults to the *fx* scale's domain; if desired, use the **ticks** option."""
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3429,8 +3516,9 @@ class _GridFxOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3484,8 +3572,9 @@ class _GridFyOpen(MarkOptions, total=False):
     inset_right: ParamRef | float
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     interval: Interval | ParamRef
-    """Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
+    """Enforces uniformity for data at regular intervals, such as integer values or daily samples.
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -3495,24 +3584,27 @@ class _GridFyOpen(MarkOptions, total=False):
     mark: Required[L["gridFy"]]
     """A vertically-positioned ruleY mark (a horizontal line, —) that renders a grid for the *fy* scale. The data defaults to the *fy* scale's domain; if desired, use the **ticks** option."""
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3520,8 +3612,9 @@ class _GridFyOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3575,8 +3668,9 @@ class _GridXOpen(MarkOptions, total=False):
     inset_top: ParamRef | float
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
     interval: Interval | ParamRef
-    """Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
+    """Enforces uniformity for data at regular intervals, such as integer values or daily samples.
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -3588,24 +3682,27 @@ class _GridXOpen(MarkOptions, total=False):
     *x* scale's domain; if desired, use one of the **ticks**, **tickSpacing**, or **interval** options.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3613,8 +3710,9 @@ class _GridXOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3668,8 +3766,9 @@ class _GridYOpen(MarkOptions, total=False):
     inset_right: ParamRef | float
     """Insets the right edge by the specified number of pixels. A positive value insets towards the left edge (reducing effective area), while a negative value insets away from the left edge (increasing it)."""
     interval: Interval | ParamRef
-    """Enforces uniformity for data at regular intervals, such as integer values or daily samples. The interval may be one of:
+    """Enforces uniformity for data at regular intervals, such as integer values or daily samples.
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -3681,24 +3780,27 @@ class _GridYOpen(MarkOptions, total=False):
     *y* scale's domain; if desired, use one of the **ticks**, **tickSpacing**, or **interval** options.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3706,8 +3808,9 @@ class _GridYOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3748,8 +3851,9 @@ class _HeatmapOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/image-rendering
     """
     interpolate: GridInterpolate | ParamRef | None
-    """The spatial interpolation method; one of:
+    """The spatial interpolation method.
 
+    One of:
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
     - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
@@ -3892,8 +3996,9 @@ class _HexbinOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -3935,8 +4040,9 @@ class _HullOpen(MarkOptions, total=False):
     """The hull mark."""
 
     curve: Curve | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -3966,24 +4072,27 @@ class _HullOpen(MarkOptions, total=False):
     If **z** is specified, the input points are grouped by *z*, producing a separate hull for each group. If **z** is not specified, it defaults to the **fill** channel, if any, or the **stroke** channel, if any.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -3991,8 +4100,9 @@ class _HullOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4067,8 +4177,9 @@ class _LineOpen(MarkOptions, total=False):
     """The line mark."""
 
     curve: Curve | L["auto"] | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -4104,24 +4215,27 @@ class _LineOpen(MarkOptions, total=False):
     **strokeWidth**, **opacity**, **href**, **title**, and **ariaLabel** channels. When any of these channels are used, setting an explicit **z** channel (possibly to null) is strongly recommended.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4129,8 +4243,9 @@ class _LineOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4161,8 +4276,9 @@ class _LineXOpen(MarkOptions, total=False):
     """The lineX mark."""
 
     curve: Curve | L["auto"] | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -4190,24 +4306,27 @@ class _LineXOpen(MarkOptions, total=False):
     mark: Required[L["lineX"]]
     """Like line, except that **x** defaults to the identity function assuming that *data* = [*x₀*, *x₁*, *x₂*, …] and **y** defaults to the zero-based index [0, 1, 2, …]."""
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4215,8 +4334,9 @@ class _LineXOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4247,8 +4367,9 @@ class _LineYOpen(MarkOptions, total=False):
     """The lineY mark."""
 
     curve: Curve | L["auto"] | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -4276,24 +4397,27 @@ class _LineYOpen(MarkOptions, total=False):
     mark: Required[L["lineY"]]
     """Like line, except **y** defaults to the identity function and assumes that *data* = [*y₀*, *y₁*, *y₂*, …] and **x** defaults to the zero-based index [0, 1, 2, …]."""
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4301,8 +4425,9 @@ class _LineYOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4348,24 +4473,27 @@ class _LinkOpen(MarkOptions, total=False):
     *linear* **curve**.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4373,8 +4501,9 @@ class _LinkOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4418,8 +4547,9 @@ class _RasterOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/image-rendering
     """
     interpolate: GridInterpolate | ParamRef | None
-    """The spatial interpolation method; one of:
+    """The spatial interpolation method.
 
+    One of:
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
     - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
@@ -4463,8 +4593,9 @@ class _RasterTileOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/image-rendering
     """
     interpolate: GridInterpolate | ParamRef | None
-    """The spatial interpolation method; one of:
+    """The spatial interpolation method.
 
+    One of:
     - *none* - do not perform interpolation (the default), maps samples to single bins
     - *linear* - apply proportional linear interpolation across adjacent bins
     - *nearest* - assign each pixel to the closest sample's value (Voronoi diagram)
@@ -4534,8 +4665,9 @@ class _RectOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -4636,8 +4768,9 @@ class _RectXOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -4733,8 +4866,9 @@ class _RectYOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -4840,8 +4974,9 @@ class _RuleXOpen(MarkOptions, total=False):
     inset_top: ParamRef | float
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
     interval: Interval | ParamRef
-    """How to convert a continuous value (**y** for ruleX, or **x** for ruleY) into an interval (**y1** and **y2** for ruleX, or **x1** and **x2** for ruleY); one of:
+    """How to convert a continuous value (**y** for ruleX, or **x** for ruleY) into an interval (**y1** and **y2** for ruleX, or **x1** and **x2** for ruleY).
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
     """
@@ -4852,24 +4987,27 @@ class _RuleXOpen(MarkOptions, total=False):
     The ruleX mark is often used to highlight specific *x* values. If *y* represents ordinal values, use a tickX mark instead.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4877,8 +5015,9 @@ class _RuleXOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4917,8 +5056,9 @@ class _RuleYOpen(MarkOptions, total=False):
     inset_top: ParamRef | float
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
     interval: Interval | ParamRef
-    """How to convert a continuous value (**y** for ruleX, or **x** for ruleY) into an interval (**y1** and **y2** for ruleX, or **x1** and **x2** for ruleY); one of:
+    """How to convert a continuous value (**y** for ruleX, or **x** for ruleY) into an interval (**y1** and **y2** for ruleX, or **x1** and **x2** for ruleY).
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
     """
@@ -4929,24 +5069,27 @@ class _RuleYOpen(MarkOptions, total=False):
     The ruleY mark is often used to highlight specific *y* values. If *x* represents ordinal values, use a tickY mark instead.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4954,8 +5097,9 @@ class _RuleYOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -4998,8 +5142,9 @@ class _SpikeOpen(MarkOptions, total=False):
     """The spike mark."""
 
     anchor: L["end", "middle", "start"] | ParamRef
-    """The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
+    """The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°.
 
+    One of:
     - *start* - from [*x*, *y*] to [*x*, *y* - *l*]
     - *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]
     - *end* - from [*x*, *y* + *l*] to [*x*, *y*]
@@ -5113,8 +5258,9 @@ class _TextOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -5213,8 +5359,9 @@ class _TextXOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -5315,8 +5462,9 @@ class _TextYOpen(MarkOptions, total=False):
         | ParamRef
         | None
     )
-    """How truncate (or wrap) lines of text longer than the given **lineWidth**; one of:
+    """How truncate (or wrap) lines of text longer than the given **lineWidth**.
 
+    One of:
     - null (default) - preserve overflowing characters (and wrap if needed)
     - *clip* or *clip-end* - remove characters from the end
     - *clip-start* - remove characters from the start
@@ -5353,24 +5501,27 @@ class _TickXOpen(MarkOptions, total=False):
     If *y* represents quantitative or temporal values, use a ruleX mark instead.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -5378,8 +5529,9 @@ class _TickXOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -5416,24 +5568,27 @@ class _TickYOpen(MarkOptions, total=False):
     If *x* represents quantitative or temporal values, use a ruleY mark instead.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -5441,8 +5596,9 @@ class _TickYOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -5466,8 +5622,9 @@ class _VectorOpen(MarkOptions, total=False):
     """The vector mark."""
 
     anchor: L["end", "middle", "start"] | ParamRef
-    """The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
+    """The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°.
 
+    One of:
     - *start* - from [*x*, *y*] to [*x*, *y* - *l*]
     - *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]
     - *end* - from [*x*, *y* + *l*] to [*x*, *y*]
@@ -5509,8 +5666,9 @@ class _VectorXOpen(MarkOptions, total=False):
     """The vectorX mark."""
 
     anchor: L["end", "middle", "start"] | ParamRef
-    """The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
+    """The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°.
 
+    One of:
     - *start* - from [*x*, *y*] to [*x*, *y* - *l*]
     - *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]
     - *end* - from [*x*, *y* + *l*] to [*x*, *y*]
@@ -5549,8 +5707,9 @@ class _VectorYOpen(MarkOptions, total=False):
     """The vectorY mark."""
 
     anchor: L["end", "middle", "start"] | ParamRef
-    """The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°, one of:
+    """The vector's position along its orientation relative to its anchor point; a constant. Assuming a default **rotate** angle of 0°.
 
+    One of:
     - *start* - from [*x*, *y*] to [*x*, *y* - *l*]
     - *middle* (default) - from [*x*, *y* + *l* / 2] to [*x*, *y* - *l* / 2]
     - *end* - from [*x*, *y* + *l*] to [*x*, *y*]
@@ -5589,8 +5748,9 @@ class _VoronoiMeshOpen(MarkOptions, total=False):
     """The voronoiMesh mark."""
 
     curve: Curve | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -5619,24 +5779,27 @@ class _VoronoiMeshOpen(MarkOptions, total=False):
     If **z** is specified, the input points are grouped by *z*, producing a separate Voronoi tesselation for each group.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -5644,8 +5807,9 @@ class _VoronoiMeshOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -5674,8 +5838,9 @@ class _VoronoiOpen(MarkOptions, total=False):
     """The voronoi mark."""
 
     curve: Curve | ParamRef
-    """The curve (interpolation) method for connecting adjacent points. One of:
+    """The curve (interpolation) method for connecting adjacent points.
 
+    One of:
     - *basis* - a cubic basis spline (repeating the end points)
     - *basis-open* - an open cubic basis spline
     - *basis-closed* - a closed cubic basis spline
@@ -5703,24 +5868,27 @@ class _VoronoiOpen(MarkOptions, total=False):
     If **z** is specified, the input points are grouped by *z*, producing a separate Voronoi tesselation for each group.
     """
     marker: L["none"] | MarkerName | ParamRef | bool | None
-    """Shorthand to set the same default for markerStart, markerMid, and markerEnd; one of:
+    """Shorthand to set the same default for markerStart, markerMid, and markerEnd.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     - *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_end: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the ending point of a line segment; one of:
+    """The marker for the ending point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
     * false or null - alias for *none*
     """
     marker_mid: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect. One of:
+    """The marker for any middle (interior) points of a line segment. If the line segment only has a start and end point, this option has no effect.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -5728,8 +5896,9 @@ class _VoronoiOpen(MarkOptions, total=False):
     * a function - a custom marker function; see below
     """
     marker_start: L["none"] | MarkerName | ParamRef | bool | None
-    """The marker for the starting point of a line segment; one of:
+    """The marker for the starting point of a line segment.
 
+    One of:
     - a marker name such as *arrow* or *circle*
     * *none* (default) - no marker
     * true - alias for *circle-fill*
@@ -5772,8 +5941,9 @@ class _WaffleXOpen(MarkOptions, total=False):
     inset_top: ParamRef | float
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
     interval: Interval | ParamRef
-    """How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY); one of:
+    """How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY).
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -5797,8 +5967,9 @@ class _WaffleXOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
@@ -5866,8 +6037,9 @@ class _WaffleYOpen(MarkOptions, total=False):
     inset_top: ParamRef | float
     """Insets the top edge by the specified number of pixels. A positive value insets towards the bottom edge (reducing effective area), while a negative value insets away from the bottom edge (increasing it)."""
     interval: Interval | ParamRef
-    """How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY); one of:
+    """How to convert a continuous value (**x** for barX, or **y** for barY) into an interval (**x1** and **x2** for barX, or **y1** and **y2** for barY).
 
+    One of:
     - a named time interval such as *day* (for date intervals)
     - a number (for number intervals), defining intervals at integer multiples of *n*
 
@@ -5891,8 +6063,9 @@ class _WaffleYOpen(MarkOptions, total=False):
     [1]: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/opacity
     """
     order: ParamRef | StackOrder | None
-    """The order in which stacks are layered; one of:
+    """The order in which stacks are layered.
 
+    One of:
     - null (default) for input order
     - a named stack order method such as *inside-out* or *sum*
     - a field name, for natural order of the corresponding values
