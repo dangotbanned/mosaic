@@ -141,6 +141,7 @@ def _(obj: mlir.NamedTuple, name: PyIdentifier) -> d.NamedTuple:
     )
     return d.NamedTuple(name=name, fields=fields, doc=obj.doc)
 
+
 @_from_def.register(mlir.PyStr)
 def _(obj: mlir.PyStr, name: PyIdentifier) -> d.NewTypeStr:
     return d.NewTypeStr(name=name, doc=obj.doc)
