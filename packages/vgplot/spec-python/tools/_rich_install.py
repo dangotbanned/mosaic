@@ -1,13 +1,9 @@
-"""Configures [rich] for visualizing schemas.
-
-This is a noop without `uv <command> --group repl`.
+"""Configures [rich] for visualizing schemas and other large objects.
 
 [rich]: https://github.com/Textualize/rich
 """
 
 from __future__ import annotations
-
-# pyright: reportMissingImports=false
 
 _STYLES = {
     "repr.call": "rgb(78,201,176)",
@@ -30,20 +26,17 @@ def install(
     max_string: int | None = 80,
     max_depth: int | None = 3,
 ) -> None:
-    """Configure [`rich`][] if available.
+    """Configure [`rich`][] for visualizing schemas and other large objects.
 
     ## Notes
     - Sets reasonable limits for output size
     - Theme is adapted from [VSCode Dark+ Python Theme](https://github.com/thowitz/dark-plus-python-theme/blob/99ece7cb5ac540cbb28447d401b316fd44230d26/themes/dark-plus-python-theme.json)
     """
-    import contextlib
+    import rich.console
+    import rich.pretty
+    import rich.theme
 
-    with contextlib.suppress(ImportError):
-        import rich.console
-        import rich.pretty
-        import rich.theme
-
-        console = rich.console.Console(theme=rich.theme.Theme(_STYLES))
-        rich.pretty.install(
-            console, crop=crop, max_length=max_length, max_string=max_string, max_depth=max_depth
-        )
+    console = rich.console.Console(theme=rich.theme.Theme(_STYLES))
+    rich.pretty.install(
+        console, crop=crop, max_length=max_length, max_string=max_string, max_depth=max_depth
+    )
