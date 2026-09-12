@@ -44,9 +44,6 @@ type ChildIter[D: MLIR, S] = GroupByIter[tuple[DefName, Definition[D]], S]
 type HasFields = mlir.ClosedDict | mlir.ExtraDict | mlir.OpenDict
 _HAS_FIELDS: Final = mlir.ClosedDict, mlir.ExtraDict, mlir.OpenDict
 
-# HACK: Forcing `pyrefly` to not infer `0` as `int`
-_ZERO: Final[L[0]] = 0  # ruff: ignore[redundant-final-literal]
-
 
 # NOTE: `ty` reports `Unknown`, but `pyrefly` understands
 is_inner_fields: Callable[[Definition[Any]], TypeIs[Definition[HasFields]]] = inner_type_is(
@@ -88,7 +85,7 @@ class Matcher:
     def from_scopes(cls, scopes: Scopes) -> Matcher:
         """Construct from a full, nested configuration object."""
         return cls._from_filters(
-            scopes.include, scopes.exclude, getattr(scopes, "ref_follow_depth", _ZERO)
+            scopes.include, scopes.exclude, getattr(scopes, "ref_follow_depth", 0)
         )
 
     @classmethod
