@@ -71,7 +71,7 @@ mostly an arrangement of tools.
 [`./scripts/`]: ./scripts/__init__.py
 [`./tools/`]: ./tools/__init__.py
 [`./tests/`]: ./tests/__init__.py
-[Roadmap]: roadmap.md
+[Roadmap]: ./docs/roadmap.md
 
 | Where          | What                                                       |
 | -------------- | ---------------------------------------------------------- |
@@ -119,4 +119,4 @@ pnpm test
 [pnpm scripts]: ./package.json
 [`./tests/test_examples`]: ./tests/test_examples/__init__.py
 [also generated]: ./scripts/prepare_examples.py
-[Test PEPs]: ./roadmap.md#test-peps
+[Test PEPs]: ./docs/roadmap.md#test-peps

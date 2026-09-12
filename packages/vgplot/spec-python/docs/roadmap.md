@@ -36,7 +36,7 @@ easier to spot regressions within these more focused cases vs a needle in a [com
 - [ ] [PEP 821 - `**TypedDict` (Callable)]
 - [ ] [PEP 827 - Type Manipulation]
 
-[`tests/test_examples/`]: ./tests/test_examples/__init__.py
+[`tests/test_examples/`]: ../tests/test_examples/__init__.py
 [Typing PEPs]: https://peps.python.org/topic/typing/
 [PEP 589 - `TypedDict`]: https://peps.python.org/pep-0589/
 [PEP 655 - `Required` and `NotRequired`]: https://peps.python.org/pep-0655/
@@ -148,10 +148,10 @@ And here is the same thing in Observable Plot?
 
 - (https://github.com/observablehq/plot/blob/356f579b1d947ee05a914420eddff0f29cee300a/src/plot.d.ts)
 
-[explanation]: https://github.com/dangotbanned/mosaic/blob/b3793004b483dbdfff0c6e390f9cc24fcbf897a7/packages/vgplot/spec-python/tools/models/source.py#L1-L55
+[explanation]: ./intersection.md
 [extension fields]: https://json-schema.org/blog/posts/custom-annotations-will-continue#too-long-read-anyway
 [`pyrefly`]: https://pyrefly.org/en/docs/
-[complex example]: ./tests/test_examples/test_splom.py
+[complex example]: ../tests/test_examples/test_splom.py
 
 ## General
 

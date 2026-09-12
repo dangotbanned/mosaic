@@ -10,7 +10,7 @@ Python typing for authoring [Mosaic] visualizations, derived from [Mosaic Spec].
 > See ([#1075]) for motivation and ([roadmap]) for what's next.
 
 [#1075]: https://github.com/uwdata/mosaic/issues/1075
-[roadmap]: ./roadmap.md
+[roadmap]: ./docs/roadmap.md
 
 ## Usage
 
