@@ -6,12 +6,15 @@ from typing import Final, Self, final
 
 from tools import ds
 from tools.common import RichRepr, copy_replace
+from tools.ir.mlir.common import sort_key_mlir_rich_cmp
 from tools.models import base
 from tools.models.base import Lit
 
 if typing.TYPE_CHECKING:
     import collections.abc as cabc
     from collections.abc import Iterator
+
+    from _typeshed import SupportsRichComparison
 
     from tools.ir.mlir.common import NameMap, RefMap
     from tools.models.base import DefName, IdName
@@ -64,6 +67,16 @@ class MLIR(base.FrozenHashableStruct):
         """Return the field `name` if it exists."""
         return
 
+    def _rich_cmp(self) -> SupportsRichComparison:
+        """Doubly-cached [^1] comparator, which supports comparing any `MLIR` with any oth.
+
+        - By default, it is only stable within a single process, see [`object.__hash__`](https://docs.python.org/3/reference/datamodel.html#object.__hash__).
+        - Subclasses can override with a more stable source, and should omit `self.__hash__`.
+
+        [^1]: First via [`cache_hash=True`](https://msgspec.dev/api#msgspec.Struct) and second via a [`lru_cache`](https://docs.python.org/3/library/functools.html#functools.lru_cache) on the caller of this method.
+        """
+        return self.__class__.__name__, self.__hash__()
+
 
 @final
 class Reference(MLIR):
@@ -100,6 +113,9 @@ class Reference(MLIR):
             return self.to_ext_ref(ext)
         return self
 
+    def _rich_cmp(self) -> SupportsRichComparison:
+        return self.__class__.__name__, self.ref
+
 
 def ref(name: DefName, /) -> Reference:
     return Reference(ref=name)
@@ -115,6 +131,9 @@ class ExtReference(MLIR):
 
     def iter_ext_refs(self) -> Iterator[ExtReference]:
         yield self
+
+    def _rich_cmp(self) -> SupportsRichComparison:
+        return self.__class__.__name__, self.ext, self.ref
 
 
 @final
@@ -189,6 +208,11 @@ class _HasChildren(MLIR):
     def iter_ext_refs(self) -> Iterator[ExtReference]:
         for child in self.iter_children():
             yield from child.iter_ext_refs()
+
+    def _rich_cmp(self) -> SupportsRichComparison:
+        return self.__class__.__name__, tuple(
+            sort_key_mlir_rich_cmp(child) for child in self.iter_children()
+        )
 
 
 class _BaseType[T: MLIR](_HasChildren):

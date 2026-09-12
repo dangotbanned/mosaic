@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, Final, Literal as L, Protocol, 
 from tools.codegen.convert import kebab_case
 from tools.common import ensure_type
 from tools.ir.mlir import nodes
-from tools.ir.mlir.common import into_name_map, into_ref_map, sort_key_dict
+from tools.ir.mlir.common import into_name_map, into_ref_map, sort_key_mlir_dict
 from tools.ir.mlir.definition import Definition
 from tools.ir.mlir.nodes import ClosedDict, Union
 from tools.ir.mlir.root import Root
@@ -365,7 +365,7 @@ class AsDefs(_Base[L["children"]]):
             else:
                 new_members.append(child)
         if len(todo) != 1:
-            todo.sort(key=sort_key_dict)
+            todo.sort(key=sort_key_mlir_dict)
         for idx, child in enumerate(todo, 1):
             name = f"{def_name}{idx}"
             new_members.append(nodes.ref(name))

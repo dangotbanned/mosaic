@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import functools
 import typing as t
 from collections.abc import Callable, Iterable, Mapping
+from operator import methodcaller
 
 from tools.models.base import DefName, IdName
 
@@ -79,15 +81,15 @@ def inner_type_is(
     return guard
 
 
-def sort_key_any(node: MLIR, /) -> SupportsRichComparison:
-    """Deterministic-ish sort for all `MLIR` nodes.
+if t.TYPE_CHECKING:
+    # NOTE: Micro-optimized to use only functions implemented in C, as this is called in a hot loop
+    # This branch preserves the docs from the method when called
+    sort_key_mlir_rich_cmp = functools.partial(MLIR._rich_cmp)
+else:
+    sort_key_mlir_rich_cmp = functools.lru_cache(maxsize=256)(methodcaller("_rich_cmp"))
 
-    Stable within a single process, see [`object.__hash__`](https://docs.python.org/3/reference/datamodel.html#object.__hash__).
-    """
-    return node.__class__.__name__, node.__hash__()
 
-
-def sort_key_dict(node: ClosedDict, /) -> SupportsRichComparison:
+def sort_key_mlir_dict(node: ClosedDict, /) -> SupportsRichComparison:
     """A cheap, approximate stable sort for a union of `ClosedDict` types.
 
     If multiple members have the same set of field names, this function cannot provide stability.

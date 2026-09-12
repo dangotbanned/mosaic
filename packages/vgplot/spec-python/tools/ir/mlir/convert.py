@@ -9,7 +9,7 @@ from tools import ds
 from tools.common import POUND_DEFS
 from tools.ir.json_wrapper import nodes as jw
 from tools.ir.mlir import nodes as mlir
-from tools.ir.mlir.common import sort_key_any
+from tools.ir.mlir.common import sort_key_mlir_rich_cmp
 from tools.ir.mlir.nodes import MLIR
 from tools.models.base import DefName, IdName, Lit
 
@@ -181,4 +181,6 @@ def _(obj: jw.Union, owner: DefName, /) -> mlir.Union:
     if merge_literals:
         members.add(mlir.Literal(members=tuple(sorted(merge_literals, key=str))))
 
-    return mlir.Union(members=tuple(sorted(members, key=sort_key_any)), doc=obj.description)
+    return mlir.Union(
+        members=tuple(sorted(members, key=sort_key_mlir_rich_cmp)), doc=obj.description
+    )
