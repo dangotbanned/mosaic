@@ -33,6 +33,8 @@ def main(target_dir: Path, /) -> None:
 
 
 if __name__ == "__main__":
+    from tools import _rich
+
     target = fs.TESTS / "test_examples"
     main(target)
-    print(f"Generated examples at: {fs.repo_relative_str(target)}")
+    _rich.print_path("Generated examples", target)

@@ -39,7 +39,7 @@ class GriffeResult:
 
 
 def main(target: Path, /) -> None:
-    from tools import models, serde
+    from tools import _rich, models, serde
 
     schema = serde.schema(models.config.MosaicSpecToml)
     # https://tombi-toml.github.io/tombi/docs/json-schema#x-tombi-string-formats
@@ -56,7 +56,7 @@ def main(target: Path, /) -> None:
     }
     result = griffe_enhance(schema)
     serde.write_json(target, result.schema, pretty=True)
-    print(f"Generated TOML schema at: {fs.repo_relative_str(target)}")
+    _rich.print_path("Generated TOML schema", target)
     result.display_report()
 
 

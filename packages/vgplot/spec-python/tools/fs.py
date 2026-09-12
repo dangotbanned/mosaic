@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Final, Literal as L, LiteralString as LS, overload
+from typing import TYPE_CHECKING, Final, Literal as L, LiteralString as LS, overload
 
 if TYPE_CHECKING:
     import subprocess as sp
@@ -127,18 +127,6 @@ PYPROJECT_TOML = SPEC_PYTHON / "pyproject.toml"
 """`mosaic/packages/vgplot/spec-python/pyproject.toml`"""
 
 
-def repo_relative_str(source: IntoPath) -> str:
-    """Return a path representation for errors/logs."""
-    return Path(source).relative_to(SPEC_PYTHON).as_posix()
-
-
-def read_pyproject() -> dict[str, Any]:
-    """`["tool"]["datamodel-codegen"]["profiles"]["spec"]["output"]`."""
-    import tomllib
-
-    return tomllib.loads(PYPROJECT_TOML.read_text("utf8"))
-
-
 def iter_dir(source_dir: IntoPath, *include_suffix: Suffix) -> Iterator[Path]:
     """Iterate over the paths in `source_dir`.
 
@@ -193,7 +181,9 @@ def write_lines(target: IntoPath, lines: Iterable[str], /, message: str | None =
     target.touch()
     target.write_text("\n".join(lines), "utf8", newline="\n")
     if message:
-        print(f"{message} at: {repo_relative_str(target)}")
+        from tools._rich import print_path
+
+        print_path(message, target)
 
 
 # TODO @dangotbanned: Change `cwd` to use an enum instead of `None` to represent "leave me alone"

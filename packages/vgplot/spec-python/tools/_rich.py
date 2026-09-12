@@ -5,7 +5,14 @@
 
 from __future__ import annotations
 
-_STYLES = {
+import typing as t
+
+if t.TYPE_CHECKING:
+    from pathlib import Path
+
+    from rich.console import Console
+
+_STYLES: t.Final = {
     "repr.call": "rgb(78,201,176)",
     "repr.attrib_name": "rgb(156,220,254)",
     "repr.str": "rgb(206,145,120)",
@@ -17,6 +24,29 @@ _STYLES = {
     "repr.number": "rgb(181,206,168)",
     "repr.number_complex": "rgb(181,206,168)",
 }
+
+
+_console: Console | None = None
+
+
+def get_console() -> Console:
+    global _console  # ruff: ignore[global-statement]
+    if _console is None:
+        from rich.console import Console
+        from rich.theme import Theme
+
+        _console = Console(theme=Theme(_STYLES))
+    return _console
+
+
+def print_path(message: str, path: Path) -> None:
+    """Display a clickable link to a filepath."""
+    from fs import SPEC_PYTHON
+    from rich.style import Style
+    from rich.text import Text
+
+    text = Text(path.relative_to(SPEC_PYTHON).as_posix(), Style(link=path.as_uri()))
+    get_console().print(f"{message} at:", text)
 
 
 def install(
@@ -32,11 +62,8 @@ def install(
     - Sets reasonable limits for output size
     - Theme is adapted from [VSCode Dark+ Python Theme](https://github.com/thowitz/dark-plus-python-theme/blob/99ece7cb5ac540cbb28447d401b316fd44230d26/themes/dark-plus-python-theme.json)
     """
-    import rich.console
     import rich.pretty
-    import rich.theme
 
-    console = rich.console.Console(theme=rich.theme.Theme(_STYLES))
     rich.pretty.install(
-        console, crop=crop, max_length=max_length, max_string=max_string, max_depth=max_depth
+        get_console(), crop=crop, max_length=max_length, max_string=max_string, max_depth=max_depth
     )
