@@ -5,16 +5,16 @@ from typing import TYPE_CHECKING, Annotated as A, Any, Final, Literal as L, Self
 import msgspec
 
 from tools.common import POUND_DEFS
+from tools.ir.json_wrapper.inner import Schema
 from tools.models import base
 from tools.models.base import DefName, Lit
-from tools.models.mosaic import JsonSchema
 from tools.serde import convert_json
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
 
-_EMPTY_SCHEMA = JsonSchema()
+_EMPTY_SCHEMA = Schema()
 type Scalar = L["boolean", "integer", "number", "string", "null"]
 """Primitive Json schema types, excluding `"array"` and `"object"`."""
 
@@ -32,7 +32,7 @@ class _Tagged(base.Struct, tag=True, tag_field="tag"): ...
 
 # NOTE: Use `schema` last in the constructor and it will show last in the repr
 class JsonWrapper(_Tagged, kw_only=True):
-    schema: JsonSchema
+    schema: Schema
 
     @property
     def description(self) -> str:
@@ -43,7 +43,7 @@ class JsonWrapper(_Tagged, kw_only=True):
         self.schema.description = value
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Self:
+    def from_schema(cls, schema: Schema) -> Self:
         """Wrap a json schema, making this layer a tagged union."""
         msg = f"{cls.from_schema.__qualname__}() is not yet implemented"
         raise NotImplementedError(msg)
@@ -64,7 +64,7 @@ class Reference(JsonWrapper):
     ref: str
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Reference:
+    def from_schema(cls, schema: Schema) -> Reference:
         return Reference(ref=schema.ref, schema=schema)
 
     def iter_refs(self) -> Iterator[Reference]:
@@ -83,7 +83,7 @@ class Const(JsonWrapper):
     value: Lit | LitBool
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Const:
+    def from_schema(cls, schema: Schema) -> Const:
         if not isinstance(schema.const, (str, bool)):
             raise _temporary_bad_static_error(schema.type, cls)
         return Const(value=schema.const, schema=schema)
@@ -99,7 +99,7 @@ class Enum(JsonWrapper):
     values: cabc.Sequence[Lit | LitBool | None]
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Enum:
+    def from_schema(cls, schema: Schema) -> Enum:
         return Enum(values=schema.enum, schema=schema)
 
     def iter_values(self) -> Iterator[Lit | LitBool | None]:
@@ -113,7 +113,7 @@ class Primitive(JsonWrapper):
     type: Scalar
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Primitive:
+    def from_schema(cls, schema: Schema) -> Primitive:
         if not _is_scalar(schema.type):
             raise _temporary_bad_static_error(schema.type, cls)
         return Primitive(type=schema.type, schema=schema)
@@ -129,7 +129,7 @@ class PrimitiveUnion(JsonWrapper):
     types: cabc.Sequence[Scalar]
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> PrimitiveUnion:
+    def from_schema(cls, schema: Schema) -> PrimitiveUnion:
         types = schema.type
         if isinstance(types, (str, type(None))):
             raise _temporary_bad_static_error(types, cls)
@@ -161,10 +161,10 @@ class Unknown(JsonWrapper):
     ```
     """
 
-    schema: JsonSchema = msgspec.field(default_factory=JsonSchema)
+    schema: Schema = msgspec.field(default_factory=Schema)
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Unknown:
+    def from_schema(cls, schema: Schema) -> Unknown:
         if schema == _EMPTY_SCHEMA:
             return Unknown()
         # quite a hassle to remove defaults, leaving just description
@@ -181,7 +181,7 @@ class EmptySequence(JsonWrapper):
     """`{"maxItems": 0, "minItems": 0, "type": "array"}`."""
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> EmptySequence:
+    def from_schema(cls, schema: Schema) -> EmptySequence:
         return EmptySequence(schema=schema)
 
 
@@ -192,9 +192,9 @@ class NamedSequence(JsonWrapper):
     fields: dict[camelCase, JsonWrapper]
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> NamedSequence:
+    def from_schema(cls, schema: Schema) -> NamedSequence:
         items = schema.items
-        if isinstance(items, (JsonSchema, bool)):
+        if isinstance(items, (Schema, bool)):
             raise _temporary_bad_static_error(items, cls)
         return NamedSequence(fields={el.title: _from_schema(el) for el in items}, schema=schema)
 
@@ -212,9 +212,9 @@ class Sequence(JsonWrapper):
     max: int | None = None
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Sequence:
+    def from_schema(cls, schema: Schema) -> Sequence:
         items = schema.items
-        if not isinstance(items, JsonSchema):
+        if not isinstance(items, Schema):
             raise _temporary_bad_static_error(items, cls)
         return Sequence(
             items=_from_schema(items), min=schema.min_items, max=schema.max_items, schema=schema
@@ -238,14 +238,14 @@ class Object(JsonWrapper):
     extra_items: JsonWrapper | None
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Object:
+    def from_schema(cls, schema: Schema) -> Object:
         additional = schema.additional_properties
         closed = None
         extra_items = None
         if additional is False:
             closed = "closed"
         elif additional is not True:
-            extra_items = _from_schema(convert_json(additional, JsonSchema))
+            extra_items = _from_schema(convert_json(additional, Schema))
         else:
             extra_items = Unknown()
         return Object(
@@ -270,7 +270,7 @@ class Union(JsonWrapper):
     members: cabc.Sequence[JsonWrapper]
 
     @classmethod
-    def from_schema(cls, schema: JsonSchema) -> Union:
+    def from_schema(cls, schema: Schema) -> Union:
         return Union(members=[_from_schema(m) for m in schema.any_of], schema=schema)
 
     def iter_refs(self) -> Iterator[Reference]:
@@ -278,7 +278,7 @@ class Union(JsonWrapper):
             yield from member.iter_refs()
 
 
-def _from_schema(schema: JsonSchema) -> JsonWrapper:
+def _from_schema(schema: Schema) -> JsonWrapper:
     if schema.ref:
         tp = Reference
     elif schema.any_of:
@@ -301,7 +301,7 @@ def _from_schema(schema: JsonSchema) -> JsonWrapper:
     return tp.from_schema(schema)
 
 
-def _from_schema_array(schema: JsonSchema) -> Sequence | NamedSequence | EmptySequence:
+def _from_schema_array(schema: Schema) -> Sequence | NamedSequence | EmptySequence:
     items = schema.items
     if isinstance(items, bool):
         if schema.max_items != 0:
@@ -309,7 +309,7 @@ def _from_schema_array(schema: JsonSchema) -> Sequence | NamedSequence | EmptySe
             raise TypeError(msg)
         tp = EmptySequence
     else:
-        tp = Sequence if isinstance(items, JsonSchema) else NamedSequence
+        tp = Sequence if isinstance(items, Schema) else NamedSequence
     return tp.from_schema(schema)
 
 

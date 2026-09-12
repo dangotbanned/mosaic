@@ -9,7 +9,6 @@ from tools.common import CanonicalPath, PyIdentifier, PyIdentifierSnake
 from tools.ir import json_wrapper as jw, mlir, pyir
 from tools.ir.pyir.dependencies import Resolver
 from tools.models.config import MosaicSpecToml
-from tools.models.mosaic import InputSchema
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterator, Mapping, Sequence
@@ -50,64 +49,41 @@ class App:
 
     ### Stage 1
 
-    - Module: `tools.models.mosaic`
-    - Root: `mosaic.InputSchema`
-    - Nodes: `mosaic.JsonSchema`, `mosaic.NonRecursiveFields`
-
-    Raw files are **strictly** parsed into a reduced subset of [JSON Schema draft-07],
-    based on patterns observed from [ts-json-schema-generator]'s output.
-
-    [JSON Schema draft-07]: https://json-schema.org/draft-07/schema
-    [ts-json-schema-generator]: https://github.com/vega/ts-json-schema-generator
-
-    #### Open issues
-
-    - Most of what this representation does is related to `scripts/schema_mod.py`
-    - The naming of the types & module location are not consistent with `tools.ir.*`
-    - `description` is cleaned on creation
-
-    ### Stage 2
-
-    - Package: `tools.ir.json_wrapper`
+    - Package: [`tools.ir.json_wrapper`][]
     - Root: `json_wrapper.Root`
     - Nodes: `json_wrapper.JsonWrapper`, 11 implementations
 
-    #### Open issues
+    The raw schema cannot deserialize into this representation directly (see [msgspec/msgspec#982]).
 
-    - Would really like to deserialize into this directly, but (https://github.com/msgspec/msgspec/issues/982)
+    This stage begins with a re-wrapping of a representation that *can*, stored on the `schema` field of each node.
 
-    ### Stage 3
+    [msgspec/msgspec#982]: https://github.com/msgspec/msgspec/issues/982
 
-    - Package: `tools.ir.mlir`
+    ### Stage 2
+
+    - Package: [`tools.ir.mlir`][]
     - Root: `mlir.Root`
     - Definition: `mlir.Definition`
     - Nodes: `mlir.MLIR`, 20 implementations
 
     #### Open issues
 
-    - `ref_unwrap` mutates "Stage 2" to create "Stage 3"
+    - `ref_unwrap` mutates "Stage 1" to create "Stage 2"
 
-    ### Stage 4
+    ### Stage 3
 
-    - Package: `tools.ir.pyir`
+    - Package: [`tools.ir.pyir`][]
     - Root: `pyir.Module` / `pyir.Package`
     - Definition: `pyir.Definition`, 7 implementations
     - Nodes:
         - `pyir.Expr`, 14 implementations
         - `pyir.PyIR` (other), 9 implementations
 
-    #### Open issues
-
-    - Some deeply nested edge cases are not converted yet (`expr.Unresolved`)
-    - Reference typing, for inheritance lists
-
     ## Targets
-
-    *This section is a goal, but entirely unimplemented and depends on the output of **Stage 4***.
 
     ### Python version
 
-    Output is for the current [minimum supported Python version] (-5 versions).
+    Codegen targets the current [minimum supported Python version] (-5 versions).
     This is **not planned to be configurable**.
 
     If you want features from a newer version, use Ruff's ([`UP`]) rules on the output:
@@ -181,14 +157,12 @@ class App:
     """
 
     config: MosaicSpecToml
-    _inputs: deque[InputSchema]
     _wrappers: deque[jw.Root]
     _mlirs: deque[mlir.Root]
     _package: pyir.Package
 
     def __init__(self, config: MosaicSpecToml) -> None:
         self.config = config
-        self._inputs = deque[InputSchema]()
         self._wrappers = deque[jw.Root]()
         self._mlirs = deque[mlir.Root]()
         self._actions: dict[int, mlir.Action] = {}
@@ -206,9 +180,9 @@ class App:
             self.preview_modules(*options.preview_modules, quiet=quiet)
             return
         method = {
-            "pyir": self.into_pyir,
-            "mlir": self.into_mlir,
             "json_wrapper": self.into_json_wrapper,
+            "mlir": self.into_mlir,
+            "pyir": self.into_pyir,
             "codegen": self.codegen,
             "lint": self.lint,
         }[stage]
@@ -224,14 +198,15 @@ class App:
         msg = "Empty actions"
         raise NotImplementedError(msg)
 
-    def read_into_inputs(self) -> None:
-        self._inputs = deque(self._read_sources())
-
     def into_json_wrapper(self, *, quiet: bool = False) -> None:
-        self.read_into_inputs()
-        self._wrappers = deque(jw.Root.from_input_schema(schema) for schema in self._inputs)
+        """Deserialize source schema(s) and wrap them in `JSONWrapper` nodes."""
+        if not (sources := self.config.convert.sources):
+            msg = "Empty sources"
+            raise NotImplementedError(msg)
+        self._wrappers = deque(jw.Root.from_json(source.path, source.id) for source in sources)
 
     def into_mlir(self, *, quiet: bool = False) -> None:
+        """Convert `JSONWrapper` into `MLIR`, running actions on the result."""
         self.into_json_wrapper()
         config = self.config.convert.to_mlir
         fn = mlir.Root.from_json_wrapper
@@ -245,7 +220,7 @@ class App:
             print("\n".join(root._describe() for root in self._mlirs))
 
     def into_pyir(self, *, quiet: bool = False) -> None:
-        """Lower MLIR into PyIR."""
+        """Convert `MLIR` into `PyIR`."""
         self.into_mlir(quiet=quiet)
         if not quiet:
             print(f"Generating module representation from {len(self._mlirs)} root(s).")
@@ -341,16 +316,6 @@ class App:
 
     def _iter_modules(self) -> Iterator[pyir.Module]:
         return self._package.iter_modules_descendants()
-
-    def _read_sources(self) -> Iterator[InputSchema]:
-        if not (sources := self.config.convert.sources):
-            msg = "Empty sources"
-            raise NotImplementedError(msg)
-
-        for source in sources:
-            schema = serde.read_json(source.path, InputSchema)
-            schema.id = source.id
-            yield schema
 
     def _run_actions(self, roots: deque[mlir.Root], *, quiet: bool) -> deque[mlir.Root]:
         for idx, action in self.actions.items():

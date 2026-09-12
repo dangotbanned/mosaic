@@ -5,30 +5,33 @@ from typing import TYPE_CHECKING, Any, Literal as L, TypeIs, assert_never, final
 
 import msgspec
 
+from tools import serde
 from tools.common import POUND_DEFS
+from tools.ir.json_wrapper.inner import Mosaic
 from tools.ir.json_wrapper.nodes import JsonWrapper, Reference, _from_schema
 from tools.models import base
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+    from pathlib import Path
 
     from tools.models.config import JsonWrapperToMLIR
-    from tools.models.mosaic import InputSchema
 
 
 @final
 class Root(base.RootId[JsonWrapper], kw_only=True):
     """Top-level context for `mosaic-schema.json`."""
 
-    id: base.IdName = msgspec.field(name="$id", default=base.IdName(""))
+    id: base.IdName = msgspec.field(name="$id")
     ref: str = msgspec.field(name="$ref", default="")
     schema: str = msgspec.field(name="$schema")
 
     @classmethod
-    def from_input_schema(cls, source: InputSchema) -> Root:
+    def from_json(cls, path: Path, id: base.IdName) -> Root:
+        source = serde.read_json(path, Mosaic)
         return Root(
-            id=source.id,
-            definitions={k: _from_schema(v) for k, v in source.definitions.items()},
+            id=id,
+            definitions={k: _from_schema(v) for k, v in source.def_items()},
             ref=source.ref,
             schema=source.schema,
         )

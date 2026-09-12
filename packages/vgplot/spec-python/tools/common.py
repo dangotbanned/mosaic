@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import typing as t
 from itertools import chain
 
@@ -192,3 +193,16 @@ def copy_replace(obj: Incomplete, /, **changes: Incomplete) -> Incomplete:
     - https://github.com/python/typeshed/issues/15973
     """
     return obj.__replace__(**changes)
+
+
+@functools.lru_cache(1024)
+def fix_ambiguous_unicode_characters(string: str, /) -> str:
+    """Duplicated from [altair].
+
+    These characters are all over `mosaic/packages/vgplot/spec/src/`, so it seems intentional.
+
+    [altair]: https://github.com/vega/altair/blob/fab318c6c54db07849ec90437efdf20ad431e3a5/tools/markup.py#L133-L134
+    """
+    string = string.replace("’", "'")  # ruff: ignore[ambiguous-unicode-character-string]
+    string = string.replace("–", "-")  # ruff: ignore[ambiguous-unicode-character-string]
+    return string  # ruff: ignore[unnecessary-assign]

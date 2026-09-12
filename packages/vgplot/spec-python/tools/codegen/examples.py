@@ -24,7 +24,7 @@ from typing_extensions import TypedDict
 from tools.codegen import markdown
 from tools.codegen.convert import KEYS_REPLACE, py_identifier_snake
 from tools.codegen.docstrings import doc
-from tools.models.mosaic import _fix_ambiguous_unicode_characters
+from tools.common import fix_ambiguous_unicode_characters
 from tools.serde import read_yaml_untyped
 
 if TYPE_CHECKING:
@@ -149,7 +149,7 @@ class Example:
             parts, *rest = source.stem.split("-")
             title = " ".join((parts.title(), *rest))
         else:
-            title = _fix_ambiguous_unicode_characters(title.removesuffix("."))
+            title = fix_ambiguous_unicode_characters(title.removesuffix("."))
         title = f"{title}."
         if description := meta.pop("description", ""):
             description = description.strip()
@@ -159,7 +159,7 @@ class Example:
             description = f"## Credit\n{credit}"
         else:
             return title, "*Missing description*"
-        return title, _fix_ambiguous_unicode_characters(description)
+        return title, fix_ambiguous_unicode_characters(description)
 
     @classmethod
     def from_path(cls, source: Path) -> Self:
