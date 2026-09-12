@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Final, Literal as L, LiteralString as LS, overload
+from typing import TYPE_CHECKING, Literal as L, LiteralString as LS, overload
 
 if TYPE_CHECKING:
     import subprocess as sp
@@ -78,7 +78,6 @@ VGPLOT_PYTHON = VGPLOT_PACKAGE / "vgplot-python"
 WIDGET = VGPLOT_PACKAGE / "widget"
 """`mosaic/packages/vgplot/widget`"""
 
-
 # NOTE: Local paths
 SPEC_PYTHON = _HERE.parent.parent
 """`mosaic/packages/vgplot/spec-python`"""
@@ -92,15 +91,6 @@ One day, this file will configure everything.
 MOSAIC_SPEC_TOML_SCHEMA = SPEC_PYTHON / "mosaic-spec-toml-schema.json"
 """`mosaic/packages/vgplot/spec-python/mosaic-spec-toml-schema.json`."""
 
-SCHEMA: Final = SPEC_PYTHON / "schema"
-"""`mosaic/packages/vgplot/spec-python/schema`.
-
-Output directory for modified schemas.
-"""
-
-SCRIPTS = SPEC_PYTHON / "scripts"
-"""`mosaic/packages/vgplot/spec-python/scripts`"""
-
 TESTS = SPEC_PYTHON / "tests"
 """`mosaic/packages/vgplot/spec-python/tests`"""
 
@@ -112,16 +102,6 @@ MOSAIC_SPEC = SRC / "mosaic_spec"
 
 MOSAIC_SPEC_INIT = MOSAIC_SPEC / "__init__.py"
 """`mosaic/packages/vgplot/spec-python/src/mosaic_spec/__init__.py`"""
-
-MOSAIC_SPEC_GEN = MOSAIC_SPEC / "_gen"
-"""`mosaic/packages/vgplot/spec-python/src/mosaic_spec/_gen/`"""
-
-MOSAIC_SPEC_GEN_INIT = MOSAIC_SPEC_GEN / "__init__.py"
-"""`mosaic/packages/vgplot/spec-python/src/mosaic_spec/_gen/__init__.py`"""
-
-
-MOSAIC_SPEC_INTERSECTION = MOSAIC_SPEC / "spec.py"
-"""`mosaic/packages/vgplot/spec-python/src/mosaic_spec/spec.py`"""
 
 PYPROJECT_TOML = SPEC_PYTHON / "pyproject.toml"
 """`mosaic/packages/vgplot/spec-python/pyproject.toml`"""
