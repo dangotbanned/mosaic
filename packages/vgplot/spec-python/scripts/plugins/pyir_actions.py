@@ -5,6 +5,7 @@ from __future__ import annotations
 import dataclasses
 import typing as t
 from itertools import chain
+from operator import attrgetter
 
 from tools.codegen.convert import py_identifier_snake
 from tools.common import PyIdentifier, PyIdentifierSnake, ensure_type
@@ -18,6 +19,9 @@ if t.TYPE_CHECKING:
     from tools.app import App
 
 type SpecTarget = tuple[PyIdentifier, TypedExtRef[OpenDict]]
+
+
+_get_name = attrgetter("name")
 
 
 def massage_components(app: App) -> None:
@@ -153,6 +157,7 @@ def _build_spec_module(app: App, targets: Iterable[SpecTarget]) -> None:
     module_spec.update_defs((spec_union, td_spec_head))
 
 
+# HACK: Contains a hot fix for non-determistic documentation
 @dataclasses.dataclass
 class _MarksRelations:
     """Stores shared components between `marks` and `spec`.
@@ -192,11 +197,15 @@ class _MarksRelations:
         class Graticule(_GraticuleOpen, total=False, closed=True): ...
         ```
         """
-        mark_defns = tuple(
+        it = (
             defn
             for defn in module.def_values()
             if isinstance(defn, ClosedDict) and defn.has_field("mark")
         )
+        # NOTE: hot fix for non-deterministic `doc` selection
+        # `fill`, `fill_opactity` have multiple versions,
+        # but resolving this correctly requires a refactor of inheritance
+        mark_defns = sorted(it, key=_get_name)
         return _MarksRelations._from_marks(mark_defns)
 
     def iter_defs(self) -> Iterator[OpenDict | ClosedDict]:
