@@ -44,23 +44,24 @@ Python syntax.
 Broadly we do this by:
 
 1. Reading the schema into [`msgspec`] structs
-2. [Transforming] their contents and splitting what was one large schema [^1] into
-   [multiple smaller schemas]
-3. Feeding [`datamodel-code-generator`] those schemas to generate *most* of the package, using
-   [templates]
-4. Hand-rolling some generation for [one module] with a [unique issue] to solve
+2. Performing a [multi-stage IR conversion], to move from JSON Schema to Python, notably:
+
+   i. Applying transformative [actions] once we've left JSON Schema behind.  
+   Effectively, splitting what was one large schema [^1] into something that can output 14+
+   modules.
+
+   ii. Dealing with some edge cases [outside of the core workflow].
+3. Generating the majority of [`/src`] directly from the [final representation]
 
 [^1]: 200K+ lines, weighing in at over 8 MB!
 
+<!--TODO @dangotbanned: Add a pretty diagram for IR--->
+
 [`msgspec`]: https://github.com/msgspec/msgspec
-[Transforming]: ./scripts/schema_mod.py
-[multiple smaller schemas]: ./schema/
-[`./schema/`]: ./schema/
-[`datamodel-code-generator`]: https://github.com/koxudaxi/datamodel-code-generator
-[one module]: ./src/mosaic_spec/spec.py
-[unique issue]: ./tools/models/mosaic.py
-[templates]: ./templates/datamodel-code-generator/README.md
-[`./templates/`]: ./templates/
+[actions]: ./mosaic-spec.toml
+[multi-stage IR conversion]: ./tools/app.py
+[outside of the core workflow]: ./scripts/plugins/__init__.py
+[final representation]: ./tools/ir/pyir/module.py
 
 ### Project layout
 
@@ -71,16 +72,13 @@ mostly an arrangement of tools.
 [`./tools/`]: ./tools/__init__.py
 [`./tests/`]: ./tests/__init__.py
 [Roadmap]: roadmap.md
-[Jinja template]: https://jinja.palletsprojects.com/en/stable/templates/
 
-| Where            | What                                                                         |
-| ---------------- | ---------------------------------------------------------------------------- |
-| [`./schema/`]    | Transformed JSON schemas, provided as input for [`datamodel-code-generator`] |
-| [`./scripts/`]   | Code that is run by [`generate`]                                             |
-| [`./templates/`] | [Jinja template] overrides for [`datamodel-code-generator`]                  |
-| [`./tests/`]     | The test suite                                                               |
-| [`./tools/`]     | Building blocks for [`./scripts/`]                                           |
-| [Roadmap]        | Ideas for what's next                                                        |
+| Where          | What                                                       |
+| -------------- | ---------------------------------------------------------- |
+| [`./scripts/`] | Code that is run by [`generate`] and other [pnpm scripts]. |
+| [`./tests/`]   | The test suite.                                            |
+| [`./tools/`]   | Building blocks for [`./scripts/`]                         |
+| [Roadmap]      | Ideas for what's next                                      |
 
 ## Tests
 
@@ -105,10 +103,20 @@ pnpm typecheck:pyrefly
 > [!NOTE]
 > `typecheck` is the final step of [`generate`]
 
-Runtime tests are still a work-in-progress, but can be run via:
+The tests defined under [`./tests/test_examples`] are [also generated], which can be re-run via:
+
+```sh
+pnpm generate:examples
+```
+
+Runtime tests are still a work-in-progress (see [Test PEPs]), but can be run via:
 
 ```sh
 pnpm test
 ```
 
 [`generate`]: #contributing
+[pnpm scripts]: ./package.json
+[`./tests/test_examples`]: ./tests/test_examples/__init__.py
+[also generated]: ./scripts/prepare_examples.py
+[Test PEPs]: ./roadmap.md#test-peps

@@ -5,44 +5,39 @@ Here's a big list of things to do/known issues. Current priorities are deduplica
 
 [LSP]: https://en.wikipedia.org/wiki/Language_Server_Protocol
 
-## General
+## Test PEPs
 
-- [x] Generate `TypedDict`s from the schema
-- [x] Generate docstrings
-- [x] Generate an `__all__`
-  - [x] `_gen`
-  - [x] `mosaic_spec`
-- [x] Use `.py` for target output instead of `.pyi`
-- [x] Fix emitting 81 version of `Spec`
-  - [x] Caused by a huge intersection type `Spec = SpecHead & Component` (see [explanation])
-  - [x] Remove `Spec` from `mosaic.json`
-    - Reduced `mosaic.py` **53k** -> **28k** LOC
-  - [x] Fix `closed=True` on base class (~100 type errors)
-  - [x] Fix `data: PlotMarkData` Required/NotRequired conflict (~59 type errors)
-- [x] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
-  - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
-  - [x] Use `_typing_compat.py` imports for codegen
-- [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between
-      `TypedDict` defs
-- [x] Configure [`pyrefly`] and run it during `typecheck`
-- [ ] Add some tests once the top-level namespace starts stabilizing
-  - [x] Add codegen for [`tests/test_examples/`]
-  - [ ] Add a `tests/test_peps/` suite
-    - [ ] Completed
-      - [ ] [PEP 589 - `TypedDict`]
-      - [ ] [PEP 655 - `Required` and `NotRequired`]
-      - [ ] [PEP 692 - `**TypedDict` (kwargs)]
-      - [ ] [PEP 695 - Type Parameter Syntax]
-        - Just the `TypeAliasType` part
-      - [ ] [PEP 728 - `closed` and `extra_items`]
-      - [ ] [PEP 747 - `TypeForm`]
-    - [ ] Open
-      - [ ] [PEP 764 - Inline typed dictionaries]
-        - `ty` marks this syntax as `@Todo`
-        - `pyright` seems to ignore it
-      - [ ] [PEP 821 - `**TypedDict` (Callable)]
-      - [ ] [PEP 827 - Type Manipulation]
+[`tests/test_examples/`] ensures that every upstream example works without producing a diagnostic.
 
+The goal of this task will be a secondary test suite (`tests/test_peps/`) that provides more
+project-specific regression coverage.
+
+> [!NOTE]
+> A PEP stands for Python Enhancement Proposal.
+
+These tests will (primarily) cover the subset of [Typing PEPs] that relate to `TypedDict`. It should
+easier to spot regressions within these more focused cases vs a needle in a [complex example].
+
+### Finished PEPs (done, with a stable interface)
+
+- [ ] [PEP 589 - `TypedDict`]
+- [ ] [PEP 655 - `Required` and `NotRequired`]
+- [ ] [PEP 692 - `**TypedDict` (kwargs)]
+- [ ] [PEP 695 - Type Parameter Syntax]
+  - Just the `TypeAliasType` part
+- [ ] [PEP 728 - `closed` and `extra_items`]
+- [ ] [PEP 747 - `TypeForm`]
+
+### Open PEPs (under consideration)
+
+- [ ] [PEP 764 - Inline typed dictionaries]
+  - `ty` marks this syntax as `@Todo`
+  - `pyright` seems to ignore it
+- [ ] [PEP 821 - `**TypedDict` (Callable)]
+- [ ] [PEP 827 - Type Manipulation]
+
+[`tests/test_examples/`]: ./tests/test_examples/__init__.py
+[Typing PEPs]: https://peps.python.org/topic/typing/
 [PEP 589 - `TypedDict`]: https://peps.python.org/pep-0589/
 [PEP 655 - `Required` and `NotRequired`]: https://peps.python.org/pep-0655/
 [PEP 692 - `**TypedDict` (kwargs)]: https://peps.python.org/pep-0692/
@@ -97,14 +92,6 @@ a single file. To mitigate this, here are some potential modules/subpackages to 
 
 [altair/vegalite/v6/schema/_typing.py#L100-L114]: https://github.com/vega/altair/blob/c217ba4b03386fe303b70c75551e96d4e2bc6f30/altair/vegalite/v6/schema/_typing.py#L100-L114
 
-## `datamodel-code-generator` feature requests
-
-Things that should be easiest to fix upstream in `datamodel-code-generator`
-
-- [x] [Support (`total=False`, `Required`) in `TypedDict` (#3680)]
-- [x] [Support overriding default imports (#3681)]
-- [x] [Support configuring `--use-type-alias` behavior (#3682)]
-
 ## `mosaic-spec` feedback
 
 Things that should be easiest to fix upstream in Mosaic
@@ -112,7 +99,7 @@ Things that should be easiest to fix upstream in Mosaic
 - [ ] Avoid anonymous literal/enums
 - [ ] Generally, try to provide names for complex, repeated types
 - [ ] Output multiple schemas -> fixes one big file issue
-- [ ] Add `"x-*"` [extension fields] into the schema which can be used here for templating
+- [ ] Add `"x-*"` [extension fields] into the schema which can be utilized here
   - Which file did the symbol come from?
   - Inheritance?
 - [ ] Follow some python-friendly rules when writing **docs** in TS
@@ -162,9 +149,27 @@ And here is the same thing in Observable Plot?
 - (https://github.com/observablehq/plot/blob/356f579b1d947ee05a914420eddff0f29cee300a/src/plot.d.ts)
 
 [explanation]: https://github.com/dangotbanned/mosaic/blob/b3793004b483dbdfff0c6e390f9cc24fcbf897a7/packages/vgplot/spec-python/tools/models/source.py#L1-L55
-[Support (`total=False`, `Required`) in `TypedDict` (#3680)]: https://github.com/koxudaxi/datamodel-code-generator/issues/3680
-[Support overriding default imports (#3681)]: https://github.com/koxudaxi/datamodel-code-generator/issues/3681
-[Support configuring `--use-type-alias` behavior (#3682)]: https://github.com/koxudaxi/datamodel-code-generator/issues/3682
-[extension fields]: https://datamodel-code-generator.koxudaxi.dev/custom_template/#schema-extensions
+[extension fields]: https://json-schema.org/blog/posts/custom-annotations-will-continue#too-long-read-anyway
 [`pyrefly`]: https://pyrefly.org/en/docs/
-[`tests/test_examples/`]: ./tests/test_examples/__init__.py
+[complex example]: ./tests/test_examples/test_splom.py
+
+## General
+
+- [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between
+      `TypedDict` defs
+- [x] Generate `TypedDict`s from the schema
+- [x] Generate docstrings
+- [x] Generate an `__all__`
+  - [x] `_gen`
+  - [x] `mosaic_spec`
+- [x] Use `.py` for target output instead of `.pyi`
+- [x] Fix emitting 81 version of `Spec`
+  - [x] Caused by a huge intersection type `Spec = SpecHead & Component` (see [explanation])
+  - [x] Remove `Spec` from `mosaic.json`
+    - Reduced `mosaic.py` **53k** -> **28k** LOC
+  - [x] Fix `closed=True` on base class (~100 type errors)
+  - [x] Fix `data: PlotMarkData` Required/NotRequired conflict (~59 type errors)
+- [x] `typing_extensions` compat (`closed=True` is required for runtime `TypedDict`s)
+  - [x] Add `_typing_compat.py` to handle `"typing-extensions>=4.16 ; python_full_version < '3.15'"`
+  - [x] Use `_typing_compat.py` imports for codegen
+- [x] Configure [`pyrefly`] and run it during `typecheck`
