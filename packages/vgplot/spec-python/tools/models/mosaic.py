@@ -55,86 +55,17 @@ Sadly, this doesn't cover intersecting with a union.
 """
 
 import functools
-import re
-from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
-from typing import Annotated as A, Final, Literal as L, final
+from collections.abc import Sequence
+from typing import Literal as L, final
 
 from msgspec import field
 
 from tools.models import base
-from tools.models.base import DefName
-
-type FileName = str
-"""The name of a file, as defined by [`pathlib.Path.name`][]."""
 
 type Primitive = L["array", "boolean", "integer", "null", "number", "object", "string"]
 type _JsonSchemaFwd = JsonSchema
 type NonRecursiveFields = _NonRecursiveFieldsBase
 type Ref = str
-type Resolved[T] = A[T, L["Resolved"]]
-
-
-_POUND_DEFS: Final = "#/definitions/"
-
-
-class XTemplate(
-    base.Struct,
-    omit_defaults=False,
-    forbid_unknown_fields=True,
-    kw_only=True,
-    tag=functools.partial(re.compile("Template").sub, ""),
-    tag_field="tag",
-):
-    """Helpers for passing in jinja template data when generating typed dicts."""
-
-
-class SingleTemplate(XTemplate):
-    """Generate a single `TypedDict`.
-
-    Which looks like:
-    ```py
-    class <DefName>(<bases>, <keywords>):
-        ... # fields w/ docs are defined here
-    """
-
-    bases: str = "TypedDict"
-    """The class(es) to use as a base class."""
-
-    keywords: L["total=False", "closed=True", "", "total=False, closed=True"] = "total=False"
-    """Keyword arguments for TypedDict's metaclass."""
-
-
-class ExtraTemplate(XTemplate):
-    """Generate two `TypedDict`s.
-
-    Which looks like:
-    ```py
-    class <base>(<root>, total=False):
-        ... # fields w/ docs are defined here
-
-    class <DefName>(<base>, total=False, closed=True):...
-    ```
-    """
-
-    base: str
-    """The name of an extra base TypedDict to generate via [TypedDictBase.jinja2].
-
-    [TypedDictBase.jinja2]: ../../templates/datamodel-code-generator/TypedDictBase.jinja2"""
-
-    root: str = "TypedDict"
-    """The base class of `base` itself."""
-
-    @classmethod
-    def format(cls, original_name: DefName) -> str:
-        return f"_{original_name}Open"
-
-    @classmethod
-    def from_name(cls, original_name: DefName, /, root: str) -> ExtraTemplate:
-        return cls(base=cls.format(original_name), root=root)
-
-    @classmethod
-    def from_open_root(cls, original_name: DefName, /, root: DefName) -> ExtraTemplate:
-        return cls(base=cls.format(original_name), root=cls.format(root))
 
 
 class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
@@ -151,19 +82,6 @@ class _NonRecursiveFieldsBase(base.Struct, forbid_unknown_fields=True):
         name="additionalProperties", default=True
     )
     required: Sequence[str] = field(default_factory=list)
-
-    x_template: SingleTemplate | ExtraTemplate | None = field(name="x-template", default=None)
-    """See also [`x-` prefix annotations](https://json-schema.org/blog/posts/custom-annotations-will-continue#too-long-read-anyway)"""
-
-    def map_refs(self, function: Callable[[Ref], Ref | None], /) -> None:
-        if ref := self.ref:
-            if new_ref := function(ref):
-                self.ref = new_ref
-        elif not isinstance(self.additional_properties, bool):
-            self.additional_properties.map_refs(function)
-
-    def is_ref(self) -> bool:
-        return bool(self.ref)
 
     def __post_init__(self) -> None:
         if doc := self.description:
@@ -191,63 +109,9 @@ class JsonSchema(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
     min_items: int = field(name="minItems", default=0)
     max_items: int | None = field(name="maxItems", default=None)
 
-    @property
-    def def_name(self) -> DefName:
-        if ref := self.ref:
-            return ref.removeprefix(_POUND_DEFS)
-        msg = f"Expected ref, got {self!r}"
-        raise TypeError(msg)
-
-    @classmethod
-    def new_ref(cls, name: DefName, /) -> JsonSchema:
-        return cls(ref=f"{_POUND_DEFS}{name}")
-
-    def is_union(self) -> bool:
-        return bool(self.any_of)
-
-    def remove_properties(self, keys: Iterable[str], /) -> None:
-        """Remove a set of *known* keys from `self.properties`."""
-        del_item = self.properties.__delitem__
-        for key in keys:
-            del_item(key)
-
-    def items_schema(self) -> JsonSchema:
-        """Ensure `items` contains another `JsonSchema`."""
-        items = self.items
-        if not isinstance(items, JsonSchema):
-            msg = f"Expected a schema in `items` but got {type(items).__name__!r}, in:\n{self!r}"
-            raise NotImplementedError(msg)
-        return items
-
-    def iter_members(self) -> Iterator[JsonSchema]:
-        """Iterate over the members of a union, raising if the assumption that this is a union has changed."""
-        if not (members := self.any_of):
-            msg = f"Expected a union but `any_of` was empty, got:\n{self!r}"
-            raise NotImplementedError(msg)
-        yield from members
-
-    def map_refs(self, function: Callable[[Ref], Ref | None], /) -> None:
-        if ref := self.ref:
-            if new_ref := function(ref):
-                self.ref = new_ref
-        elif members := self.any_of:
-            for member in members:
-                member.map_refs(function)
-        elif (items := self.items) and items is not True:
-            if isinstance(items, JsonSchema):
-                items.map_refs(function)
-            else:
-                for item in items:
-                    item.map_refs(function)
-        else:
-            for prop in self.properties.values():
-                prop.map_refs(function)
-            if not isinstance(self.additional_properties, bool):
-                self.additional_properties.map_refs(function)
-
 
 @final
-class InputSchema(base.RootId[Resolved[JsonSchema]], kw_only=True):
+class InputSchema(base.RootId[JsonSchema], kw_only=True):
     """Top level schema for `mosaic-schema.json`."""
 
     # TODO @dangotbanned: I want to migrate to 2020-12 (2 jumps from draft-07)
@@ -261,28 +125,6 @@ class InputSchema(base.RootId[Resolved[JsonSchema]], kw_only=True):
     id: base.IdName = field(name="$id", default=base.IdName(""))
     ref: Ref = field(name="$ref", default="")
 
-    def insert(self, name: DefName, schema: Resolved[JsonSchema]) -> None:
-        """Add a new top-level definition to the schema."""
-        self.definitions[name] = schema
-
-    def iter_members_defs(
-        self, union: Resolved[JsonSchema], /
-    ) -> Iterator[tuple[DefName, Resolved[JsonSchema]]]:
-        """Iterate over the definitions ref'd by a union of references.
-
-        Resolves `$ref`s defined at the current level, and raises if either:
-        - `union` is not a union
-        - each member is not a reference
-        """
-        for member_ref in union.iter_members():
-            name = member_ref.def_name
-            yield name, self[name]
-
-    def map_refs(self, ctx: Mapping[DefName, A[FileName, L["json"]]], /) -> None:
-        function = ref_mapper(ctx)
-        for schema in self.definitions.values():
-            schema.map_refs(function)
-
 
 @functools.lru_cache(1024)
 def _fix_ambiguous_unicode_characters(string: str, /) -> str:
@@ -295,9 +137,3 @@ def _fix_ambiguous_unicode_characters(string: str, /) -> str:
     string = string.replace("’", "'")  # ruff: ignore[ambiguous-unicode-character-string]
     string = string.replace("–", "-")  # ruff: ignore[ambiguous-unicode-character-string]
     return string  # ruff: ignore[unnecessary-assign]
-
-
-def ref_mapper(ctx: Mapping[DefName, A[FileName, L["json"]]], /) -> Callable[[Ref], Ref | None]:
-    """Construct a `$ref` replacement function for [`JsonSchema.map_refs`][]."""
-    defs = _POUND_DEFS
-    return {f"{defs}{k}": f"{v}{defs}{k}" for k, v in ctx.items()}.get
