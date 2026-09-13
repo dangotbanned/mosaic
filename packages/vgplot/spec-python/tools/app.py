@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING, Literal as L, Protocol, final
 
 from tools import fs, serde
 from tools.common import CanonicalPath, PyIdentifier, PyIdentifierSnake
+from tools.config import MosaicSpecToml
 from tools.ir import json_wrapper as jw, mlir, pyir
 from tools.ir.pyir.dependencies import Resolver
-from tools.models.config import MosaicSpecToml
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterator, Mapping, Sequence

@@ -32,7 +32,7 @@ from tools.ir.pyir.module import Module, Package
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from tools.models import config as _cfg
+    from tools import config as _cfg
 
 
 def _noop[T](obj: T, /) -> T:
@@ -40,7 +40,7 @@ def _noop[T](obj: T, /) -> T:
 
 
 @_contextlib.contextmanager
-def configure(config: _cfg.PyIRConfig, /) -> Iterator[None]:
+def configure(config: _cfg.ToPyIR, /) -> Iterator[None]:
     name = config.name
     aliases = name.aliases
     typing = aliases.typing

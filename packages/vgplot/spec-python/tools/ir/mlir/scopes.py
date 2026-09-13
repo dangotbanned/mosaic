@@ -12,16 +12,17 @@ from collections.abc import Callable, Iterable, Iterator
 from typing import Any, Final, Literal as L, TypeIs
 
 from tools.common import prepend, select_items
+from tools.config.selectors import Child, Filter, NamesNodes
+from tools.config.typing import MLIR_TYPES, Depth, MLIRType
 from tools.ir.mlir import nodes as mlir
 from tools.ir.mlir.common import inner_type_is
 from tools.ir.mlir.nodes import MLIR
 from tools.models.base import DefName, IdName
-from tools.models.config import _MLIR_TYPES, Child, Filter, MLIRType, NamesNodes
 
 if typing.TYPE_CHECKING:
+    from tools.config import Scopes
     from tools.ir.mlir.definition import Definition
     from tools.ir.mlir.root import Root
-    from tools.models.config import Depth, Scopes
 
 type Unused = typing.Any
 # NOTE: `pyrefly` stops understanding `tuple` if this is simplified
@@ -333,7 +334,7 @@ class DefsGeneral:
 
 
 def _convert_nodes(incl: NamesNodes | Child, excl: NamesNodes | Child, /) -> tuple[type[MLIR], ...]:
-    nodes = (incl.nodes or _MLIR_TYPES).difference(excl.nodes)
+    nodes = (incl.nodes or MLIR_TYPES).difference(excl.nodes)
     return tuple[type[MLIR], ...](getattr(mlir, name) for name in nodes)
 
 

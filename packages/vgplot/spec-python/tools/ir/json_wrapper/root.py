@@ -12,10 +12,10 @@ from tools.ir.json_wrapper.nodes import JsonWrapper, Reference, _from_schema
 from tools.models import base
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Iterator, Mapping
     from pathlib import Path
 
-    from tools.models.config import JsonWrapperToMLIR
+    from tools.config import ReferenceUnwrap
 
 
 @final
@@ -41,7 +41,9 @@ class Root(base.RootId[JsonWrapper], kw_only=True):
         for schema in self.definitions.values():
             yield from schema.iter_refs()
 
-    def ref_unwrap(self, config: JsonWrapperToMLIR) -> None:
+    def ref_unwrap(
+        self, config: Mapping[base.DefName, ReferenceUnwrap], default: ReferenceUnwrap
+    ) -> None:
         """Rewrite top-level references.
 
         ## Notes
@@ -52,14 +54,12 @@ class Root(base.RootId[JsonWrapper], kw_only=True):
             - VectorShape/VectorShapeName
         - Want to remove the nesting, pick 1 description (they often have 2), update everywhere they are ref'd
         """
-        cfg = config.ref_unwrap
-        default = config.ref_unwrap_default
         modified = {}
         to_replace = {}
         for outer_name, outer in self.iter_defs(is_ref):
             inner_name = outer.def_name
             inner = self[inner_name]
-            policy = cfg.get(outer_name, default)
+            policy = config.get(outer_name, default)
             if policy.name == "outer":
                 final_name = outer_name
             else:

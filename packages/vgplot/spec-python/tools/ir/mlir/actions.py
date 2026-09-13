@@ -8,15 +8,16 @@ from importlib import import_module
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, ClassVar, Final, Literal as L, Protocol, assert_never
 
+import tools.config.actions as cfg
 from tools.codegen.convert import kebab_case
 from tools.common import ensure_type
+from tools.config.typing import ACTION_KIND, ENTRY_POINT_PATTERN, ActionKind, IterOver
 from tools.ir.mlir import nodes
 from tools.ir.mlir.common import into_name_map, into_ref_map, sort_key_mlir_dict
 from tools.ir.mlir.definition import Definition
 from tools.ir.mlir.nodes import ClosedDict, Union
 from tools.ir.mlir.root import Root
 from tools.ir.mlir.scopes import Matcher, is_inner_union
-from tools.models import config as cfg
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Collection, Iterable, Iterator, Mapping, Sequence, Set
@@ -40,18 +41,18 @@ class Action(Protocol):
 
     def run(self, roots: RootsMut, /) -> Iterator[Root]: ...
     @property
-    def kind(self) -> cfg.ActionKind: ...
+    def kind(self) -> ActionKind: ...
 
 
-class _Base[O: cfg.IterOver](Protocol):
+class _Base[O: IterOver](Protocol):
     __slots__ = ("matcher",)
     matcher: Matcher
-    _kind: ClassVar[cfg.ActionKind]
+    _kind: ClassVar[ActionKind]
 
     @property
     def over(self) -> O: ...
     @property
-    def kind(self) -> cfg.ActionKind:
+    def kind(self) -> ActionKind:
         return self._kind
 
     def run(self, roots: RootsMut) -> Iterator[Root]:
@@ -66,17 +67,17 @@ class _Base[O: cfg.IterOver](Protocol):
         name = cls.__name__
         if not name.startswith("_"):
             kind = kebab_case(name)
-            if kind not in cfg._ACTION_KIND:
+            if kind not in ACTION_KIND:
                 msg = (
                     f"{name!r} should be the PascalCase version of a kebab-case `action` value.\n"
-                    f"But {kind!r} is not one of: {cfg._ACTION_KIND!r}\n\n"
-                    f"Hints:\n- try updating {cfg.ActionKind}?\n- spell {name!r} differently?"
+                    f"But {kind!r} is not one of: {ACTION_KIND!r}\n\n"
+                    f"Hints:\n- try updating {ActionKind}?\n- spell {name!r} differently?"
                 )
                 raise TypeError(msg)
             cls._kind = kind
 
 
-class _MultiOver[O: cfg.IterOver](_Base[O], Protocol):
+class _MultiOver[O: IterOver](_Base[O], Protocol):
     __slots__ = ("_over",)
     _over: O
 
@@ -86,12 +87,12 @@ class _MultiOver[O: cfg.IterOver](_Base[O], Protocol):
 
 
 @typing.final
-class Plugin(_MultiOver[cfg.IterOver]):
+class Plugin(_MultiOver[IterOver]):
     __slots__ = ("entry_point", "extra")
     entry_point: str
     extra: Mapping[str, Any]
 
-    _PATTERN: ClassVar = re.compile(cfg.ENTRY_POINT_PATTERN["python"])
+    _PATTERN: ClassVar = re.compile(ENTRY_POINT_PATTERN["python"])
 
     def __init__(self, config: cfg.PluginAction) -> None:
         self.matcher = Matcher.from_scopes(config.scope)

@@ -1,6 +1,6 @@
 {
   "$defs": {
-    "AsDefsAction": {
+    "actions.AsDefsAction": {
       "additionalProperties": false,
       "description": "Lift one or more anonymous types, within a union, into new definitions.",
       "properties": {
@@ -16,7 +16,7 @@
           "type": "string"
         },
         "scope": {
-          "$ref": "#/$defs/ChildrenScope"
+          "$ref": "#/$defs/scopes.ChildrenScope"
         }
       },
       "required": [
@@ -25,7 +25,7 @@
       "title": "AsDefsAction",
       "type": "object"
     },
-    "AsDefsFieldAction": {
+    "actions.AsDefsFieldAction": {
       "additionalProperties": false,
       "description": "Lift unrepresentable anonymous types from field(s) into definitions.\n\nTarget fields can be selected via `scope.include.child.field_names`.",
       "properties": {
@@ -36,7 +36,7 @@
           ]
         },
         "scope": {
-          "$ref": "#/$defs/ChildrenScope"
+          "$ref": "#/$defs/scopes.ChildrenScope"
         }
       },
       "required": [
@@ -45,7 +45,338 @@
       "title": "AsDefsFieldAction",
       "type": "object"
     },
-    "Child": {
+    "actions.NewTreeAction": {
+      "additionalProperties": false,
+      "description": "Derive a new `Root` from another, taking ownership of related definitions.\n\nThis action could be considered taking a cutting from a tree and \"re-planting\" it.\n\n## Notes\n- differs by not requiring 1 `root_name: DefName`, since multiple definitions can match\n- creates a new `mlir.Root` per-action",
+      "properties": {
+        "action": {
+          "description": "Derive a new `Root` from another, taking ownership of related definitions.\n\nThis action could be considered taking a cutting from a tree and \"re-planting\" it.\n\n## Notes\n- differs by not requiring 1 `root_name: DefName`, since multiple definitions can match\n- creates a new `mlir.Root` per-action",
+          "enum": [
+            "new-tree"
+          ]
+        },
+        "id": {
+          "description": "The name of the new `Root`.",
+          "type": "string"
+        },
+        "into_ext_ref": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "description": "If this operation would leave \"dangling\" references, resolve them using this mapping.\n\nThis option should be reserved for *acknowledging* cyclic definitions.",
+          "type": "object"
+        },
+        "scope": {
+          "$ref": "#/$defs/scopes.DefsDescendantsScope"
+        }
+      },
+      "required": [
+        "action",
+        "id"
+      ],
+      "title": "NewTreeAction",
+      "type": "object"
+    },
+    "actions.PluginAction": {
+      "additionalProperties": false,
+      "description": "You're on your own, jim.",
+      "properties": {
+        "action": {
+          "description": "You're on your own, jim.",
+          "enum": [
+            "plugin"
+          ]
+        },
+        "entry_point": {
+          "description": "The path to the plugin definition.\n\nUses a pattern adapted from [entry-points], restricted to the following forms:\n\n```py\n\"package.module:attribute\"\n\"package.module:object.attribute\"\n```\n\n[entry-points]: https://packaging.python.org/en/latest/specifications/entry-points/",
+          "pattern": "([\\w.]+)\\s*(:\\s*([\\w.]+)\\s*)$",
+          "type": "string"
+        },
+        "extra": {
+          "additionalProperties": true,
+          "default": {},
+          "description": "Namespace for arbitrary data passed to the plugin.",
+          "type": "object"
+        },
+        "scope": {
+          "$ref": "#/$defs/scopes.PluginScope"
+        }
+      },
+      "required": [
+        "action",
+        "entry_point"
+      ],
+      "title": "PluginAction",
+      "type": "object"
+    },
+    "actions.RemoveAction": {
+      "additionalProperties": false,
+      "description": "Remove matching definitions, without replacement.",
+      "properties": {
+        "action": {
+          "description": "Remove matching definitions, without replacement.",
+          "enum": [
+            "remove"
+          ]
+        },
+        "preserve_children": {
+          "default": false,
+          "description": "If the target definition is a union, substitute references to it with refs to the children.",
+          "type": "boolean"
+        },
+        "scope": {
+          "$ref": "#/$defs/scopes.DefsScope"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "RemoveAction",
+      "type": "object"
+    },
+    "actions.RenameFieldsAction": {
+      "additionalProperties": false,
+      "description": "Rename fields that match a name provided in `overrides`.",
+      "properties": {
+        "action": {
+          "description": "Rename fields that match a name provided in `overrides`.",
+          "enum": [
+            "rename-fields"
+          ]
+        },
+        "overrides": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "A mapping from old name to new name.",
+          "type": "object"
+        },
+        "scope": {
+          "$ref": "#/$defs/scopes.DefsScope"
+        }
+      },
+      "required": [
+        "action",
+        "overrides"
+      ],
+      "title": "RenameFieldsAction",
+      "type": "object"
+    },
+    "ref_unwrap.ReferenceUnwrap": {
+      "additionalProperties": false,
+      "description": "Override how each attribute is chosen when unwraping a ref.\n\n## Notes\nBoth `name` and `description` are resolved independently. Here they are referred to as **value**.\n\n- *\"longest\"*: pick the longest value\n- *\"shortest\"*: pick the shortest value\n    - **note**: The default description is `\"\"`\n- *\"outer\"*: use the value of the definition with a `\"$ref\"` field\n- *\"inner\"*: use the value of the definition without a `\"$ref\"` field\n\n## Examples\n`\"Curve\"` does not add much value to `\"CurveName\"`, but it has a different name and description:\n\n```py\nschema = {\n    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n    \"definitions\": {\n        \"Curve\": {\n            \"$ref\": \"#/definitions/CurveName\",\n            \"description\": \"How to interpolate between control points.\",\n        },\n        \"CurveName\": {\n            \"description\": \"The built-in curve implementations.\",\n            \"enum\": [\"basis\", \"basis-closed\", \"basis-open\"],\n            \"type\": \"string\",\n        },\n    },\n}\n```\n\nBy default, `schema` will be simplified using the `\"outer\"` name (`\"Curve\"`)\nand the `\"longest\"` description (`\"CurveName\"`)\n\n```py\nschema = {\n    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n    \"definitions\": {\n        \"Curve\": {\n            \"description\": \"How to interpolate between control points.\",\n            \"enum\": [\"basis\", \"basis-closed\", \"basis-open\"],\n            \"type\": \"string\",\n        }\n    },\n}\n```",
+      "properties": {
+        "description": {
+          "default": "longest",
+          "enum": [
+            "inner",
+            "longest",
+            "outer",
+            "shortest"
+          ]
+        },
+        "name": {
+          "default": "outer",
+          "enum": [
+            "inner",
+            "longest",
+            "outer",
+            "shortest"
+          ]
+        }
+      },
+      "required": [],
+      "title": "ReferenceUnwrap",
+      "type": "object"
+    },
+    "root.Convert": {
+      "additionalProperties": false,
+      "description": "Top-level config for translation/codegen.",
+      "properties": {
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/root.Source"
+          },
+          "type": "array"
+        },
+        "to_mlir": {
+          "$ref": "#/$defs/to_mlir.ToMLIR"
+        },
+        "to_pyir": {
+          "$ref": "#/$defs/to_pyir.ToPyIR"
+        }
+      },
+      "required": [],
+      "title": "Convert",
+      "type": "object"
+    },
+    "root.MosaicSpecToml": {
+      "additionalProperties": false,
+      "description": "Top-level config for everything!",
+      "properties": {
+        "convert": {
+          "$ref": "#/$defs/root.Convert"
+        }
+      },
+      "required": [],
+      "title": "MosaicSpecToml",
+      "type": "object"
+    },
+    "root.Source": {
+      "additionalProperties": false,
+      "description": "A schema source for conversion.",
+      "properties": {
+        "id": {
+          "description": "A unique identifier for the loaded result.\n\nIn the final representation, `id` is used for the name of a python module.",
+          "type": "string"
+        },
+        "path": {
+          "description": "A relative file path.",
+          "format": "uri-reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "id"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "scopes.ChildrenScope": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "properties": {
+        "exclude": {
+          "$ref": "#/$defs/selectors.Filter",
+          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
+        },
+        "include": {
+          "$ref": "#/$defs/selectors.Filter",
+          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
+        },
+        "over": {
+          "default": "children",
+          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
+          "enum": [
+            "children"
+          ]
+        }
+      },
+      "required": [],
+      "title": "ChildrenScope",
+      "type": "object"
+    },
+    "scopes.DefsDescendantsScope": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "properties": {
+        "exclude": {
+          "$ref": "#/$defs/selectors.Filter",
+          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
+        },
+        "include": {
+          "$ref": "#/$defs/selectors.Filter",
+          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
+        },
+        "over": {
+          "default": "definitions",
+          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
+          "enum": [
+            "definitions",
+            "descendants"
+          ]
+        },
+        "ref_follow_depth": {
+          "default": 0,
+          "description": "Resolve references to a maximum of this depth, before stopping a search.\n\nBy default, refs are left unresolved.\nEach increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\nThis model chooses not to support an \"unbounded\" search.",
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      },
+      "required": [],
+      "title": "DefsDescendantsScope",
+      "type": "object"
+    },
+    "scopes.DefsScope": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "properties": {
+        "exclude": {
+          "$ref": "#/$defs/selectors.Filter",
+          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
+        },
+        "include": {
+          "$ref": "#/$defs/selectors.Filter",
+          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
+        },
+        "over": {
+          "default": "definitions",
+          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
+          "enum": [
+            "definitions"
+          ]
+        }
+      },
+      "required": [],
+      "title": "DefsScope",
+      "type": "object"
+    },
+    "scopes.PluginScope": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "properties": {
+        "exclude": {
+          "$ref": "#/$defs/selectors.Filter",
+          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
+        },
+        "include": {
+          "$ref": "#/$defs/selectors.Filter",
+          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
+        },
+        "over": {
+          "default": "definitions",
+          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
+          "enum": [
+            "children",
+            "definitions",
+            "descendants"
+          ]
+        },
+        "ref_follow_depth": {
+          "default": 0,
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      },
+      "required": [],
+      "title": "PluginScope",
+      "type": "object"
+    },
+    "selectors.Child": {
       "additionalProperties": false,
       "description": "Match on the contents of a definition's children.",
       "properties": {
@@ -91,127 +422,16 @@
       "title": "Child",
       "type": "object"
     },
-    "ChildrenScope": {
-      "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
-      "properties": {
-        "exclude": {
-          "$ref": "#/$defs/Filter",
-          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
-        },
-        "include": {
-          "$ref": "#/$defs/Filter",
-          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
-        },
-        "over": {
-          "default": "children",
-          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
-          "enum": [
-            "children"
-          ]
-        }
-      },
-      "required": [],
-      "title": "ChildrenScope",
-      "type": "object"
-    },
-    "ConvertConfig": {
-      "additionalProperties": false,
-      "description": "Top-level config for translation/codegen.",
-      "properties": {
-        "sources": {
-          "items": {
-            "$ref": "#/$defs/SourceConfig"
-          },
-          "type": "array"
-        },
-        "to_mlir": {
-          "$ref": "#/$defs/JsonWrapperToMLIR"
-        },
-        "to_pyir": {
-          "$ref": "#/$defs/PyIRConfig"
-        }
-      },
-      "required": [],
-      "title": "ConvertConfig",
-      "type": "object"
-    },
-    "DefsDescendantsScope": {
-      "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
-      "properties": {
-        "exclude": {
-          "$ref": "#/$defs/Filter",
-          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
-        },
-        "include": {
-          "$ref": "#/$defs/Filter",
-          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
-        },
-        "over": {
-          "default": "definitions",
-          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
-          "enum": [
-            "definitions",
-            "descendants"
-          ]
-        },
-        "ref_follow_depth": {
-          "default": 0,
-          "description": "Resolve references to a maximum of this depth, before stopping a search.\n\nBy default, refs are left unresolved.\nEach increment above will continue the search if `<current>.ref` leads to another ref when iterating *the ref's children*.\nThis model chooses not to support an \"unbounded\" search.",
-          "enum": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10
-          ]
-        }
-      },
-      "required": [],
-      "title": "DefsDescendantsScope",
-      "type": "object"
-    },
-    "DefsScope": {
-      "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
-      "properties": {
-        "exclude": {
-          "$ref": "#/$defs/Filter",
-          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
-        },
-        "include": {
-          "$ref": "#/$defs/Filter",
-          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
-        },
-        "over": {
-          "default": "definitions",
-          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
-          "enum": [
-            "definitions"
-          ]
-        }
-      },
-      "required": [],
-      "title": "DefsScope",
-      "type": "object"
-    },
-    "Filter": {
+    "selectors.Filter": {
       "additionalProperties": false,
       "description": "A specification for matching against a graph.\n\nEach parameter constrains the search in the priority order of:\n\n```\nid -> definition -> child\n```",
       "properties": {
         "child": {
-          "$ref": "#/$defs/Child",
+          "$ref": "#/$defs/selectors.Child",
           "description": "Match on an anonymous symbol within a definition."
         },
         "definition": {
-          "$ref": "#/$defs/NamesNodes",
+          "$ref": "#/$defs/selectors.NamesNodes",
           "description": "Match on a named symbol within a module (`Root.definitions`)."
         },
         "id": {
@@ -227,72 +447,7 @@
       "title": "Filter",
       "type": "object"
     },
-    "JsonWrapperToMLIR": {
-      "additionalProperties": false,
-      "description": "Configure converting from json schema.\n\nRepresents the first conversion stage.",
-      "properties": {
-        "actions": {
-          "items": {
-            "anyOf": [
-              {
-                "$ref": "#/$defs/AsDefsAction"
-              },
-              {
-                "$ref": "#/$defs/AsDefsFieldAction"
-              },
-              {
-                "$ref": "#/$defs/NewTreeAction"
-              },
-              {
-                "$ref": "#/$defs/RemoveAction"
-              },
-              {
-                "$ref": "#/$defs/RenameFieldsAction"
-              },
-              {
-                "$ref": "#/$defs/PluginAction"
-              }
-            ],
-            "discriminator": {
-              "mapping": {
-                "as-defs": "#/$defs/AsDefsAction",
-                "as-defs-field": "#/$defs/AsDefsFieldAction",
-                "new-tree": "#/$defs/NewTreeAction",
-                "plugin": "#/$defs/PluginAction",
-                "remove": "#/$defs/RemoveAction",
-                "rename-fields": "#/$defs/RenameFieldsAction"
-              },
-              "propertyName": "action"
-            }
-          },
-          "type": "array"
-        },
-        "ref_unwrap": {
-          "additionalProperties": {
-            "$ref": "#/$defs/ReferenceUnwrap"
-          },
-          "default": {},
-          "description": "Mapping from the outer (\"$ref\"-defining) definition name to a policy table.",
-          "type": "object"
-        }
-      },
-      "required": [],
-      "title": "JsonWrapperToMLIR",
-      "type": "object"
-    },
-    "MosaicSpecToml": {
-      "additionalProperties": false,
-      "description": "Top-level config for everything!",
-      "properties": {
-        "convert": {
-          "$ref": "#/$defs/ConvertConfig"
-        }
-      },
-      "required": [],
-      "title": "MosaicSpecToml",
-      "type": "object"
-    },
-    "NamesNodes": {
+    "selectors.NamesNodes": {
       "additionalProperties": false,
       "description": "Match on the name or type of a definition.",
       "properties": {
@@ -336,140 +491,86 @@
       "title": "NamesNodes",
       "type": "object"
     },
-    "NewTreeAction": {
+    "to_mlir.ToMLIR": {
       "additionalProperties": false,
-      "description": "Derive a new `Root` from another, taking ownership of related definitions.\n\nThis action could be considered taking a cutting from a tree and \"re-planting\" it.\n\n## Notes\n- differs by not requiring 1 `root_name: DefName`, since multiple definitions can match\n- creates a new `mlir.Root` per-action",
+      "description": "Configure converting from json schema.\n\nRepresents the first conversion stage.",
       "properties": {
-        "action": {
-          "description": "Derive a new `Root` from another, taking ownership of related definitions.\n\nThis action could be considered taking a cutting from a tree and \"re-planting\" it.\n\n## Notes\n- differs by not requiring 1 `root_name: DefName`, since multiple definitions can match\n- creates a new `mlir.Root` per-action",
-          "enum": [
-            "new-tree"
-          ]
+        "actions": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/actions.AsDefsAction"
+              },
+              {
+                "$ref": "#/$defs/actions.AsDefsFieldAction"
+              },
+              {
+                "$ref": "#/$defs/actions.NewTreeAction"
+              },
+              {
+                "$ref": "#/$defs/actions.RemoveAction"
+              },
+              {
+                "$ref": "#/$defs/actions.RenameFieldsAction"
+              },
+              {
+                "$ref": "#/$defs/actions.PluginAction"
+              }
+            ],
+            "discriminator": {
+              "mapping": {
+                "as-defs": "#/$defs/actions.AsDefsAction",
+                "as-defs-field": "#/$defs/actions.AsDefsFieldAction",
+                "new-tree": "#/$defs/actions.NewTreeAction",
+                "plugin": "#/$defs/actions.PluginAction",
+                "remove": "#/$defs/actions.RemoveAction",
+                "rename-fields": "#/$defs/actions.RenameFieldsAction"
+              },
+              "propertyName": "action"
+            }
+          },
+          "type": "array"
         },
-        "id": {
-          "description": "The name of the new `Root`.",
-          "type": "string"
-        },
-        "into_ext_ref": {
+        "ref_unwrap": {
           "additionalProperties": {
-            "type": "string"
+            "$ref": "#/$defs/ref_unwrap.ReferenceUnwrap"
           },
           "default": {},
-          "description": "If this operation would leave \"dangling\" references, resolve them using this mapping.\n\nThis option should be reserved for *acknowledging* cyclic definitions.",
+          "description": "Mapping from the outer (\"$ref\"-defining) definition name to a policy table.",
           "type": "object"
-        },
-        "scope": {
-          "$ref": "#/$defs/DefsDescendantsScope"
-        }
-      },
-      "required": [
-        "action",
-        "id"
-      ],
-      "title": "NewTreeAction",
-      "type": "object"
-    },
-    "PluginAction": {
-      "additionalProperties": false,
-      "description": "You're on your own, jim.",
-      "properties": {
-        "action": {
-          "description": "You're on your own, jim.",
-          "enum": [
-            "plugin"
-          ]
-        },
-        "entry_point": {
-          "description": "The path to the plugin definition.\n\nUses a pattern adapted from [entry-points], restricted to the following forms:\n\n```py\n\"package.module:attribute\"\n\"package.module:object.attribute\"\n```\n\n[entry-points]: https://packaging.python.org/en/latest/specifications/entry-points/",
-          "pattern": "([\\w.]+)\\s*(:\\s*([\\w.]+)\\s*)$",
-          "type": "string"
-        },
-        "extra": {
-          "additionalProperties": true,
-          "default": {},
-          "description": "Namespace for arbitrary data passed to the plugin.",
-          "type": "object"
-        },
-        "scope": {
-          "$ref": "#/$defs/PluginScope"
-        }
-      },
-      "required": [
-        "action",
-        "entry_point"
-      ],
-      "title": "PluginAction",
-      "type": "object"
-    },
-    "PluginScope": {
-      "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
-      "properties": {
-        "exclude": {
-          "$ref": "#/$defs/Filter",
-          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
-        },
-        "include": {
-          "$ref": "#/$defs/Filter",
-          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
-        },
-        "over": {
-          "default": "definitions",
-          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
-          "enum": [
-            "children",
-            "definitions",
-            "descendants"
-          ]
-        },
-        "ref_follow_depth": {
-          "default": 0,
-          "enum": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10
-          ]
         }
       },
       "required": [],
-      "title": "PluginScope",
+      "title": "ToMLIR",
       "type": "object"
     },
-    "PyIRAliases": {
+    "to_pyir.Aliases": {
       "additionalProperties": false,
       "properties": {
         "collections": {
-          "$ref": "#/$defs/PyIRAliasesCollections"
+          "$ref": "#/$defs/to_pyir.AliasesCollections"
         },
         "typing": {
-          "$ref": "#/$defs/PyIRAliasesTyping",
+          "$ref": "#/$defs/to_pyir.AliasesTyping",
           "description": "These aliases also apply for `typing_extensions`."
         }
       },
       "required": [],
-      "title": "PyIRAliases",
+      "title": "Aliases",
       "type": "object"
     },
-    "PyIRAliasesCollections": {
+    "to_pyir.AliasesCollections": {
       "additionalProperties": false,
       "properties": {
         "abc": {
-          "$ref": "#/$defs/PyIRAliasesCollectionsAbc"
+          "$ref": "#/$defs/to_pyir.AliasesCollectionsAbc"
         }
       },
       "required": [],
-      "title": "PyIRAliasesCollections",
+      "title": "AliasesCollections",
       "type": "object"
     },
-    "PyIRAliasesCollectionsAbc": {
+    "to_pyir.AliasesCollectionsAbc": {
       "additionalProperties": false,
       "properties": {
         "Sequence": {
@@ -481,10 +582,10 @@
         }
       },
       "required": [],
-      "title": "PyIRAliasesCollectionsAbc",
+      "title": "AliasesCollectionsAbc",
       "type": "object"
     },
-    "PyIRAliasesTyping": {
+    "to_pyir.AliasesTyping": {
       "additionalProperties": false,
       "properties": {
         "Annotated": {
@@ -513,30 +614,14 @@
         }
       },
       "required": [],
-      "title": "PyIRAliasesTyping",
+      "title": "AliasesTyping",
       "type": "object"
     },
-    "PyIRConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "name": {
-          "$ref": "#/$defs/PyIRNameConfig",
-          "description": "Naming conventions for generated code."
-        },
-        "type": {
-          "$ref": "#/$defs/PyIRTypeConfig",
-          "description": "Opinionated type configuration.\n\nThese are edge cases where both options have trade-offs."
-        }
-      },
-      "required": [],
-      "title": "PyIRConfig",
-      "type": "object"
-    },
-    "PyIRNameConfig": {
+    "to_pyir.Naming": {
       "additionalProperties": false,
       "properties": {
         "aliases": {
-          "$ref": "#/$defs/PyIRAliases",
+          "$ref": "#/$defs/to_pyir.Aliases",
           "description": "Import target aliases for standard library types."
         },
         "format_base": {
@@ -547,10 +632,26 @@
         }
       },
       "required": [],
-      "title": "PyIRNameConfig",
+      "title": "Naming",
       "type": "object"
     },
-    "PyIRTypeConfig": {
+    "to_pyir.ToPyIR": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/to_pyir.Naming",
+          "description": "Naming conventions for generated code."
+        },
+        "type": {
+          "$ref": "#/$defs/to_pyir.Types",
+          "description": "Opinionated type configuration.\n\nThese are edge cases where both options have trade-offs."
+        }
+      },
+      "required": [],
+      "title": "ToPyIR",
+      "type": "object"
+    },
+    "to_pyir.Types": {
       "additionalProperties": false,
       "properties": {
         "NamedTuple": {
@@ -571,112 +672,12 @@
         }
       },
       "required": [],
-      "title": "PyIRTypeConfig",
-      "type": "object"
-    },
-    "ReferenceUnwrap": {
-      "additionalProperties": false,
-      "description": "Override how each attribute is chosen when unwraping a ref.\n\n## Notes\nBoth `name` and `description` are resolved independently. Here they are referred to as **value**.\n\n- *\"longest\"*: pick the longest value\n- *\"shortest\"*: pick the shortest value\n    - **note**: The default description is `\"\"`\n- *\"outer\"*: use the value of the definition with a `\"$ref\"` field\n- *\"inner\"*: use the value of the definition without a `\"$ref\"` field\n\n## Examples\n`\"Curve\"` does not add much value to `\"CurveName\"`, but it has a different name and description:\n\n```py\nschema = {\n    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n    \"definitions\": {\n        \"Curve\": {\n            \"$ref\": \"#/definitions/CurveName\",\n            \"description\": \"How to interpolate between control points.\",\n        },\n        \"CurveName\": {\n            \"description\": \"The built-in curve implementations.\",\n            \"enum\": [\"basis\", \"basis-closed\", \"basis-open\"],\n            \"type\": \"string\",\n        },\n    },\n}\n```\n\nBy default, `schema` will be simplified using the `\"outer\"` name (`\"Curve\"`)\nand the `\"longest\"` description (`\"CurveName\"`)\n\n```py\nschema = {\n    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n    \"definitions\": {\n        \"Curve\": {\n            \"description\": \"How to interpolate between control points.\",\n            \"enum\": [\"basis\", \"basis-closed\", \"basis-open\"],\n            \"type\": \"string\",\n        }\n    },\n}\n```",
-      "properties": {
-        "description": {
-          "default": "longest",
-          "enum": [
-            "inner",
-            "longest",
-            "outer",
-            "shortest"
-          ]
-        },
-        "name": {
-          "default": "outer",
-          "enum": [
-            "inner",
-            "longest",
-            "outer",
-            "shortest"
-          ]
-        }
-      },
-      "required": [],
-      "title": "ReferenceUnwrap",
-      "type": "object"
-    },
-    "RemoveAction": {
-      "additionalProperties": false,
-      "description": "Remove matching definitions, without replacement.",
-      "properties": {
-        "action": {
-          "description": "Remove matching definitions, without replacement.",
-          "enum": [
-            "remove"
-          ]
-        },
-        "preserve_children": {
-          "default": false,
-          "description": "If the target definition is a union, substitute references to it with refs to the children.",
-          "type": "boolean"
-        },
-        "scope": {
-          "$ref": "#/$defs/DefsScope"
-        }
-      },
-      "required": [
-        "action"
-      ],
-      "title": "RemoveAction",
-      "type": "object"
-    },
-    "RenameFieldsAction": {
-      "additionalProperties": false,
-      "description": "Rename fields that match a name provided in `overrides`.",
-      "properties": {
-        "action": {
-          "description": "Rename fields that match a name provided in `overrides`.",
-          "enum": [
-            "rename-fields"
-          ]
-        },
-        "overrides": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "A mapping from old name to new name.",
-          "type": "object"
-        },
-        "scope": {
-          "$ref": "#/$defs/DefsScope"
-        }
-      },
-      "required": [
-        "action",
-        "overrides"
-      ],
-      "title": "RenameFieldsAction",
-      "type": "object"
-    },
-    "SourceConfig": {
-      "additionalProperties": false,
-      "description": "A schema source for conversion.",
-      "properties": {
-        "id": {
-          "description": "A unique identifier for the loaded result.\n\nIn the final representation, `id` is used for the name of a python module.",
-          "type": "string"
-        },
-        "path": {
-          "description": "A relative file path.",
-          "format": "uri-reference",
-          "type": "string"
-        }
-      },
-      "required": [
-        "path",
-        "id"
-      ],
-      "title": "SourceConfig",
+      "title": "Types",
       "type": "object"
     }
   },
-  "$ref": "#/$defs/MosaicSpecToml",
+  "$ref": "#/$defs/root.MosaicSpecToml",
+  "title": "MosaicSpecToml",
   "x-tombi-string-formats": [
     "uri-reference",
     "date-time",

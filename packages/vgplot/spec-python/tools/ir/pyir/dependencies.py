@@ -14,12 +14,13 @@ from tools.ir.pyir.definition import ClosedDict, ExtraDict, OpenDict
 from tools.ir.pyir.field import Field
 from tools.ir.pyir.qualifier import ReadOnly, Required
 from tools.ir.pyir.type_param import TypeVar
-from tools.models import base, config as cfg
+from tools.models import base
 
 if t.TYPE_CHECKING:
     import collections.abc as cabc
 
     from tools.common import PyIdentifier, PyIdentifierSnake
+    from tools.config import to_pyir as cfg
 
 __all__ = ("Resolver",)
 
@@ -74,14 +75,14 @@ class Resolver:
     """
 
     def __init__(
-        self, modules: cabc.Mapping[PyIdentifierSnake, CanonicalPath], config: cfg.PyIRNameConfig, /
+        self, modules: cabc.Mapping[PyIdentifierSnake, CanonicalPath], config: cfg.Naming, /
     ) -> None:
         # NOTE: `(Typed)ExtRef` is lossy
         # - It doesn't include the full canonical path.
         # - Hasn't been an issue for my use case, but would be if any modules shared
         #   the same name (but lived in different sub-packages)
         self._canonical: cabc.Mapping[PyIdentifierSnake, CanonicalPath] = modules
-        self._aliases: cfg.PyIRAliases = config.aliases
+        self._aliases: cfg.Aliases = config.aliases
         typing_compat = CanonicalPath("mosaic_spec._typing_compat")
         self._missing_from_data_model: cabc.Mapping[_StdName, CanonicalPath] = {
             "Required": typing_compat,

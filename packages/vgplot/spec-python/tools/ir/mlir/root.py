@@ -8,16 +8,16 @@ from tools.ir.mlir.nodes import MLIR
 from tools.models import base
 
 if TYPE_CHECKING:
+    from tools import config as cfg
     from tools.ir import json_wrapper as jw
     from tools.models.base import DefName
-    from tools.models.config import JsonWrapperToMLIR
 
 
 @final
 class Root(base.RootId[Definition[MLIR]], kw_only=True):
     @classmethod
-    def from_json_wrapper(cls, source: jw.Root, config: JsonWrapperToMLIR, /) -> Root:
-        source.ref_unwrap(config)
+    def from_json_wrapper(cls, source: jw.Root, config: cfg.ToMLIR, /) -> Root:
+        source.ref_unwrap(config.ref_unwrap, config.ref_unwrap_default)
         definitions = {
             name: Definition.from_mlir(convert.from_json(schema, name))
             for name, schema in source.def_items()
