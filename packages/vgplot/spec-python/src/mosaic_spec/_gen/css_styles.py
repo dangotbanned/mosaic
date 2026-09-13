@@ -12,6 +12,8 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     align_self: str
     alignment_baseline: str
     all: str
+    anchor_name: str
+    anchor_scope: str
     animation: str
     animation_composition: str
     animation_delay: str
@@ -21,6 +23,10 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     animation_iteration_count: str
     animation_name: str
     animation_play_state: str
+    animation_range: str
+    animation_range_end: str
+    animation_range_start: str
+    animation_timeline: str
     animation_timing_function: str
     appearance: str
     aspect_ratio: str
@@ -152,7 +158,9 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     direction: str
     display: str
     dominant_baseline: str
+    dynamic_range_limit: str
     empty_cells: str
+    field_sizing: str
     fill: str
     fill_opacity: str
     fill_rule: str
@@ -171,6 +179,7 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     font_family: str
     font_feature_settings: str
     font_kerning: str
+    font_language_override: str
     font_optical_sizing: str
     font_palette: str
     font_size: str
@@ -185,6 +194,7 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     font_variant_alternates: str
     font_variant_caps: str
     font_variant_east_asian: str
+    font_variant_emoji: str
     font_variant_ligatures: str
     font_variant_numeric: str
     font_variant_position: str
@@ -264,6 +274,7 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     mask_size: str
     mask_type: str
     math_depth: str
+    math_shift: str
     math_style: str
     max_block_size: str
     max_height: str
@@ -326,6 +337,12 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     place_self: str
     pointer_events: str
     position: str
+    position_anchor: str
+    position_area: str
+    position_try: str
+    position_try_fallbacks: str
+    position_try_order: str
+    position_visibility: str
     print_color_adjust: str
     quotes: str
     r: str
@@ -364,6 +381,9 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     scroll_snap_align: str
     scroll_snap_stop: str
     scroll_snap_type: str
+    scroll_timeline: str
+    scroll_timeline_axis: str
+    scroll_timeline_name: str
     scrollbar_color: str
     scrollbar_gutter: str
     scrollbar_width: str
@@ -386,6 +406,7 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     text_align: str
     text_align_last: str
     text_anchor: str
+    text_autospace: str
     text_box: str
     text_box_edge: str
     text_box_trim: str
@@ -401,6 +422,7 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     text_emphasis_position: str
     text_emphasis_style: str
     text_indent: str
+    text_justify: str
     text_orientation: str
     text_overflow: str
     text_rendering: str
@@ -411,6 +433,7 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     text_wrap: str
     text_wrap_mode: str
     text_wrap_style: str
+    timeline_scope: str
     top: str
     touch_action: str
     transform: str
@@ -428,6 +451,10 @@ class CSSStyles(TypedDict, total=False, extra_items=str):
     user_select: str
     vector_effect: str
     vertical_align: str
+    view_timeline: str
+    view_timeline_axis: str
+    view_timeline_inset: str
+    view_timeline_name: str
     view_transition_class: str
     view_transition_name: str
     visibility: str
