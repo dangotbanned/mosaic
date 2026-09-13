@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing as t
 
-from tools.codegen.docstrings import doc
 from tools.ir.pyir.base import Definition, Expr, IterExprs, Lines, RefRepl, RuntimeScope, join_comma
 
 
@@ -17,7 +16,7 @@ class TypeVar(Definition):
         value = str(bound) if (bound := self.bound) else join_comma(map(str, self.constraints))
         yield f"{self.name} = TypeVar({self.name!r}{value})"
         if self.doc:
-            yield doc(self.doc)
+            yield f'"""{self.doc}"""'
 
     def iter_exprs(self) -> IterExprs:
         if bound := self.bound:

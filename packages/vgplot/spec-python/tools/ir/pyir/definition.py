@@ -7,7 +7,6 @@ from typing import Literal as L, Self
 
 from tools import ds
 from tools.codegen.convert import py_identifier
-from tools.codegen.docstrings import doc
 from tools.common import PyIdentifier, PyIdentifierSnake, copy_replace
 from tools.ir.pyir import special as sf
 from tools.ir.pyir.base import (
@@ -52,7 +51,7 @@ class TypeAlias(Definition, t.Generic[_E]):  # ruff: ignore[non-pep695-generic-c
             params = f", type_params = {join_comma(tp.as_ref() for tp in type_params)}"
         yield f"{self.name} = {self._ALIAS}({self.name!r}{params})"
         if self.doc:
-            yield doc(self.doc)
+            yield f'"""{self.doc}"""'
 
     def iter_exprs(self) -> IterExprs:
         yield from self.expr.iter_exprs()
@@ -85,7 +84,7 @@ class NewTypeStr(Definition):
     def iter_lines(self) -> Lines:
         yield f"{self.name} = NewType({self.name!r}, str)"
         if self.doc:
-            yield doc(self.doc)
+            yield f'"""{self.doc}"""'
 
     def iter_exprs(self) -> IterExprs:
         yield from ()

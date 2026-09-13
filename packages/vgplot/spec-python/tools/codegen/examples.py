@@ -25,7 +25,6 @@ from typing_extensions import TypedDict
 
 from tools.codegen import markdown
 from tools.codegen.convert import py_identifier_snake
-from tools.codegen.docstrings import doc
 from tools.common import fix_ambiguous_unicode_characters, into_repl_map
 from tools.serde import read_yaml_untyped
 
@@ -156,8 +155,7 @@ class Example:
 
     def render_test_module(self) -> str:
         s = markdown.fix(f"{self.title}\n\n{self.description}")
-        docstring = doc(s)
-        return TEMPLATE_TEST_MODULE.format(doc=docstring, content=self.converted, type=self.type)
+        return TEMPLATE_TEST_MODULE.format(doc=f'"""{s}"""', content=self.converted, type=self.type)
 
     def target_path(self, target_dir: Path) -> Path:
         # kebab-case module names cannot be imported
