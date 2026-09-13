@@ -140,7 +140,7 @@ class Root[K: DefName, D](Struct, kw_only=True):
     def __repr__(self) -> str:
         # NOTE: Fallback used to keep bound method reprs small
         tp = self.__class__
-        module_name = tp.__module__.removeprefix("tools.models.")
+        module_name = tp.__module__.removeprefix("tools.ir.")
         return f"{module_name}.{tp.__name__}{self._describe(names=False)}"
 
     def _describe(self, *, length: bool = True, names: bool = True) -> str:
