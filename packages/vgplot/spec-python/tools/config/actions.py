@@ -5,9 +5,9 @@ from typing import Annotated as A, Literal as L, final
 import msgspec
 from msgspec import field
 
-from tools.codegen.convert import kebab_case
 from tools.config import scopes
 from tools.config.typing import ENTRY_POINT_PATTERN, IterOver
+from tools.ident import kebab_case
 from tools.models.base import DefName, FrozenStruct, IdName
 
 

@@ -24,8 +24,8 @@ import fs
 from typing_extensions import TypedDict
 
 from tools.codegen import markdown
-from tools.codegen.convert import py_identifier_snake
 from tools.common import fix_ambiguous_unicode_characters, into_repl_map
+from tools.ident import py_identifier_snake
 from tools.serde import read_yaml_untyped
 
 if TYPE_CHECKING:

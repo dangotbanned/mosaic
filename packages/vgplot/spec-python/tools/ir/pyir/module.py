@@ -11,8 +11,8 @@ from typing import Literal as L
 
 import msgspec
 
-from tools.codegen.convert import py_identifier_snake
 from tools.common import CanonicalPath, PyIdentifier, PyIdentifierSnake, RichRepr
+from tools.ident import py_identifier_snake
 from tools.ir.pyir.base import Definition, Lines, Ref, TypedExtRef, TypedRef
 from tools.models import base
 

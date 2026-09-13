@@ -7,8 +7,8 @@ import typing as t
 from itertools import chain
 from operator import attrgetter
 
-from tools.codegen.convert import py_identifier_snake
 from tools.common import PyIdentifier, PyIdentifierSnake, ensure_type
+from tools.ident import py_identifier_snake
 from tools.ir import pyir
 from tools.ir.pyir import Ref, TypedExtRef, definition as pyir_d, dsl, expr as pyir_e
 from tools.ir.pyir.definition import ClosedDict, OpenDict

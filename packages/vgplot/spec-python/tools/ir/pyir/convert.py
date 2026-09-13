@@ -4,8 +4,8 @@ import functools
 import typing as t
 
 from tools import ds
-from tools.codegen.convert import py_identifier, py_identifier_snake
 from tools.dispatch import just_dispatch
+from tools.ident import py_identifier, py_identifier_snake
 from tools.ir.mlir import MLIR, Definition as mlir_Definition, nodes as mlir
 from tools.ir.pyir import definition as d, expr, qualifier as q, value
 from tools.ir.pyir.base import ExtRef, Ref

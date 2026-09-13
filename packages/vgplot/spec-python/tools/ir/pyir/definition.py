@@ -6,8 +6,8 @@ from itertools import chain
 from typing import Literal as L, Self
 
 from tools import ds
-from tools.codegen.convert import py_identifier
 from tools.common import PyIdentifier, PyIdentifierSnake, copy_replace
+from tools.ident import py_identifier
 from tools.ir.pyir import special as sf
 from tools.ir.pyir.base import (
     INDENT,

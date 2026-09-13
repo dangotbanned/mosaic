@@ -3,8 +3,8 @@ from __future__ import annotations
 import typing as t
 from typing import Literal as L, Self
 
-from tools.codegen.convert import py_identifier_snake
 from tools.common import copy_replace
+from tools.ident import py_identifier_snake
 from tools.ir.pyir.base import Expr, IterExprs, RefRepl, TypeExpr, join_comma, join_or
 from tools.models import base
 

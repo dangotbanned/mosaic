@@ -9,9 +9,9 @@ from types import ModuleType
 from typing import TYPE_CHECKING, Any, ClassVar, Final, Literal as L, Protocol, assert_never
 
 import tools.config.actions as cfg
-from tools.codegen.convert import kebab_case
 from tools.common import ensure_type
 from tools.config.typing import ACTION_KIND, ENTRY_POINT_PATTERN, ActionKind, IterOver
+from tools.ident import kebab_case
 from tools.ir.mlir import nodes
 from tools.ir.mlir.common import into_name_map, into_ref_map, sort_key_mlir_dict
 from tools.ir.mlir.definition import Definition

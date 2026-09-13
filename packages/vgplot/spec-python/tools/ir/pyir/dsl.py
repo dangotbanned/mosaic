@@ -6,8 +6,7 @@ import collections.abc as _cabc
 import typing as _t
 from typing import TYPE_CHECKING, Literal as L
 
-from tools import ds as _ds
-from tools.codegen import convert as _name
+from tools import ds as _ds, ident as _name
 from tools.ir.pyir import definition as _defn, expr as _e, qualifier as _q, special as _sf
 from tools.ir.pyir.base import Source
 from tools.ir.pyir.field import Field as _Field
