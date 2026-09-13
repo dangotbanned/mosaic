@@ -16,6 +16,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import functools
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Final, LiteralString as LS
@@ -24,7 +25,7 @@ import fs
 from typing_extensions import TypedDict
 
 from tools.codegen import markdown
-from tools.common import fix_ambiguous_unicode_characters, into_repl_map
+from tools.common import ensure_type, fix_ambiguous_unicode_characters, into_repl_map
 from tools.ident import py_identifier_snake
 from tools.serde import read_yaml_untyped
 
@@ -47,12 +48,114 @@ class _Config(TypedDict, total=False):
     extensions: str | list[str]
 
 
-class YamlSpec(TypedDict, total=False, extra_items=JsonIn):
+type _DataInline = list[dict[str, Any]]
+"""DataArray"""
+
+type _DataDef = dict[str, Any]
+"""csv, file, json, json objects, parquet, spatial, table."""
+
+type _DataQuery = str
+"""target for NewType"""
+
+
+class _YamlSpec(TypedDict, total=False, extra_items=JsonIn):
     meta: _Meta
     config: _Config
-    data: dict[str, JsonIn]
+    data: dict[str, _DataInline | _DataDef | _DataQuery]
     params: dict[str, JsonIn]
     plotDefaults: dict[str, JsonIn]
+
+
+@dataclass
+class DataOther:
+    inner: _DataInline | _DataDef
+
+    def __repr__(self) -> str:
+        return self.inner.__str__()
+
+
+@dataclass
+class DataQuery:
+    sql: str
+
+    def __repr__(self) -> str:
+        return f"ms.DataQuery({self.sql!r})"
+
+
+@dataclass
+class Datasets:
+    inner: dict[str, DataQuery | DataOther] = dataclasses.field(default_factory=dict)
+
+    @staticmethod
+    def extract(converted: dict[str, JsonOut]) -> Datasets:
+        data: dict[str, Any] = ensure_type(converted.pop("data", {}), dict)
+        if not data:
+            return Datasets()
+        return Datasets(
+            {k: (DataQuery(v) if isinstance(v, str) else DataOther(v)) for k, v in data.items()}
+        )
+
+    def __bool__(self) -> bool:
+        return bool(self.inner)
+
+
+@dataclass
+class Doc:
+    title: str
+    description: str
+
+    @staticmethod
+    def extract(spec: _YamlSpec, source: Path) -> Doc:
+        if not (meta := spec.pop("meta", {})) or not (title := meta.pop("title", "")):
+            parts, *rest = source.stem.split("-")
+            title = " ".join((parts.title(), *rest))
+        else:
+            title = fix_ambiguous_unicode_characters(title.removesuffix("."))
+        title = f"{title}."
+        if description := meta.pop("description", ""):
+            description = description.strip()
+            if credit := (meta.pop("credit", "").strip()):
+                description = f"{description}\n\n## Credit\n{credit}"
+        elif credit := (meta.pop("credit", "").strip()):
+            description = f"## Credit\n{credit}"
+        else:
+            return Doc(title, "*Missing description*")
+        return Doc(title, fix_ambiguous_unicode_characters(description))
+
+    def render(self) -> str:
+        return f'"""{markdown.fix(f"{self.title}\n\n{self.description}")}"""'
+
+
+@dataclass
+class Example:
+    doc: Doc
+    source: Path
+    converted: dict[str, JsonOut]
+    data: Datasets
+
+    @property
+    def type(self) -> LS:
+        """Symbol from `mosaic_spec` to use as an annotation."""
+        if "plot" in self.converted:
+            return "spec.Plot"
+        if "vconcat" in self.converted:
+            return "spec.VConcat"
+        if "hconcat" in self.converted:
+            return "spec.HConcat"
+        if "input" in self.converted and self.converted["input"] == "table":
+            return "spec.Table"
+        return "Spec"
+
+    def render_test_module(self) -> str:
+        content = {"data": self.data.inner, **self.converted} if self.data else self.converted
+        return TEMPLATE_TEST_MODULE.format(doc=self.doc.render(), content=content, type=self.type)
+
+    def target_path(self, target_dir: Path) -> Path:
+        # kebab-case module names cannot be imported
+        valid_stem = self.source.stem.replace("-", "_")
+        target = target_dir / f"test_{valid_stem}.py"
+        target.touch()
+        return target
 
 
 def py_name(rename_fields: Mapping[str, str], /) -> Callable[[str], str]:
@@ -62,6 +165,54 @@ def py_name(rename_fields: Mapping[str, str], /) -> Callable[[str], str]:
         return get(s) or py_identifier_snake(s)
 
     return functools.cache(name)
+
+
+class ExamplesGenerator:
+    def __init__(
+        self, source_dir: Path, target_dir: Path, rename_fields: Mapping[str, str]
+    ) -> None:
+        self.source_dir: Path = source_dir
+        self.target_dir: Path = target_dir
+        self.rename: Callable[[str], str] = py_name(rename_fields)
+
+    def generate_examples(self) -> None:
+        for source in fs.iter_dir(self.source_dir, ".yaml"):
+            spec = read_yaml_untyped(source)
+            example = self.example(spec, source)
+            target = example.target_path(self.target_dir)
+            content = example.render_test_module()
+            fs.write_lines(target, content, "Generated example")
+
+    def example(self, spec: _YamlSpec, source: Path) -> Example:
+        doc = Doc.extract(spec, source)
+        _py_name = self.rename
+        _translate = self._translate_inner
+        converted = {_py_name(k): _translate(v) for k, v in spec.items()}
+        data = Datasets.extract(converted)
+        return Example(doc, source, converted, data)
+
+    def _translate_inner(self, obj: JsonIn | Any, /) -> JsonOut:
+        _stop = _STOP
+        _list: Final = list
+        _py_name = self.rename
+        _translate = self._translate_inner
+        if isinstance(obj, _stop):
+            return obj
+        if isinstance(obj, _list):
+            return [_translate(el) for el in obj]
+        if _LIST_AS_TUPLE.isdisjoint(obj):
+            return {_py_name(k): _translate(v) for k, v in obj.items()}
+        return {
+            k_: (
+                tuple(_translate(el) for el in v)
+                if k_ in _LIST_AS_TUPLE and isinstance(v, _list)
+                else [_translate(el) for el in v]
+                if isinstance(v, _list)
+                else _translate(v)
+            )
+            for k, v in obj.items()
+            if (k_ := _py_name(k))
+        }
 
 
 _LIST_AS_TUPLE: Final = frozenset(
@@ -109,108 +260,6 @@ When deserializing, they will be a `list` and therefore produce typing yells.
 """
 
 _STOP: Final = bool, int, float, str, type(None)
-
-
-type Title = str
-type Description = str
-
-
-def _extract_doc_components(spec: YamlSpec, source: Path) -> tuple[Title, Description]:
-    if not (meta := spec.pop("meta", {})) or not (title := meta.pop("title", "")):
-        parts, *rest = source.stem.split("-")
-        title = " ".join((parts.title(), *rest))
-    else:
-        title = fix_ambiguous_unicode_characters(title.removesuffix("."))
-    title = f"{title}."
-    if description := meta.pop("description", ""):
-        description = description.strip()
-        if credit := (meta.pop("credit", "").strip()):
-            description = f"{description}\n\n## Credit\n{credit}"
-    elif credit := (meta.pop("credit", "").strip()):
-        description = f"## Credit\n{credit}"
-    else:
-        return title, "*Missing description*"
-    return title, fix_ambiguous_unicode_characters(description)
-
-
-@dataclass
-class Example:
-    title: Title
-    description: Description
-    source: Path
-    converted: dict[str, JsonOut]
-
-    @property
-    def type(self) -> LS:
-        """Symbol from `mosaic_spec` to use as an annotation."""
-        if "plot" in self.converted:
-            return "spec.Plot"
-        if "vconcat" in self.converted:
-            return "spec.VConcat"
-        if "hconcat" in self.converted:
-            return "spec.HConcat"
-        if "input" in self.converted and self.converted["input"] == "table":
-            return "spec.Table"
-        return "Spec"
-
-    def render_test_module(self) -> str:
-        s = markdown.fix(f"{self.title}\n\n{self.description}")
-        return TEMPLATE_TEST_MODULE.format(doc=f'"""{s}"""', content=self.converted, type=self.type)
-
-    def target_path(self, target_dir: Path) -> Path:
-        # kebab-case module names cannot be imported
-        valid_stem = self.source.stem.replace("-", "_")
-        target = target_dir / f"test_{valid_stem}.py"
-        target.touch()
-        return target
-
-
-class ExamplesGenerator:
-    def __init__(
-        self, source_dir: Path, target_dir: Path, rename_fields: Mapping[str, str]
-    ) -> None:
-        self.source_dir: Path = source_dir
-        self.target_dir: Path = target_dir
-        self.rename: Callable[[str], str] = py_name(rename_fields)
-
-    def generate(self) -> None:
-        for source in fs.iter_dir(self.source_dir, ".yaml"):
-            spec: YamlSpec = read_yaml_untyped(source)
-            example = self._translate(spec, source)
-            target = example.target_path(self.target_dir)
-            content = example.render_test_module()
-            fs.write_lines(target, content, "Generated example")
-
-    def _translate(self, spec: YamlSpec, source: Path) -> Example:
-        title, description = _extract_doc_components(spec, source)
-        _py_name = self.rename
-        _translate = self._translate_inner
-        converted = {_py_name(k): _translate(v) for k, v in spec.items()}
-        return Example(title, description, source, converted)
-
-    def _translate_inner(self, obj: JsonIn | Any, /) -> JsonOut:
-        _stop = _STOP
-        _list: Final = list
-        _py_name = self.rename
-        _translate = self._translate_inner
-        if isinstance(obj, _stop):
-            return obj
-        if isinstance(obj, _list):
-            return [_translate(el) for el in obj]
-        if _LIST_AS_TUPLE.isdisjoint(obj):
-            return {_py_name(k): _translate(v) for k, v in obj.items()}
-        return {
-            k_: (
-                tuple(_translate(el) for el in v)
-                if k_ in _LIST_AS_TUPLE and isinstance(v, _list)
-                else [_translate(el) for el in v]
-                if isinstance(v, _list)
-                else _translate(v)
-            )
-            for k, v in obj.items()
-            if (k_ := _py_name(k))
-        }
-
 
 TEMPLATE_TEST_MODULE: Final = """\
 {doc}

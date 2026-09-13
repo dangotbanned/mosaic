@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Any, Literal as L
+from typing import Any, Literal as L, NewType
 
 from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
 
@@ -136,7 +136,7 @@ class DataParquet(TypedDict, total=False, closed=True):
     """A filter (WHERE clause) to apply upon load. Only rows that pass the filter are included."""
 
 
-DataQuery = TypeAliasType("DataQuery", str)
+DataQuery = NewType("DataQuery", str)
 """A SQL query defining a new temporary database table."""
 
 

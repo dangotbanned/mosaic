@@ -11,17 +11,14 @@ Adapted from an [Observable Plot example].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
     _spec: ms.spec.Plot = {
         "data": {
             "travelers": {"file": "data/travelers.parquet"},
-            "endpoint": "SELECT * FROM travelers ORDER BY date DESC LIMIT 1\n",
+            "endpoint": ms.DataQuery("SELECT * FROM travelers ORDER BY date DESC LIMIT 1\n"),
         },
         "plot": [
             {"mark": "ruleY", "data": [0]},

@@ -11,10 +11,7 @@ Adapted from an [Observable Plot example].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -26,7 +23,9 @@ def test_infer() -> None:
                 "layer": "counties",
             },
             "rates": {"file": "data/us-county-unemployment.parquet"},
-            "combined": "SELECT a.geom AS geom, b.rate AS rate FROM counties AS a, rates AS b WHERE a.id = b.id\n",
+            "combined": ms.DataQuery(
+                "SELECT a.geom AS geom, b.rate AS rate FROM counties AS a, rates AS b WHERE a.id = b.id\n"
+            ),
         },
         "vconcat": [
             {"legend": "color", "plot": "county-map", "label": "Unemployment (%)"},

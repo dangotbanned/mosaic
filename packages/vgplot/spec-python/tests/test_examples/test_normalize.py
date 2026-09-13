@@ -7,17 +7,16 @@ and parameterized expressions reactively update in response.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
     _spec: ms.spec.Plot = {
         "data": {
             "stocks": {"file": "data/stocks.parquet"},
-            "labels": "SELECT MAX(Date) as Date, ARGMAX(Close, Date) AS Close, Symbol FROM stocks GROUP BY Symbol",
+            "labels": ms.DataQuery(
+                "SELECT MAX(Date) as Date, ARGMAX(Close, Date) AS Close, Symbol FROM stocks GROUP BY Symbol"
+            ),
         },
         "params": {"point": {"date": "2013-05-13"}},
         "plot": [

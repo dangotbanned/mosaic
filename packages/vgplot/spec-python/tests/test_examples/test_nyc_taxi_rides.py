@@ -11,15 +11,11 @@ _You may need to wait a few seconds for the dataset to load._
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
     _spec: ms.spec.VConcat = {
-        "config": {"extensions": "spatial"},
         "data": {
             "rides": {
                 "file": "https://pub-1da360b43ceb401c809f68ca37c7f8a4.r2.dev/data/nyc-rides-2010.parquet",
@@ -29,8 +25,11 @@ def test_infer() -> None:
                     "ST_Transform(ST_Point(dropoff_latitude, dropoff_longitude), 'EPSG:4326', 'ESRI:102718') AS drop",
                 ],
             },
-            "trips": "SELECT\n  (HOUR(datetime) + MINUTE(datetime)/60) AS time,\n  ST_X(pick) AS px, ST_Y(pick) AS py,\n  ST_X(drop) AS dx, ST_Y(drop) AS dy\nFROM rides\n",
+            "trips": ms.DataQuery(
+                "SELECT\n  (HOUR(datetime) + MINUTE(datetime)/60) AS time,\n  ST_X(pick) AS px, ST_Y(pick) AS py,\n  ST_X(drop) AS dx, ST_Y(drop) AS dy\nFROM rides\n"
+            ),
         },
+        "config": {"extensions": "spatial"},
         "params": {"filter": {"select": "crossfilter"}},
         "vconcat": [
             {

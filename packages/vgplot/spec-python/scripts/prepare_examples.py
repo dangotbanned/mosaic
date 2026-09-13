@@ -22,7 +22,7 @@ def main(target_dir: Path, /) -> None:
         package_init.touch()
 
     rename = dict(App.discover()._iter_rename_fields_overrides())
-    ExamplesGenerator(fs.EXAMPLES_SPECS_YAML, target_dir, rename).generate()
+    ExamplesGenerator(fs.EXAMPLES_SPECS_YAML, target_dir, rename).generate_examples()
 
 
 if __name__ == "__main__":
