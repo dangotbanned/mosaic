@@ -22,7 +22,6 @@ scope.ref_follow_depth         = 6
 action                         = "new-tree"
 id                             = "typing"
 scope.include.id               = ["mosaic"]
-# TODO: `ColorScheme` Needs to remove 1x `Record<never, never>`
 scope.include.definition.names = [
   "ChannelDomainValue",
   "ColorScaleType",
@@ -50,6 +49,12 @@ scope.include.definition.names = [
 ]
 scope.over                     = "descendants"
 scope.ref_follow_depth         = 2
+
+[[convert.to_mlir.actions]]
+action                         = "plugin"
+entry_point                    = "scripts.plugins.mlir_actions:fix_color_scheme"
+scope.include.id               = ["typing"]
+scope.include.definition.names = ["ColorScheme"]
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"

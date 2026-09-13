@@ -2,7 +2,7 @@
 # Regenerate with: pnpm generate
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from typing import Any, Literal as L
 
 from mosaic_spec._typing_compat import TypeAliasType
@@ -160,8 +160,58 @@ ColorScheme = TypeAliasType(
         "YlGnBu",
         "YlOrBr",
         "YlOrRd",
-    ]
-    | Mapping[str, Any],
+        "accent",
+        "blues",
+        "brbg",
+        "bugn",
+        "bupu",
+        "burd",
+        "buylrd",
+        "category10",
+        "cividis",
+        "cool",
+        "cubehelix",
+        "dark2",
+        "gnbu",
+        "greens",
+        "greys",
+        "inferno",
+        "magma",
+        "observable10",
+        "oranges",
+        "orrd",
+        "paired",
+        "pastel1",
+        "pastel2",
+        "piyg",
+        "plasma",
+        "prgn",
+        "pubu",
+        "pubugn",
+        "puor",
+        "purd",
+        "purples",
+        "rainbow",
+        "rdbu",
+        "rdgy",
+        "rdpu",
+        "rdylbu",
+        "rdylgn",
+        "reds",
+        "set1",
+        "set2",
+        "set3",
+        "sinebow",
+        "spectral",
+        "tableau10",
+        "turbo",
+        "viridis",
+        "warm",
+        "ylgn",
+        "ylgnbu",
+        "ylorbr",
+        "ylorrd",
+    ],
 )
 """The built-in color schemes. For categorical data, one of:
 

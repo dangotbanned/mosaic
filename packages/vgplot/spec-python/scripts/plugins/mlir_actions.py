@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import typing as t
+from itertools import chain
 
 from tools.common import ensure_type
 from tools.ir import mlir
 from tools.ir.mlir import MLIR, Definition, nodes
 from tools.ir.mlir.nodes import ClosedDict, Union, ref
+from tools.models.base import Lit
 
 if t.TYPE_CHECKING:
     from collections.abc import Iterator
@@ -63,6 +65,20 @@ def fix_tip(action: mlir.Plugin, roots: mlir.RootsMut) -> Iterator[mlir.Root]:
 
             if new_defs:
                 root.definitions.update(new_defs)
+        yield root
+
+
+@mlir.actions_plugin
+def fix_color_scheme(action: mlir.Plugin, roots: mlir.RootsMut) -> Iterator[mlir.Root]:
+    """Remove `Record<never, never>` artifact and add lowercase versions of colors."""
+    for root in roots:
+        if action.matcher.matches_root(root):
+            name, defn = next(iter(action.matcher.matching_definitions(root)))
+            inner = ensure_type(defn.inner, Union, name=name)
+            lit = next(m for m in inner.members if isinstance(m, nodes.Literal))
+            lit_lower = (Lit(m.lower()) for m in lit.members if isinstance(m, str))
+            lit_both = lit.__replace__(members=tuple(chain(lit.members, lit_lower)), doc=inner.doc)
+            root.definitions[name] = new_def(lit_both)
         yield root
 
 
