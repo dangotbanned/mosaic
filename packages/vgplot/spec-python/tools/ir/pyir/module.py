@@ -210,6 +210,7 @@ def _child_package_name(parent: CanonicalPath, child: CanonicalPath) -> PyIdenti
 _get_name = itemgetter(0)
 
 
+# TODO @dangotbanned: Add an optional `doc` field, after thinking about when to introduce it
 @t.final
 class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
     """A representation of a Python module.
