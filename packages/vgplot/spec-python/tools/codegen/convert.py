@@ -4,16 +4,9 @@ import functools
 import re
 import string
 from keyword import iskeyword as is_keyword
-from typing import ClassVar, Final, Self
+from typing import ClassVar, Self
 
 from tools.common import PyIdentifier, PyIdentifierSnake
-
-KEYS_REPLACE: Final = {"as": "bind", "from": "source", "for": "plot"}
-"""Keys that collide with [`keyword.kwlist`][], but the values are required.
-
-These keys only appear in `"properties"` and `"required"`, the challenge is finding those guys.
-"""
-
 
 _REPL_ADD_UNDERSCORE = r"\g<1>_\g<2>"
 _REPL_ADD_HYPHEN = r"\g<1>-\g<2>"

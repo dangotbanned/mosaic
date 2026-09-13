@@ -159,7 +159,8 @@ def write_lines(target: IntoPath, lines: Iterable[str], /, message: str | None =
     """Join `lines` and write them to `target`."""
     target = Path(target)
     target.touch()
-    target.write_text("\n".join(lines), "utf8", newline="\n")
+    lines = lines if isinstance(lines, str) else "\n".join(lines)
+    target.write_text(lines, "utf-8", newline="\n")
     if message:
         from tools._rich import print_path
 

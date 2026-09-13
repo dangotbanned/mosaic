@@ -332,3 +332,14 @@ class App:
         scripts.plugins.pyir_actions.run(self)
         if not quiet:
             print("Finished pyir plugins")
+
+    def _iter_rename_fields_overrides(self) -> Iterator[tuple[str, str]]:
+        """Yield `action = "rename-fields"` overrides.
+
+        Maps from old name to new name.
+        """
+        from tools.config.actions import RenameFields
+
+        for action in self.config.convert.to_mlir.actions:
+            if isinstance(action, RenameFields):
+                yield from action.overrides.items()
