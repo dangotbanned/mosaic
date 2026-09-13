@@ -23,15 +23,16 @@ class Source(FrozenStruct, frozen=True, forbid_unknown_fields=True):
 
 # TODO @dangotbanned: really should use less verbose names
 class Convert(FrozenStruct, frozen=True, forbid_unknown_fields=True):
-    """Top-level config for translation/codegen."""
+    """Configure translation/codegen."""
 
-    sources: Sequence[Source] = field(default_factory=list[Source])
     to_mlir: ToMLIR = field(default_factory=ToMLIR)
     to_pyir: ToPyIR = field(default_factory=ToPyIR)
 
 
 @final
 class MosaicSpecToml(FrozenStruct, frozen=True, forbid_unknown_fields=True):
-    """Top-level config for everything!"""
+    """Top-level config."""
 
+    sources: Sequence[Source] = field(default_factory=list[Source])
+    """Schemas to convert."""
     convert: Convert = field(default_factory=Convert)

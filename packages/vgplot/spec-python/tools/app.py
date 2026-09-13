@@ -200,7 +200,7 @@ class App:
 
     def into_json_wrapper(self, *, quiet: bool = False) -> None:
         """Deserialize source schema(s) and wrap them in `JSONWrapper` nodes."""
-        if not (sources := self.config.convert.sources):
+        if not (sources := self.config.sources):
             msg = "Empty sources"
             raise NotImplementedError(msg)
         self._wrappers = deque(jw.Root.from_json(source.path, source.id) for source in sources)

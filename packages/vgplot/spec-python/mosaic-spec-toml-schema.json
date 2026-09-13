@@ -192,14 +192,8 @@
     },
     "root.Convert": {
       "additionalProperties": false,
-      "description": "Top-level config for translation/codegen.",
+      "description": "Configure translation/codegen.",
       "properties": {
-        "sources": {
-          "items": {
-            "$ref": "#/$defs/root.Source"
-          },
-          "type": "array"
-        },
         "to_mlir": {
           "$ref": "#/$defs/to_mlir.ToMLIR"
         },
@@ -213,10 +207,17 @@
     },
     "root.MosaicSpecToml": {
       "additionalProperties": false,
-      "description": "Top-level config for everything!",
+      "description": "Top-level config.",
       "properties": {
         "convert": {
           "$ref": "#/$defs/root.Convert"
+        },
+        "sources": {
+          "description": "Schemas to convert.",
+          "items": {
+            "$ref": "#/$defs/root.Source"
+          },
+          "type": "array"
         }
       },
       "required": [],
