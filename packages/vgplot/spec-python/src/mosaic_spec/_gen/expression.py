@@ -1,4 +1,5 @@
-# Generated: `mosaic_spec._gen.expression`
+# NOTE: DO NOT EDIT MANUALLY.
+# Regenerate with: pnpm generate
 from __future__ import annotations
 
 from mosaic_spec._typing_compat import Required, TypedDict

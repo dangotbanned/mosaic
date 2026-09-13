@@ -34,6 +34,9 @@ Either option will implicitly exclude `_`-prefixed names.
 type ExportSpec = Mapping[CanonicalPath, ExportKind | tuple[PyIdentifier, ...]]
 type PyIdentifierAny = PyIdentifier | PyIdentifierSnake
 
+# TODO @dangotbanned: Expose this in config
+GENERATED_COMMENT: t.Final = "# NOTE: DO NOT EDIT MANUALLY.\n# Regenerate with: pnpm generate"
+
 
 # NOTE: Why is `Package` separated from `Module`?
 # - In Python's data model
@@ -164,7 +167,7 @@ class Package(base.Struct, kw_only=True):
         # NOTE: Pretend that this doesn't need to handle `Module`s for now.
         # `Module.generate` is called independently to allow sharing a cache of imports between all modules
         self_canonical = self.canonical_path
-        yield f"# Generated: `{self_canonical}`"
+        yield GENERATED_COMMENT
         yield "from __future__ import annotations\n"
         exporter = Exporter()
         if not (export_spec := self.export_spec):
@@ -238,7 +241,7 @@ class Module(base.Root[PyIdentifier | str, Definition], kw_only=True):
             msg = f"Module {self.canonical_path!r} does not have any definitions to generate."
             raise TypeError(msg)
         get = self.definitions.__getitem__
-        yield f"# Generated: `{self.canonical_path}`"
+        yield GENERATED_COMMENT
         yield "from __future__ import annotations\n"
         yield from sorted(resolver.iter_imports(self.def_values()))
         yield ""

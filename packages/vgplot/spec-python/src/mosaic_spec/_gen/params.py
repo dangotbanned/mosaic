@@ -1,4 +1,5 @@
-# Generated: `mosaic_spec._gen.params`
+# NOTE: DO NOT EDIT MANUALLY.
+# Regenerate with: pnpm generate
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence

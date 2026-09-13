@@ -1,4 +1,5 @@
-# Generated: `mosaic_spec`
+# NOTE: DO NOT EDIT MANUALLY.
+# Regenerate with: pnpm generate
 from __future__ import annotations
 
 from mosaic_spec import spec

@@ -1,4 +1,5 @@
-# Generated: `mosaic_spec._gen.inputs`
+# NOTE: DO NOT EDIT MANUALLY.
+# Regenerate with: pnpm generate
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Literal as L

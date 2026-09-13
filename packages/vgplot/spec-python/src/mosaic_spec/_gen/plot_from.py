@@ -1,4 +1,5 @@
-# Generated: `mosaic_spec._gen.plot_from`
+# NOTE: DO NOT EDIT MANUALLY.
+# Regenerate with: pnpm generate
 from __future__ import annotations
 
 from collections.abc import Sequence
