@@ -1,5 +1,5 @@
 from __future__ import annotations
 
-from tools.codegen import markdown
+from tools.codegen import examples, markdown
 
-__all__ = ("markdown",)
+__all__ = ("examples", "markdown")
