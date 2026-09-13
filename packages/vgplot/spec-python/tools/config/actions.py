@@ -5,13 +5,8 @@ from typing import Annotated as A, Literal as L, final
 import msgspec
 from msgspec import field
 
-from tools.config.scopes import (
-    ChildrenScope,
-    DefsDescendantsScope,
-    DefsScope,
-    PluginScope,
-    _BaseScopes,
-)
+from tools.codegen.convert import kebab_case
+from tools.config import scopes
 from tools.config.typing import ENTRY_POINT_PATTERN, IterOver
 from tools.models.base import DefName, FrozenStruct, IdName
 
@@ -20,27 +15,20 @@ class _Base[Over: IterOver](
     FrozenStruct,
     frozen=True,
     kw_only=True,
-    tag=True,
+    tag=kebab_case,
     tag_field="action",
     forbid_unknown_fields=True,
 ):
     """Combines a search space (`scope`) and what to do with it (`action`, ...)."""
 
-    scope: _BaseScopes[Over]
+    scope: scopes._BaseScopes[Over]
 
 
 @final
-class AsDefsAction(
-    _Base[L["children"]],
-    frozen=True,
-    kw_only=True,
-    tag="as-defs",
-    tag_field="action",
-    forbid_unknown_fields=True,
-):
+class AsDefs(_Base[L["children"]], frozen=True, kw_only=True, forbid_unknown_fields=True):
     """Lift one or more anonymous types, within a union, into new definitions."""
 
-    scope: ChildrenScope = field(default_factory=ChildrenScope)
+    scope: scopes.Children = field(default_factory=scopes.Children)
     discriminator: str = ""
     """The name of a discriminator field, if this action targets a [discriminated union][1].
 
@@ -51,30 +39,18 @@ class AsDefsAction(
 
 
 @final
-class AsDefsFieldAction(
-    _Base[L["children"]],
-    frozen=True,
-    kw_only=True,
-    tag="as-defs-field",
-    tag_field="action",
-    forbid_unknown_fields=True,
-):
+class AsDefsField(_Base[L["children"]], frozen=True, kw_only=True, forbid_unknown_fields=True):
     """Lift unrepresentable anonymous types from field(s) into definitions.
 
     Target fields can be selected via `scope.include.child.field_names`.
     """
 
-    scope: ChildrenScope = field(default_factory=ChildrenScope)
+    scope: scopes.Children = field(default_factory=scopes.Children)
 
 
 @final
-class NewTreeAction(
-    _Base[L["definitions", "descendants"]],
-    frozen=True,
-    kw_only=True,
-    tag="new-tree",
-    tag_field="action",
-    forbid_unknown_fields=True,
+class NewTree(
+    _Base[L["definitions", "descendants"]], frozen=True, kw_only=True, forbid_unknown_fields=True
 ):
     """Derive a new `Root` from another, taking ownership of related definitions.
 
@@ -85,7 +61,7 @@ class NewTreeAction(
     - creates a new `mlir.Root` per-action
     """
 
-    scope: DefsDescendantsScope = field(default_factory=DefsDescendantsScope)
+    scope: scopes.DefsDescendants = field(default_factory=scopes.DefsDescendants)
     id: IdName
     """The name of the new `Root`."""
 
@@ -97,50 +73,29 @@ class NewTreeAction(
 
 
 @final
-class RemoveAction(
-    _Base[L["definitions"]],
-    frozen=True,
-    kw_only=True,
-    tag="remove",
-    tag_field="action",
-    forbid_unknown_fields=True,
-):
+class Remove(_Base[L["definitions"]], frozen=True, kw_only=True, forbid_unknown_fields=True):
     """Remove matching definitions, without replacement."""
 
-    scope: DefsScope = field(default_factory=DefsScope)
+    scope: scopes.Defs = field(default_factory=scopes.Defs)
     # NOTE: Option is a possible candidate for a plugin
     preserve_children: bool = False
     """If the target definition is a union, substitute references to it with refs to the children."""
 
 
 @final
-class RenameFieldsAction(
-    _Base[L["definitions"]],
-    frozen=True,
-    kw_only=True,
-    tag="rename-fields",
-    tag_field="action",
-    forbid_unknown_fields=True,
-):
+class RenameFields(_Base[L["definitions"]], frozen=True, kw_only=True, forbid_unknown_fields=True):
     """Rename fields that match a name provided in `overrides`."""
 
-    scope: DefsScope = field(default_factory=DefsScope)
+    scope: scopes.Defs = field(default_factory=scopes.Defs)
     overrides: cabc.Mapping[str, str]
     """A mapping from old name to new name."""
 
 
 @final
-class PluginAction(
-    _Base[IterOver],
-    frozen=True,
-    kw_only=True,
-    tag="plugin",
-    tag_field="action",
-    forbid_unknown_fields=True,
-):
+class Plugin(_Base[IterOver], frozen=True, kw_only=True, forbid_unknown_fields=True):
     """You're on your own, jim."""
 
-    scope: PluginScope = field(default_factory=PluginScope)
+    scope: scopes.Plugin = field(default_factory=scopes.Plugin)
     entry_point: A[str, msgspec.Meta(pattern=ENTRY_POINT_PATTERN["json"])]
     """The path to the plugin definition.
 
@@ -159,11 +114,4 @@ class PluginAction(
     """Namespace for arbitrary data passed to the plugin."""
 
 
-type Action = (
-    AsDefsAction
-    | AsDefsFieldAction
-    | NewTreeAction
-    | RemoveAction
-    | RenameFieldsAction
-    | PluginAction
-)
+type Action = AsDefs | AsDefsField | NewTree | Remove | RenameFields | Plugin

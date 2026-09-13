@@ -58,21 +58,17 @@ class _BaseScopes[Over: IterOver](
 
 
 @final
-class ChildrenScope(
-    _BaseScopes[L["children"]], frozen=True, kw_only=True, forbid_unknown_fields=True
-):
+class Children(_BaseScopes[L["children"]], frozen=True, kw_only=True, forbid_unknown_fields=True):
     over: L["children"] = "children"
 
 
 @final
-class DefsScope(
-    _BaseScopes[L["definitions"]], frozen=True, kw_only=True, forbid_unknown_fields=True
-):
+class Defs(_BaseScopes[L["definitions"]], frozen=True, kw_only=True, forbid_unknown_fields=True):
     over: L["definitions"] = "definitions"
 
 
 @final
-class DefsDescendantsScope(
+class DefsDescendants(
     _BaseScopes[L["definitions", "descendants"]],
     frozen=True,
     kw_only=True,
@@ -97,9 +93,9 @@ class DefsDescendantsScope(
 
 
 @final
-class PluginScope(_BaseScopes[IterOver], frozen=True, kw_only=True, forbid_unknown_fields=True):
+class Plugin(_BaseScopes[IterOver], frozen=True, kw_only=True, forbid_unknown_fields=True):
     over: IterOver = "definitions"
     ref_follow_depth: Depth = 0
 
 
-type Scopes = ChildrenScope | DefsScope | DefsDescendantsScope | PluginScope
+type Scopes = Children | Defs | DefsDescendants | Plugin

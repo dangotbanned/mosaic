@@ -94,7 +94,7 @@ class Plugin(_MultiOver[IterOver]):
 
     _PATTERN: ClassVar = re.compile(ENTRY_POINT_PATTERN["python"])
 
-    def __init__(self, config: cfg.PluginAction) -> None:
+    def __init__(self, config: cfg.Plugin) -> None:
         self.matcher = Matcher.from_scopes(config.scope)
         self.entry_point = config.entry_point
         self.extra = config.extra
@@ -499,17 +499,17 @@ def rename_fields_error(
 def from_config(configs: Sequence[cfg.Action], /) -> Iterator[tuple[int, Action]]:
     for idx, config in enumerate(configs):
         match config:
-            case cfg.RemoveAction(scope=scope, preserve_children=preserve):
+            case cfg.Remove(scope=scope, preserve_children=preserve):
                 item = Remove(Matcher.from_scopes(scope), preserve_children=preserve)
-            case cfg.NewTreeAction(scope=scope, id=id, into_ext_ref=into_ext_ref):
+            case cfg.NewTree(scope=scope, id=id, into_ext_ref=into_ext_ref):
                 item = NewTree(Matcher.from_scopes(scope), scope.over, id, into_ext_ref)
-            case cfg.AsDefsAction(scope=scope, discriminator=discriminator):
+            case cfg.AsDefs(scope=scope, discriminator=discriminator):
                 item = AsDefs(Matcher.from_scopes(scope), discriminator)
-            case cfg.RenameFieldsAction(scope=scope, overrides=overrides):
+            case cfg.RenameFields(scope=scope, overrides=overrides):
                 item = RenameFields(Matcher.from_scopes(scope), overrides)
-            case cfg.AsDefsFieldAction(scope=scope):
+            case cfg.AsDefsField(scope=scope):
                 item = AsDefsField(Matcher.from_scopes(scope))
-            case cfg.PluginAction():
+            case cfg.Plugin():
                 item = Plugin(config)
             case _:
                 assert_never(config)

@@ -1,6 +1,6 @@
 {
   "$defs": {
-    "actions.AsDefsAction": {
+    "actions.AsDefs": {
       "additionalProperties": false,
       "description": "Lift one or more anonymous types, within a union, into new definitions.",
       "properties": {
@@ -16,16 +16,16 @@
           "type": "string"
         },
         "scope": {
-          "$ref": "#/$defs/scopes.ChildrenScope"
+          "$ref": "#/$defs/scopes.Children"
         }
       },
       "required": [
         "action"
       ],
-      "title": "AsDefsAction",
+      "title": "AsDefs",
       "type": "object"
     },
-    "actions.AsDefsFieldAction": {
+    "actions.AsDefsField": {
       "additionalProperties": false,
       "description": "Lift unrepresentable anonymous types from field(s) into definitions.\n\nTarget fields can be selected via `scope.include.child.field_names`.",
       "properties": {
@@ -36,16 +36,16 @@
           ]
         },
         "scope": {
-          "$ref": "#/$defs/scopes.ChildrenScope"
+          "$ref": "#/$defs/scopes.Children"
         }
       },
       "required": [
         "action"
       ],
-      "title": "AsDefsFieldAction",
+      "title": "AsDefsField",
       "type": "object"
     },
-    "actions.NewTreeAction": {
+    "actions.NewTree": {
       "additionalProperties": false,
       "description": "Derive a new `Root` from another, taking ownership of related definitions.\n\nThis action could be considered taking a cutting from a tree and \"re-planting\" it.\n\n## Notes\n- differs by not requiring 1 `root_name: DefName`, since multiple definitions can match\n- creates a new `mlir.Root` per-action",
       "properties": {
@@ -68,17 +68,17 @@
           "type": "object"
         },
         "scope": {
-          "$ref": "#/$defs/scopes.DefsDescendantsScope"
+          "$ref": "#/$defs/scopes.DefsDescendants"
         }
       },
       "required": [
         "action",
         "id"
       ],
-      "title": "NewTreeAction",
+      "title": "NewTree",
       "type": "object"
     },
-    "actions.PluginAction": {
+    "actions.Plugin": {
       "additionalProperties": false,
       "description": "You're on your own, jim.",
       "properties": {
@@ -100,17 +100,17 @@
           "type": "object"
         },
         "scope": {
-          "$ref": "#/$defs/scopes.PluginScope"
+          "$ref": "#/$defs/scopes.Plugin"
         }
       },
       "required": [
         "action",
         "entry_point"
       ],
-      "title": "PluginAction",
+      "title": "Plugin",
       "type": "object"
     },
-    "actions.RemoveAction": {
+    "actions.Remove": {
       "additionalProperties": false,
       "description": "Remove matching definitions, without replacement.",
       "properties": {
@@ -126,16 +126,16 @@
           "type": "boolean"
         },
         "scope": {
-          "$ref": "#/$defs/scopes.DefsScope"
+          "$ref": "#/$defs/scopes.Defs"
         }
       },
       "required": [
         "action"
       ],
-      "title": "RemoveAction",
+      "title": "Remove",
       "type": "object"
     },
-    "actions.RenameFieldsAction": {
+    "actions.RenameFields": {
       "additionalProperties": false,
       "description": "Rename fields that match a name provided in `overrides`.",
       "properties": {
@@ -153,14 +153,14 @@
           "type": "object"
         },
         "scope": {
-          "$ref": "#/$defs/scopes.DefsScope"
+          "$ref": "#/$defs/scopes.Defs"
         }
       },
       "required": [
         "action",
         "overrides"
       ],
-      "title": "RenameFieldsAction",
+      "title": "RenameFields",
       "type": "object"
     },
     "ref_unwrap.ReferenceUnwrap": {
@@ -244,7 +244,7 @@
       "title": "Source",
       "type": "object"
     },
-    "scopes.ChildrenScope": {
+    "scopes.Children": {
       "additionalProperties": false,
       "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
       "properties": {
@@ -265,10 +265,34 @@
         }
       },
       "required": [],
-      "title": "ChildrenScope",
+      "title": "Children",
       "type": "object"
     },
-    "scopes.DefsDescendantsScope": {
+    "scopes.Defs": {
+      "additionalProperties": false,
+      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
+      "properties": {
+        "exclude": {
+          "$ref": "#/$defs/selectors.Filter",
+          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
+        },
+        "include": {
+          "$ref": "#/$defs/selectors.Filter",
+          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
+        },
+        "over": {
+          "default": "definitions",
+          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
+          "enum": [
+            "definitions"
+          ]
+        }
+      },
+      "required": [],
+      "title": "Defs",
+      "type": "object"
+    },
+    "scopes.DefsDescendants": {
       "additionalProperties": false,
       "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
       "properties": {
@@ -307,34 +331,10 @@
         }
       },
       "required": [],
-      "title": "DefsDescendantsScope",
+      "title": "DefsDescendants",
       "type": "object"
     },
-    "scopes.DefsScope": {
-      "additionalProperties": false,
-      "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
-      "properties": {
-        "exclude": {
-          "$ref": "#/$defs/selectors.Filter",
-          "description": "Reject candidates that meet these constraints.\n\nBy default, the search does not exclude."
-        },
-        "include": {
-          "$ref": "#/$defs/selectors.Filter",
-          "description": "Require matches to meet these constraints for inclusion.\n\nBy default, the search includes all roots, definitions and their children."
-        },
-        "over": {
-          "default": "definitions",
-          "description": "The kind of traversal to perform.\n\n- *\"definitions\"*: Visit top-level definitions only.\n- *\"children\"*: Visit the children of top-level definitions.\n- *\"descendants\"*: Visit top-level definitions, then their children, recursively.",
-          "enum": [
-            "definitions"
-          ]
-        }
-      },
-      "required": [],
-      "title": "DefsScope",
-      "type": "object"
-    },
-    "scopes.PluginScope": {
+    "scopes.Plugin": {
       "additionalProperties": false,
       "description": "A search space for an `Action`.\n\n## Notes\nThe algorithm for resolving `include` and `exclude` is *roughly*:\n\n```py\neverything = set()\ninclude = set()\nexclude = set()\n\nneither = everything\ninclude_only = everything.intersection(include)\nexclude_only = everything.difference(exclude)\ninclude_exclude = everything.intersection(include).difference(exclude)\n```",
       "properties": {
@@ -373,7 +373,7 @@
         }
       },
       "required": [],
-      "title": "PluginScope",
+      "title": "Plugin",
       "type": "object"
     },
     "selectors.Child": {
@@ -499,32 +499,32 @@
           "items": {
             "anyOf": [
               {
-                "$ref": "#/$defs/actions.AsDefsAction"
+                "$ref": "#/$defs/actions.AsDefs"
               },
               {
-                "$ref": "#/$defs/actions.AsDefsFieldAction"
+                "$ref": "#/$defs/actions.AsDefsField"
               },
               {
-                "$ref": "#/$defs/actions.NewTreeAction"
+                "$ref": "#/$defs/actions.NewTree"
               },
               {
-                "$ref": "#/$defs/actions.RemoveAction"
+                "$ref": "#/$defs/actions.Remove"
               },
               {
-                "$ref": "#/$defs/actions.RenameFieldsAction"
+                "$ref": "#/$defs/actions.RenameFields"
               },
               {
-                "$ref": "#/$defs/actions.PluginAction"
+                "$ref": "#/$defs/actions.Plugin"
               }
             ],
             "discriminator": {
               "mapping": {
-                "as-defs": "#/$defs/actions.AsDefsAction",
-                "as-defs-field": "#/$defs/actions.AsDefsFieldAction",
-                "new-tree": "#/$defs/actions.NewTreeAction",
-                "plugin": "#/$defs/actions.PluginAction",
-                "remove": "#/$defs/actions.RemoveAction",
-                "rename-fields": "#/$defs/actions.RenameFieldsAction"
+                "as-defs": "#/$defs/actions.AsDefs",
+                "as-defs-field": "#/$defs/actions.AsDefsField",
+                "new-tree": "#/$defs/actions.NewTree",
+                "plugin": "#/$defs/actions.Plugin",
+                "remove": "#/$defs/actions.Remove",
+                "rename-fields": "#/$defs/actions.RenameFields"
               },
               "propertyName": "action"
             }
