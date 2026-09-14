@@ -347,7 +347,7 @@ class Tip(TypedDict, total=False, closed=True):
     """The ending vertical position channel specifying the tip's anchor, typically bound to the *y* scale."""
 
 
-class MarkOptions(TypedDict, total=False):
+class _MarkOptions(TypedDict, total=False):
     """Shared options for all marks."""
 
     aria_description: ParamRef | str
@@ -570,7 +570,7 @@ class MarkOptions(TypedDict, total=False):
     """
 
 
-class _AreaOpen(MarkOptions, total=False):
+class _AreaOpen(_MarkOptions, total=False):
     """The area mark."""
 
     curve: Curve | ParamRef
@@ -639,7 +639,7 @@ class _AreaOpen(MarkOptions, total=False):
     """
 
 
-class _AreaXOpen(MarkOptions, total=False):
+class _AreaXOpen(_MarkOptions, total=False):
     """The areaX mark."""
 
     curve: Curve | ParamRef
@@ -720,7 +720,7 @@ class _AreaXOpen(MarkOptions, total=False):
     """
 
 
-class _AreaYOpen(MarkOptions, total=False):
+class _AreaYOpen(_MarkOptions, total=False):
     """The areaY mark."""
 
     curve: Curve | ParamRef
@@ -801,7 +801,7 @@ class _AreaYOpen(MarkOptions, total=False):
     """
 
 
-class _ArrowOpen(MarkOptions, total=False):
+class _ArrowOpen(_MarkOptions, total=False):
     """The arrow mark."""
 
     bend: ParamRef | bool | float
@@ -841,7 +841,7 @@ class _ArrowOpen(MarkOptions, total=False):
     """The ending vertical position; typically bound to the *y* scale; also sets a default for **y1**."""
 
 
-class _AxisFxOpen(MarkOptions, total=False):
+class _AxisFxOpen(_MarkOptions, total=False):
     """The axisFx mark."""
 
     anchor: L["bottom", "left", "right", "top"] | ParamRef
@@ -1061,7 +1061,7 @@ class _AxisFxOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _AxisFyOpen(MarkOptions, total=False):
+class _AxisFyOpen(_MarkOptions, total=False):
     """The axisFy mark."""
 
     anchor: L["bottom", "left", "right", "top"] | ParamRef
@@ -1280,7 +1280,7 @@ class _AxisFyOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _AxisXOpen(MarkOptions, total=False):
+class _AxisXOpen(_MarkOptions, total=False):
     """The axisX mark."""
 
     anchor: L["bottom", "left", "right", "top"] | ParamRef
@@ -1501,7 +1501,7 @@ class _AxisXOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _AxisYOpen(MarkOptions, total=False):
+class _AxisYOpen(_MarkOptions, total=False):
     """The axisY mark."""
 
     anchor: L["bottom", "left", "right", "top"] | ParamRef
@@ -1720,7 +1720,7 @@ class _AxisYOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _BarXOpen(MarkOptions, total=False):
+class _BarXOpen(_MarkOptions, total=False):
     """The barX mark."""
 
     inset: ParamRef | float
@@ -1810,7 +1810,7 @@ class _BarXOpen(MarkOptions, total=False):
     """
 
 
-class _BarYOpen(MarkOptions, total=False):
+class _BarYOpen(_MarkOptions, total=False):
     """The barY mark."""
 
     inset: ParamRef | float
@@ -1900,7 +1900,7 @@ class _BarYOpen(MarkOptions, total=False):
     """
 
 
-class _CellOpen(MarkOptions, total=False):
+class _CellOpen(_MarkOptions, total=False):
     """The cell mark."""
 
     inset: ParamRef | float
@@ -1950,7 +1950,7 @@ class _CellOpen(MarkOptions, total=False):
     """
 
 
-class _CellXOpen(MarkOptions, total=False):
+class _CellXOpen(_MarkOptions, total=False):
     """The cellX mark."""
 
     inset: ParamRef | float
@@ -1996,7 +1996,7 @@ class _CellXOpen(MarkOptions, total=False):
     """
 
 
-class _CellYOpen(MarkOptions, total=False):
+class _CellYOpen(_MarkOptions, total=False):
     """The cellY mark."""
 
     inset: ParamRef | float
@@ -2042,7 +2042,7 @@ class _CellYOpen(MarkOptions, total=False):
     """
 
 
-class _CircleOpen(MarkOptions, total=False):
+class _CircleOpen(_MarkOptions, total=False):
     """The circle mark."""
 
     frame_anchor: FrameAnchor | ParamRef
@@ -2076,7 +2076,7 @@ class _CircleOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _ContourOpen(MarkOptions, total=False):
+class _ContourOpen(_MarkOptions, total=False):
     """The contour mark."""
 
     bandwidth: ParamRef | float
@@ -2119,7 +2119,7 @@ class _ContourOpen(MarkOptions, total=False):
     """The vertical position channel, typically bound to the *y* scale. Domain values are binned into a grid with *height* vertical bins."""
 
 
-class _DelaunayLinkOpen(MarkOptions, total=False):
+class _DelaunayLinkOpen(_MarkOptions, total=False):
     """The delaunayLink mark."""
 
     curve: Curve | ParamRef
@@ -2209,7 +2209,7 @@ class _DelaunayLinkOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
-class _DelaunayMeshOpen(MarkOptions, total=False):
+class _DelaunayMeshOpen(_MarkOptions, total=False):
     """The delaunayMesh mark."""
 
     curve: Curve | ParamRef
@@ -2299,7 +2299,7 @@ class _DelaunayMeshOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
-class _DenseLineOpen(MarkOptions, total=False):
+class _DenseLineOpen(_MarkOptions, total=False):
     """The denseLine mark."""
 
     bandwidth: ParamRef | float
@@ -2344,7 +2344,7 @@ class _DenseLineOpen(MarkOptions, total=False):
     """A ordinal channel for grouping data into series to be drawn as separate lines."""
 
 
-class _DensityOpen(MarkOptions, total=False):
+class _DensityOpen(_MarkOptions, total=False):
     """The density mark for 2D densities."""
 
     bandwidth: ParamRef | float
@@ -2468,7 +2468,7 @@ class _DensityOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _DensityXAreaXOpen(MarkOptions, total=False):
+class _DensityXAreaXOpen(_MarkOptions, total=False):
     """The densityX mark."""
 
     bandwidth: ParamRef | float
@@ -2545,7 +2545,7 @@ class _DensityXAreaXOpen(MarkOptions, total=False):
     """
 
 
-class _DensityXDotXOpen(MarkOptions, total=False):
+class _DensityXDotXOpen(_MarkOptions, total=False):
     """The densityX mark."""
 
     bandwidth: ParamRef | float
@@ -2589,7 +2589,7 @@ class _DensityXDotXOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _DensityXLineXOpen(MarkOptions, total=False):
+class _DensityXLineXOpen(_MarkOptions, total=False):
     """The densityX mark."""
 
     bandwidth: ParamRef | float
@@ -2690,7 +2690,7 @@ class _DensityXLineXOpen(MarkOptions, total=False):
     """
 
 
-class _DensityXTextXOpen(MarkOptions, total=False):
+class _DensityXTextXOpen(_MarkOptions, total=False):
     """The densityX mark."""
 
     bandwidth: ParamRef | float
@@ -2796,7 +2796,7 @@ class _DensityXTextXOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _DensityYAreaYOpen(MarkOptions, total=False):
+class _DensityYAreaYOpen(_MarkOptions, total=False):
     """The densityY mark."""
 
     bandwidth: ParamRef | float
@@ -2873,7 +2873,7 @@ class _DensityYAreaYOpen(MarkOptions, total=False):
     """
 
 
-class _DensityYDotOpen(MarkOptions, total=False):
+class _DensityYDotOpen(_MarkOptions, total=False):
     """The densityY mark."""
 
     bandwidth: ParamRef | float
@@ -2917,7 +2917,7 @@ class _DensityYDotOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _DensityYLineYOpen(MarkOptions, total=False):
+class _DensityYLineYOpen(_MarkOptions, total=False):
     """The densityY mark."""
 
     bandwidth: ParamRef | float
@@ -3018,7 +3018,7 @@ class _DensityYLineYOpen(MarkOptions, total=False):
     """
 
 
-class _DensityYTextOpen(MarkOptions, total=False):
+class _DensityYTextOpen(_MarkOptions, total=False):
     """The densityY mark."""
 
     bandwidth: ParamRef | float
@@ -3124,7 +3124,7 @@ class _DensityYTextOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _DotOpen(MarkOptions, total=False):
+class _DotOpen(_MarkOptions, total=False):
     """The dot mark."""
 
     frame_anchor: FrameAnchor | ParamRef
@@ -3165,7 +3165,7 @@ class _DotOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _DotXOpen(MarkOptions, total=False):
+class _DotXOpen(_MarkOptions, total=False):
     """The dotX mark."""
 
     frame_anchor: FrameAnchor | ParamRef
@@ -3205,7 +3205,7 @@ class _DotXOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _DotYOpen(MarkOptions, total=False):
+class _DotYOpen(_MarkOptions, total=False):
     """The dotY mark."""
 
     frame_anchor: FrameAnchor | ParamRef
@@ -3245,7 +3245,7 @@ class _DotYOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _ErrorBarXOpen(MarkOptions, total=False):
+class _ErrorBarXOpen(_MarkOptions, total=False):
     """The errorbarX mark."""
 
     ci: ParamRef | float
@@ -3311,7 +3311,7 @@ class _ErrorBarXOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data, producing an independent error bar for each group. If not specified, it defaults to **stroke** if a channel."""
 
 
-class _ErrorBarYOpen(MarkOptions, total=False):
+class _ErrorBarYOpen(_MarkOptions, total=False):
     """The errorbarY mark."""
 
     ci: ParamRef | float
@@ -3377,7 +3377,7 @@ class _ErrorBarYOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data, producing an independent error bar for each group. If not specified, it defaults to **stroke** if a channel."""
 
 
-class _FrameOpen(MarkOptions, total=False):
+class _FrameOpen(_MarkOptions, total=False):
     """The frame mark."""
 
     anchor: L["bottom", "left", "right", "top"] | ParamRef | None
@@ -3415,7 +3415,7 @@ class _FrameOpen(MarkOptions, total=False):
     """
 
 
-class _GeoOpen(MarkOptions, total=False):
+class _GeoOpen(_MarkOptions, total=False):
     """The geo mark."""
 
     geometry: ChannelValue
@@ -3439,7 +3439,7 @@ class _GeoOpen(MarkOptions, total=False):
     """
 
 
-class _GraticuleOpen(MarkOptions, total=False):
+class _GraticuleOpen(_MarkOptions, total=False):
     """The graticule mark."""
 
     mark: Required[L["graticule"]]
@@ -3451,7 +3451,7 @@ class _GraticuleOpen(MarkOptions, total=False):
     """
 
 
-class _GridFxOpen(MarkOptions, total=False):
+class _GridFxOpen(_MarkOptions, total=False):
     """The gridFx mark."""
 
     anchor: L["bottom", "left", "right", "top"] | ParamRef
@@ -3547,7 +3547,7 @@ class _GridFxOpen(MarkOptions, total=False):
     """
 
 
-class _GridFyOpen(MarkOptions, total=False):
+class _GridFyOpen(_MarkOptions, total=False):
     """The gridFy mark."""
 
     anchor: L["bottom", "left", "right", "top"] | ParamRef
@@ -3643,7 +3643,7 @@ class _GridFyOpen(MarkOptions, total=False):
     """The vertical position of the tick; an optional channel bound to the *y* scale. If not specified, the rule will be vertically centered in the plot's frame."""
 
 
-class _GridXOpen(MarkOptions, total=False):
+class _GridXOpen(_MarkOptions, total=False):
     """The gridX mark."""
 
     anchor: L["bottom", "left", "right", "top"] | ParamRef
@@ -3741,7 +3741,7 @@ class _GridXOpen(MarkOptions, total=False):
     """
 
 
-class _GridYOpen(MarkOptions, total=False):
+class _GridYOpen(_MarkOptions, total=False):
     """The gridY mark."""
 
     anchor: L["bottom", "left", "right", "top"] | ParamRef
@@ -3839,7 +3839,7 @@ class _GridYOpen(MarkOptions, total=False):
     """The vertical position of the tick; an optional channel bound to the *y* scale. If not specified, the rule will be vertically centered in the plot's frame."""
 
 
-class _HeatmapOpen(MarkOptions, total=False):
+class _HeatmapOpen(_MarkOptions, total=False):
     """The heatmap mark."""
 
     bandwidth: ParamRef | float
@@ -3882,7 +3882,7 @@ class _HeatmapOpen(MarkOptions, total=False):
     """The vertical position channel, typically bound to the *y* scale. Domain values are binned into a grid with *height* vertical bins."""
 
 
-class _HexagonOpen(MarkOptions, total=False):
+class _HexagonOpen(_MarkOptions, total=False):
     """The hexagon mark."""
 
     frame_anchor: FrameAnchor | ParamRef
@@ -3916,7 +3916,7 @@ class _HexagonOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _HexbinOpen(MarkOptions, total=False):
+class _HexbinOpen(_MarkOptions, total=False):
     """The hexbin mark."""
 
     bin_width: ParamRef | float
@@ -4019,7 +4019,7 @@ class _HexbinOpen(MarkOptions, total=False):
     """How to subdivide bins. If not specified, defaults to the *fill* channel, if any, or the *stroke* channel, if any. If null, bins will not be subdivided."""
 
 
-class _HexgridOpen(MarkOptions, total=False):
+class _HexgridOpen(_MarkOptions, total=False):
     """The hexgrid mark."""
 
     bin_width: ParamRef | float
@@ -4037,7 +4037,7 @@ class _HexgridOpen(MarkOptions, total=False):
     """
 
 
-class _HullOpen(MarkOptions, total=False):
+class _HullOpen(_MarkOptions, total=False):
     """The hull mark."""
 
     curve: Curve | ParamRef
@@ -4128,7 +4128,7 @@ class _HullOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
-class _ImageOpen(MarkOptions, total=False):
+class _ImageOpen(_MarkOptions, total=False):
     cross_origin: ParamRef | str
     """The [cross-origin][1] behavior. See the [Plot.image notebook][2] for details.
 
@@ -4174,7 +4174,7 @@ class _ImageOpen(MarkOptions, total=False):
     """The vertical position channel specifying the image's center; typically bound to the *y* scale."""
 
 
-class _LineOpen(MarkOptions, total=False):
+class _LineOpen(_MarkOptions, total=False):
     """The line mark."""
 
     curve: Curve | L["auto"] | ParamRef
@@ -4273,7 +4273,7 @@ class _LineOpen(MarkOptions, total=False):
     """
 
 
-class _LineXOpen(MarkOptions, total=False):
+class _LineXOpen(_MarkOptions, total=False):
     """The lineX mark."""
 
     curve: Curve | L["auto"] | ParamRef
@@ -4364,7 +4364,7 @@ class _LineXOpen(MarkOptions, total=False):
     """
 
 
-class _LineYOpen(MarkOptions, total=False):
+class _LineYOpen(_MarkOptions, total=False):
     """The lineY mark."""
 
     curve: Curve | L["auto"] | ParamRef
@@ -4455,7 +4455,7 @@ class _LineYOpen(MarkOptions, total=False):
     """
 
 
-class _LinkOpen(MarkOptions, total=False):
+class _LinkOpen(_MarkOptions, total=False):
     """The link mark."""
 
     curve: Curve | L["auto"] | ParamRef
@@ -4535,7 +4535,7 @@ class _LinkOpen(MarkOptions, total=False):
     """The ending vertical position; typically bound to the *y* scale; also sets a default for **y1**."""
 
 
-class _RasterOpen(MarkOptions, total=False):
+class _RasterOpen(_MarkOptions, total=False):
     """The raster mark."""
 
     bandwidth: ParamRef | float
@@ -4581,7 +4581,7 @@ class _RasterOpen(MarkOptions, total=False):
     """The vertical position channel, typically bound to the *y* scale. Domain values are binned into a grid with *height* vertical bins."""
 
 
-class _RasterTileOpen(MarkOptions, total=False):
+class _RasterTileOpen(_MarkOptions, total=False):
     """The rasterTile mark."""
 
     bandwidth: ParamRef | float
@@ -4624,7 +4624,7 @@ class _RasterTileOpen(MarkOptions, total=False):
     """The vertical position channel, typically bound to the *y* scale. Domain values are binned into a grid with *height* vertical bins."""
 
 
-class _RectOpen(MarkOptions, total=False):
+class _RectOpen(_MarkOptions, total=False):
     """The rect mark."""
 
     inset: ParamRef | float
@@ -4735,7 +4735,7 @@ class _RectOpen(MarkOptions, total=False):
     """
 
 
-class _RectXOpen(MarkOptions, total=False):
+class _RectXOpen(_MarkOptions, total=False):
     """The rectX mark."""
 
     inset: ParamRef | float
@@ -4833,7 +4833,7 @@ class _RectXOpen(MarkOptions, total=False):
     """
 
 
-class _RectYOpen(MarkOptions, total=False):
+class _RectYOpen(_MarkOptions, total=False):
     """The rectY mark."""
 
     inset: ParamRef | float
@@ -4931,7 +4931,7 @@ class _RectYOpen(MarkOptions, total=False):
     """
 
 
-class _RegressionYOpen(MarkOptions, total=False):
+class _RegressionYOpen(_MarkOptions, total=False):
     """The regressionY mark."""
 
     ci: ParamRef | float
@@ -4963,7 +4963,7 @@ class _RegressionYOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into (possibly stacked) series, producing an independent regression for each group. If not specified, it defaults to **fill** if a channel, or **stroke** if a channel."""
 
 
-class _RuleXOpen(MarkOptions, total=False):
+class _RuleXOpen(_MarkOptions, total=False):
     """The ruleX mark."""
 
     inset: ParamRef | float
@@ -5045,7 +5045,7 @@ class _RuleXOpen(MarkOptions, total=False):
     """
 
 
-class _RuleYOpen(MarkOptions, total=False):
+class _RuleYOpen(_MarkOptions, total=False):
     """The ruleY mark."""
 
     inset: ParamRef | float
@@ -5127,7 +5127,7 @@ class _RuleYOpen(MarkOptions, total=False):
     """
 
 
-class _SphereOpen(MarkOptions, total=False):
+class _SphereOpen(_MarkOptions, total=False):
     """The sphere mark."""
 
     mark: Required[L["sphere"]]
@@ -5139,7 +5139,7 @@ class _SphereOpen(MarkOptions, total=False):
     """
 
 
-class _SpikeOpen(MarkOptions, total=False):
+class _SpikeOpen(_MarkOptions, total=False):
     """The spike mark."""
 
     anchor: L["end", "middle", "start"] | ParamRef
@@ -5178,7 +5178,7 @@ class _SpikeOpen(MarkOptions, total=False):
     """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
-class _TextOpen(MarkOptions, total=False):
+class _TextOpen(_MarkOptions, total=False):
     """The text mark."""
 
     font_family: ParamRef | str
@@ -5279,7 +5279,7 @@ class _TextOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _TextXOpen(MarkOptions, total=False):
+class _TextXOpen(_MarkOptions, total=False):
     """The textX mark."""
 
     font_family: ParamRef | str
@@ -5382,7 +5382,7 @@ class _TextXOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _TextYOpen(MarkOptions, total=False):
+class _TextYOpen(_MarkOptions, total=False):
     """The textY mark."""
 
     font_family: ParamRef | str
@@ -5485,7 +5485,7 @@ class _TextYOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping data into series."""
 
 
-class _TickXOpen(MarkOptions, total=False):
+class _TickXOpen(_MarkOptions, total=False):
     """The tickX mark."""
 
     inset: ParamRef | float
@@ -5552,7 +5552,7 @@ class _TickXOpen(MarkOptions, total=False):
     """
 
 
-class _TickYOpen(MarkOptions, total=False):
+class _TickYOpen(_MarkOptions, total=False):
     """The tickY mark."""
 
     inset: ParamRef | float
@@ -5619,7 +5619,7 @@ class _TickYOpen(MarkOptions, total=False):
     """The required vertical position of the tick; a channel typically bound to the *y* scale."""
 
 
-class _VectorOpen(MarkOptions, total=False):
+class _VectorOpen(_MarkOptions, total=False):
     """The vector mark."""
 
     anchor: L["end", "middle", "start"] | ParamRef
@@ -5663,7 +5663,7 @@ class _VectorOpen(MarkOptions, total=False):
     """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
-class _VectorXOpen(MarkOptions, total=False):
+class _VectorXOpen(_MarkOptions, total=False):
     """The vectorX mark."""
 
     anchor: L["end", "middle", "start"] | ParamRef
@@ -5704,7 +5704,7 @@ class _VectorXOpen(MarkOptions, total=False):
     """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
-class _VectorYOpen(MarkOptions, total=False):
+class _VectorYOpen(_MarkOptions, total=False):
     """The vectorY mark."""
 
     anchor: L["end", "middle", "start"] | ParamRef
@@ -5745,7 +5745,7 @@ class _VectorYOpen(MarkOptions, total=False):
     """The vertical position of the vector's anchor point; an optional channel bound to the *y* scale. Default depends on the **frameAnchor**."""
 
 
-class _VoronoiMeshOpen(MarkOptions, total=False):
+class _VoronoiMeshOpen(_MarkOptions, total=False):
     """The voronoiMesh mark."""
 
     curve: Curve | ParamRef
@@ -5835,7 +5835,7 @@ class _VoronoiMeshOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
-class _VoronoiOpen(MarkOptions, total=False):
+class _VoronoiOpen(_MarkOptions, total=False):
     """The voronoi mark."""
 
     curve: Curve | ParamRef
@@ -5924,7 +5924,7 @@ class _VoronoiOpen(MarkOptions, total=False):
     """An optional ordinal channel for grouping to produce multiple (possibly overlapping) triangulations."""
 
 
-class _WaffleXOpen(MarkOptions, total=False):
+class _WaffleXOpen(_MarkOptions, total=False):
     """The waffleX mark."""
 
     gap: ParamRef | float
@@ -6020,7 +6020,7 @@ class _WaffleXOpen(MarkOptions, total=False):
     """
 
 
-class _WaffleYOpen(MarkOptions, total=False):
+class _WaffleYOpen(_MarkOptions, total=False):
     """The waffleY mark."""
 
     gap: ParamRef | float
@@ -6583,7 +6583,6 @@ __all__ = (
     "LineX",
     "LineY",
     "Link",
-    "MarkOptions",
     "PlotMark",
     "Raster",
     "RasterTile",

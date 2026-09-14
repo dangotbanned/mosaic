@@ -180,13 +180,13 @@ class _MarksRelations:
 
         ```py
         # `(...) + 1`
-        class MarkOptions(TypedDict, total=False):
+        class _MarkOptions(TypedDict, total=False):
             # 39 fields common to every mark
             ...
 
 
         # `(... * 2) + ...`
-        class _GraticuleOpen(MarkOptions, total=False):
+        class _GraticuleOpen(_MarkOptions, total=False):
             '''The graticule mark.'''
 
             mark: Required[Literal["graticule"]]
@@ -221,7 +221,7 @@ class _MarksRelations:
     @classmethod
     def _from_marks(cls, definitions: Collection[ClosedDict]) -> _MarksRelations:
         options = dsl.supertype(
-            "MarkOptions",
+            "_MarkOptions",
             definitions,
             doc="Shared options for all marks.",
             # NOTE: This is a bug in the TS source:
@@ -257,17 +257,17 @@ def _synthesize_transform_hierarchy(app: App) -> None:
         ).members
     )
     window_options = dsl.supertype(
-        "WindowOptions", window_transforms, doc="Window transform options."
+        "_WindowOptions", window_transforms, doc="Window transform options."
     )
     distinct = dsl.field("distinct", pyir_e.BOOL)
     agg_options = window_options.with_child_open(
-        "AggregateOptions", doc="Aggregate transform options.", fields={distinct.name: distinct}
+        "_AggregateOptions", doc="Aggregate transform options.", fields={distinct.name: distinct}
     )
 
     aggregate_exclude = window_options.fields.keys() | agg_options.fields.keys()
     name = dsl.Source.SELF
 
-    # NOTE: `AggregateOptions` children need to go first, as they iterate over the dictionary being updated
+    # NOTE: `_AggregateOptions` children need to go first, as they iterate over the dictionary being updated
     module.update_defs(
         chain(
             (

@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing_extensions import assert_type
 
 import mosaic_spec as ms
-from mosaic_spec._gen.transform import AggregateOptions, WindowOptions
+from mosaic_spec._gen.transform import _AggregateOptions, _WindowOptions
 from mosaic_spec._typing_compat import NotRequired, TypeAliasType
 
 Arg = TypeAliasType("Arg", ms.ParamRef | bool | float | str)
@@ -51,10 +51,10 @@ def test_using_typed_dict_types() -> None:
 
 
 def test_inheritance() -> None:
-    class NullCount1(AggregateOptions):
+    class NullCount1(_AggregateOptions):
         null_count: Arg | tuple[Arg]
 
-    class NullCount2(WindowOptions):
+    class NullCount2(_WindowOptions):
         null_count: Arg | tuple[Arg]
         distinct: NotRequired[bool]
 

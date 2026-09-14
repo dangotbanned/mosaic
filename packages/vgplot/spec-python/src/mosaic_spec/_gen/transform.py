@@ -165,7 +165,7 @@ ColumnTransform = TypeAliasType(
 FrameValue = TypeAliasType("FrameValue", IntervalTransform | float | None)
 
 
-class WindowOptions(TypedDict, total=False):
+class _WindowOptions(TypedDict, total=False):
     """Window transform options."""
 
     exclude: L[
@@ -178,34 +178,28 @@ class WindowOptions(TypedDict, total=False):
     rows: ParamRef | tuple[FrameValue, FrameValue]
 
 
-class AggregateOptions(WindowOptions, total=False):
-    """Aggregate transform options."""
-
-    distinct: bool
-
-
-class CumeDist(WindowOptions, closed=True):
+class CumeDist(_WindowOptions, closed=True):
     """A cume_dist window transform."""
 
     cume_dist: Required[tuple[()] | None]
     """Compute the cumulative distribution value over an ordered window partition. Equals the number of partition rows preceding or peer with the current row, divided by the total number of partition rows."""
 
 
-class DenseRank(WindowOptions, closed=True):
+class DenseRank(_WindowOptions, closed=True):
     """A dense_rank window transform."""
 
     dense_rank: Required[tuple[()] | None]
     """Compute the dense row rank (no gaps) over an ordered window partition. Sorting ties do not result in gaps in the rank numbers ([1, 1, 2, ...])."""
 
 
-class FirstValue(WindowOptions, closed=True):
+class FirstValue(_WindowOptions, closed=True):
     """A first_value window transform."""
 
     first_value: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
     """Get the first value of the given column in the current window frame."""
 
 
-class Lag(WindowOptions, closed=True):
+class Lag(_WindowOptions, closed=True):
     """A lag window transform."""
 
     lag: Required[
@@ -224,14 +218,14 @@ class Lag(WindowOptions, closed=True):
     """Compute lagging values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows before the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."""
 
 
-class LastValue(WindowOptions, closed=True):
+class LastValue(_WindowOptions, closed=True):
     """A last_value window transform."""
 
     last_value: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
     """Get the last value of the given column in the current window frame."""
 
 
-class Lead(WindowOptions, closed=True):
+class Lead(_WindowOptions, closed=True):
     """A lead window transform."""
 
     lead: Required[
@@ -250,14 +244,14 @@ class Lead(WindowOptions, closed=True):
     """Compute leading values in a column. Returns the value at the row that is `offset` (second argument, default `1`) rows after the current row within the window frame. If there is no such row, instead return `default` (third argument, default `null`). Both offset and default are evaluated with respect to the current row."""
 
 
-class NTile(WindowOptions, closed=True):
+class NTile(_WindowOptions, closed=True):
     """An ntile window transform."""
 
     ntile: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
     """Compute an n-tile integer ranging from 1 to the provided argument (num_buckets), dividing the partition as equally as possible."""
 
 
-class NthValue(WindowOptions, closed=True):
+class NthValue(_WindowOptions, closed=True):
     """An nth_value window transform."""
 
     nth_value: Required[
@@ -271,146 +265,31 @@ class NthValue(WindowOptions, closed=True):
     """Get the nth value of the given column in the current window frame, counting from one. The second argument is the offset for the nth row."""
 
 
-class PercentRank(WindowOptions, closed=True):
+class PercentRank(_WindowOptions, closed=True):
     """A percent_rank window transform."""
 
     percent_rank: Required[tuple[()] | None]
     """Compute the percentage rank over an ordered window partition."""
 
 
-class Rank(WindowOptions, closed=True):
+class Rank(_WindowOptions, closed=True):
     """A rank window transform."""
 
     rank: Required[tuple[()] | None]
     """Compute the row rank over an ordered window partition. Sorting ties result in gaps in the rank numbers ([1, 1, 3, ...])."""
 
 
-class RowNumber(WindowOptions, closed=True):
+class RowNumber(_WindowOptions, closed=True):
     """A row_number window transform."""
 
     row_number: Required[tuple[()] | None]
     """Compute the 1-based row number over an ordered window partition."""
 
 
-class Argmax(AggregateOptions, closed=True):
-    """An argmax aggregate transform."""
+class _AggregateOptions(_WindowOptions, total=False):
+    """Aggregate transform options."""
 
-    argmax: Required[tuple[ParamRef | bool | float | str, ParamRef | bool | float | str]]
-    """Find a value of the first column that maximizes the second column."""
-
-
-class Argmin(AggregateOptions, closed=True):
-    """An argmin aggregate transform."""
-
-    argmin: Required[tuple[ParamRef | bool | float | str, ParamRef | bool | float | str]]
-    """Find a value of the first column that minimizes the second column."""
-
-
-class Avg(AggregateOptions, closed=True):
-    """An avg (average, or mean) aggregate transform."""
-
-    avg: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the average (mean) value of the given column."""
-
-
-class Count(AggregateOptions, closed=True):
-    """A count aggregate transform."""
-
-    count: Required[
-        tuple[()] | ParamRef | bool | float | str | tuple[ParamRef | bool | float | str] | None
-    ]
-    """Compute the count of records in an aggregation group."""
-
-
-class First(AggregateOptions, closed=True):
-    """A first aggregate transform."""
-
-    first: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Return the first column value found in an aggregation group."""
-
-
-class Last(AggregateOptions, closed=True):
-    """A last aggregate transform."""
-
-    last: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Return the last column value found in an aggregation group."""
-
-
-class Max(AggregateOptions, closed=True):
-    """A max aggregate transform."""
-
-    max: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the maximum value of the given column."""
-
-
-class Median(AggregateOptions, closed=True):
-    """A median aggregate transform."""
-
-    median: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the median value of the given column."""
-
-
-class Min(AggregateOptions, closed=True):
-    """A min aggregate transform."""
-
-    min: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the minimum value of the given column."""
-
-
-class Mode(AggregateOptions, closed=True):
-    """A mode aggregate transform."""
-
-    mode: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the mode value of the given column."""
-
-
-class Product(AggregateOptions, closed=True):
-    """A product aggregate transform."""
-
-    product: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the product of the given column."""
-
-
-class Quantile(AggregateOptions, closed=True):
-    """A quantile aggregate transform."""
-
-    quantile: Required[tuple[ParamRef | bool | float | str, ParamRef | bool | float | str]]
-    """Compute the quantile value of the given column at the provided probability threshold. For example, 0.5 is the median."""
-
-
-class Stddev(AggregateOptions, closed=True):
-    """A sample standard deviation aggregate transform."""
-
-    stddev: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the sum of the given column."""
-
-
-class StddevPop(AggregateOptions, closed=True):
-    """A population standard deviation aggregate transform."""
-
-    stddev_pop: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the sum of the given column."""
-
-
-class Sum(AggregateOptions, closed=True):
-    """A sum aggregate transform."""
-
-    sum: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the sum of the given column."""
-
-
-class VarPop(AggregateOptions, closed=True):
-    """A population variance aggregate transform."""
-
-    var_pop: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the population variance of the given column."""
-
-
-class Variance(AggregateOptions, closed=True):
-    """A sample variance aggregate transform."""
-
-    variance: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Compute the sample variance of the given column."""
+    distinct: bool
 
 
 WindowTransform = TypeAliasType(
@@ -428,6 +307,129 @@ WindowTransform = TypeAliasType(
     | RowNumber,
 )
 """A window transform that operates over a sorted domain."""
+
+
+class Argmax(_AggregateOptions, closed=True):
+    """An argmax aggregate transform."""
+
+    argmax: Required[tuple[ParamRef | bool | float | str, ParamRef | bool | float | str]]
+    """Find a value of the first column that maximizes the second column."""
+
+
+class Argmin(_AggregateOptions, closed=True):
+    """An argmin aggregate transform."""
+
+    argmin: Required[tuple[ParamRef | bool | float | str, ParamRef | bool | float | str]]
+    """Find a value of the first column that minimizes the second column."""
+
+
+class Avg(_AggregateOptions, closed=True):
+    """An avg (average, or mean) aggregate transform."""
+
+    avg: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the average (mean) value of the given column."""
+
+
+class Count(_AggregateOptions, closed=True):
+    """A count aggregate transform."""
+
+    count: Required[
+        tuple[()] | ParamRef | bool | float | str | tuple[ParamRef | bool | float | str] | None
+    ]
+    """Compute the count of records in an aggregation group."""
+
+
+class First(_AggregateOptions, closed=True):
+    """A first aggregate transform."""
+
+    first: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Return the first column value found in an aggregation group."""
+
+
+class Last(_AggregateOptions, closed=True):
+    """A last aggregate transform."""
+
+    last: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Return the last column value found in an aggregation group."""
+
+
+class Max(_AggregateOptions, closed=True):
+    """A max aggregate transform."""
+
+    max: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the maximum value of the given column."""
+
+
+class Median(_AggregateOptions, closed=True):
+    """A median aggregate transform."""
+
+    median: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the median value of the given column."""
+
+
+class Min(_AggregateOptions, closed=True):
+    """A min aggregate transform."""
+
+    min: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the minimum value of the given column."""
+
+
+class Mode(_AggregateOptions, closed=True):
+    """A mode aggregate transform."""
+
+    mode: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the mode value of the given column."""
+
+
+class Product(_AggregateOptions, closed=True):
+    """A product aggregate transform."""
+
+    product: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the product of the given column."""
+
+
+class Quantile(_AggregateOptions, closed=True):
+    """A quantile aggregate transform."""
+
+    quantile: Required[tuple[ParamRef | bool | float | str, ParamRef | bool | float | str]]
+    """Compute the quantile value of the given column at the provided probability threshold. For example, 0.5 is the median."""
+
+
+class Stddev(_AggregateOptions, closed=True):
+    """A sample standard deviation aggregate transform."""
+
+    stddev: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the sum of the given column."""
+
+
+class StddevPop(_AggregateOptions, closed=True):
+    """A population standard deviation aggregate transform."""
+
+    stddev_pop: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the sum of the given column."""
+
+
+class Sum(_AggregateOptions, closed=True):
+    """A sum aggregate transform."""
+
+    sum: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the sum of the given column."""
+
+
+class VarPop(_AggregateOptions, closed=True):
+    """A population variance aggregate transform."""
+
+    var_pop: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the population variance of the given column."""
+
+
+class Variance(_AggregateOptions, closed=True):
+    """A sample variance aggregate transform."""
+
+    variance: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Compute the sample variance of the given column."""
+
+
 AggregateTransform = TypeAliasType(
     "AggregateTransform",
     Argmax
@@ -454,7 +456,6 @@ Transform = TypeAliasType("Transform", AggregateTransform | ColumnTransform | Wi
 
 
 __all__ = (
-    "AggregateOptions",
     "AggregateTransform",
     "Argmax",
     "Argmin",
@@ -506,7 +507,6 @@ __all__ = (
     "TransformField",
     "VarPop",
     "Variance",
-    "WindowOptions",
     "WindowTransform",
     "Years",
 )

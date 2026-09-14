@@ -99,7 +99,6 @@ from mosaic_spec._gen.marks import (
     LineX,
     LineY,
     Link,
-    MarkOptions,
     PlotMark,
     Raster,
     RasterTile,
@@ -143,7 +142,6 @@ from mosaic_spec._gen.plot import Margins, Plot, PlotAttributes
 from mosaic_spec._gen.plot_from import PlotDataInline, PlotFrom, PlotMarkData
 from mosaic_spec._gen.plot_legend import Legend, PlotLegend
 from mosaic_spec._gen.transform import (
-    AggregateOptions,
     AggregateTransform,
     Argmax,
     Argmin,
@@ -195,7 +193,6 @@ from mosaic_spec._gen.transform import (
     TransformField,
     Variance,
     VarPop,
-    WindowOptions,
     WindowTransform,
     Years,
 )
@@ -231,7 +228,6 @@ from mosaic_spec._gen.typing import (
 
 __all__ = (
     "AggregateExpression",
-    "AggregateOptions",
     "AggregateTransform",
     "Area",
     "AreaX",
@@ -354,7 +350,6 @@ __all__ = (
     "LineY",
     "Link",
     "Margins",
-    "MarkOptions",
     "MarkerName",
     "Max",
     "Median",
@@ -456,7 +451,6 @@ __all__ = (
     "VoronoiMesh",
     "WaffleX",
     "WaffleY",
-    "WindowOptions",
     "WindowTransform",
     "Years",
 )
