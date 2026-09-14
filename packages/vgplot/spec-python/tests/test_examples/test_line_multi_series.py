@@ -15,10 +15,7 @@ Adapted from a [D3 example]. Data from the [Bureau of Labor Statistics].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -36,8 +33,8 @@ def test_infer() -> None:
                 "stroke_opacity": 0.9,
                 "curve": "monotone-x",
             },
-            {"select": "nearestX", "channels": ["z"], "bind": "$curr"},
-            {"select": "highlight", "by": "$curr"},
+            {"select": "nearestX", "channels": ["z"], "bind": ms.ParamRef("$curr")},
+            {"select": "highlight", "by": ms.ParamRef("$curr")},
             {
                 "mark": "dot",
                 "data": {"source": "bls_unemp"},

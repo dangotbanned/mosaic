@@ -6,10 +6,7 @@ database upon updates.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -20,7 +17,7 @@ def test_infer() -> None:
             {
                 "input": "slider",
                 "label": "Bias",
-                "bind": "$point",
+                "bind": ms.ParamRef("$point"),
                 "min": 0,
                 "max": 1000,
                 "step": 1,

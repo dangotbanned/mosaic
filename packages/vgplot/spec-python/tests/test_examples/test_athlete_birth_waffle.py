@@ -12,10 +12,7 @@ Adapted from an [Observable Plot example].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -27,20 +24,25 @@ def test_infer() -> None:
                 "hconcat": [
                     {
                         "input": "menu",
-                        "bind": "$unit",
+                        "bind": ms.ParamRef("$unit"),
                         "options": [1, 2, 5, 10, 25, 50, 100],
                         "label": "Unit",
                     },
-                    {"input": "menu", "bind": "$round", "options": [True, False], "label": "Round"},
                     {
                         "input": "menu",
-                        "bind": "$gap",
+                        "bind": ms.ParamRef("$round"),
+                        "options": [True, False],
+                        "label": "Round",
+                    },
+                    {
+                        "input": "menu",
+                        "bind": ms.ParamRef("$gap"),
                         "options": [0, 1, 2, 3, 4, 5],
                         "label": "Gap",
                     },
                     {
                         "input": "slider",
-                        "bind": "$radius",
+                        "bind": ms.ParamRef("$radius"),
                         "min": 0,
                         "max": 10,
                         "step": 0.1,
@@ -54,10 +56,10 @@ def test_infer() -> None:
                     {
                         "mark": "waffleY",
                         "data": {"source": "athletes"},
-                        "unit": "$unit",
-                        "round": "$round",
-                        "gap": "$gap",
-                        "rx": "$radius",
+                        "unit": ms.ParamRef("$unit"),
+                        "round": ms.ParamRef("$round"),
+                        "gap": ms.ParamRef("$gap"),
+                        "rx": ms.ParamRef("$radius"),
                         "x": {"sql": '5 * floor(year("date_of_birth") / 5)'},
                         "y": {"count": None},
                     }

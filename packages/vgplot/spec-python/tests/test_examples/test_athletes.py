@@ -6,10 +6,7 @@ automatically populated by backing data columns.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -17,8 +14,8 @@ def test_infer() -> None:
         "data": {"athletes": {"file": "data/athletes.parquet"}},
         "params": {
             "category": {"select": "intersect"},
-            "query": {"select": "intersect", "include": "$category"},
-            "hover": {"select": "intersect", "empty": True},
+            "query": {"include": ms.ParamRef("$category"), "select": "intersect"},
+            "hover": {"empty": True, "select": "intersect"},
         },
         "hconcat": [
             {
@@ -28,22 +25,22 @@ def test_infer() -> None:
                             {
                                 "input": "menu",
                                 "label": "Sport",
-                                "bind": "$category",
+                                "bind": ms.ParamRef("$category"),
                                 "source": "athletes",
                                 "column": "sport",
                             },
                             {
                                 "input": "menu",
                                 "label": "Sex",
-                                "bind": "$category",
+                                "bind": ms.ParamRef("$category"),
                                 "source": "athletes",
                                 "column": "sex",
                             },
                             {
                                 "input": "search",
                                 "label": "Name",
-                                "filter_by": "$category",
-                                "bind": "$query",
+                                "filter_by": ms.ParamRef("$category"),
+                                "bind": ms.ParamRef("$query"),
                                 "source": "athletes",
                                 "column": "name",
                                 "type": "contains",
@@ -55,7 +52,7 @@ def test_infer() -> None:
                         "plot": [
                             {
                                 "mark": "dot",
-                                "data": {"source": "athletes", "filter_by": "$query"},
+                                "data": {"source": "athletes", "filter_by": ms.ParamRef("$query")},
                                 "x": "weight",
                                 "y": "height",
                                 "fill": "sex",
@@ -64,19 +61,19 @@ def test_infer() -> None:
                             },
                             {
                                 "mark": "regressionY",
-                                "data": {"source": "athletes", "filter_by": "$query"},
+                                "data": {"source": "athletes", "filter_by": ms.ParamRef("$query")},
                                 "x": "weight",
                                 "y": "height",
                                 "stroke": "sex",
                             },
                             {
                                 "select": "intervalXY",
-                                "bind": "$query",
+                                "bind": ms.ParamRef("$query"),
                                 "brush": {"fill_opacity": 0, "stroke": "black"},
                             },
                             {
                                 "mark": "dot",
-                                "data": {"source": "athletes", "filter_by": "$hover"},
+                                "data": {"source": "athletes", "filter_by": ms.ParamRef("$hover")},
                                 "x": "weight",
                                 "y": "height",
                                 "fill": "sex",
@@ -97,8 +94,8 @@ def test_infer() -> None:
                         "source": "athletes",
                         "max_width": 570,
                         "height": 250,
-                        "filter_by": "$query",
-                        "bind": "$hover",
+                        "filter_by": ms.ParamRef("$query"),
+                        "bind": ms.ParamRef("$hover"),
                         "columns": ["name", "nationality", "sex", "height", "weight", "sport"],
                         "width": {
                             "name": 180,

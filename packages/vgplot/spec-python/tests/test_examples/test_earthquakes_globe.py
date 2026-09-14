@@ -12,10 +12,7 @@ Adapted from an [Observable Plot example].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -24,14 +21,18 @@ def test_infer() -> None:
             "earthquakes": {"file": "data/earthquakes.parquet"},
             "land": {"type": "spatial", "file": "data/countries-110m.json", "layer": "land"},
         },
-        "params": {"longitude": -180, "latitude": -30, "rotate": ["$longitude", "$latitude"]},
+        "params": {
+            "longitude": -180,
+            "latitude": -30,
+            "rotate": [ms.ParamRef("$longitude"), ms.ParamRef("$latitude")],
+        },
         "vconcat": [
             {
                 "hconcat": [
                     {
                         "input": "slider",
                         "label": "Longitude",
-                        "bind": "$longitude",
+                        "bind": ms.ParamRef("$longitude"),
                         "min": -180,
                         "max": 180,
                         "step": 1,
@@ -39,7 +40,7 @@ def test_infer() -> None:
                     {
                         "input": "slider",
                         "label": "Latitude",
-                        "bind": "$latitude",
+                        "bind": ms.ParamRef("$latitude"),
                         "min": -90,
                         "max": 90,
                         "step": 1,
@@ -70,7 +71,7 @@ def test_infer() -> None:
                 "margin": 10,
                 "style": "overflow: visible;",
                 "projection_type": "orthographic",
-                "projection_rotate": "$rotate",
+                "projection_rotate": ms.ParamRef("$rotate"),
             },
         ],
     }

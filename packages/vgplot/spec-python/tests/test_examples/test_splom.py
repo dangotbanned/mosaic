@@ -7,10 +7,7 @@ all plots.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -50,8 +47,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ],
                         "y_axis": "left",
                         "margin_left": 45,
@@ -68,8 +65,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ]
                     },
                     {
@@ -83,8 +80,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ]
                     },
                     {
@@ -98,8 +95,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ]
                     },
                 ]
@@ -117,8 +114,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ],
                         "y_axis": "left",
                         "margin_left": 45,
@@ -135,8 +132,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ]
                     },
                     {
@@ -150,8 +147,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ]
                     },
                     {
@@ -165,8 +162,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ]
                     },
                 ]
@@ -184,8 +181,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ],
                         "y_axis": "left",
                         "margin_left": 45,
@@ -202,8 +199,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ]
                     },
                     {
@@ -217,8 +214,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ]
                     },
                     {
@@ -232,8 +229,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ]
                     },
                 ]
@@ -251,8 +248,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ],
                         "y_axis": "left",
                         "x_axis": "bottom",
@@ -272,8 +269,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ],
                         "x_axis": "bottom",
                         "height": 175,
@@ -290,8 +287,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ],
                         "x_axis": "bottom",
                         "height": 175,
@@ -308,8 +305,8 @@ def test_infer() -> None:
                                 "fill": "species",
                                 "r": 2,
                             },
-                            {"select": "intervalXY", "bind": "$brush"},
-                            {"select": "highlight", "by": "$brush", "opacity": 0.1},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
+                            {"select": "highlight", "by": ms.ParamRef("$brush"), "opacity": 0.1},
                         ],
                         "x_axis": "bottom",
                         "height": 175,

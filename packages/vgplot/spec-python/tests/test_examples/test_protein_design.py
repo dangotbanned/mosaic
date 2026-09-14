@@ -36,10 +36,7 @@ McNamara-Bordewick. Data from the [UW Institute for Protein Design].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -47,7 +44,7 @@ def test_infer() -> None:
         "data": {"proteins": {"file": "data/protein-design.parquet"}},
         "params": {
             "query": {"select": "crossfilter"},
-            "point": {"select": "intersect", "empty": True},
+            "point": {"empty": True, "select": "intersect"},
             "plddt_domain": [67, 94.5],
             "pae_domain": [5, 29],
             "scheme": "observable10",
@@ -60,28 +57,28 @@ def test_infer() -> None:
                         "source": "proteins",
                         "column": "partial_t",
                         "label": "Partial t",
-                        "bind": "$query",
+                        "bind": ms.ParamRef("$query"),
                     },
                     {
                         "input": "menu",
                         "source": "proteins",
                         "column": "noise",
                         "label": "Noise",
-                        "bind": "$query",
+                        "bind": ms.ParamRef("$query"),
                     },
                     {
                         "input": "menu",
                         "source": "proteins",
                         "column": "gradient_decay_function",
                         "label": "Gradient Decay",
-                        "bind": "$query",
+                        "bind": ms.ParamRef("$query"),
                     },
                     {
                         "input": "menu",
                         "source": "proteins",
                         "column": "gradient_scale",
                         "label": "Gradient Scale",
-                        "bind": "$query",
+                        "bind": ms.ParamRef("$query"),
                     },
                 ]
             },
@@ -92,7 +89,7 @@ def test_infer() -> None:
                         "plot": [
                             {
                                 "mark": "rectY",
-                                "data": {"source": "proteins", "filter_by": "$query"},
+                                "data": {"source": "proteins", "filter_by": ms.ParamRef("$query")},
                                 "x": {"bin": "plddt_total", "steps": 60},
                                 "y": {"count": None},
                                 "z": "version",
@@ -107,16 +104,21 @@ def test_infer() -> None:
                         "height": 55,
                         "x_axis": None,
                         "y_axis": None,
-                        "x_domain": "$plddt_domain",
+                        "x_domain": ms.ParamRef("$plddt_domain"),
                         "color_domain": "Fixed",
-                        "color_scheme": "$scheme",
+                        "color_scheme": ms.ParamRef("$scheme"),
                         "margin_left": 40,
                         "margin_right": 0,
                         "margin_top": 0,
                         "margin_bottom": 0,
                     },
                     {"hspace": 5},
-                    {"legend": "color", "plot": "scatter", "columns": 1, "bind": "$query"},
+                    {
+                        "legend": "color",
+                        "plot": "scatter",
+                        "columns": 1,
+                        "bind": ms.ParamRef("$query"),
+                    },
                 ]
             },
             {
@@ -127,7 +129,7 @@ def test_infer() -> None:
                             {"mark": "frame", "stroke": "#ccc"},
                             {
                                 "mark": "raster",
-                                "data": {"source": "proteins", "filter_by": "$query"},
+                                "data": {"source": "proteins", "filter_by": ms.ParamRef("$query")},
                                 "x": "plddt_total",
                                 "y": "pae_interaction",
                                 "fill": "version",
@@ -135,12 +137,12 @@ def test_infer() -> None:
                             },
                             {
                                 "select": "intervalXY",
-                                "bind": "$query",
+                                "bind": ms.ParamRef("$query"),
                                 "brush": {"stroke": "currentColor", "fill": "transparent"},
                             },
                             {
                                 "mark": "dot",
-                                "data": {"source": "proteins", "filter_by": "$point"},
+                                "data": {"source": "proteins", "filter_by": ms.ParamRef("$point")},
                                 "x": "plddt_total",
                                 "y": "pae_interaction",
                                 "fill": "version",
@@ -151,9 +153,9 @@ def test_infer() -> None:
                         "opacity_domain": [0, 2],
                         "opacity_clamp": True,
                         "color_domain": "Fixed",
-                        "color_scheme": "$scheme",
-                        "x_domain": "$plddt_domain",
-                        "y_domain": "$pae_domain",
+                        "color_scheme": ms.ParamRef("$scheme"),
+                        "x_domain": ms.ParamRef("$plddt_domain"),
+                        "y_domain": ms.ParamRef("$pae_domain"),
                         "x_label_anchor": "center",
                         "y_label_anchor": "center",
                         "margin_top": 0,
@@ -166,7 +168,7 @@ def test_infer() -> None:
                         "plot": [
                             {
                                 "mark": "rectX",
-                                "data": {"source": "proteins", "filter_by": "$query"},
+                                "data": {"source": "proteins", "filter_by": ms.ParamRef("$query")},
                                 "x": {"count": None},
                                 "y": {"bin": "pae_interaction", "steps": 60},
                                 "z": "version",
@@ -184,17 +186,17 @@ def test_infer() -> None:
                         "margin_top": 0,
                         "margin_left": 0,
                         "margin_right": 0,
-                        "y_domain": "$pae_domain",
+                        "y_domain": ms.ParamRef("$pae_domain"),
                         "color_domain": "Fixed",
-                        "color_scheme": "$scheme",
+                        "color_scheme": ms.ParamRef("$scheme"),
                     },
                 ]
             },
             {"vspace": "1em"},
             {
                 "input": "table",
-                "bind": "$point",
-                "filter_by": "$query",
+                "bind": ms.ParamRef("$point"),
+                "filter_by": ms.ParamRef("$query"),
                 "source": "proteins",
                 "columns": [
                     "version",

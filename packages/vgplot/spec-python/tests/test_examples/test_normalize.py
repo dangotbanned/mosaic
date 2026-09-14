@@ -20,11 +20,11 @@ def test_infer() -> None:
         },
         "params": {"point": {"date": "2013-05-13"}},
         "plot": [
-            {"mark": "ruleX", "x": "$point"},
+            {"mark": "ruleX", "x": ms.ParamRef("$point")},
             {
                 "mark": "textX",
-                "x": "$point",
-                "text": "$point",
+                "x": ms.ParamRef("$point"),
+                "text": ms.ParamRef("$point"),
                 "frame_anchor": "top",
                 "line_anchor": "bottom",
                 "dy": -7,
@@ -50,7 +50,7 @@ def test_infer() -> None:
                 },
                 "stroke": "Symbol",
             },
-            {"select": "nearestX", "bind": "$point"},
+            {"select": "nearestX", "bind": ms.ParamRef("$point")},
         ],
         "y_scale": "log",
         "y_domain": [0.2, 6],

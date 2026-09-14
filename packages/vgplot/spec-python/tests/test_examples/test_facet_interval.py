@@ -9,10 +9,7 @@ Adapted from https://observablehq.com/@observablehq/plot-non-faceted-marks
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -40,8 +37,12 @@ def test_infer() -> None:
                         "fx": "sex",
                         "fy": "species",
                     },
-                    {"select": "intervalXY", "bind": "$sel", "brush": {"stroke": "transparent"}},
-                    {"select": "highlight", "by": "$sel"},
+                    {
+                        "select": "intervalXY",
+                        "bind": ms.ParamRef("$sel"),
+                        "brush": {"stroke": "transparent"},
+                    },
+                    {"select": "highlight", "by": ms.ParamRef("$sel")},
                 ],
                 "grid": True,
                 "margin_right": 60,

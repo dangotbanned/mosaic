@@ -7,10 +7,7 @@ kernel bandwidth.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -23,11 +20,17 @@ def test_infer() -> None:
                     {
                         "input": "slider",
                         "label": "Bandwidth (σ)",
-                        "bind": "$bandwidth",
+                        "bind": ms.ParamRef("$bandwidth"),
                         "min": 1,
                         "max": 100,
                     },
-                    {"input": "slider", "label": "Bins", "bind": "$bins", "min": 10, "max": 60},
+                    {
+                        "input": "slider",
+                        "label": "Bins",
+                        "bind": ms.ParamRef("$bins"),
+                        "min": 10,
+                        "max": 60,
+                    },
                 ]
             },
             {
@@ -40,9 +43,9 @@ def test_infer() -> None:
                         "r": "density",
                         "fill": "species",
                         "fill_opacity": 0.5,
-                        "width": "$bins",
-                        "height": "$bins",
-                        "bandwidth": "$bandwidth",
+                        "width": ms.ParamRef("$bins"),
+                        "height": ms.ParamRef("$bins"),
+                        "bandwidth": ms.ParamRef("$bandwidth"),
                     },
                     {
                         "mark": "dot",

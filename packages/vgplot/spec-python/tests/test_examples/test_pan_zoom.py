@@ -6,10 +6,7 @@ set of bound selections, one per unique axis.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -30,7 +27,7 @@ def test_infer() -> None:
                                 "r": 2,
                                 "clip": True,
                             },
-                            {"select": "panZoom", "x": "$xs", "y": "$ys"},
+                            {"select": "panZoom", "x": ms.ParamRef("$xs"), "y": ms.ParamRef("$ys")},
                         ],
                         "width": 320,
                         "height": 240,
@@ -48,7 +45,7 @@ def test_infer() -> None:
                                 "r": 2,
                                 "clip": True,
                             },
-                            {"select": "panZoom", "x": "$xs", "y": "$zs"},
+                            {"select": "panZoom", "x": ms.ParamRef("$xs"), "y": ms.ParamRef("$zs")},
                         ],
                         "width": 320,
                         "height": 240,
@@ -70,7 +67,7 @@ def test_infer() -> None:
                                 "r": 2,
                                 "clip": True,
                             },
-                            {"select": "panZoom", "x": "$ws", "y": "$ys"},
+                            {"select": "panZoom", "x": ms.ParamRef("$ws"), "y": ms.ParamRef("$ys")},
                         ],
                         "width": 320,
                         "height": 240,
@@ -88,7 +85,7 @@ def test_infer() -> None:
                                 "r": 2,
                                 "clip": True,
                             },
-                            {"select": "panZoom", "x": "$ws", "y": "$zs"},
+                            {"select": "panZoom", "x": ms.ParamRef("$ws"), "y": ms.ParamRef("$zs")},
                         ],
                         "width": 320,
                         "height": 240,

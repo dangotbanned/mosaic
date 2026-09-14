@@ -10,10 +10,7 @@ subset can still faithfully represent these area charts.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -29,7 +26,7 @@ def test_infer() -> None:
                         "y": "v",
                         "fill": "steelblue",
                     },
-                    {"select": "intervalX", "bind": "$brush"},
+                    {"select": "intervalX", "bind": ms.ParamRef("$brush")},
                 ],
                 "width": 680,
                 "height": 200,
@@ -38,7 +35,7 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "areaY",
-                        "data": {"source": "walk", "filter_by": "$brush"},
+                        "data": {"source": "walk", "filter_by": ms.ParamRef("$brush")},
                         "x": "t",
                         "y": "v",
                         "fill": "steelblue",

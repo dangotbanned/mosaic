@@ -7,10 +7,7 @@ Select a region to view regression results for a data subset.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -28,14 +25,14 @@ def test_infer() -> None:
             },
             {
                 "mark": "regressionY",
-                "data": {"source": "athletes", "filter_by": "$query"},
+                "data": {"source": "athletes", "filter_by": ms.ParamRef("$query")},
                 "x": "weight",
                 "y": "height",
                 "stroke": "sex",
             },
             {
                 "select": "intervalXY",
-                "bind": "$query",
+                "bind": ms.ParamRef("$query"),
                 "brush": {"fill_opacity": 0, "stroke": "currentColor"},
             },
         ],

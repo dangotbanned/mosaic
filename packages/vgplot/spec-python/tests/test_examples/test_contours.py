@@ -7,10 +7,7 @@ densities.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -23,14 +20,14 @@ def test_infer() -> None:
                     {
                         "input": "slider",
                         "label": "Bandwidth (σ)",
-                        "bind": "$bandwidth",
+                        "bind": ms.ParamRef("$bandwidth"),
                         "min": 1,
                         "max": 100,
                     },
                     {
                         "input": "slider",
                         "label": "Thresholds",
-                        "bind": "$thresholds",
+                        "bind": ms.ParamRef("$thresholds"),
                         "min": 2,
                         "max": 20,
                     },
@@ -44,7 +41,7 @@ def test_infer() -> None:
                         "x": "bill_length",
                         "y": "bill_depth",
                         "fill": "species",
-                        "bandwidth": "$bandwidth",
+                        "bandwidth": ms.ParamRef("$bandwidth"),
                     },
                     {
                         "mark": "contour",
@@ -52,8 +49,8 @@ def test_infer() -> None:
                         "x": "bill_length",
                         "y": "bill_depth",
                         "stroke": "species",
-                        "bandwidth": "$bandwidth",
-                        "thresholds": "$thresholds",
+                        "bandwidth": ms.ParamRef("$bandwidth"),
+                        "thresholds": ms.ParamRef("$thresholds"),
                     },
                     {
                         "mark": "dot",

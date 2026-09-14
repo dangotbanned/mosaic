@@ -5,10 +5,7 @@ Sort and limit an aggregate bar chart of gold medals by country.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -18,7 +15,7 @@ def test_infer() -> None:
             {
                 "input": "menu",
                 "label": "Sport",
-                "bind": "$query",
+                "bind": ms.ParamRef("$query"),
                 "source": "athletes",
                 "column": "sport",
                 "value": "aquatics",
@@ -28,7 +25,7 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "barX",
-                        "data": {"source": "athletes", "filter_by": "$query"},
+                        "data": {"source": "athletes", "filter_by": ms.ParamRef("$query")},
                         "x": {"sum": "gold"},
                         "y": "nationality",
                         "fill": "steelblue",

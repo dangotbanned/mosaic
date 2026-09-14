@@ -14,10 +14,7 @@ Adapted from the [Arquero window query tutorial].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -40,7 +37,7 @@ def test_infer() -> None:
                         "mark": "lineY",
                         "data": {"source": "cases"},
                         "x": {"sql": "day + 0.5"},
-                        "y": {"avg": "cases", "orderby": "day", "rows": "$frame"},
+                        "y": {"avg": "cases", "orderby": "day", "rows": ms.ParamRef("$frame")},
                         "curve": "monotone-x",
                         "stroke": "currentColor",
                     },
@@ -52,7 +49,7 @@ def test_infer() -> None:
             {
                 "input": "menu",
                 "label": "Window Frame",
-                "bind": "$frame",
+                "bind": ms.ParamRef("$frame"),
                 "options": [
                     {"label": "7-day moving average, with prior 6 days: [-6, 0]", "value": [-6, 0]},
                     {

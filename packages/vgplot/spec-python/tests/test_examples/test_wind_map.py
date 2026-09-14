@@ -13,10 +13,7 @@ Adapted from an [Observable Plot example].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -26,7 +23,12 @@ def test_infer() -> None:
         },
         "params": {"selected": {"select": "union"}, "length": 2},
         "vconcat": [
-            {"legend": "color", "plot": "wind-map", "label": "Speed (m/s)", "bind": "$selected"},
+            {
+                "legend": "color",
+                "plot": "wind-map",
+                "label": "Speed (m/s)",
+                "bind": ms.ParamRef("$selected"),
+            },
             {
                 "name": "wind-map",
                 "plot": [
@@ -40,8 +42,8 @@ def test_infer() -> None:
                         "stroke": {"sql": "sqrt(u * u + v * v)"},
                         "channels": {"id": "id"},
                     },
-                    {"select": "region", "bind": "$selected", "channels": ["id"]},
-                    {"select": "highlight", "by": "$selected"},
+                    {"select": "region", "bind": ms.ParamRef("$selected"), "channels": ["id"]},
+                    {"select": "highlight", "by": ms.ParamRef("$selected")},
                 ],
                 "length_scale": "identity",
                 "color_zero": True,
@@ -54,7 +56,7 @@ def test_infer() -> None:
                 "min": 1,
                 "max": 7,
                 "step": 0.1,
-                "bind": "$length",
+                "bind": ms.ParamRef("$length"),
                 "label": "Vector Length",
             },
         ],

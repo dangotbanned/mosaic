@@ -12,10 +12,7 @@ Adapted from an [Observable Plot example].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -53,7 +50,7 @@ def test_infer() -> None:
                     {"label": "Any Opinion", "value": 1},
                     {"label": "Net Favorability", "value": -1},
                 ],
-                "bind": "$sign",
+                "bind": ms.ParamRef("$sign"),
             },
         ],
     }

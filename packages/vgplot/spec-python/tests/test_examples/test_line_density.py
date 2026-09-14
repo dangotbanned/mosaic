@@ -8,10 +8,7 @@ data, while the pixel size menu adjusts the raster resolution.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -36,7 +33,7 @@ def test_infer() -> None:
                     {
                         "input": "slider",
                         "label": "Bandwidth (σ)",
-                        "bind": "$bandwidth",
+                        "bind": ms.ParamRef("$bandwidth"),
                         "min": 0,
                         "max": 10,
                         "step": 0.1,
@@ -44,7 +41,7 @@ def test_infer() -> None:
                     {
                         "input": "menu",
                         "label": "Pixel Size",
-                        "bind": "$pixelSize",
+                        "bind": ms.ParamRef("$pixel_size"),
                         "options": [0.5, 1, 2],
                     },
                 ]
@@ -54,17 +51,17 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "denseLine",
-                        "data": {"source": "stocks_after_2006", "filter_by": "$brush"},
+                        "data": {"source": "stocks_after_2006", "filter_by": ms.ParamRef("$brush")},
                         "x": "Date",
                         "y": "Close",
                         "z": "Symbol",
                         "fill": "density",
-                        "bandwidth": "$bandwidth",
-                        "pixel_size": "$pixelSize",
+                        "bandwidth": ms.ParamRef("$bandwidth"),
+                        "pixel_size": ms.ParamRef("$pixel_size"),
                     }
                 ],
-                "color_scheme": "$schemeColor",
-                "color_scale": "$scaleColor",
+                "color_scheme": ms.ParamRef("$scheme_color"),
+                "color_scale": ms.ParamRef("$scale_color"),
                 "y_label": "Close (Normalized) ↑",
                 "y_nice": True,
                 "margins": {"left": 30, "top": 20, "right": 0},
@@ -81,13 +78,13 @@ def test_infer() -> None:
                         "z": "Symbol",
                         "fill": "density",
                         "normalize": False,
-                        "bandwidth": "$bandwidth",
-                        "pixel_size": "$pixelSize",
+                        "bandwidth": ms.ParamRef("$bandwidth"),
+                        "pixel_size": ms.ParamRef("$pixel_size"),
                     },
-                    {"select": "intervalXY", "bind": "$brush"},
+                    {"select": "intervalXY", "bind": ms.ParamRef("$brush")},
                 ],
-                "color_scheme": "$schemeColor",
-                "color_scale": "$scaleColor",
+                "color_scheme": ms.ParamRef("$scheme_color"),
+                "color_scale": ms.ParamRef("$scale_color"),
                 "y_label": "Close (Unnormalized) ↑",
                 "y_nice": True,
                 "margins": {"left": 30, "top": 20, "right": 0},

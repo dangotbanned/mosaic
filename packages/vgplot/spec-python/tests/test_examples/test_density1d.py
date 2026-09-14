@@ -7,10 +7,7 @@ log-scaled domain. To change the amount of smoothing, use the slider to set the 
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -21,7 +18,7 @@ def test_infer() -> None:
             {
                 "input": "slider",
                 "label": "Bandwidth (σ)",
-                "bind": "$bandwidth",
+                "bind": ms.ParamRef("$bandwidth"),
                 "min": 0.1,
                 "max": 100,
                 "step": 0.1,
@@ -30,13 +27,13 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "densityY",
-                        "data": {"source": "flights", "filter_by": "$brush"},
+                        "data": {"source": "flights", "filter_by": ms.ParamRef("$brush")},
                         "x": "delay",
                         "fill": "#888",
                         "fill_opacity": 0.5,
-                        "bandwidth": "$bandwidth",
+                        "bandwidth": ms.ParamRef("$bandwidth"),
                     },
-                    {"select": "intervalX", "bind": "$brush"},
+                    {"select": "intervalX", "bind": ms.ParamRef("$brush")},
                 ],
                 "y_axis": None,
                 "x_domain": "Fixed",
@@ -48,13 +45,13 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "densityY",
-                        "data": {"source": "flights", "filter_by": "$brush"},
+                        "data": {"source": "flights", "filter_by": ms.ParamRef("$brush")},
                         "x": "distance",
                         "fill": "#888",
                         "fill_opacity": 0.5,
-                        "bandwidth": "$bandwidth",
+                        "bandwidth": ms.ParamRef("$bandwidth"),
                     },
-                    {"select": "intervalX", "bind": "$brush"},
+                    {"select": "intervalX", "bind": ms.ParamRef("$brush")},
                 ],
                 "y_axis": None,
                 "x_scale": "log",

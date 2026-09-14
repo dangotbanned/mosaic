@@ -6,10 +6,7 @@ regions in the marginal histograms to filter the density display.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -22,7 +19,7 @@ def test_infer() -> None:
                     {
                         "input": "menu",
                         "label": "Color Scale",
-                        "bind": "$scale",
+                        "bind": ms.ParamRef("$scale"),
                         "options": ["log", "linear", "sqrt"],
                     },
                     {"hspace": 10},
@@ -41,7 +38,7 @@ def test_infer() -> None:
                                 "fill": "steelblue",
                                 "inset": 0.5,
                             },
-                            {"select": "intervalX", "bind": "$query"},
+                            {"select": "intervalX", "bind": ms.ParamRef("$query")},
                         ],
                         "margins": {"left": 5, "right": 5, "top": 30, "bottom": 0},
                         "x_domain": "Fixed",
@@ -61,7 +58,7 @@ def test_infer() -> None:
                         "plot": [
                             {
                                 "mark": "hexbin",
-                                "data": {"source": "flights", "filter_by": "$query"},
+                                "data": {"source": "flights", "filter_by": ms.ParamRef("$query")},
                                 "x": "time",
                                 "y": "delay",
                                 "fill": {"count": None},
@@ -70,7 +67,7 @@ def test_infer() -> None:
                             {"mark": "hexgrid", "bin_width": 10},
                         ],
                         "color_scheme": "ylgnbu",
-                        "color_scale": "$scale",
+                        "color_scale": ms.ParamRef("$scale"),
                         "margins": {"left": 5, "right": 0, "top": 0, "bottom": 5},
                         "x_axis": None,
                         "y_axis": None,
@@ -88,7 +85,7 @@ def test_infer() -> None:
                                 "fill": "steelblue",
                                 "inset": 0.5,
                             },
-                            {"select": "intervalY", "bind": "$query"},
+                            {"select": "intervalY", "bind": ms.ParamRef("$query")},
                         ],
                         "margins": {"left": 0, "right": 50, "top": 4, "bottom": 5},
                         "y_domain": [-60, 180],

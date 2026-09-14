@@ -13,10 +13,7 @@ Adapted from an [Observable Plot example].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -43,7 +40,7 @@ def test_infer() -> None:
                         "x": "bill_length",
                         "y": "bill_depth",
                         "stroke": "species",
-                        "stroke_opacity": "$hull",
+                        "stroke_opacity": ms.ParamRef("$hull"),
                         "stroke_width": 1.5,
                     },
                     {
@@ -53,7 +50,7 @@ def test_infer() -> None:
                         "y": "bill_depth",
                         "z": "species",
                         "stroke": "species",
-                        "stroke_opacity": "$mesh",
+                        "stroke_opacity": ms.ParamRef("$mesh"),
                         "stroke_width": 1,
                     },
                     {
@@ -75,14 +72,14 @@ def test_infer() -> None:
                         "input": "menu",
                         "label": "Delaunay Mesh",
                         "options": [{"value": 0, "label": "Hide"}, {"value": 0.5, "label": "Show"}],
-                        "bind": "$mesh",
+                        "bind": ms.ParamRef("$mesh"),
                     },
                     {"hspace": 5},
                     {
                         "input": "menu",
                         "label": "Convex Hull",
                         "options": [{"value": 0, "label": "Hide"}, {"value": 1, "label": "Show"}],
-                        "bind": "$hull",
+                        "bind": ms.ParamRef("$hull"),
                     },
                 ]
             },

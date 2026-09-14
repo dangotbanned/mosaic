@@ -5,10 +5,7 @@ A test specification to compare M4 optimized and unoptimized line charts.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -25,7 +22,7 @@ def test_infer() -> None:
                         "z": None,
                         "stroke": "time_stamp",
                     },
-                    {"select": "intervalX", "bind": "$brush"},
+                    {"select": "intervalX", "bind": ms.ParamRef("$brush")},
                 ],
                 "x_label": None,
                 "width": 680,
@@ -36,7 +33,7 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "lineY",
-                        "data": {"source": "wave", "filter_by": "$brush"},
+                        "data": {"source": "wave", "filter_by": ms.ParamRef("$brush")},
                         "x": "time_stamp",
                         "y": "power",
                         "z": None,
@@ -54,7 +51,11 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "lineY",
-                        "data": {"source": "wave", "filter_by": "$brush", "optimize": False},
+                        "data": {
+                            "source": "wave",
+                            "filter_by": ms.ParamRef("$brush"),
+                            "optimize": False,
+                        },
                         "x": "time_stamp",
                         "y": "power",
                         "z": None,

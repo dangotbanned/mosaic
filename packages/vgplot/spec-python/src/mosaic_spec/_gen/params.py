@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Literal as L
+from typing import Literal as L, NewType
 
 from mosaic_spec._typing_compat import Required, TypeAliasType, TypedDict
 
@@ -27,7 +27,7 @@ class ParamDate(TypedDict, total=False, closed=True):
 
 ParamLiteral = TypeAliasType("ParamLiteral", bool | float | str | None)
 """Literal Param values."""
-ParamRef = TypeAliasType("ParamRef", str)
+ParamRef = NewType("ParamRef", str)
 ParamValue = TypeAliasType("ParamValue", ParamLiteral | Sequence[ParamLiteral | ParamRef])
 """Valid Param values."""
 

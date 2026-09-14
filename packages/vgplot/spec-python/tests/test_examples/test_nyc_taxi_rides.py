@@ -29,8 +29,8 @@ def test_infer() -> None:
                 "SELECT\n  (HOUR(datetime) + MINUTE(datetime)/60) AS time,\n  ST_X(pick) AS px, ST_Y(pick) AS py,\n  ST_X(drop) AS dx, ST_Y(drop) AS dy\nFROM rides\n"
             ),
         },
-        "config": {"extensions": "spatial"},
         "params": {"filter": {"select": "crossfilter"}},
+        "config": {"extensions": "spatial"},
         "vconcat": [
             {
                 "hconcat": [
@@ -38,12 +38,12 @@ def test_infer() -> None:
                         "plot": [
                             {
                                 "mark": "raster",
-                                "data": {"source": "trips", "filter_by": "$filter"},
+                                "data": {"source": "trips", "filter_by": ms.ParamRef("$filter")},
                                 "x": "px",
                                 "y": "py",
                                 "bandwidth": 0,
                             },
-                            {"select": "intervalXY", "bind": "$filter"},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$filter")},
                             {
                                 "mark": "text",
                                 "data": [{"label": "Taxi Pickups"}],
@@ -70,12 +70,12 @@ def test_infer() -> None:
                         "plot": [
                             {
                                 "mark": "raster",
-                                "data": {"source": "trips", "filter_by": "$filter"},
+                                "data": {"source": "trips", "filter_by": ms.ParamRef("$filter")},
                                 "x": "dx",
                                 "y": "dy",
                                 "bandwidth": 0,
                             },
-                            {"select": "intervalXY", "bind": "$filter"},
+                            {"select": "intervalXY", "bind": ms.ParamRef("$filter")},
                             {
                                 "mark": "text",
                                 "data": [{"label": "Taxi Dropoffs"}],
@@ -110,7 +110,7 @@ def test_infer() -> None:
                         "fill": "steelblue",
                         "inset": 0.5,
                     },
-                    {"select": "intervalX", "bind": "$filter"},
+                    {"select": "intervalX", "bind": ms.ParamRef("$filter")},
                 ],
                 "y_tick_format": "s",
                 "x_label": "Pickup Hour →",

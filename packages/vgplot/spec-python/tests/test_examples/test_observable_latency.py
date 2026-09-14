@@ -16,10 +16,7 @@ Adapted from an [Observable Framework example].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -36,7 +33,7 @@ def test_infer() -> None:
                     {"mark": "frame", "fill": "black"},
                     {
                         "mark": "raster",
-                        "data": {"source": "latency", "filter_by": "$filter"},
+                        "data": {"source": "latency", "filter_by": ms.ParamRef("$filter")},
                         "x": "time",
                         "y": "latency",
                         "fill": {"argmax": ("route", "count")},
@@ -45,7 +42,7 @@ def test_infer() -> None:
                         "height": 500,
                         "image_rendering": "pixelated",
                     },
-                    {"select": "intervalXY", "bind": "$filter"},
+                    {"select": "intervalXY", "bind": ms.ParamRef("$filter")},
                 ],
                 "color_domain": "Fixed",
                 "color_scheme": "observable10",
@@ -66,15 +63,15 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "barX",
-                        "data": {"source": "latency", "filter_by": "$filter"},
+                        "data": {"source": "latency", "filter_by": ms.ParamRef("$filter")},
                         "x": {"sum": "count"},
                         "y": "route",
                         "fill": "route",
                         "sort": {"y": "-x", "limit": 15},
                     },
-                    {"select": "toggleY", "bind": "$filter"},
-                    {"select": "toggleY", "bind": "$highlight"},
-                    {"select": "highlight", "by": "$highlight"},
+                    {"select": "toggleY", "bind": ms.ParamRef("$filter")},
+                    {"select": "toggleY", "bind": ms.ParamRef("$highlight")},
+                    {"select": "highlight", "by": ms.ParamRef("$highlight")},
                 ],
                 "color_domain": "Fixed",
                 "x_label": "Routes by Total Requests",

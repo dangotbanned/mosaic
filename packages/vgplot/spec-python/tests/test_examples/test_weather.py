@@ -13,10 +13,7 @@ Based on a [Vega-Lite/Altair example] by Jake Vanderplas.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -34,7 +31,7 @@ def test_infer() -> None:
                         "plot": [
                             {
                                 "mark": "dot",
-                                "data": {"source": "weather", "filter_by": "$click"},
+                                "data": {"source": "weather", "filter_by": ms.ParamRef("$click")},
                                 "x": {"date_month_day": "date"},
                                 "y": "temp_max",
                                 "fill": "weather",
@@ -43,21 +40,21 @@ def test_infer() -> None:
                             },
                             {
                                 "select": "intervalX",
-                                "bind": "$range",
+                                "bind": ms.ParamRef("$range"),
                                 "brush": {"fill": "none", "stroke": "#888"},
                             },
                             {
                                 "select": "highlight",
-                                "by": "$range",
+                                "by": ms.ParamRef("$range"),
                                 "fill": "#ccc",
                                 "fill_opacity": 0.2,
                             },
-                            {"legend": "color", "bind": "$click", "columns": 1},
+                            {"legend": "color", "bind": ms.ParamRef("$click"), "columns": 1},
                         ],
                         "xy_domain": "Fixed",
                         "x_tick_format": "%b",
-                        "color_domain": "$domain",
-                        "color_range": "$colors",
+                        "color_domain": ms.ParamRef("$domain"),
+                        "color_range": ms.ParamRef("$colors"),
                         "r_domain": "Fixed",
                         "r_range": [2, 10],
                         "width": 680,
@@ -77,19 +74,19 @@ def test_infer() -> None:
                     },
                     {
                         "mark": "barX",
-                        "data": {"source": "weather", "filter_by": "$range"},
+                        "data": {"source": "weather", "filter_by": ms.ParamRef("$range")},
                         "x": {"count": None},
                         "y": "weather",
                         "fill": "weather",
                     },
-                    {"select": "toggleY", "bind": "$click"},
-                    {"select": "highlight", "by": "$click"},
+                    {"select": "toggleY", "bind": ms.ParamRef("$click")},
+                    {"select": "highlight", "by": ms.ParamRef("$click")},
                 ],
                 "x_domain": "Fixed",
-                "y_domain": "$domain",
+                "y_domain": ms.ParamRef("$domain"),
                 "y_label": None,
-                "color_domain": "$domain",
-                "color_range": "$colors",
+                "color_domain": ms.ParamRef("$domain"),
+                "color_range": ms.ParamRef("$colors"),
                 "width": 680,
             },
         ],

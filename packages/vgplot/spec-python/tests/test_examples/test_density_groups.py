@@ -8,10 +8,7 @@ density areas.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -24,14 +21,19 @@ def test_infer() -> None:
                     {
                         "input": "menu",
                         "label": "Normalize",
-                        "bind": "$normalize",
+                        "bind": ms.ParamRef("$normalize"),
                         "options": ["none", "sum", "max"],
                     },
-                    {"input": "menu", "label": "Stack", "bind": "$stack", "options": [False, True]},
+                    {
+                        "input": "menu",
+                        "label": "Stack",
+                        "bind": ms.ParamRef("$stack"),
+                        "options": [False, True],
+                    },
                     {
                         "input": "menu",
                         "label": "Offset",
-                        "bind": "$offset",
+                        "bind": ms.ParamRef("$offset"),
                         "options": [
                             {"label": "none", "value": None},
                             {"label": "normalize", "value": "normalize"},
@@ -48,10 +50,10 @@ def test_infer() -> None:
                         "x": "bill_depth",
                         "fill": "species",
                         "fill_opacity": 0.4,
-                        "bandwidth": "$bandwidth",
-                        "normalize": "$normalize",
-                        "stack": "$stack",
-                        "offset": "$offset",
+                        "bandwidth": ms.ParamRef("$bandwidth"),
+                        "normalize": ms.ParamRef("$normalize"),
+                        "stack": ms.ParamRef("$stack"),
+                        "offset": ms.ParamRef("$offset"),
                     }
                 ],
                 "margin_left": 50,

@@ -5,10 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -20,14 +17,14 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "rectY",
-                        "data": {"source": "flights", "filter_by": "$brush"},
+                        "data": {"source": "flights", "filter_by": ms.ParamRef("$brush")},
                         "x": {"bin": "delay"},
                         "y": {"count": None},
                         "fill": "steelblue",
                         "inset_left": 0.5,
                         "inset_right": 0.5,
                     },
-                    {"select": "intervalX", "bind": "$brush"},
+                    {"select": "intervalX", "bind": ms.ParamRef("$brush")},
                 ],
                 "x_domain": "Fixed",
                 "x_label": "Arrival Delay (min)",
@@ -39,14 +36,14 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "rectY",
-                        "data": {"source": "flights", "filter_by": "$brush"},
+                        "data": {"source": "flights", "filter_by": ms.ParamRef("$brush")},
                         "x": {"bin": "time"},
                         "y": {"count": None},
                         "fill": "steelblue",
                         "inset_left": 0.5,
                         "inset_right": 0.5,
                     },
-                    {"select": "intervalX", "bind": "$brush"},
+                    {"select": "intervalX", "bind": ms.ParamRef("$brush")},
                 ],
                 "x_domain": "Fixed",
                 "x_label": "Departure Time (hour)",

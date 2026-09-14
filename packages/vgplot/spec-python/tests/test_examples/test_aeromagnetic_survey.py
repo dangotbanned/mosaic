@@ -17,10 +17,7 @@ Adapted from an [Observable Plot example].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -34,10 +31,16 @@ def test_infer() -> None:
                         "input": "menu",
                         "label": "Interpolation Method",
                         "options": ["none", "nearest", "barycentric", "random-walk"],
-                        "bind": "$interp",
+                        "bind": ms.ParamRef("$interp"),
                     },
                     {"hspace": "1em"},
-                    {"input": "slider", "label": "Blur", "min": 0, "max": 100, "bind": "$blur"},
+                    {
+                        "input": "slider",
+                        "label": "Blur",
+                        "min": 0,
+                        "max": 100,
+                        "bind": ms.ParamRef("$blur"),
+                    },
                 ]
             },
             {"vspace": "1em"},
@@ -49,8 +52,8 @@ def test_infer() -> None:
                         "x": "LONGITUDE",
                         "y": "LATITUDE",
                         "fill": {"max": "MAG_IGRF90"},
-                        "interpolate": "$interp",
-                        "bandwidth": "$blur",
+                        "interpolate": ms.ParamRef("$interp"),
+                        "bandwidth": ms.ParamRef("$blur"),
                     }
                 ],
                 "color_scale": "diverging",

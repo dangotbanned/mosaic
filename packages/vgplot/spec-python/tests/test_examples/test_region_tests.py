@@ -5,10 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -42,8 +39,8 @@ def test_infer() -> None:
                         "stroke_opacity": 0.9,
                         "curve": "monotone-x",
                     },
-                    {"select": "region", "channels": ["z"], "bind": "$series"},
-                    {"select": "highlight", "by": "$series"},
+                    {"select": "region", "channels": ["z"], "bind": ms.ParamRef("$series")},
+                    {"select": "highlight", "by": ms.ParamRef("$series")},
                 ],
                 "margin_left": 24,
                 "x_label": None,
@@ -76,8 +73,8 @@ def test_infer() -> None:
                         "href": "url",
                         "target": "_blank",
                     },
-                    {"select": "region", "channels": ["id"], "bind": "$quakes"},
-                    {"select": "highlight", "by": "$quakes"},
+                    {"select": "region", "channels": ["id"], "bind": ms.ParamRef("$quakes")},
+                    {"select": "highlight", "by": ms.ParamRef("$quakes")},
                 ],
                 "margin": 2,
                 "projection_type": "equirectangular",
@@ -92,8 +89,12 @@ def test_infer() -> None:
                         "stroke": "currentColor",
                         "stroke_width": 0.25,
                     },
-                    {"select": "region", "channels": ["id"], "bind": "$counties_filter"},
-                    {"select": "highlight", "by": "$counties_filter"},
+                    {
+                        "select": "region",
+                        "channels": ["id"],
+                        "bind": ms.ParamRef("$counties_filter"),
+                    },
+                    {"select": "highlight", "by": ms.ParamRef("$counties_filter")},
                 ],
                 "margin": 0,
                 "projection_type": "albers",

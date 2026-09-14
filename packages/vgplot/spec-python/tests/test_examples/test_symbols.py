@@ -6,10 +6,7 @@ control which data table columns are plotted.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -23,13 +20,13 @@ def test_infer() -> None:
                         "input": "menu",
                         "label": "Y",
                         "options": ["body_mass", "flipper_length", "bill_depth", "bill_length"],
-                        "bind": "$y",
+                        "bind": ms.ParamRef("$y"),
                     },
                     {
                         "input": "menu",
                         "label": "X",
                         "options": ["body_mass", "flipper_length", "bill_depth", "bill_length"],
-                        "bind": "$x",
+                        "bind": ms.ParamRef("$x"),
                     },
                 ]
             },
@@ -42,8 +39,8 @@ def test_infer() -> None:
                             {
                                 "mark": "dot",
                                 "data": {"source": "penguins"},
-                                "x": {"column": "$x"},
-                                "y": {"column": "$y"},
+                                "x": {"column": ms.ParamRef("$x")},
+                                "y": {"column": ms.ParamRef("$y")},
                                 "stroke": "species",
                                 "symbol": "species",
                             }
@@ -64,8 +61,8 @@ def test_infer() -> None:
                             {
                                 "mark": "dot",
                                 "data": {"source": "penguins"},
-                                "x": {"column": "$x"},
-                                "y": {"column": "$y"},
+                                "x": {"column": ms.ParamRef("$x")},
+                                "y": {"column": ms.ParamRef("$y")},
                                 "fill": "species",
                                 "symbol": "species",
                             }

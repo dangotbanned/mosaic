@@ -16,10 +16,7 @@ Pitts and Madeline Brown.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -39,15 +36,15 @@ def test_infer() -> None:
                         "input": "menu",
                         "source": "shots",
                         "column": "team_name",
-                        "bind": "$filter",
+                        "bind": ms.ParamRef("$filter"),
                         "label": "Team",
                     },
                     {
                         "input": "menu",
                         "source": "shots",
                         "column": "athlete_name",
-                        "filter_by": "$filter",
-                        "bind": "$filter",
+                        "filter_by": ms.ParamRef("$filter"),
+                        "bind": ms.ParamRef("$filter"),
                         "label": "Athlete",
                     },
                 ]
@@ -56,11 +53,15 @@ def test_infer() -> None:
             {
                 "plot": [
                     {"mark": "frame", "stroke_opacity": 0.5},
-                    {"mark": "hexgrid", "bin_width": "$binWidth", "stroke_opacity": 0.05},
+                    {
+                        "mark": "hexgrid",
+                        "bin_width": ms.ParamRef("$bin_width"),
+                        "stroke_opacity": 0.05,
+                    },
                     {
                         "mark": "hexbin",
-                        "data": {"source": "shots", "filter_by": "$filter"},
-                        "bin_width": "$binWidth",
+                        "data": {"source": "shots", "filter_by": ms.ParamRef("$filter")},
+                        "bin_width": ms.ParamRef("$bin_width"),
                         "x": "x_position",
                         "y": "y_position",
                         "fill": {"avg": "score_value"},

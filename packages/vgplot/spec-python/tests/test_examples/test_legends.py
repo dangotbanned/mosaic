@@ -6,10 +6,7 @@ a zero-size frame) and external legends that reference a named plot.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -24,33 +21,45 @@ def test_infer() -> None:
             {
                 "hconcat": [
                     {
-                        "plot": [{"legend": "color", "label": "Color Swatch", "bind": "$toggle"}],
+                        "plot": [
+                            {
+                                "legend": "color",
+                                "label": "Color Swatch",
+                                "bind": ms.ParamRef("$toggle"),
+                            }
+                        ],
                         "name": "color-categorical",
                         "color_scale": "categorical",
-                        "color_domain": "$domain",
+                        "color_domain": ms.ParamRef("$domain"),
                     },
                     {"hspace": 35},
                     {
                         "legend": "color",
                         "plot": "color-categorical",
                         "label": "Color Swatch (External)",
-                        "bind": "$toggle",
+                        "bind": ms.ParamRef("$toggle"),
                     },
                 ]
             },
             {
                 "hconcat": [
                     {
-                        "plot": [{"legend": "symbol", "label": "Symbol Swatch", "bind": "$toggle"}],
+                        "plot": [
+                            {
+                                "legend": "symbol",
+                                "label": "Symbol Swatch",
+                                "bind": ms.ParamRef("$toggle"),
+                            }
+                        ],
                         "name": "symbol-categorical",
-                        "symbol_domain": "$domain",
+                        "symbol_domain": ms.ParamRef("$domain"),
                     },
                     {"hspace": 35},
                     {
                         "legend": "symbol",
                         "plot": "symbol-categorical",
                         "label": "Symbol Swatch (External)",
-                        "bind": "$toggle",
+                        "bind": ms.ParamRef("$toggle"),
                     },
                 ]
             },
@@ -59,7 +68,11 @@ def test_infer() -> None:
                 "hconcat": [
                     {
                         "plot": [
-                            {"legend": "opacity", "label": "Opacity Ramp", "bind": "$interval"}
+                            {
+                                "legend": "opacity",
+                                "label": "Opacity Ramp",
+                                "bind": ms.ParamRef("$interval"),
+                            }
                         ],
                         "name": "opacity-linear",
                         "opacity_domain": [0, 100],
@@ -69,7 +82,7 @@ def test_infer() -> None:
                         "legend": "opacity",
                         "plot": "opacity-linear",
                         "label": "Opacity Ramp (External)",
-                        "bind": "$interval",
+                        "bind": ms.ParamRef("$interval"),
                     },
                 ]
             },
@@ -89,7 +102,11 @@ def test_infer() -> None:
                 "hconcat": [
                     {
                         "plot": [
-                            {"legend": "color", "label": "Linear Color Ramp", "bind": "$interval"}
+                            {
+                                "legend": "color",
+                                "label": "Linear Color Ramp",
+                                "bind": ms.ParamRef("$interval"),
+                            }
                         ],
                         "name": "color-linear",
                         "color_domain": [0, 100],
@@ -99,7 +116,7 @@ def test_infer() -> None:
                         "legend": "color",
                         "plot": "color-linear",
                         "label": "Linear Color Ramp (External)",
-                        "bind": "$interval",
+                        "bind": ms.ParamRef("$interval"),
                     },
                 ]
             },
@@ -122,7 +139,7 @@ def test_infer() -> None:
                             {
                                 "legend": "color",
                                 "label": "Logarithmic Color Ramp",
-                                "bind": "$interval",
+                                "bind": ms.ParamRef("$interval"),
                             }
                         ],
                         "name": "color-log",
@@ -134,7 +151,7 @@ def test_infer() -> None:
                         "legend": "color",
                         "plot": "color-log",
                         "label": "Logarithmic Color Ramp (External)",
-                        "bind": "$interval",
+                        "bind": ms.ParamRef("$interval"),
                     },
                 ]
             },
@@ -145,7 +162,7 @@ def test_infer() -> None:
                             {
                                 "legend": "color",
                                 "label": "Diverging Color Ramp",
-                                "bind": "$interval",
+                                "bind": ms.ParamRef("$interval"),
                             }
                         ],
                         "name": "color-diverging",
@@ -158,7 +175,7 @@ def test_infer() -> None:
                         "legend": "color",
                         "plot": "color-diverging",
                         "label": "Diverging Color Ramp (External)",
-                        "bind": "$interval",
+                        "bind": ms.ParamRef("$interval"),
                     },
                 ]
             },
@@ -169,7 +186,7 @@ def test_infer() -> None:
                             {
                                 "legend": "color",
                                 "label": "Diverging Symlog Color Ramp",
-                                "bind": "$interval",
+                                "bind": ms.ParamRef("$interval"),
                             }
                         ],
                         "name": "color-diverging-symlog",
@@ -182,7 +199,7 @@ def test_infer() -> None:
                         "legend": "color",
                         "plot": "color-diverging-symlog",
                         "label": "Diverging Symlog Color Ramp (External)",
-                        "bind": "$interval",
+                        "bind": ms.ParamRef("$interval"),
                     },
                 ]
             },

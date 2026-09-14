@@ -6,10 +6,7 @@ wave.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -20,7 +17,7 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "areaY",
-                        "data": {"source": "wave", "filter_by": "$brush"},
+                        "data": {"source": "wave", "filter_by": ms.ParamRef("$brush")},
                         "x": "time_stamp",
                         "y": "power",
                     }
@@ -36,7 +33,11 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "areaY",
-                        "data": {"source": "wave", "filter_by": "$brush", "optimize": False},
+                        "data": {
+                            "source": "wave",
+                            "filter_by": ms.ParamRef("$brush"),
+                            "optimize": False,
+                        },
                         "x": "time_stamp",
                         "y": "power",
                     }
@@ -56,7 +57,7 @@ def test_infer() -> None:
                         "x": "time_stamp",
                         "y": "power",
                     },
-                    {"select": "intervalX", "bind": "$brush"},
+                    {"select": "intervalX", "bind": ms.ParamRef("$brush")},
                 ],
                 "y_domain": "Fixed",
                 "width": 680,

@@ -12,10 +12,7 @@ Adapted from an [Observable Plot example].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -38,7 +35,7 @@ def test_infer() -> None:
                         "y1": "R90_10_1980",
                         "x2": "POP_2015",
                         "y2": "R90_10_2015",
-                        "bend": "$bend",
+                        "bend": ms.ParamRef("$bend"),
                         "stroke": {"sql": "R90_10_2015 - R90_10_1980"},
                     },
                     {
@@ -61,6 +58,11 @@ def test_infer() -> None:
                 "color_scheme": "BuRd",
                 "color_tick_format": "+f",
             },
-            {"input": "menu", "label": "Bend Arrows?", "options": [True, False], "bind": "$bend"},
+            {
+                "input": "menu",
+                "label": "Bend Arrows?",
+                "options": [True, False],
+                "bind": ms.ParamRef("$bend"),
+            },
         ],
     }

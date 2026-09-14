@@ -10,10 +10,7 @@ number of athletes in the full dataset.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import mosaic_spec as ms
+import mosaic_spec as ms
 
 
 def test_infer() -> None:
@@ -34,7 +31,7 @@ def test_infer() -> None:
                             {
                                 "input": "slider",
                                 "select": "interval",
-                                "bind": "$query",
+                                "bind": ms.ParamRef("$query"),
                                 "column": "batch",
                                 "source": "athletesBatched",
                                 "step": 10,
@@ -43,7 +40,7 @@ def test_infer() -> None:
                             },
                             {
                                 "input": "slider",
-                                "bind": "$ci",
+                                "bind": ms.ParamRef("$ci"),
                                 "min": 0.5,
                                 "max": 0.999,
                                 "step": 0.001,
@@ -56,8 +53,11 @@ def test_infer() -> None:
                         "plot": [
                             {
                                 "mark": "errorbarX",
-                                "data": {"source": "athletesBatched", "filter_by": "$query"},
-                                "ci": "$ci",
+                                "data": {
+                                    "source": "athletesBatched",
+                                    "filter_by": ms.ParamRef("$query"),
+                                },
+                                "ci": ms.ParamRef("$ci"),
                                 "x": "height",
                                 "y": "sport",
                                 "stroke": "sex",

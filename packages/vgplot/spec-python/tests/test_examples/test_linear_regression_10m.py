@@ -26,7 +26,7 @@ def test_infer() -> None:
             {
                 "input": "menu",
                 "label": "Sample",
-                "bind": "$data",
+                "bind": ms.ParamRef("$data"),
                 "options": [
                     {"value": "flights10m", "label": "Full Data"},
                     {"value": "flights10p", "label": "10% Sample"},
@@ -39,7 +39,7 @@ def test_infer() -> None:
                 "plot": [
                     {
                         "mark": "raster",
-                        "data": {"source": "$data"},
+                        "data": {"source": ms.ParamRef("$data")},
                         "x": "time",
                         "y": "delay",
                         "pixel_size": 4,
@@ -48,21 +48,24 @@ def test_infer() -> None:
                     },
                     {
                         "mark": "regressionY",
-                        "data": {"source": "$data"},
+                        "data": {"source": ms.ParamRef("$data")},
                         "x": "time",
                         "y": "delay",
                         "stroke": "gray",
                     },
                     {
                         "mark": "regressionY",
-                        "data": {"source": "$data", "filter_by": "$query"},
+                        "data": {
+                            "source": ms.ParamRef("$data"),
+                            "filter_by": ms.ParamRef("$query"),
+                        },
                         "x": "time",
                         "y": "delay",
                         "stroke": "firebrick",
                     },
                     {
                         "select": "intervalXY",
-                        "bind": "$query",
+                        "bind": ms.ParamRef("$query"),
                         "brush": {"fill_opacity": 0, "stroke": "currentColor"},
                     },
                 ],
