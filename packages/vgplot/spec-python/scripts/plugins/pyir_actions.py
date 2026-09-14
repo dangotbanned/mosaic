@@ -281,7 +281,21 @@ def _synthesize_transform_hierarchy(app: App) -> None:
     )
 
 
+def _synthesize_data_options(app: App) -> None:
+    module = app.module("mosaic_spec._gen.data")
+    data_dicts = tuple(defn for defn in module.def_values() if isinstance(defn, ClosedDict))
+    # NOTE: Named `DataBaseOptions` upstream and doesn't have a doc
+    name_base = "_DataOptions"
+    data_options = dsl.supertype(
+        name_base, data_dicts, doc="Shared options for all data definitions."
+    )
+    name = dsl.Source.SELF
+    module.definitions[name_base] = data_options
+    module.update_defs(defn.with_parent_closed(name, data_options) for defn in data_dicts)
+
+
 def run(app: App) -> None:
     """Run after typing all references."""
     massage_components(app)
     _synthesize_transform_hierarchy(app)
+    _synthesize_data_options(app)
