@@ -11,7 +11,8 @@ def install() -> None:
     import contextlib
 
     with contextlib.suppress(ImportError):
-        from _colorize import (  # ty: ignore[unresolved-import]  # pyrefly: ignore[missing-import]
+        # https://github.com/python/typeshed/issues/16361
+        from _colorize import (  # ty: ignore[unresolved-import]  # pyrefly: ignore[missing-import]  # pyright: ignore[reportMissingTypeStubs]
             ANSIColors,
             Traceback,
             default_theme,

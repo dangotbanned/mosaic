@@ -3,7 +3,7 @@ from __future__ import annotations
 import contextlib
 import copy
 import types
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Generator
 from functools import partial
 from types import FunctionType
 from typing import TYPE_CHECKING, Any, Protocol, final, overload
@@ -62,7 +62,7 @@ class _Base[R]:
     @contextlib.contextmanager
     def context(
         self, change_the_world: Callable[[_Registry[R]], _Registry[R]], /
-    ) -> Iterator[None]:
+    ) -> Generator[None]:
         """Context manager to temporarily change the dispatch algorithm.
 
         The original state will be restored on exit.

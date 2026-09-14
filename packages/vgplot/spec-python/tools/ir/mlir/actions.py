@@ -101,6 +101,7 @@ class Plugin(_MultiOver[IterOver]):
         self._over = config.scope.over
 
     def load(self) -> PluginImpl:
+        loaded: Any
         if (
             (match := self._PATTERN.match(self.entry_point))
             and (name := match.group("module"))

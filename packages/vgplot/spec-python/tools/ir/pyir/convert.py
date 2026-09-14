@@ -37,12 +37,12 @@ _PY_LITERAL: t.Final[Mapping[mlir.LiteralMember, expr.LiteralMember]] = {
 }
 
 
-def _patch_type_alias_type[R: dict[type[t.Any], t.Any]](reg: R, /) -> R:
+def patch_type_alias_type[R: dict[type[t.Any], t.Any]](reg: R, /) -> R:
     reg.pop(mlir.PyStr)
     return reg
 
 
-def _patch_named_tuple[R: dict[type[t.Any], t.Any]](reg: R, /) -> R:
+def patch_named_tuple[R: dict[type[t.Any], t.Any]](reg: R, /) -> R:
     reg.pop(mlir.NamedTuple)
     return reg
 

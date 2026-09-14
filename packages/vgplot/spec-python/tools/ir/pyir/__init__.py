@@ -30,7 +30,7 @@ from tools.ir.pyir.field import Field
 from tools.ir.pyir.module import Module, Package
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Generator
 
     from tools import config as _cfg
 
@@ -40,7 +40,7 @@ def _noop[T](obj: T, /) -> T:
 
 
 @_contextlib.contextmanager
-def configure(config: _cfg.ToPyIR, /) -> Iterator[None]:
+def configure(config: _cfg.ToPyIR, /) -> Generator[None]:
     name = config.name
     aliases = name.aliases
     typing = aliases.typing
@@ -52,8 +52,8 @@ def configure(config: _cfg.ToPyIR, /) -> Iterator[None]:
     definition.OpenDict._FORMAT = name.format_base
 
     type_config = config.type
-    from_def = convert._patch_type_alias_type if type_config.str == "TypeAliasType" else _noop
-    into_expr = convert._patch_named_tuple if type_config.NamedTuple == "NamedTuple" else _noop
+    from_def = convert.patch_type_alias_type if type_config.str == "TypeAliasType" else _noop
+    into_expr = convert.patch_named_tuple if type_config.NamedTuple == "NamedTuple" else _noop
 
     try:
         with convert._from_def.context(from_def), convert.into_expr.context(into_expr):
