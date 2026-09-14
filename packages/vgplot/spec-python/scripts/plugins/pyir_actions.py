@@ -294,8 +294,31 @@ def _synthesize_data_options(app: App) -> None:
     module.update_defs(defn.with_parent_closed(name, data_options) for defn in data_dicts)
 
 
+def _synthesize_interactors_hierarchy(app: App) -> None:
+    module = app.module("mosaic_spec._gen.interactors")
+    definitions = {k: v for k, v in module.def_items() if isinstance(v, ClosedDict)}
+    source_self = dsl.Source.SELF
+
+    def make(name_options: str, *names_children: str) -> Iterator[OpenDict | ClosedDict]:
+        defs = tuple(definitions.pop(name) for name in names_children)
+        options = dsl.supertype(name_options, defs, exclude="select")
+        yield options
+        yield from (defn.with_parent_closed(source_self, options) for defn in defs)
+
+    pan_zoom_names = tuple(k for k in definitions if k.startswith("Pan"))
+    module.update_defs(
+        chain(
+            make("_NearestOptions", "NearestX", "NearestY"),
+            make("_IntervalOptions", "IntervalX", "IntervalY", "IntervalXY"),
+            make("_ToggleOptions", "Toggle", "ToggleX", "ToggleY", "ToggleColor"),
+            make("_PanZoomOptions", *pan_zoom_names),
+        )
+    )
+
+
 def run(app: App) -> None:
     """Run after typing all references."""
     massage_components(app)
     _synthesize_transform_hierarchy(app)
     _synthesize_data_options(app)
+    _synthesize_interactors_hierarchy(app)
