@@ -84,9 +84,13 @@ def test_inheritance_multi() -> None:
     ms.Area(mark="area", data={"named": parquet})  # ty: ignore[missing-typed-dict-key, invalid-key] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType, reportCallIssue]
 
 
-# TODO @dangotbanned: test: Cover "Totality"
 def test_totality() -> None:
-    """https://peps.python.org/pep-0589/#totality"""
+    style_0: ms.CSSStyles = {}
+    style_1: ms.CSSStyles = {"padding": "10px 50px 20px"}
+
+    assert_type(style_0, ms.CSSStyles)
+    # error: "assert_type" mismatch: expected "CSSStyles" but received "CSSStyles"
+    assert_type(style_1, ms.CSSStyles)  # pyright: ignore[reportAssertTypeFailure]
 
 
 # TODO @dangotbanned: test: Cover "Type Consistency"
