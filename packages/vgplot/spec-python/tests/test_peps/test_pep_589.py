@@ -82,3 +82,23 @@ def test_inheritance_multi() -> None:
     ms.spec.Area(mark="area", data={"source": param})  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-assignment]  # pyright: ignore[reportArgumentType]
     ms.Area(mark="area", params={"a": 1})  # ty: ignore[missing-typed-dict-key, invalid-key] # pyrefly: ignore[missing-argument, unexpected-keyword]  # pyright: ignore[reportCallIssue]
     ms.Area(mark="area", data={"named": parquet})  # ty: ignore[missing-typed-dict-key, invalid-key] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType, reportCallIssue]
+
+
+# TODO @dangotbanned: test: Cover "Totality"
+def test_totality() -> None:
+    """https://peps.python.org/pep-0589/#totality"""
+
+
+# TODO @dangotbanned: test: Cover "Type Consistency"
+def test_type_consistency() -> None:
+    """https://peps.python.org/pep-0589/#type-consistency"""
+
+
+# TODO @dangotbanned: test: Cover "Supported and Unsupported Operations"
+def test_supported_and_unsupported_operations() -> None:
+    """https://peps.python.org/pep-0589/#supported-and-unsupported-operations"""
+
+
+# TODO @dangotbanned: test: "Use of Final Values and Literal Types"
+def test_use_of_final_values_and_literal_types() -> None:
+    """https://peps.python.org/pep-0589/#use-of-final-values-and-literal-types"""
