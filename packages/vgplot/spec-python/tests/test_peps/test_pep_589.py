@@ -37,3 +37,10 @@ def test_using_typed_dict_types() -> None:
     table["list_match"] = "any"  # ty: ignore[invalid-key]  # pyrefly: ignore[bad-typed-dict-key]  # pyright: ignore[reportGeneralTypeIssues]
     table["align"] = "justify"  # ty: ignore[invalid-assignment]  # pyrefly: ignore[bad-assignment]  # pyright: ignore[reportGeneralTypeIssues]
     table["width"] = "container"  # ty: ignore[invalid-assignment]  # pyrefly: ignore[bad-assignment]  # pyright: ignore[reportGeneralTypeIssues]
+
+    _region = ms.Region(
+        bind=ms.ParamRef("$brush"),
+        select="region",
+        brush={"fill": "red", "fill_opacity": 0.8, "stroke": "green"},
+        channels=("x",),
+    )
