@@ -265,6 +265,9 @@ def _synthesize_transform_hierarchy(app: App) -> None:
     aggregate_exclude = window_options.fields.keys() | agg_options.fields.keys()
     name = dsl.Source.SELF
 
+    bin = module.get_typed("Bin", ClosedDict)
+    bin_options = dsl.dict("_BinOptions", *bin.fields.remove(PyIdentifierSnake("bin")).values())
+
     # NOTE: `_AggregateOptions` children need to go first, as they iterate over the dictionary being updated
     module.update_defs(
         chain(
@@ -280,6 +283,9 @@ def _synthesize_transform_hierarchy(app: App) -> None:
                 agg_options.with_child_closed(
                     "AggregateOptions", doc="Aggregate transform options."
                 ),
+                bin_options,
+                bin.with_parent_closed(name, bin_options),
+                bin_options.with_child_closed("BinOptions", doc="Bin transform options."),
             ),
             (defn.with_parent_closed(name, window_options) for defn in window_transforms),
         )

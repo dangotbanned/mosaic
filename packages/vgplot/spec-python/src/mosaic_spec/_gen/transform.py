@@ -133,11 +133,7 @@ TransformField = TypeAliasType("TransformField", ParamRef | str)
 """A field argument to a data transform."""
 
 
-class Bin(TypedDict, total=False, closed=True):
-    """A bin transform."""
-
-    bin: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
-    """Bin a continuous variable into discrete intervals. The bin argument specifies a data column or expression to bin. Both numerical and temporal (date/time) values are supported."""
+class _BinOptions(TypedDict, total=False):
     interval: BinInterval
     """The interval bin unit to use, typically used to indicate a date/time unit for binning temporal values, such as `hour`, `day`, or `month`. If `date`, the extent of data values is used to automatically select an interval for temporal data. The value `number` enforces normal numerical binning, even over temporal data. If unspecified, defaults to `number` for numerical data and `date` for temporal data."""
     minstep: float
@@ -157,12 +153,25 @@ IntervalTransform = TypeAliasType(
     Days | Hours | Microseconds | Milliseconds | Minutes | Months | Seconds | Years,
 )
 """Date/time interval."""
+
+
+class Bin(_BinOptions, closed=True):
+    """A bin transform."""
+
+    bin: Required[ParamRef | bool | float | str | tuple[ParamRef | bool | float | str]]
+    """Bin a continuous variable into discrete intervals. The bin argument specifies a data column or expression to bin. Both numerical and temporal (date/time) values are supported."""
+
+
+class BinOptions(_BinOptions, closed=True):
+    """Bin transform options."""
+
+
+FrameValue = TypeAliasType("FrameValue", IntervalTransform | float | None)
 ColumnTransform = TypeAliasType(
     "ColumnTransform",
     Bin | Centroid | CentroidX | CentroidY | Column | DateDay | DateMonth | DateMonthDay | GeoJSON,
 )
 """A data transform that maps one column value to another."""
-FrameValue = TypeAliasType("FrameValue", IntervalTransform | float | None)
 
 
 class _WindowOptions(TypedDict, total=False):
@@ -467,6 +476,7 @@ __all__ = (
     "Avg",
     "Bin",
     "BinInterval",
+    "BinOptions",
     "Centroid",
     "CentroidX",
     "CentroidY",
