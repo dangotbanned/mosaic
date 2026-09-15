@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 # ruff: file-ignore[print]
-from collections import deque
+from collections import Counter, deque
 from typing import TYPE_CHECKING, Literal as L, Protocol, final
 
 from tools import fs, serde
@@ -24,6 +24,11 @@ class CLIOptions(Protocol):
     """Run until the end of a specific conversion stage."""
     quiet: bool
     "Print less to stdout."
+    require_unique_module_names: bool
+    """Before codegen, check that every module (regardless of package) has a unique name.
+
+    See [related](https://github.com/dangotbanned/mosaic/blob/4c26a5ff88a17663b01ba1b191c0a37480912cb6/packages/vgplot/spec-python/tools/ir/pyir/dependencies.py#L77-L84)
+    """
 
 
 @final
@@ -235,6 +240,7 @@ class App:
             print("Added 2 packages.")
         with pyir.configure(self.config.convert.to_pyir):
             for root in self._mlirs:
+                # TODO @dangotbanned: Either bake `ext` here or make everything walkable?
                 sub_pkg.with_child(
                     root.id,
                     (pyir.convert.from_def(defn, def_name) for def_name, defn in root.def_items()),
@@ -243,16 +249,35 @@ class App:
                 self._package._summarize_into_pyir()
             self._run_pyir_plugins(quiet=quiet)
 
+    def _ensure_unique_module_names(self, n_unique: int, /) -> None:
+        module_names = [module.name for module in self._iter_modules()]
+        if n_unique == len(module_names):
+            return
+        duplicates = "\n".join(
+            f"- Got {name!r} {count} times"
+            for name, count in Counter(module_names).items()
+            if count > 1
+        )
+        msg = (
+            f"Multiple modules with the same name are not yet supported:\n{duplicates}.\n\n"
+            f"See (https://github.com/dangotbanned/mosaic/blob/4c26a5ff88a17663b01ba1b191c0a37480912cb6/packages/vgplot/spec-python/tools/ir/pyir/dependencies.py#L77-L84)"
+        )
+        raise NotImplementedError(msg)
+
     def codegen(self, options: CLIOptions) -> None:
         self.into_pyir(options)
         quiet = options.quiet
         if not quiet:
             print("Starting codegen")
 
-        resolver = Resolver(
-            {module.name: module.canonical_path for module in self._iter_modules()},
-            self.config.convert.to_pyir.name,
-        )
+        # TODO @dangotbanned: remove the need for exapnding the names here.
+        # Likely need to do this during `into_pyir` when the parent is accessible
+        expand_to_canonical_path = {
+            module.name: module.canonical_path for module in self._iter_modules()
+        }
+        if options.require_unique_module_names:
+            self._ensure_unique_module_names(len(expand_to_canonical_path))
+        resolver = Resolver(expand_to_canonical_path, self.config.convert.to_pyir.name)
         messages = {
             True: (None, None, None),
             False: ("Generated module", "Generated subpackage", "Generated package"),
