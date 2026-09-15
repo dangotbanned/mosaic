@@ -37,7 +37,7 @@ def test_infer() -> None:
                         "mark": "lineY",
                         "data": {"source": "cases"},
                         "x": {"sql": "day + 0.5"},
-                        "y": {"avg": "cases", "orderby": "day", "rows": ms.ParamRef("$frame")},
+                        "y": {"avg": "cases", "order_by": "day", "rows": ms.ParamRef("$frame")},
                         "curve": "monotone-x",
                         "stroke": "currentColor",
                     },

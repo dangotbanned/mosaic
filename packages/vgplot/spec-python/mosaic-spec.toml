@@ -187,6 +187,12 @@ scope.include.definition.nodes = ["ClosedDict"]
 overrides                      = { as = "bind", for = "plot" }
 
 [[convert.to_mlir.actions]]
+action                         = "rename-fields"
+scope.include.id               = ["transform"]
+scope.include.definition.nodes = ["ClosedDict"]
+overrides                      = { orderby = "order_by", partitionby = "partition_by" }
+
+[[convert.to_mlir.actions]]
 action                          = "as-defs-field"
 scope.include.id                = ["plot"]
 scope.include.child.field_names = ["margins"]

@@ -179,8 +179,8 @@ class _WindowOptions(TypedDict, total=False):
         "CURRENT ROW", "GROUP", "NO OTHERS", "TIES", "current row", "group", "no others", "ties"
     ]
     groups: ParamRef | tuple[FrameValue, FrameValue]
-    orderby: Sequence[TransformField] | TransformField
-    partitionby: Sequence[TransformField] | TransformField
+    order_by: Sequence[TransformField] | TransformField
+    partition_by: Sequence[TransformField] | TransformField
     range: ParamRef | tuple[FrameValue, FrameValue]
     rows: ParamRef | tuple[FrameValue, FrameValue]
 

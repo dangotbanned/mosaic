@@ -211,7 +211,7 @@ def test_vgplot_aggregate() -> None:
     mode("hi", i_dont_exist=1)  # ty: ignore[unknown-argument] # pyrefly: ignore[unexpected-keyword]   # pyright: ignore[reportCallIssue]
 
     with pytest.raises(TypeError):
-        quantile("a", orderby=("b", "c"))  # ty: ignore[missing-argument] # pyrefly: ignore[missing-argument] # pyright: ignore[reportCallIssue]
+        quantile("a", order_by=("b", "c"))  # ty: ignore[missing-argument] # pyrefly: ignore[missing-argument] # pyright: ignore[reportCallIssue]
 
     variance("upper", exclude="CURRENT ROW")
     variance("lower", exclude="current row")
@@ -220,7 +220,7 @@ def test_vgplot_aggregate() -> None:
     assert sum("num1")["sum"] == "num1"
     assert count("num1", distinct=True) == {"count": "num1", "distinct": True}
     assert argmax("num1", "num2") == {"argmax": ("num1", "num2")}
-    assert min("a", partitionby=("num1", "num2")) == {"min": "a", "partitionby": ("num1", "num2")}
+    assert min("a", partition_by=("num1", "num2")) == {"min": "a", "partition_by": ("num1", "num2")}
 
 
 # TODO @dangotbanned: Add positive/negative usage
