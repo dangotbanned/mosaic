@@ -166,8 +166,6 @@ FrameValue = TypeAliasType("FrameValue", IntervalTransform | float | None)
 
 
 class _WindowOptions(TypedDict, total=False):
-    """Window transform options."""
-
     exclude: L[
         "CURRENT ROW", "GROUP", "NO OTHERS", "TIES", "current row", "group", "no others", "ties"
     ]
@@ -286,9 +284,11 @@ class RowNumber(_WindowOptions, closed=True):
     """Compute the 1-based row number over an ordered window partition."""
 
 
-class _AggregateOptions(_WindowOptions, total=False):
-    """Aggregate transform options."""
+class WindowOptions(_WindowOptions, closed=True):
+    """Window transform options."""
 
+
+class _AggregateOptions(_WindowOptions, total=False):
     distinct: bool
 
 
@@ -307,6 +307,10 @@ WindowTransform = TypeAliasType(
     | RowNumber,
 )
 """A window transform that operates over a sorted domain."""
+
+
+class AggregateOptions(_AggregateOptions, closed=True):
+    """Aggregate transform options."""
 
 
 class Argmax(_AggregateOptions, closed=True):
@@ -456,6 +460,7 @@ Transform = TypeAliasType("Transform", AggregateTransform | ColumnTransform | Wi
 
 
 __all__ = (
+    "AggregateOptions",
     "AggregateTransform",
     "Argmax",
     "Argmin",
@@ -507,6 +512,7 @@ __all__ = (
     "TransformField",
     "VarPop",
     "Variance",
+    "WindowOptions",
     "WindowTransform",
     "Years",
 )

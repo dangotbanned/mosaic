@@ -256,12 +256,10 @@ def _synthesize_transform_hierarchy(app: App) -> None:
             ensure_type(module["WindowTransform"], pyir_d.TypeAlias).expr, pyir_e.Union
         ).members
     )
-    window_options = dsl.supertype(
-        "_WindowOptions", window_transforms, doc="Window transform options."
-    )
+    window_options = dsl.supertype("_WindowOptions", window_transforms)
     distinct = dsl.field("distinct", pyir_e.BOOL)
     agg_options = window_options.with_child_open(
-        "_AggregateOptions", doc="Aggregate transform options.", fields={distinct.name: distinct}
+        "_AggregateOptions", fields={distinct.name: distinct}
     )
 
     aggregate_exclude = window_options.fields.keys() | agg_options.fields.keys()
@@ -275,7 +273,14 @@ def _synthesize_transform_hierarchy(app: App) -> None:
                 for defn in module.def_values()
                 if isinstance(defn, ClosedDict) and defn.has_field("distinct")
             ),
-            (window_options, agg_options),
+            (
+                window_options,
+                agg_options,
+                window_options.with_child_closed("WindowOptions", doc="Window transform options."),
+                agg_options.with_child_closed(
+                    "AggregateOptions", doc="Aggregate transform options."
+                ),
+            ),
             (defn.with_parent_closed(name, window_options) for defn in window_transforms),
         )
     )
