@@ -172,6 +172,10 @@ def centroid_y(col: Arg) -> ms.CentroidY:
     return ms.CentroidY(centroid_y=col)
 
 
+def geojson(col: Arg) -> ms.GeoJSON:
+    return ms.GeoJSON(geojson=col)
+
+
 def column(col: Arg) -> ms.Column:
     return ms.Column(column=col)
 
@@ -188,8 +192,36 @@ def date_month_day(col: Arg) -> ms.DateMonthDay:
     return ms.DateMonthDay(date_month_day=col)
 
 
-def geojson(col: Arg) -> ms.GeoJSON:
-    return ms.GeoJSON(geojson=col)
+def years(value: float, /) -> ms.Years:
+    return ms.Years(years=value)
+
+
+def months(value: float, /) -> ms.Months:
+    return ms.Months(months=value)
+
+
+def days(value: float, /) -> ms.Days:
+    return ms.Days(days=value)
+
+
+def hours(value: float, /) -> ms.Hours:
+    return ms.Hours(hours=value)
+
+
+def minutes(value: float, /) -> ms.Minutes:
+    return ms.Minutes(minutes=value)
+
+
+def seconds(value: float, /) -> ms.Seconds:
+    return ms.Seconds(seconds=value)
+
+
+def milliseconds(value: float, /) -> ms.Milliseconds:
+    return ms.Milliseconds(milliseconds=value)
+
+
+def microseconds(value: float, /) -> ms.Microseconds:
+    return ms.Microseconds(microseconds=value)
 
 
 def test_vgplot_aggregate() -> None:
