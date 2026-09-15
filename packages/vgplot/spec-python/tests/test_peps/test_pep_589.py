@@ -5,11 +5,9 @@
 
 from __future__ import annotations
 
-from typing_extensions import assert_type
-
 import mosaic_spec as ms
 from mosaic_spec._gen.transform import _AggregateOptions, _WindowOptions
-from mosaic_spec._typing_compat import NotRequired, TypeAliasType
+from mosaic_spec._typing_compat import NotRequired, TypeAliasType, assert_type
 
 Arg = TypeAliasType("Arg", ms.ParamRef | bool | float | str)
 
