@@ -11,6 +11,8 @@ from __future__ import annotations
 # pyright: reportUnusedFunction=false
 from typing import Any, overload
 
+import pytest
+
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, Unpack
 
@@ -190,8 +192,35 @@ def geojson(col: Arg) -> ms.GeoJSON:
     return ms.GeoJSON(geojson=col)
 
 
-# TODO @dangotbanned: Add positive/negative usage
-def test_vgplot_aggregate() -> None: ...
+def test_vgplot_aggregate() -> None:
+    count()
+    count("columm")
+    count(())
+    count(("one", "two"))  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+
+    count(distinct=True)
+    count(distinct=False)
+    count(distinct="not a bool")  # ty: ignore[invalid-argument-type]  # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+
+    stddev_pop("1", groups=ms.ParamRef("$groups"))
+    var_pop("1", groups="a regular string")  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+
+    last("aaa", groups=(None, 5))
+    first("aaa", groups=[None, 5])  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+
+    mode("hi", i_dont_exist=1)  # ty: ignore[unknown-argument] # pyrefly: ignore[unexpected-keyword]   # pyright: ignore[reportCallIssue]
+
+    with pytest.raises(TypeError):
+        quantile("a", orderby=("b", "c"))  # ty: ignore[missing-argument] # pyrefly: ignore[missing-argument] # pyright: ignore[reportCallIssue]
+
+    variance("upper", exclude="CURRENT ROW")
+    variance("lower", exclude="current row")
+    variance("bad", exclude="something else")  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+
+    assert sum("num1")["sum"] == "num1"
+    assert count("num1", distinct=True) == {"count": "num1", "distinct": True}
+    assert argmax("num1", "num2") == {"argmax": ("num1", "num2")}
+    assert min("a", partitionby=("num1", "num2")) == {"min": "a", "partitionby": ("num1", "num2")}
 
 
 # TODO @dangotbanned: Add positive/negative usage
