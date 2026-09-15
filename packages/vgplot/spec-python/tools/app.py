@@ -172,16 +172,14 @@ class App:
         return App(config)
 
     def run(self, options: CLIOptions) -> None:
-        stage = options.stage
-        quiet = options.quiet
         method = {
             "json_wrapper": self.into_json_wrapper,
             "mlir": self.into_mlir,
             "pyir": self.into_pyir,
             "codegen": self.codegen,
             "lint": self.lint,
-        }[stage]
-        method(quiet=quiet)
+        }[options.stage]
+        method(options)
 
     @property
     def actions(self) -> Mapping[int, mlir.Action]:
@@ -193,19 +191,20 @@ class App:
         msg = "Empty actions"
         raise NotImplementedError(msg)
 
-    def into_json_wrapper(self, *, quiet: bool = False) -> None:
+    def into_json_wrapper(self, options: CLIOptions) -> None:
         """Deserialize source schema(s) and wrap them in `JSONWrapper` nodes."""
         if not (sources := self.config.sources):
             msg = "Empty sources"
             raise NotImplementedError(msg)
         self._wrappers = deque(jw.Root.from_json(source.path, source.id) for source in sources)
 
-    def into_mlir(self, *, quiet: bool = False) -> None:
+    def into_mlir(self, options: CLIOptions) -> None:
         """Convert `JSONWrapper` into `MLIR`, running actions on the result."""
-        self.into_json_wrapper()
+        self.into_json_wrapper(options)
         config = self.config.convert.to_mlir
         fn = mlir.Root.from_json_wrapper
         self._mlirs = deque(fn(root, config) for root in self._wrappers)
+        quiet = options.quiet
         if not quiet:
             print(f"Starting {len(self.actions)} actions on {len(self._mlirs)} root(s).")
         self._mlirs = self._run_actions(self._mlirs, quiet=quiet)
@@ -214,9 +213,10 @@ class App:
             print(f"Finished actions with {len(self._mlirs)} root(s).")
             print("\n".join(root._describe() for root in self._mlirs))
 
-    def into_pyir(self, *, quiet: bool = False) -> None:
+    def into_pyir(self, options: CLIOptions) -> None:
         """Convert `MLIR` into `PyIR`."""
-        self.into_mlir(quiet=quiet)
+        self.into_mlir(options)
+        quiet = options.quiet
         if not quiet:
             print(f"Generating module representation from {len(self._mlirs)} root(s).")
 
@@ -243,8 +243,9 @@ class App:
                 self._package._summarize_into_pyir()
             self._run_pyir_plugins(quiet=quiet)
 
-    def codegen(self, *, quiet: bool = False) -> None:
-        self.into_pyir(quiet=quiet)
+    def codegen(self, options: CLIOptions) -> None:
+        self.into_pyir(options)
+        quiet = options.quiet
         if not quiet:
             print("Starting codegen")
 
@@ -266,8 +267,9 @@ class App:
 
         fs.write_lines(root.filepath, root.generate(resolver), messages[2])
 
-    def lint(self, *, quiet: bool = False) -> None:
-        self.codegen(quiet=quiet)
+    def lint(self, options: CLIOptions) -> None:
+        self.codegen(options)
+        quiet = options.quiet
         output = "quiet" if quiet else "pipe"
         fs.run("uv", "run", "ruff", "check", output=output)
         fs.run("uv", "run", "ruff", "format", output=output)
