@@ -44,6 +44,7 @@ else:
         ReadOnly,
         Required,
         Self,
+        Sentinel as sentinel,  # ruff: ignore[camelcase-imported-as-lowercase]
         TypeAliasType,
         TypedDict,
         TypeForm,
@@ -59,7 +60,6 @@ else:
         get_protocol_members,
         override,
         reveal_type,
-        sentinel,
     )
 
 __all__ = (
