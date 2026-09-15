@@ -1,7 +1,7 @@
 # /// script
 # requires-python = ">=3.14"
 # ///
-"""WIP."""
+"""Exposes a CLI for `tools.app.App`."""
 
 from __future__ import annotations
 
@@ -9,17 +9,14 @@ from __future__ import annotations
 def main() -> None:
     import argparse
     import dataclasses
-    from typing import TYPE_CHECKING, Literal, get_args
+    from typing import get_args
 
-    if TYPE_CHECKING:
-        from collections.abc import Sequence
     from tools.app import App, RunUntil
 
     @dataclasses.dataclass(kw_only=True)
     class _CLIOptions:
         quiet: bool
         stage: RunUntil
-        preview_modules: Sequence[str | Literal["all"]]
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--quiet", action="store_true", help="Print less to stdout.")
@@ -29,12 +26,7 @@ def main() -> None:
         default="lint",
         help="Run until the end of a specific stage.",
     )
-    parser.add_argument(
-        "--preview-modules",
-        help="Print the full generated code for these (or 'all') modules to stdout.",
-        nargs="+",
-        default=(),
-    )
+
     options = parser.parse_args(namespace=_CLIOptions.__new__(_CLIOptions))
     if not options.quiet:
         print("Discovering config")

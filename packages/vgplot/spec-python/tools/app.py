@@ -11,7 +11,7 @@ from tools.ir import json_wrapper as jw, mlir, pyir
 from tools.ir.pyir.dependencies import Resolver
 
 if TYPE_CHECKING:
-    from collections.abc import Collection, Iterator, Mapping, Sequence
+    from collections.abc import Collection, Iterator, Mapping
 
     from tools.models.base import IdName
 
@@ -24,8 +24,6 @@ class CLIOptions(Protocol):
     """Run until the end of a specific conversion stage."""
     quiet: bool
     "Print less to stdout."
-    preview_modules: Sequence[str | L["all"]]
-    "Print the full generated code for these modules to stdout."
 
 
 @final
@@ -176,9 +174,6 @@ class App:
     def run(self, options: CLIOptions) -> None:
         stage = options.stage
         quiet = options.quiet
-        if options.preview_modules:
-            self.preview_modules(*options.preview_modules, quiet=quiet)
-            return
         method = {
             "json_wrapper": self.into_json_wrapper,
             "mlir": self.into_mlir,
@@ -247,25 +242,6 @@ class App:
             if not quiet:
                 self._package._summarize_into_pyir()
             self._run_pyir_plugins(quiet=quiet)
-
-    def preview_modules(self, *names: str, quiet: bool = False) -> None:
-        self.into_pyir(quiet=quiet)
-        if "all" in names:
-            names = tuple(module.name for module in self._iter_modules())
-        if not quiet:
-            print(f"Previewing modules: {list(names)!r}")
-
-        # NOTE: `quiet=True` will only silence previous steps, this one is about displaying stuff
-        resolver = Resolver(
-            {module.name: module.canonical_path for module in self._iter_modules()},
-            self.config.convert.to_pyir.name,
-        )
-        multiple_modules = len(names) > 1
-        for module in self._iter_modules():
-            if module.name in names:
-                print("\n".join(module.generate(resolver)))
-                if multiple_modules:
-                    print("-" * 100)
 
     def codegen(self, *, quiet: bool = False) -> None:
         self.into_pyir(quiet=quiet)
