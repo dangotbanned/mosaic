@@ -5,9 +5,14 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
 import mosaic_spec as ms
 from mosaic_spec._gen.transform import _AggregateOptions, _WindowOptions
 from mosaic_spec._typing_compat import NotRequired, TypeAliasType, assert_type
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 Arg = TypeAliasType("Arg", ms.ParamRef | bool | float | str)
 
@@ -91,9 +96,29 @@ def test_totality() -> None:
     assert_type(style_1, ms.CSSStyles)  # pyright: ignore[reportAssertTypeFailure]
 
 
-# TODO @dangotbanned: test: Cover "Type Consistency"
 def test_type_consistency() -> None:
-    """https://peps.python.org/pep-0589/#type-consistency"""
+    def only_bar_y(mark: ms.BarY) -> None: ...
+    def only_dict(mark: dict[str, Any]) -> None: ...
+    def only_mapping(mark: Mapping[str, Any]) -> None: ...
+
+    data = ms.PlotFrom(source="table_name")
+    bar_x = ms.BarX(mark="barX", data=data)
+    bar_y = ms.BarY(mark="barY", data=data)
+
+    only_bar_y({"mark": "barY", "data": data})
+    only_bar_y({"mark": "barX", "data": data})  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-assignment]  # pyright: ignore[reportArgumentType]
+    only_bar_y(bar_y)
+    only_bar_y(bar_x)  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+
+    only_dict({"mark": "barY", "data": data})
+    only_dict({"mark": "barX", "data": data})
+    only_dict(bar_y)  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+    only_dict(bar_x)  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+
+    only_mapping({"mark": "barY", "data": data})
+    only_mapping({"mark": "barX", "data": data})
+    only_mapping(bar_y)
+    only_mapping(bar_x)
 
 
 # TODO @dangotbanned: test: Cover "Supported and Unsupported Operations"

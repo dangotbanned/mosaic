@@ -22,7 +22,7 @@ easier to spot regressions within these more focused cases vs a needle in a [com
 
 - [ ] [PEP 589 - `TypedDict`]
   - [x] [Initial PEP 589 coverage]
-  - [ ] Type Consistency
+  - [x] Type Consistency
   - [ ] Supported and Unsupported Operations
   - [ ] Use of Final Values and Literal Types
 - [ ] [PEP 655 - `Required` and `NotRequired`]
