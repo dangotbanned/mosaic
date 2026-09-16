@@ -55,7 +55,30 @@ Broadly we do this by:
 
 [^1]: 200K+ lines, weighing in at over 8 MB!
 
-<!--TODO @dangotbanned: Add a pretty diagram for IR--->
+#### Diagram
+
+<!---TODO @dangotbanned: Explain (overall) why there are multiple representations
+
+- Then add more detail in each subpackage doc on responsiblities, etc
+- Some of this is covered in `App`, but should be spread out more
+-->
+
+```mermaid
+
+flowchart LR
+  Schema["<a href="../spec/dist/mosaic-schema.json">mosaic-schema.json</a>"]
+  JsonWrapper["<a href="./tools/ir/json_wrapper/__init__.py">JsonWrapper</a>"]
+  MLIR["<a href="./tools/ir/mlir/__init__.py">MLIR</a>"]
+  PyIR["<a href="./tools/ir/pyir/__init__.py">PyIR</a>"]
+  src["<a href="./src/mosaic_spec/__init__.py">src/mosaic_spec/</a>"]
+
+  Schema --> JsonWrapper;
+  subgraph "Intermediate Representations"
+  JsonWrapper --> MLIR;
+  MLIR --> PyIR;
+  end
+  PyIR --> src; 
+```
 
 [`msgspec`]: https://github.com/msgspec/msgspec
 [actions]: ./mosaic-spec.toml
@@ -65,20 +88,22 @@ Broadly we do this by:
 
 ### Project layout
 
-Most activity takes place in [`./scripts/`] and [`./tools/`], where *ideally* a script is
+Most activity takes place in [`/scripts/`] and [`/tools/`], where *ideally* a script is
 mostly an arrangement of tools.
 
-[`./scripts/`]: ./scripts/__init__.py
-[`./tools/`]: ./tools/__init__.py
-[`./tests/`]: ./tests/__init__.py
+[`/scripts/`]: ./scripts/__init__.py
+[`/tools/`]: ./tools/__init__.py
+[`/tests/`]: ./tests/__init__.py
 [Roadmap]: ./docs/roadmap.md
+[`/tools/app.py`]: ./tools/app.py
+[`/tools/ir/`]: ./tools/ir/__init__.py
 
-| Where          | What                                                       |
-| -------------- | ---------------------------------------------------------- |
-| [`./scripts/`] | Code that is run by [`generate`] and other [pnpm scripts]. |
-| [`./tests/`]   | The test suite.                                            |
-| [`./tools/`]   | Building blocks for [`./scripts/`]                         |
-| [Roadmap]      | Ideas for what's next                                      |
+| Where         | What                                                                           |
+| ------------- | ------------------------------------------------------------------------------ |
+| [`/scripts/`] | Code that is run by [`generate`] and other [pnpm scripts].                     |
+| [`/tests/`]   | The test suites.                                                               |
+| [`/tools/`]   | Building blocks for [`/scripts/`], e.g. [`/tools/app.py`] and  [`/tools/ir/`]. |
+| [Roadmap]     | Ideas for what's next.                                                         |
 
 ## Tests
 
@@ -103,7 +128,7 @@ pnpm typecheck:pyrefly
 > [!NOTE]
 > `typecheck` is the final step of [`generate`]
 
-The tests defined under [`./tests/test_examples`] are [also generated], which can be re-run via:
+The tests defined under [`/tests/test_examples`] are [also generated], which can be re-run via:
 
 ```sh
 pnpm generate:examples
@@ -117,6 +142,6 @@ pnpm test
 
 [`generate`]: #contributing
 [pnpm scripts]: ./package.json
-[`./tests/test_examples`]: ./tests/test_examples/__init__.py
+[`/tests/test_examples`]: ./tests/test_examples/__init__.py
 [also generated]: ./scripts/prepare_examples.py
 [Test PEPs]: ./docs/roadmap.md#test-peps
