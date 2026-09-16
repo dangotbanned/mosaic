@@ -166,7 +166,7 @@ class BinOptions(_BinOptions, closed=True):
     """Bin transform options."""
 
 
-FrameValue = TypeAliasType("FrameValue", IntervalTransform | float | None)
+FrameValue = TypeAliasType("FrameValue", IntervalTransform | int | None)
 ColumnTransform = TypeAliasType(
     "ColumnTransform",
     Bin | Centroid | CentroidX | CentroidY | Column | DateDay | DateMonth | DateMonthDay | GeoJSON,

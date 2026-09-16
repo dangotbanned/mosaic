@@ -239,6 +239,9 @@ def test_vgplot_aggregate() -> None:
 
     last("aaa", groups=(None, 5))
     first("aaa", groups=[None, 5])  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+    median("bbb", groups=(1.2, 4))  # ty: ignore[invalid-argument-type]  # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+    max("ccc", rows=(1.2, 4))  # ty: ignore[invalid-argument-type]  # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+    argmin("a", "b", range=(1.2, 4))  # ty: ignore[invalid-argument-type]  # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
 
     mode("hi", i_dont_exist=1)  # ty: ignore[unknown-argument] # pyrefly: ignore[unexpected-keyword]   # pyright: ignore[reportCallIssue]
 

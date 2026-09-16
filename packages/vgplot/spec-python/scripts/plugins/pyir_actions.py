@@ -286,10 +286,25 @@ def _synthesize_transform_hierarchy(app: App) -> None:
                 bin_options,
                 bin.with_parent_closed(name, bin_options),
                 bin_options.with_child_closed("BinOptions", doc="Bin transform options."),
+                _make_frame_value_integral(module.get_typed("FrameValue", pyir_d.TypeAlias)),
             ),
             (defn.with_parent_closed(name, window_options) for defn in window_transforms),
         )
     )
+
+
+def _make_frame_value_integral(defn: pyir_d.TypeAlias, /) -> pyir_d.TypeAlias:
+    """Fix a `{"type: "number"}` -> `float` edge case.
+
+    Python's float means the same thing as JS's number, [to a type checker].
+    However, the [DuckDB docs] explicitly state [integral number].
+
+    [to a type checker]: https://typing.python.org/en/latest/spec/special-types.html#special-cases-for-float-and-complex
+    [integral number]: https://duckdb.org/docs/current/sql/functions/window_functions#framing
+    """
+    expr = ensure_type(defn.expr, pyir_e.Union)
+    members = tuple(m if m is not pyir_e.FLOAT else pyir_e.INT for m in expr.members)
+    return defn.__replace__(expr=expr.__replace__(members=members))
 
 
 def _synthesize_data_options(app: App) -> None:
