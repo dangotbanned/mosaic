@@ -22,7 +22,7 @@ easier to spot regressions within these more focused cases vs a needle in a [com
 
 - [ ] [PEP 589 - `TypedDict`]
 - [ ] [PEP 655 - `Required` and `NotRequired`]
-- [ ] [PEP 692 - `**TypedDict` (kwargs)]
+- [x] [PEP 692 - `**TypedDict` (kwargs)]
 - [ ] [PEP 695 - Type Parameter Syntax]
   - Just the `TypeAliasType` part
 - [ ] [PEP 728 - `closed` and `extra_items`]
