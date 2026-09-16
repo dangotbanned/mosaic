@@ -336,5 +336,9 @@ def test_vgplot_window() -> None:
 def test_vgplot_column() -> None: ...
 
 
-# TODO @dangotbanned: Review PEP for any gaps the above doesn't cover
-# https://peps.python.org/pep-0692/
+# NOTE @dangotbanned: Remaining gaps from the PEP
+# - [ ] https://peps.python.org/pep-0692/#keyword-collisions
+# - [ ] https://peps.python.org/pep-0692/#source-and-destination-contain-kwargs
+# - [ ] https://peps.python.org/pep-0692/#source-contains-kwargs-and-destination-doesn-t
+# - [ ] https://peps.python.org/pep-0692/#passing-kwargs-inside-a-function-to-another-function
+# - [ ] https://peps.python.org/pep-0692/#typeddict-unions (overloads example)
