@@ -1,15 +1,57 @@
-"""Very-intermediate-representation for tagging *from* a JSON schema.
+"""The first representation.
 
-This layer is about narrowing from the infinite possibilities of JSON schema [keywords]
-and [type-specific keywords] into one of 11 distinct node types.
+The outer container `Root` stores a `definitions` table, much like a JSON Schema:
 
-Excluding `Object` and `Sequence`, all nodes have *at-most* 1 attribute.
+```py
+Root(definitions={"definition_name": JsonWrapper(schema=Schema(...))})
+```
 
-In this context, *wrapper* means that the original (sub)schema is preserved on each node,
-accessible via [`tools.ir.JSONWrapper.schema`][].
+The core difference is that each definition *wraps* a `Schema` inside one of 11 distinct node types:
+
+```py
+Object(  # < JsonWrapper
+    fields={
+        "agg": Primitive(  # < JsonWrapper
+            type="string",
+            schema=Schema(  # < Schema
+                description="A SQL expression string to calculate an aggregate value...",
+                type="string",
+            ),
+        ),
+        "label": Primitive(  # < JsonWrapper
+            type="string",
+            schema=Schema(description="A label for this expression....", type="string"),  # < Schema
+        ),
+    },
+    required=["agg"],
+    closed="closed",
+    extra_items=None,
+    schema=Schema(  # < Schema
+        description="A custom SQL aggregate expression.",
+        type="object",
+        additional_properties=False,
+        required=["agg"],
+        properties={
+            "agg": Schema(description="...", type="string"),  # < Schema
+            "label": Schema(description="...", type="string"),  # < Schema
+        },
+    ),
+)
+```
+
+## Why so many types?
+
+JSON schema has many [keywords] and some are [type-specific].
+By contrast, most `JSONWrapper` nodes have a `schema` field and
+only require a single additional field for data.
+
+Things that *could be* an optional field are more commonly represented as a distinct type.
+Having lots of hyper-specific types pairs nicely with [`@functools.singledispatch`],
+which is used heavily for performance.
 
 [keywords]: https://json-schema.org/understanding-json-schema/keywords
-[type-specific keywords]: https://json-schema.org/understanding-json-schema/reference/type
+[type-specific]: https://json-schema.org/understanding-json-schema/reference/type
+[`@functools.singledispatch`]: https://docs.python.org/3/library/functools.html#functools.singledispatch
 """
 
 from __future__ import annotations

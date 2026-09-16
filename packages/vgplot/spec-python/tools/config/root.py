@@ -31,7 +31,10 @@ class Convert(FrozenStruct, frozen=True, forbid_unknown_fields=True):
 
 @final
 class MosaicSpecToml(FrozenStruct, frozen=True, forbid_unknown_fields=True):
-    """Top-level config."""
+    """Top-level config ([mosaic-spec.toml]).
+
+    [mosaic-spec.toml]: https://github.com/dangotbanned/mosaic/blob/spec-python/hand-rolled/packages/vgplot/spec-python/mosaic-spec.toml
+    """
 
     sources: Sequence[Source] = field(default_factory=list[Source])
     """Schemas to convert."""

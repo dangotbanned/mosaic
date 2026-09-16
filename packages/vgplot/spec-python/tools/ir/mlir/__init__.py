@@ -10,6 +10,21 @@
     - Special forms (well some of them at least)
     - Generics
 - Not 100% sure what to call this yet.
+
+---
+
+<!--TODO @dangotbanned: Merge above and below into a narrative--->
+
+### Stage 2
+
+- Package: [`tools.ir.mlir`][]
+- Root: `mlir.Root`
+- Definition: `mlir.Definition`
+- Nodes: `mlir.MLIR`, 20 implementations
+
+#### Open issues
+
+- `ref_unwrap` mutates "Stage 1" to create "Stage 2"
 """
 
 from __future__ import annotations
