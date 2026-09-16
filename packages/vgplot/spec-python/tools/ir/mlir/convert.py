@@ -102,11 +102,7 @@ def _(obj: jw.PrimitiveUnion, _owner: DefName, /) -> mlir.Union:
 @_from_json_dispatch.register(jw.Sequence)
 def _(
     obj: jw.Sequence, owner: DefName, /
-) -> (
-    mlir.Sequence[MLIR]
-    | mlir.HomogeneousTuple[MLIR, int]
-    | mlir.VariantHomogeneousTuple[MLIR, tuple[int, ...]]
-):
+) -> mlir.Sequence | mlir.HomogeneousTuple | mlir.VariantHomogeneousTuple:
     doc = obj.description
     type = from_json(obj.items, owner)
     match (obj.min, obj.max):

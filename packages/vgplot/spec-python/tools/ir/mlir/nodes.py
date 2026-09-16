@@ -215,8 +215,8 @@ class _HasChildren(MLIR):
         )
 
 
-class _BaseType[T: MLIR](_HasChildren):
-    type: Final[T]
+class _BaseType(_HasChildren):
+    type: Final[MLIR]
     doc: str = ""
 
     def iter_children(self) -> Iterator[MLIR]:
@@ -240,21 +240,21 @@ class _BaseType[T: MLIR](_HasChildren):
 
 
 @final
-class Field[T: MLIR = MLIR](_BaseType[T]):
+class Field(_BaseType):
     """An entry in a `*Dict`."""
 
     required: bool = False
 
-    def with_type[M: MLIR = MLIR](self, type: M, /) -> Field[M]:  # ruff: ignore[builtin-argument-shadowing]
-        return copy_replace(self, type=type)
+    def with_type(self, type: MLIR, /) -> Field:  # ruff: ignore[builtin-argument-shadowing]
+        return self.__replace__(type=type)
 
 
 @final
-class Mapping[T: MLIR = MLIR](_BaseType[T]):
+class Mapping(_BaseType):
     """Special-case of `ExtraDict`, with only `extra_items`."""
 
 
-class _BaseSeq[T: MLIR](_BaseType[T]): ...
+class _BaseSeq(_BaseType): ...
 
 
 _get_name = operator.itemgetter(0)
@@ -329,30 +329,30 @@ class _BaseFields(_HasChildren):
 
 
 @final
-class Sequence[T: MLIR](_BaseSeq[T]):
+class Sequence(_BaseSeq):
     """A sequence where all elements are the same type."""
 
 
 @final
-class HomogeneousTuple[T: MLIR, N: int](_BaseSeq[T]):
+class HomogeneousTuple(_BaseSeq):
     """A sequence where all elements are the same type and has a fixed-length.
 
     ## Notes
     Python's tuple is *heterogeneous*, but in `mosaic-schema.json` there are no cases of them
     """
 
-    length: N
+    length: int
 
 
 @final
-class VariantHomogeneousTuple[T: MLIR, Ns: tuple[int, ...]](_BaseSeq[T]):
+class VariantHomogeneousTuple(_BaseSeq):
     """A sequence where all elements are the same type and has one of the lengths specified in `Ns`.
 
     ## Notes
     Represents `min: int, max: int`, which in Python means `tuple[T, T] | tuple[T, T, T] | ...`
     """
 
-    lengths: Ns
+    lengths: tuple[int, ...]
 
 
 @final

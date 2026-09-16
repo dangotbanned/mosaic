@@ -88,22 +88,22 @@ def _(obj: mlir.Literal) -> expr.Literal:
 
 
 @into_expr.register(mlir.Mapping)
-def _(obj: mlir.Mapping[MLIR]) -> expr.Mapping:
+def _(obj: mlir.Mapping) -> expr.Mapping:
     return expr.Mapping(expr=into_expr(obj.type))
 
 
 @into_expr.register(mlir.Sequence)
-def _(obj: mlir.Sequence[MLIR]) -> expr.Sequence:
+def _(obj: mlir.Sequence) -> expr.Sequence:
     return expr.Sequence(expr=into_expr(obj.type))
 
 
 @into_expr.register(mlir.HomogeneousTuple)
-def _(obj: mlir.HomogeneousTuple[MLIR, int]) -> expr.HomogeneousTuple:
+def _(obj: mlir.HomogeneousTuple) -> expr.HomogeneousTuple:
     return expr.HomogeneousTuple(expr=into_expr(obj.type), length=obj.length)
 
 
 @into_expr.register(mlir.VariantHomogeneousTuple)
-def _(obj: mlir.VariantHomogeneousTuple[MLIR, tuple[int, ...]]) -> expr.Union:
+def _(obj: mlir.VariantHomogeneousTuple) -> expr.Union:
     elements = into_expr(obj.type)
     return expr.Union(
         members=tuple(expr.HomogeneousTuple(expr=elements, length=length) for length in obj.lengths)
