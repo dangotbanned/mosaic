@@ -1,5 +1,13 @@
 #:schema file://./mosaic-spec-toml-schema.json
 
+# Help
+# - Install [tombi] for schema-driven IDE support
+# - Re-generate the schema via `pnpm generate:config`
+# - Make changes to the [generation script]
+#
+# [tombi]: https://tombi-toml.github.io/tombi/docs/installation
+# [generation script]: file://./scripts/generate_config_schema.py
+
 [[sources]]
 id   = "mosaic"
 path = "../../spec/dist/mosaic-schema.json"

@@ -97,13 +97,15 @@ mostly an arrangement of tools.
 [Roadmap]: ./docs/roadmap.md
 [`/tools/app.py`]: ./tools/app.py
 [`/tools/ir/`]: ./tools/ir/__init__.py
+[`mosaic-spec.toml`]: ./mosaic-spec.toml
 
-| Where         | What                                                                           |
-| ------------- | ------------------------------------------------------------------------------ |
-| [`/scripts/`] | Code that is run by [`generate`] and other [pnpm scripts].                     |
-| [`/tests/`]   | The test suites.                                                               |
-| [`/tools/`]   | Building blocks for [`/scripts/`], e.g. [`/tools/app.py`] and  [`/tools/ir/`]. |
-| [Roadmap]     | Ideas for what's next.                                                         |
+| Where                | What                                                                           |
+| -------------------- | ------------------------------------------------------------------------------ |
+| [`/scripts/`]        | Code that is run by [`generate`] and other [pnpm scripts].                     |
+| [`/tests/`]          | The test suites.                                                               |
+| [`/tools/`]          | Building blocks for [`/scripts/`], e.g. [`/tools/app.py`] and  [`/tools/ir/`]. |
+| [`mosaic-spec.toml`] | Configuration for [`/tools/app.py`].                                           |
+| [Roadmap]            | Ideas for what's next.                                                         |
 
 ## Tests
 
