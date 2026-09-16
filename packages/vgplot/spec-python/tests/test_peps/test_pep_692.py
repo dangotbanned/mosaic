@@ -9,12 +9,15 @@
 from __future__ import annotations
 
 # pyright: reportUnusedFunction=false
-from typing import Any, overload
+from typing import TYPE_CHECKING, Any, Final, assert_type, overload
 
 import pytest
 
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, Unpack
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 Arg = TypeAliasType("Arg", ms.ParamRef | bool | float | str)
 
@@ -264,8 +267,69 @@ def test_vgplot_aggregate() -> None:
     assert min("a", partition_by=("num1", "num2")) == {"min": "a", "partition_by": ("num1", "num2")}
 
 
-# TODO @dangotbanned: Add positive/negative usage
-def test_vgplot_window() -> None: ...
+def test_vgplot_window() -> None:
+    kwds_annotated: ms.WindowOptions = {"order_by": ["a", "b", "c"], "partition_by": "d"}
+    kwds_bare = {"order_by": ["a", "b", "c"], "partition_by": "d"}
+    kwds_final: Final = {"order_by": ["a", "b", "c"], "partition_by": "d"}
+
+    agg_1 = row_number(**kwds_annotated)
+    agg_2 = row_number(order_by=("a", "b", "c"), partition_by=["d"])
+    assert_type(agg_1, ms.RowNumber)
+    assert_type(agg_2, ms.RowNumber)
+
+    # NOTE: Interesting that pyrefly doesn't mind this
+    row_number(**kwds_bare)  # ty: ignore[invalid-argument-type] # pyright: ignore[reportArgumentType]
+    row_number(**kwds_final)  # ty: ignore[invalid-argument-type] # pyright: ignore[reportArgumentType]
+
+    def over(
+        partition_by: ms.TransformField | Iterable[ms.TransformField],
+        *more_partition_by: ms.TransformField,
+        order_by: ms.TransformField | Iterable[ms.TransformField] | None = None,
+    ) -> ms.WindowOptions:
+        partition_by = (partition_by,) if isinstance(partition_by, str) else partition_by
+        partition_by = *partition_by, *more_partition_by
+        if order_by is None:
+            return ms.WindowOptions(partition_by=partition_by)
+        return ms.WindowOptions(
+            partition_by=partition_by,
+            order_by=(order_by,) if isinstance(order_by, str) else tuple(order_by),
+        )
+
+    # NOTE: Only `ty` understands this
+    agg_3 = cume_dist() | over("num1", "num2")  # pyrefly: ignore[unsupported-operation] # pyright: ignore[reportOperatorIssue]
+    assert_type(agg_3, ms.CumeDist)  # pyrefly: ignore[assert-type]  # pyright: ignore[reportAssertTypeFailure]
+
+    agg_4 = cume_dist(**over("num1", "num2"))
+    assert_type(agg_4, ms.CumeDist)
+
+    assert agg_3 == agg_4
+    assert agg_3 == {"cume_dist": None, "partition_by": ("num1", "num2")}
+
+    dense_rank(rows=(0, None))
+    first_value("num1", rows=(None, None))
+    nth_value("num1", rows=(0, 2))
+    nth_value("num1", 1, rows=(2, 0))
+    nth_value()  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
+    nth_value("num1", 1, 2)  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
+
+    # TODO @dangotbanned: Find out if this is supposed to be expressible in mosaic-spec
+    # https://github.com/uwdata/mosaic/blob/a2d19c3126beceb322119a7d471698bb850bcb3b/packages/mosaic/sql/test/window.test.ts#L43-L44
+    ntile("num1", rows=(2, None), exclude="current row")
+
+    rank(exclude="TIES", partition_by="num1")
+    percent_rank(exclude="NO OTHERS")
+
+    assert_type(lead("a"), ms.Lead)
+    assert_type(lead("a", "b"), ms.Lead)
+    assert_type(lead("a", "b", "c"), ms.Lead)
+    lead("a", "b", "c", "d")  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
+    lead()  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
+
+    assert_type(lag("a"), ms.Lag)
+    assert_type(lag("a", "b"), ms.Lag)
+    assert_type(lag("a", "b", "c"), ms.Lag)
+    lag("a", "b", "c", "d")  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
+    lag()  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
 
 
 # TODO @dangotbanned: Add positive/negative usage
