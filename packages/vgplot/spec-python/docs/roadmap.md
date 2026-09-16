@@ -70,13 +70,12 @@ a single file. To mitigate this, here are some potential modules/subpackages to 
   - [ ] Reduce from (`.py` 365 KB) ‼️
     - [ ] ...
     - [ ] ...
-- [ ] data (`.ts` 6 KB)
-- [ ] inputs (`.ts` 7 KB)
-- [ ] interval (`.ts` 2 KB)
+- [x] data (`.ts` 6 KB)
+- [x] inputs (`.ts` 7 KB)
 - [x] `params.py`
-- [ ] plot
+- [x] plot
   - [x] Share **215** fields between `Plot` & `PlotAttributes`
-  - [ ] Move to another module (*maybe difficult, due what it depends on*)
+  - [x] Move to another module (*maybe difficult, due what it depends on*)
     - `PlotAttribute.ts` (`.ts` **63 KB**)
 - [x] `spec.py`
   - [x] Use the original class names and don't re-export to top-level, e.g.
@@ -161,7 +160,7 @@ And here is the same thing in Observable Plot?
 
 ## General
 
-- [ ] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between
+- [x] Define ~~`TypeAlias`~~`TypeAliasType`s in another module of instead of scattered between
       `TypedDict` defs
 - [x] Generate `TypedDict`s from the schema
 - [x] Generate docstrings
