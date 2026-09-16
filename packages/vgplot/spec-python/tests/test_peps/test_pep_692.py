@@ -329,7 +329,7 @@ def test_vgplot_window() -> None:
     assert_type(lag("a", "b"), ms.Lag)
     assert_type(lag("a", "b", "c"), ms.Lag)
     lag("a", "b", "c", "d")  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
-    lag()  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
+    lag(**over(["a"], order_by="b"))  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
 
 
 # TODO @dangotbanned: Add positive/negative usage
