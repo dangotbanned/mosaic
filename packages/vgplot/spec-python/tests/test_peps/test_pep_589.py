@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 # pyright: reportUnusedFunction=false
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final, Literal as L
 
 import pytest
 
@@ -146,6 +146,15 @@ def test_supported_and_unsupported_operations() -> None:
     assert_type(agg.get("agg"), str)
 
 
-# TODO @dangotbanned: test: "Use of Final Values and Literal Types"
 def test_use_of_final_values_and_literal_types() -> None:
-    """https://peps.python.org/pep-0589/#use-of-final-values-and-literal-types"""
+    circle: ms.Circle = {"mark": "circle", "data": []}
+
+    MARK: Final = "mark"
+
+    _CIRCLE = circle[MARK].upper()
+
+    def get_value(c: ms.Circle, key: L["data", "mark"]) -> ms.PlotMarkData | L["circle"]:
+        return c[key]
+
+    data = get_value(circle, "data")
+    assert data == []

@@ -20,11 +20,7 @@ easier to spot regressions within these more focused cases vs a needle in a [com
 
 ### Finished PEPs (done, with a stable interface)
 
-- [ ] [PEP 589 - `TypedDict`]
-  - [x] [Initial PEP 589 coverage]
-  - [x] Type Consistency
-  - [x] Supported and Unsupported Operations
-  - [ ] Use of Final Values and Literal Types
+- [x] [PEP 589 - `TypedDict`]
 - [ ] [PEP 655 - `Required` and `NotRequired`]
 - [x] [PEP 692 - `**TypedDict` (kwargs)]
 - [ ] [PEP 695 - Type Parameter Syntax]
@@ -52,7 +48,6 @@ easier to spot regressions within these more focused cases vs a needle in a [com
 [PEP 764 - Inline typed dictionaries]: https://peps.python.org/pep-0764/
 [PEP 821 - `**TypedDict` (Callable)]: https://peps.python.org/pep-0821/
 [PEP 827 - Type Manipulation]: https://peps.python.org/pep-0827/
-[Initial PEP 589 coverage]: ../tests/test_peps/test_pep_589.py
 
 ## Splitting one big file
 
