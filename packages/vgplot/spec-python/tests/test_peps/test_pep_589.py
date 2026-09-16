@@ -5,7 +5,10 @@
 
 from __future__ import annotations
 
+# pyright: reportUnusedFunction=false
 from typing import TYPE_CHECKING, Any
+
+import pytest
 
 import mosaic_spec as ms
 from mosaic_spec._gen.transform import _AggregateOptions, _WindowOptions
@@ -121,9 +124,26 @@ def test_type_consistency() -> None:
     only_mapping(bar_x)
 
 
-# TODO @dangotbanned: test: Cover "Supported and Unsupported Operations"
 def test_supported_and_unsupported_operations() -> None:
-    """https://peps.python.org/pep-0589/#supported-and-unsupported-operations"""
+    ms.SQLExpression(label="hello")  # ty: ignore[missing-typed-dict-key] # pyrefly: ignore[missing-argument]   # pyright: ignore[reportCallIssue]
+    ms.Search(input="search", bind="not a NewType")  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
+    ms.PlotLegend(legend="color", i_dont_exist=1)  # ty: ignore[invalid-key] # pyrefly: ignore[unexpected-keyword]  # pyright: ignore[reportCallIssue]
+
+    def f(variable_key: str) -> None:
+        _table: ms.Table = {"input": "table", "source": "over there", variable_key: ""}  # ty: ignore[invalid-key] # pyrefly: ignore[bad-typed-dict-key] # pyright: ignore[reportAssignmentType]
+
+    agg = ms.AggregateExpression(agg="SUM($param + 1)")
+    agg.clear()  # ty: ignore[unresolved-attribute] # pyrefly: ignore[missing-attribute] # pyright: ignore[reportAttributeAccessIssue]
+
+    agg = ms.AggregateExpression(agg="SUM($param + 1)")
+    del agg["agg"]  # ty: ignore[invalid-argument-type] # pyrefly: ignore[unsupported-delete]  # pyright: ignore[reportGeneralTypeIssues]
+    with pytest.raises(KeyError):
+        # Only optional keys can be deleted, but will raise if they were not there
+        del agg["label"]
+
+    agg = ms.AggregateExpression(agg="SUM($param + 1)")
+    assert_type(agg.get("label"), str | None)
+    assert_type(agg.get("agg"), str)
 
 
 # TODO @dangotbanned: test: "Use of Final Values and Literal Types"
