@@ -20,6 +20,8 @@ Arg = TypeAliasType("Arg", ms.ParamRef | bool | float | str)
 
 
 # NOTE: `AggregateTransform`
+
+
 def argmax(col: Arg, by: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Argmax:
     return ms.Argmax(argmax=(col, by), **kwds)
 
@@ -89,6 +91,8 @@ def var_pop(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.VarPop:
 
 
 # NOTE: `WindowTransform`
+
+
 def cume_dist(**kwds: Unpack[ms.WindowOptions]) -> ms.CumeDist:
     return {"cume_dist": None, **kwds}
 
@@ -156,6 +160,8 @@ def row_number(**kwds: Unpack[ms.WindowOptions]) -> ms.RowNumber:
 
 
 # NOTE: `ColumnTransform`
+
+
 def bin(col: Arg, **kwds: Unpack[ms.BinOptions]) -> ms.Bin:
     return ms.Bin(bin=col, **kwds)
 
