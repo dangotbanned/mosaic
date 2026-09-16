@@ -201,6 +201,35 @@ def date_month_day(col: Arg) -> ms.DateMonthDay:
     return ms.DateMonthDay(date_month_day=col)
 
 
+@overload
+def col(**kwds: Unpack[ms.Bin]) -> ms.Bin: ...
+@overload
+def col(**kwds: Unpack[ms.Centroid]) -> ms.Centroid: ...
+@overload
+def col(**kwds: Unpack[ms.CentroidX]) -> ms.CentroidX: ...
+@overload
+def col(**kwds: Unpack[ms.CentroidY]) -> ms.CentroidY: ...
+@overload
+def col(**kwds: Unpack[ms.Column]) -> ms.Column: ...
+@overload
+def col(**kwds: Unpack[ms.DateDay]) -> ms.DateDay: ...
+@overload
+def col(**kwds: Unpack[ms.DateMonth]) -> ms.DateMonth: ...
+@overload
+def col(**kwds: Unpack[ms.DateMonthDay]) -> ms.DateMonthDay: ...
+@overload
+def col(**kwds: Unpack[ms.GeoJSON]) -> ms.GeoJSON: ...
+def col(**kwds: Any) -> Any:
+    """Represents the suggestion in [typeddict-unions].
+
+    [typeddict-unions]: https://peps.python.org/pep-0692/#typeddict-unions
+    """
+    return kwds
+
+
+# NOTE: `IntervalTransform`
+
+
 def years(value: float, /) -> ms.Years:
     return ms.Years(years=value)
 
@@ -332,13 +361,25 @@ def test_vgplot_window() -> None:
     lag(**over(["a"], order_by="b"))  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
 
 
-# TODO @dangotbanned: Add positive/negative usage
-def test_vgplot_column() -> None: ...
+def test_vgplot_column() -> None:
+    col()  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
+    assert_type(col(bin="b"), ms.Bin)
+    assert_type(col(bin="a", interval="day"), ms.Bin)
+    assert_type(col(centroid=("a",)), ms.Centroid)
+    assert_type(col(centroid_x="a"), ms.CentroidX)
+    # TODO @dangotbanned: Raise an issue about `Arg` containing `boolean | number` for column refs?
+    assert_type(col(centroid_y=1), ms.CentroidY)
+    assert_type(col(column=ms.ParamRef("$param")), ms.Column)
+    assert_type(col(date_day="c"), ms.DateDay)
+    assert_type(col(date_month=(ms.ParamRef("$param"),)), ms.DateMonth)
+    assert_type(col(date_month_day="d"), ms.DateMonthDay)
+    assert_type(col(geojson="e"), ms.GeoJSON)
 
+    col(bin="d", column="a")  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
+    col(bin=["a", "b"])  # ty: ignore[invalid-argument-type] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportArgumentType]
+    col(bin="a", step="yes please")  # ty: ignore[invalid-argument-type] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportArgumentType]
 
-# NOTE @dangotbanned: Remaining gaps from the PEP
-# - [ ] https://peps.python.org/pep-0692/#keyword-collisions
-# - [ ] https://peps.python.org/pep-0692/#source-and-destination-contain-kwargs
-# - [ ] https://peps.python.org/pep-0692/#source-contains-kwargs-and-destination-doesn-t
-# - [ ] https://peps.python.org/pep-0692/#passing-kwargs-inside-a-function-to-another-function
-# - [ ] https://peps.python.org/pep-0692/#typeddict-unions (overloads example)
+    assert_type(col(**date_month_day("a")), ms.DateMonthDay)
+    with pytest.raises(TypeError):
+        # https://peps.python.org/pep-0692/#keyword-collisions
+        col(column="a", **column("a"))  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
