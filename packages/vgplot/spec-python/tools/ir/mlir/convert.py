@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 # ruff: file-ignore[builtin-argument-shadowing]
-import functools
 import typing
 from typing import Final
 
 from tools import ds
 from tools.common import POUND_DEFS
+from tools.dispatch import just_dispatch
 from tools.ir.json_wrapper import nodes as jw
 from tools.ir.mlir import nodes as mlir
 from tools.ir.mlir.common import sort_key_mlir_rich_cmp
@@ -50,7 +50,7 @@ def from_json(obj: jw.JsonWrapper, owner: DefName, /) -> MLIR:
     return _from_json_dispatch(obj, owner)
 
 
-@functools.singledispatch
+@just_dispatch
 def _from_json_dispatch(obj: jw.JsonWrapper, owner: DefName, /) -> MLIR:
     """Impl for `from_json`.
 
@@ -79,8 +79,7 @@ def _(obj: jw.Reference, _owner: DefName, /) -> mlir.Reference | mlir.ExtReferen
     return mlir.ExtReference(ref=ref, ext=IdName(ext), doc=obj.description)
 
 
-@_from_json_dispatch.register(jw.Const)
-@_from_json_dispatch.register(jw.Enum)
+@_from_json_dispatch.register(jw.Const, jw.Enum)
 def _(obj: jw.Const | jw.Enum, _owner: DefName, /) -> mlir.Literal:
     it = obj.iter_values()
     members = tuple(member if isinstance(member, str) else _PY_LITERAL[member] for member in it)

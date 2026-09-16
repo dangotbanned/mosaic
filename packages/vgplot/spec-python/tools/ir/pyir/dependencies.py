@@ -8,6 +8,7 @@ from itertools import chain
 from typing import Literal as L
 
 from tools.common import CanonicalPath
+from tools.dispatch import just_dispatch
 from tools.ir.pyir import definition, expr, special as sf
 from tools.ir.pyir.base import Definition, ExtRef, Lines, PyIR, Ref, TypedExtRef, TypedRef
 from tools.ir.pyir.definition import ClosedDict, ExtraDict, OpenDict
@@ -143,24 +144,18 @@ _CONSTANT_PLUS_DESCENDANTS: t.Final[cabc.Mapping[type[PyIR], StdDep]] = {
 """Types that introduce a constant dependency via the class and variable via the instance's descendants."""
 
 
-@functools.singledispatch
+@just_dispatch
 def _find_deps(node: PyIR) -> Dependencies:
     msg = f"_find_deps() is not yet implemented for {type(node).__name__}, got:\n{node!r}"
     raise NotImplementedError(msg)
 
 
+@_find_deps.register(*_CONSTANT)
 def _const(node: PyIR) -> Dependencies:
     return _CONSTANT[node.__class__]
 
 
-for _tp in _CONSTANT:
-    _find_deps.register(_tp, _const)
-
-
-@_find_deps.register(ReadOnly)
-@_find_deps.register(Required)
-@_find_deps.register(expr.Sequence)
-@_find_deps.register(expr.Mapping)
+@_find_deps.register(expr.Mapping, expr.Sequence, Required, ReadOnly)
 def _(node: expr.Mapping | expr.Sequence | Required | ReadOnly) -> Dependencies:
     yield _CONSTANT_PLUS_DESCENDANTS[node.__class__]
     yield from _find_deps(node.expr)
@@ -186,15 +181,12 @@ def _from_ext_ref(node: ExtRef | TypedExtRef, /) -> PartialDep:
     return PartialDep(node.ext, node.ref)
 
 
-@_find_deps.register(TypedExtRef)
-@_find_deps.register(ExtRef)
+@_find_deps.register(ExtRef, TypedExtRef)
 def _(node: ExtRef | TypedExtRef) -> Dependencies:
     yield _from_ext_ref(node)
 
 
-@_find_deps.register(expr.ForwardRef)
-@_find_deps.register(Field)
-@_find_deps.register(expr.HomogeneousTuple)
+@_find_deps.register(expr.HomogeneousTuple, Field, expr.ForwardRef)
 def _(node: expr.HomogeneousTuple | Field | expr.ForwardRef) -> Dependencies:
     return _find_deps(node.expr)
 
@@ -235,8 +227,7 @@ def _(node: expr.Annotated) -> Dependencies:
         yield from _find_deps(m)
 
 
-@_find_deps.register(ClosedDict)
-@_find_deps.register(OpenDict)
+@_find_deps.register(OpenDict, ClosedDict)
 def _find_deps_dict(node: OpenDict | ClosedDict | ExtraDict) -> Dependencies:
     for f in node.fields.values():
         yield from _find_deps(f.expr)
