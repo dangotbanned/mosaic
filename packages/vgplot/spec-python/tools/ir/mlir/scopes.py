@@ -131,7 +131,7 @@ class Matcher:
         else:
             self.id = IdInclude(incl_id - exclude.id) if exclude.id else IdInclude(incl_id)
         self.definition = _into_defs_matcher(include, exclude)
-        if include.child or exclude.child:
+        if include.child.nodes or exclude.child.nodes:
             self.child = ChildIncludeNodes(include.child, exclude.child)
         else:
             self.child = _CHILD_ALWAYS
