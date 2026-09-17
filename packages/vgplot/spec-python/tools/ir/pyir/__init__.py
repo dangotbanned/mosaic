@@ -7,22 +7,28 @@
 - No AST
 - Strictly, things that can be used in the generation of modules containing `TypedDict`s
 
----
+## Compared to previous stage
 
-<!--TODO @dangotbanned: Merge above and below into a narrative--->
+[`tools.ir.mlir`][] has a representation with this shape:
 
-### Stage 3
+```py
+from tools.ir import mlir
 
-- Package: [`tools.ir.pyir`][]
-- Root: `pyir.Module` / `pyir.Package`
-- Definition: `pyir.Definition`, 7 implementations
-- Nodes:
-    - `pyir.Expr`, 14 implementations
-    - `pyir.PyIR` (other), 9 implementations
+mlir.Root(definitions={"definition_name": mlir.Definition(inner=mlir.MLIR(...))})
+```
 
----
+[`mlir.Definition`][tools.ir.mlir.Definition] is a *concrete* wrapper, whereas
+[`pyir.Definition`][tools.ir.pyir.Definition] is a *base class*.
 
-## Targets
+We distinguish between three broad categories for types to enforce what is valid python syntax:
+
+1. `pyir.Definition`, 7 implementations
+2. `pyir.Expr`, 15 implementations
+3. `pyir.PyIR` (other), 7 implementations
+
+We also move from the looser `Root` concept into `pyir.Module` and `pyir.Package`, to manage the generation of `__all__`.
+
+## Codegen
 
 ### Python version
 
