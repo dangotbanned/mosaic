@@ -1,7 +1,7 @@
 # Contributing
 
 The entire `mosaic_spec` API is currently generated. All the fun stuff
-happens *outside of* [`/src`] which can be thought of as the finished cake.
+happens *outside of* [`src/mosaic_spec`] which can be thought of as the finished cake.
 
 Try baking it with:
 
@@ -10,96 +10,41 @@ cd packages/vgplot/spec-python
 pnpm generate
 ```
 
-[`/src`]: ./src/mosaic_spec/__init__.py
-
 ## How it works
 
 ### Source
 
-Life starts at [`mosaic-schema.json`], which [Mosaic Spec (TypeScript)] takes care of producing it
-for us.  
-The important part to know is that [`mosaic-schema.json`] encodes a TypeScript package that
+Life for us starts at [`mosaic-schema.json`], which [Mosaic Spec (TypeScript)] takes care of
+producing it for us.  
+The important part to know is that [`mosaic-schema.json`] encodes [`Spec.ts`] that
 lives next door.
 
-[Mosaic Spec (TypeScript)]: ../spec/README.md
-[`mosaic-schema.json`]: ../spec/dist/mosaic-schema.json
-[`Spec.ts`]: ../spec/src/spec/Spec.ts
+### Dataflow
 
-```mermaid
+This design is shaped by an understanding that we wish to migrate from using [`mosaic-schema.json`]
+as source [in the future]. Therefore, types flow through a series of [Intermediate representations]
+(**IR**) before we generate any code:
 
-flowchart LR
-  Spec["<a href="../spec/src/spec/Spec.ts">Spec.ts</a>"]
-  Gen["<a href="../spec/package.json">pnpm -F @uwdata/mosaic-spec <br>run schema</a>"]
-  Schema["<a href="../spec/dist/mosaic-schema.json">mosaic-schema.json</a>"]
+| What                   | Kind       | Description                                                                                                                                                                                                          | Owner                      |
+| ---------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| [`Spec.ts`]            | Source     | Where the *original* [root type] comes from.                                                                                                                                                                         | [Mosaic Spec (TypeScript)] |
+| [`mosaic-schema.json`] | Source     | *Our* source, which  is generated via [`run schema`].                                                                                                                                                                | [Mosaic Spec (TypeScript)] |
+| [`JsonWrapper`]        | **IR** (1) | JSON Schema with annotations. This is the first and **only** stage that has access to the schema.                                                                                                                    | Python                     |
+| [`MLIR`] [^2]          | **IR** (2) | A step towards python. <br> Can represent types that python cannot[^3].<br>`MLIR` supports declarative transformation [actions] that let us reshape things to work better in python.                                 | Python                     |
+| [`PyIR`]               | **IR** (3) | A subset of the [python type system] which understands concepts like [`TypedDict`] (with [multiple inheritance]) and [`TypeAliasType`].<br>Beyond types, this stage also understands [`Module`(s) and `Package`(s)]. | Python                     |
+| [`src/mosaic_spec`]    | Target     | Where our codegen lands.                                                                                                                                                                                             | Python                     |
 
-  Spec --> Gen;
-  Gen --> Schema;
-```
+[^2]: ML -> Mid-level, as it is between the other two
 
-### Here
+[^3]: Such as TypeScript's [anonymous object types], which would require acceptance of
+    [PEP 764 - Inline typed dictionaries].
 
-We are then tasked with converting [`mosaic-schema.json`] back into *roughly* [`Spec.ts`] but using
-Python syntax.
-
-Broadly we do this by:
-
-1. Reading the schema into [`msgspec`] structs
-2. Performing a [multi-stage IR conversion], to move from JSON Schema to Python, notably:
-
-   i. Applying transformative [actions] once we've left JSON Schema behind.  
-   Effectively, splitting what was one large schema [^1] into something that can output 14+
-   modules.
-
-   ii. Dealing with some edge cases [outside of the core workflow].
-3. Generating the majority of [`/src`] directly from the [final representation]
-
-[^1]: 200K+ lines, weighing in at over 8 MB!
-
-#### Diagram
-
-<!---TODO @dangotbanned: Explain (overall) why there are multiple representations
-
-- Then add more detail in each subpackage doc on responsiblities, etc
-- Some of this is covered in `App`, but should be spread out more
--->
-
-```mermaid
-
-flowchart LR
-  Schema["<a href="../spec/dist/mosaic-schema.json">mosaic-schema.json</a>"]
-  JsonWrapper["<a href="./tools/ir/json_wrapper/__init__.py">JsonWrapper</a>"]
-  MLIR["<a href="./tools/ir/mlir/__init__.py">MLIR</a>"]
-  PyIR["<a href="./tools/ir/pyir/__init__.py">PyIR</a>"]
-  src["<a href="./src/mosaic_spec/__init__.py">src/mosaic_spec/</a>"]
-
-  Schema --> JsonWrapper;
-  subgraph "Intermediate Representations"
-  JsonWrapper --> MLIR;
-  MLIR --> PyIR;
-  end
-  PyIR --> src; 
-```
-
-[`msgspec`]: https://github.com/msgspec/msgspec
-[actions]: ./mosaic-spec.toml
-[multi-stage IR conversion]: ./tools/app.py
-[outside of the core workflow]: ./scripts/plugins/__init__.py
-[final representation]: ./tools/ir/pyir/module.py
-
-### Project layout
+## Project layout
 
 Most activity takes place in [`/scripts/`] and [`/tools/`], where *ideally* a script is
 mostly an arrangement of tools.
 
-[`/scripts/`]: ./scripts/__init__.py
-[`/tools/`]: ./tools/__init__.py
-[`/tests/`]: ./tests/__init__.py
-[Roadmap]: ./docs/roadmap.md
-[`/tools/app.py`]: ./tools/app.py
-[`/tools/ir/`]: ./tools/ir/__init__.py
-[`mosaic-spec.toml`]: ./mosaic-spec.toml
-
-| Where                | What                                                                           |
+| What                 | Description                                                                    |
 | -------------------- | ------------------------------------------------------------------------------ |
 | [`/scripts/`]        | Code that is run by [`generate`] and other [pnpm scripts].                     |
 | [`/tests/`]          | The test suites.                                                               |
@@ -142,8 +87,34 @@ Runtime tests are still a work-in-progress (see [Test PEPs]), but can be run via
 pnpm test
 ```
 
+[`src/mosaic_spec`]: ./src/mosaic_spec/__init__.py
+[Mosaic Spec (TypeScript)]: ../spec/README.md
+[`mosaic-schema.json`]: ../spec/dist/mosaic-schema.json
+[`Spec.ts`]: ../spec/src/spec/Spec.ts
+[`run schema`]: ../spec/package.json
+[Intermediate representations]: https://en.wikipedia.org/wiki/Intermediate_representation
+[in the future]: https://github.com/uwdata/mosaic/issues/1154#issuecomment-5308118344
+[root type]: https://json-schema.org/understanding-json-schema/structuring#id
+[`JsonWrapper`]: ./tools/ir/json_wrapper/__init__.py
+[`MLIR`]: ./tools/ir/mlir/__init__.py
+[`PyIR`]: ./tools/ir/pyir/__init__.py
+[anonymous object types]: https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#object-types
+[PEP 764 - Inline typed dictionaries]: https://peps.python.org/pep-0764/
+[actions]: ./mosaic-spec.toml
+[`Module`(s) and `Package`(s)]: ./tools/ir/pyir/module.py
+[`/scripts/`]: ./scripts/__init__.py
+[`/tools/`]: ./tools/__init__.py
+[`/tests/`]: ./tests/__init__.py
+[Roadmap]: ./docs/roadmap.md
+[`/tools/app.py`]: ./tools/app.py
+[`/tools/ir/`]: ./tools/ir/__init__.py
+[`mosaic-spec.toml`]: ./mosaic-spec.toml
 [`generate`]: #contributing
 [pnpm scripts]: ./package.json
 [`/tests/test_examples`]: ./tests/test_examples/__init__.py
 [also generated]: ./scripts/prepare_examples.py
 [Test PEPs]: ./docs/roadmap.md#test-peps
+[python type system]: https://typing.python.org/en/latest/spec/index.html
+[`TypedDict`]: https://typing.python.org/en/latest/spec/typeddict.html
+[multiple inheritance]: https://typing.python.org/en/latest/spec/typeddict.html#multiple-inheritance
+[`TypeAliasType`]: https://docs.python.org/3/library/typing.html#typing.TypeAliasType
