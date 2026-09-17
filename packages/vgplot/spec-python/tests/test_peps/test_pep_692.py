@@ -1,4 +1,7 @@
-"""[PEP 692] - Using TypedDict for more precise **kwargs typing."""
+"""[PEP 692] - Using TypedDict for more precise **kwargs typing.
+
+[PEP 692]: https://peps.python.org/pep-0692/
+"""
 
 from __future__ import annotations
 
