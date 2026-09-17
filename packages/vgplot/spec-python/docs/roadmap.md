@@ -28,6 +28,9 @@ easier to spot regressions within these more focused cases vs a needle in a [com
 - [ ] [PEP 728 - `closed` and `extra_items`]
 - [ ] [PEP 747 - `TypeForm`]
 
+> [!TIP]
+> Another good source for cases are (https://github.com/python/typing/tree/main/conformance/tests)
+
 ### Open PEPs (under consideration)
 
 - [ ] [PEP 764 - Inline typed dictionaries]
