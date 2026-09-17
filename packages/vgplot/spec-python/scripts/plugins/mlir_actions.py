@@ -20,7 +20,7 @@ FORMAT = "format"
 @mlir.actions_plugin
 def fix_tip(action: mlir.Plugin, roots: mlir.RootsMut) -> Iterator[mlir.Root]:
     # NOTE: Struggling to split this up.
-    # It does something hyper-specfic and requires a lot of context while going very deep into a tree
+    # It does something hyper-specific and requires a lot of context while going very deep into a tree
     matcher = action.matcher
     for root in roots:
         if matcher.matches_root(root):

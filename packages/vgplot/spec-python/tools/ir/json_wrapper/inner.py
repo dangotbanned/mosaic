@@ -49,7 +49,7 @@ class Schema(_NonRecursiveFieldsBase, forbid_unknown_fields=True):
     ## Notes
     - Defines a greatly-reduced subset of JSON schema
         - Excludes `"$schema"` from all `Spec` members, while leaving a single version at the top-level.
-        - Exludes all unused keywords
+        - Excludes all unused keywords
         - Narrows some types of the remaining parts
     - Structs act **both** as filters (undeclared fields are skipped)
       and validators (unexpected types within them raise during serde).

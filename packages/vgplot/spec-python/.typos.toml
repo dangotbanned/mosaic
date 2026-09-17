@@ -1,0 +1,5 @@
+[files]
+extend-exclude = [
+  "src/mosaic_spec/_gen/",
+  "tests/test_examples/",
+]

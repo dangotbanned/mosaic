@@ -4,7 +4,7 @@
 - `msgspec` may be limiting in how much metaprogramming can happen
 - would be nice to use descriptors for
     - Is this in annotation scope?
-    - Which fields contain expresions?
+    - Which fields contain expressions?
     - Something like `ExprIR` traversal stuff
 """
 

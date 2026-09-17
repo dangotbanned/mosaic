@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 def test_vgplot_aggregate() -> None:
     e.count()
-    e.count("columm")
+    e.count("column")
     e.count(())
     e.count(("one", "two"))  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]  # pyright: ignore[reportArgumentType]
 

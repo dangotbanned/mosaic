@@ -155,7 +155,7 @@ class Unknown(JsonWrapper):
     {
         "type": "object",
         "properties": {...},
-        "addditionalProperties": True,
+        "additionalProperties": True,
         "description": "Configuration options.",
     }
     ```

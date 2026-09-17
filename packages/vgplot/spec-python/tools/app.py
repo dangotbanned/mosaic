@@ -142,7 +142,7 @@ class App:
         if not quiet:
             print("Starting codegen")
 
-        # TODO @dangotbanned: remove the need for exapnding the names here.
+        # TODO @dangotbanned: remove the need for expanding the names here.
         # Likely need to do this during `into_pyir` when the parent is accessible
         expand_to_canonical_path = {
             module.name: module.canonical_path for module in self._iter_modules()

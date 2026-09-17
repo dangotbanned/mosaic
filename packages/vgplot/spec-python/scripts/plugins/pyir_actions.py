@@ -157,7 +157,7 @@ def _build_spec_module(app: App, targets: Iterable[SpecTarget]) -> None:
     module_spec.update_defs((spec_union, td_spec_head))
 
 
-# HACK: Contains a hot fix for non-determistic documentation
+# HACK: Contains a hot fix for non-deterministic documentation
 @dataclasses.dataclass
 class _MarksRelations:
     """Stores shared components between `marks` and `spec`.
@@ -203,7 +203,7 @@ class _MarksRelations:
             if isinstance(defn, ClosedDict) and defn.has_field("mark")
         )
         # NOTE: hot fix for non-deterministic `doc` selection
-        # `fill`, `fill_opactity` have multiple versions,
+        # `fill`, `fill_opacity` have multiple versions,
         # but resolving this correctly requires a refactor of inheritance
         mark_defns = sorted(it, key=_get_name)
         return _MarksRelations._from_marks(mark_defns)

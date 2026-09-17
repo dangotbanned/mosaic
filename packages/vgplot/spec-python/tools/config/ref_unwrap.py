@@ -3,7 +3,7 @@ from tools.models.base import FrozenStruct
 
 
 class ReferenceUnwrap(FrozenStruct, frozen=True, forbid_unknown_fields=True):
-    """Override how each attribute is chosen when unwraping a ref.
+    """Override how each attribute is chosen when unwrapping a ref.
 
     ## Notes
     Both `name` and `description` are resolved independently. Here they are referred to as **value**.
