@@ -1,28 +1,20 @@
 """Mid-level IR, representing something that's not quite JSON or Python.
 
-- Not a full transition to python yet
-    - But nodes are not allowed to keep a `schema` field
-    - Anything useful must have been peeled off
-- Missing things like
-    - TypeVar/parameters
-    - Type qualifiers
-    - Type alias
-    - Special forms (well some of them at least)
-    - Generics
-- Not 100% sure what to call this yet.
+## Compared to previous stage
 
----
+[`tools.ir.json_wrapper`][] retains access to the original schema; whereas here we must peel off
+anything that's useful to continue.
+While we do that, we crank up the specificity of nodes:
 
-<!--TODO @dangotbanned: Merge above and below into a narrative--->
+- 11x `JsonWrapper`
+- 20x `MLIR`
 
-### Stage 2
+## Notes
 
-- Package: [`tools.ir.mlir`][]
-- Root: `mlir.Root`
-- Definition: `mlir.Definition`
-- Nodes: `mlir.MLIR`, 20 implementations
+These types begin to look more like python, but permit definitions that the next stage would reject.
+This is fine, because we introduce [`actions`][tools.ir.mlir.actions] to smooth out the rough edges.
 
-#### Open issues
+## Open issues
 
 - `ref_unwrap` mutates "Stage 1" to create "Stage 2"
 """
