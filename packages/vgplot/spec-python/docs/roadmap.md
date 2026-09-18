@@ -21,7 +21,7 @@ easier to spot regressions within these more focused cases vs a needle in a [com
 ### Finished PEPs (done, with a stable interface)
 
 - [x] [PEP 589 - `TypedDict`]
-- [ ] [PEP 655 - `Required` and `NotRequired`]
+- [x] [PEP 655 - `Required` and `NotRequired`]
 - [x] [PEP 692 - `**TypedDict` (kwargs)]
 - [ ] [PEP 695 - Type Parameter Syntax]
   - Just the `TypeAliasType` part
