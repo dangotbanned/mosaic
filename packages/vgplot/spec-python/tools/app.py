@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-# ruff: file-ignore[print]
 from collections import Counter, deque
+from pathlib import Path
 from typing import TYPE_CHECKING, Literal as L, Protocol, final
 
 from tools import fs, serde
+from tools._rich import get_console, print_path
 from tools.common import CanonicalPath, PyIdentifier, PyIdentifierSnake
 from tools.config import MosaicSpecToml
 from tools.ir import json_wrapper as jw, mlir, pyir
@@ -29,6 +30,9 @@ class CLIOptions(Protocol):
     """
 
 
+print = get_console().print
+
+
 @final
 class App:
     """Application context for multi-stage IR conversion."""
@@ -45,8 +49,12 @@ class App:
         self._actions: dict[int, mlir.Action] = {}
 
     @staticmethod
-    def discover(path: fs.IntoPath = fs.MOSAIC_SPEC_TOML) -> App:
+    def discover(path: fs.IntoPath = fs.MOSAIC_SPEC_TOML, *, quiet: bool = False) -> App:
+        if not quiet:
+            print("Discovering config", style="dim")
         config = serde.read_toml(path, MosaicSpecToml, contains_paths=True)
+        if not quiet:
+            print_path("Loaded config", Path(path))
         return App(config)
 
     def run(self, options: CLIOptions) -> None:
@@ -74,28 +82,36 @@ class App:
         if not (sources := self.config.sources):
             msg = "Empty sources"
             raise NotImplementedError(msg)
+        if not options.quiet:
+            print("Wrapping schema(s)", highlight=False)
         self._wrappers = deque(jw.Root.from_json(source.path, source.id) for source in sources)
 
     def into_mlir(self, options: CLIOptions) -> None:
         """Convert `JSONWrapper` into `MLIR`, running actions on the result."""
         self.into_json_wrapper(options)
         config = self.config.convert.to_mlir
-        fn = mlir.Root.from_json_wrapper
-        self._mlirs = deque(fn(root, config) for root in self._wrappers)
         quiet = options.quiet
+        fn = mlir.Root.from_json_wrapper
         if not quiet:
-            print(f"Starting {len(self.actions)} actions on {len(self._mlirs)} root(s).")
+            print("Converting json wrapper to mlir")
+        self._mlirs = deque(fn(root, config) for root in self._wrappers)
+
+        if not quiet:
+            n = len(self._mlirs)
+            print(f"Starting {len(self.actions)} actions on {n} {'root' if n == 1 else 'roots'}.")
         self._mlirs = self._run_actions(self._mlirs, quiet=quiet)
         if not quiet:
-            print(f"Finished actions with {len(self._mlirs)} root(s).")
-            print("\n".join(root._describe() for root in self._mlirs))
+            console = get_console()
+            summary = "\n".join(root._describe() for root in self._mlirs)
+            console.print(f"Finished actions with {len(self._mlirs)} roots.\n{summary}")
+            console.rule()
 
     def into_pyir(self, options: CLIOptions) -> None:
         """Convert `MLIR` into `PyIR`."""
         self.into_mlir(options)
         quiet = options.quiet
         if not quiet:
-            print(f"Generating module representation from {len(self._mlirs)} root(s).")
+            print(f"Converting to module representation from {len(self._mlirs)} roots")
 
         self._package = pyir.Package.root_package(
             "mosaic_spec",
@@ -120,6 +136,8 @@ class App:
             if not quiet:
                 self._package._summarize_into_pyir()
             self._run_pyir_plugins(quiet=quiet)
+            if not quiet:
+                get_console().rule()
 
     def _ensure_unique_module_names(self, n_unique: int, /) -> None:
         module_names = [module.name for module in self._iter_modules()]
@@ -163,6 +181,8 @@ class App:
             fs.write_lines(package.filepath, package.generate(resolver), messages[1])
 
         fs.write_lines(root.filepath, root.generate(resolver), messages[2])
+        if not quiet:
+            get_console().rule()
 
     def lint(self, options: CLIOptions) -> None:
         self.codegen(options)
@@ -170,6 +190,8 @@ class App:
         output = "quiet" if quiet else "pipe"
         fs.run("uv", "run", "ruff", "check", output=output)
         fs.run("uv", "run", "ruff", "format", output=output)
+        if not quiet:
+            get_console().rule()
 
     def package(self, name: PyIdentifierSnake | str = "mosaic_spec") -> pyir.Package:
         """Return the `PyIR` representation of package `name`."""

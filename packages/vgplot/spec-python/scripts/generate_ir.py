@@ -34,9 +34,7 @@ def main() -> None:
     )
 
     options = parser.parse_args(namespace=_CLIOptions.__new__(_CLIOptions))
-    if not options.quiet:
-        print("Discovering config")
-    app = App.discover()
+    app = App.discover(quiet=options.quiet)
     app.run(options)
 
 

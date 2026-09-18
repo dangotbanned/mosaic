@@ -116,15 +116,16 @@ class Package(base.Struct, kw_only=True):
         yield from self._modules.values()
 
     def _summarize_into_pyir(self) -> None:
+        from tools._rich import get_console
+
         total_modules = 1
         total_defs = 0
         module_listing = []
         for total_modules, module in enumerate(self.iter_modules_descendants(), 1):  # ruff: ignore[unused-loop-control-variable]
             total_defs += len(module.definitions)
             module_listing.append(f" - {module}")
-
-        print(f"Finished generating with {total_modules} modules(s).")  # ruff: ignore[print]
-        print("\n".join(module_listing) + f"\nTotal definitions: {total_defs}")  # ruff: ignore[print]
+        modules_str = "\n".join(module_listing) + f"\nTotal definitions: {total_defs}"
+        get_console().print(f"Finished conversion with {total_modules} modules.\n{modules_str}")
 
     @classmethod
     def root_package(
