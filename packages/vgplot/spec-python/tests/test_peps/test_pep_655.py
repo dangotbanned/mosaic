@@ -11,7 +11,14 @@ from typing import TYPE_CHECKING, Literal as L
 import pytest
 
 import mosaic_spec as ms
-from mosaic_spec._typing_compat import ParamSpec, TypeVar, assert_type
+from mosaic_spec._typing_compat import (
+    NotRequired,
+    ParamSpec,
+    ReadOnly,
+    TypedDict,
+    TypeVar,
+    assert_type,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -62,7 +69,7 @@ def test_required_partial_indirect() -> None:
     # NOTE: `pyrefly` is wrong
     # if this becomes `unused-ignore` then using `functools.partial` to build an API is viable
     assert_type(good_1, ms.Table)  # pyrefly: ignore [assert-type]
-    assert_type(good_2, ms.Table)  # pyrefly: ignore [assert-type,bad-typed-dict-key]
+    assert_type(good_2, ms.Table)  # pyrefly: ignore [assert-type]
 
     assert good_1["source"] == "somewhere"
     with pytest.raises(KeyError):
@@ -88,3 +95,29 @@ def test_introspectable_keys(
     required_keys = getattr(ms.Menu, special_name, frozenset())
     expected_keys = frozenset(expected)
     assert required_keys == expected_keys
+
+
+def test_not_required_invalid() -> None:
+    def f(space: ms.HSpace) -> None: ...
+
+    class BadH(TypedDict):
+        hspace: NotRequired[float | str]
+
+    class BadHBadSub(BadH):
+        hspace: float | str  # ty: ignore[invalid-typed-dict-field] # pyrefly: ignore [bad-typed-dict-key] # pyright: ignore[reportGeneralTypeIssues]
+
+    class BadHRO(TypedDict):
+        hspace: ReadOnly[NotRequired[float | str]]
+
+    class SubH(BadHRO):
+        hspace: ReadOnly[float | str]
+
+    h = ms.HSpace(hspace=1)
+    bad_h = BadH(hspace=1)
+    bad_h_ro = BadHRO(hspace=1)
+    sub_h = SubH(hspace=1)
+
+    f(h)
+    f(bad_h)  # ty: ignore[invalid-argument-type] # pyrefly: ignore [bad-argument-type] # pyright: ignore[reportArgumentType]
+    f(bad_h_ro)  # ty: ignore[invalid-argument-type]  # pyrefly: ignore [bad-argument-type] # pyright: ignore[reportArgumentType]
+    f(sub_h)  # ty: ignore[invalid-argument-type] # pyrefly: ignore [bad-argument-type] # pyright: ignore[reportArgumentType]
