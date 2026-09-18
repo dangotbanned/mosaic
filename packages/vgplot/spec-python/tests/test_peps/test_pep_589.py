@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-# pyright: reportUnusedFunction=false
 from typing import TYPE_CHECKING, Any, Final, Literal as L
 
 import pytest
