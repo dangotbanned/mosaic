@@ -1,0 +1,255 @@
+"""Builder API, similar to `encodings.py` next door.
+
+Inspired by [Polars] and [Mosaic SQL]
+
+[Polars]: https://docs.pola.rs/user-guide/expressions/window-functions/
+[Mosaic SQL]: https://idl.uw.edu/mosaic/sql/
+"""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Final, Generic, Literal as L, final
+
+import mosaic_spec as ms
+from mosaic_spec._typing_compat import Self, TypeAliasType, TypeVar, Unpack
+
+if TYPE_CHECKING:
+    from collections.abc import Collection, Iterable
+
+
+FrameExclude = TypeAliasType(
+    "FrameExclude",
+    L["CURRENT ROW", "GROUP", "NO OTHERS", "TIES", "current row", "group", "no others", "ties"],
+)
+
+
+@final
+class Col:
+    __slots__ = ("_name",)
+
+    def __repr__(self) -> str:
+        return f"col({self._name!r})"
+
+    def __init__(self, name: str | ms.ParamRef) -> None:
+        self._name: str | ms.ParamRef = name
+
+    def to_dict(self) -> ms.Column:
+        return ms.Column(column=self._name)
+
+    @property
+    def dt(self) -> _DateNS:
+        """Date/time-typed transforms."""
+        return _DateNS(self)
+
+    @property
+    def st(self) -> _SpatialNS:
+        """Geometry-typed transforms."""
+        return _SpatialNS(self)
+
+    def bin(self, step_: int | None = None, /, **kwds: Unpack[ms.BinOptions]) -> ms.Bin:
+        """Bin numerical data."""
+        if step_:
+            kwds["step"] = step_
+        kwds["interval"] = "number"
+        return ms.Bin(bin=self._name, **kwds)
+
+    # TODO @dangotbanned: Remaining `AggregateTransform`
+    def first(self) -> Agg[ms.First]:
+        return Agg(ms.First(first=self._name))
+
+    # TODO @dangotbanned: Remaining `WindowTransform`
+    def first_value(self) -> Window[ms.FirstValue]:
+        return Window(ms.FirstValue(first_value=self._name))
+
+
+@final
+class _DateNS:
+    __slots__ = ("_column",)
+
+    def __init__(self, column: Col) -> None:
+        self._column: Col = column
+
+    def day(self) -> ms.DateDay:
+        return ms.DateDay(date_day=self._column._name)
+
+    def month(self) -> ms.DateMonth:
+        return ms.DateMonth(date_month=self._column._name)
+
+    def month_day(self) -> ms.DateMonthDay:
+        return ms.DateMonthDay(date_month_day=self._column._name)
+
+    def bin(
+        self,
+        step: int | None = None,
+        unit: ms.BinInterval = "date",
+        /,
+        *,
+        steps: int | None = None,
+        offset: int = 0,
+    ) -> ms.Bin:
+        """Bin temporal data."""
+        out = ms.Bin(bin=self._column._name, interval=unit)
+        if step:
+            out["step"] = step
+        if offset:
+            out["offset"] = offset
+        if steps:
+            out["steps"] = steps
+        return out
+
+
+@final
+class _SpatialNS:
+    __slots__ = ("_column",)
+
+    def __init__(self, column: Col) -> None:
+        self._column: Col = column
+
+    def centroid(self) -> ms.Centroid:
+        return ms.Centroid(centroid=self._column._name)
+
+    def centroid_x(self) -> ms.CentroidX:
+        return ms.CentroidX(centroid_x=self._column._name)
+
+    def centroid_y(self) -> ms.CentroidY:
+        return ms.CentroidY(centroid_y=self._column._name)
+
+    def geojson(self) -> ms.GeoJSON:
+        return ms.GeoJSON(geojson=self._column._name)
+
+
+_A = TypeVar("_A", bound=ms.AggregateTransform | ms.WindowTransform, covariant=True)
+A = TypeVar("A", bound=ms.AggregateTransform, covariant=True)
+W = TypeVar("W", bound=ms.WindowTransform, covariant=True)
+
+
+# NOTE: `pyrefly` complains about `copy` 7 times
+# https://github.com/facebook/pyrefly/issues/4990
+class _Aggregation(Generic[_A]):
+    __slots__ = ("_inner",)
+
+    def __init__(self, inner: _A) -> None:
+        self._inner: Final[_A] = inner
+
+    def __repr__(self) -> str:
+        s = ""
+        d = self._inner
+        if "partition_by" in d:
+            s = ", ".join(map(repr, d["partition_by"]))
+        if "order_by" in d:
+            if s:
+                _s = ", ".join(map(repr, d["order_by"]))
+                s = f"over({s}, order_by=({_s}))"
+            else:
+                s = f"over(order_by={d['order_by']!r})"
+        elif s:
+            s = f"over({s})"
+        elif len(d) == 1:
+            func, column = next(iter(d.items()))
+            return f"col({column!r}).{func}()"
+        for name in ("groups", "range", "rows"):
+            if found := d.get(name):
+                s = f"{s}.{self._fmt_frame(name, found)}"  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]
+        it = (
+            (k, v)
+            for k, v in d.items()
+            if k
+            not in {"exclude", "groups", "range", "rows", "partition_by", "order_by", "distinct"}
+        )
+        func, column = next(it)
+        return f"col({column!r}).{func}().{s.removeprefix('.')}"
+
+    def _fmt_frame(
+        self,
+        name: L["groups", "range", "rows"],
+        value: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue],
+    ) -> str:
+        g = repr(value) if isinstance(value, str) else f"{value[0]!r}, {value[1]!r}"
+        return f"{name}({g})"
+
+    def to_dict(self, *, copy: bool = False) -> _A:
+        # pyrefly: ignore [bad-return]
+        return self._inner if not copy else self._inner.copy()
+
+    def over(
+        self,
+        partition_by: str | ms.ParamRef | Iterable[str | ms.ParamRef] = (),
+        *more_partition_by: str | ms.ParamRef,
+        order_by: str | ms.ParamRef | Collection[str | ms.ParamRef] = (),
+    ) -> Self:
+        inner = self._inner.copy()
+        partition_by = (partition_by,) if isinstance(partition_by, str) else partition_by
+        if more := more_partition_by:
+            partition_by = *partition_by, *more
+        else:
+            partition_by = tuple(partition_by)
+        if partition_by:
+            inner["partition_by"] = partition_by
+        if order := order_by:
+            inner["order_by"] = (order,) if isinstance(order, str) else tuple(order)
+        # pyrefly: ignore [bad-specialization]
+        return type(self)(inner)
+
+    def exclude(self, frame: FrameExclude, /) -> Self:
+        inner = self._inner.copy()
+        inner["exclude"] = frame
+        # pyrefly: ignore [bad-specialization]
+        return type(self)(inner)
+
+    def groups(self, arg: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue], /) -> Self:
+        inner = self._inner.copy()
+        inner["groups"] = arg
+        # pyrefly: ignore [bad-specialization]
+        return type(self)(inner)
+
+    def rows(self, arg: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue], /) -> Self:
+        inner = self._inner.copy()
+        inner["rows"] = arg
+        # pyrefly: ignore [bad-specialization]
+        return type(self)(inner)
+
+    def range(self, arg: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue], /) -> Self:
+        inner = self._inner.copy()
+        inner["range"] = arg
+        # pyrefly: ignore [bad-specialization]
+        return type(self)(inner)
+
+
+@final
+class Window(_Aggregation[W]):
+    __slots__ = ()
+
+
+@final
+class Agg(_Aggregation[A]):
+    __slots__ = ()
+
+    def __repr__(self) -> str:
+        s = super().__repr__()
+        return s if not self._inner.get("distinct") else f"{s}.distinct()"
+
+    def distinct(self) -> Agg[A]:
+        inner = self._inner.copy()
+        inner["distinct"] = True
+        # pyrefly: ignore [bad-return, bad-specialization]
+        return Agg(inner)
+
+
+# TODO @dangotbanned: window functions that don't require a column
+# TODO @dangotbanned: intervals
+def col(name: str | ms.ParamRef) -> Col:
+    """Create a column expression.
+
+    ## Examples
+
+    >>> col("a")
+    col('a')
+
+    >>> expr = col("a").first().over("b", order_by=("c", "d"))
+    >>> expr
+    col('a').first().over('b', order_by=('c', 'd'))
+
+    >>> expr.distinct()
+    col('a').first().over('b', order_by=('c', 'd')).distinct()
+    """
+    return Col(name)
