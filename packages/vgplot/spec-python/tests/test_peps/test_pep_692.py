@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Final, assert_type
 import pytest
 
 import mosaic_spec as ms
-from tests.test_peps import encodings as e
+from tests.apis import encodings as e
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
