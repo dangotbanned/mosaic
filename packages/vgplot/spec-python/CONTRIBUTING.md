@@ -113,7 +113,7 @@ pnpm test
 [pnpm scripts]: ./package.json
 [`/tests/test_examples`]: ./tests/test_examples/__init__.py
 [also generated]: ./scripts/prepare_examples.py
-[Test PEPs]: ./docs/roadmap.md#test-peps
+[Test PEPs]: ./tests/test_peps/__init__.py
 [python type system]: https://typing.python.org/en/latest/spec/index.html
 [`TypedDict`]: https://typing.python.org/en/latest/spec/typeddict.html
 [multiple inheritance]: https://typing.python.org/en/latest/spec/typeddict.html#multiple-inheritance

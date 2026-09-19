@@ -49,7 +49,7 @@ def test_required_partial_direct() -> None:
 
 
 def test_required_partial_indirect() -> None:
-    """This came from experimenting with a convenient syntax for discrimnator fields.
+    """This came from experimenting with a convenient syntax for discriminator fields.
 
     ## Notes
     - `ty` fully understands

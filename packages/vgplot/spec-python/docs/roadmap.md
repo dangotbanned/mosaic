@@ -5,53 +5,6 @@ Here's a big list of things to do/known issues. Current priorities are deduplica
 
 [LSP]: https://en.wikipedia.org/wiki/Language_Server_Protocol
 
-## Test PEPs
-
-[`tests/test_examples/`] ensures that every upstream example works without producing a diagnostic.
-
-The goal of this task will be a secondary test suite ([`tests/test_peps/`]) that provides more
-project-specific regression coverage.
-
-> [!NOTE]
-> A PEP stands for Python Enhancement Proposal.
-
-These tests will (primarily) cover the subset of [Typing PEPs] that relate to `TypedDict`. It should
-easier to spot regressions within these more focused cases vs a needle in a [complex example].
-
-### Finished PEPs (done, with a stable interface)
-
-- [x] [PEP 589 - `TypedDict`]
-- [x] [PEP 655 - `Required` and `NotRequired`]
-- [x] [PEP 692 - `**TypedDict` (kwargs)]
-- [ ] [PEP 695 - Type Parameter Syntax]
-  - Just the `TypeAliasType` part
-- [ ] [PEP 728 - `closed` and `extra_items`]
-- [ ] [PEP 747 - `TypeForm`]
-
-> [!TIP]
-> Another good source for cases are (https://github.com/python/typing/tree/main/conformance/tests)
-
-### Open PEPs (under consideration)
-
-- [ ] [PEP 764 - Inline typed dictionaries]
-  - `ty` marks this syntax as `@Todo`
-  - `pyright` seems to ignore it
-- [ ] [PEP 821 - `**TypedDict` (Callable)]
-- [ ] [PEP 827 - Type Manipulation]
-
-[`tests/test_examples/`]: ../tests/test_examples/__init__.py
-[`tests/test_peps/`]: ../tests/test_peps/__init__.py
-[Typing PEPs]: https://peps.python.org/topic/typing/
-[PEP 589 - `TypedDict`]: https://peps.python.org/pep-0589/
-[PEP 655 - `Required` and `NotRequired`]: https://peps.python.org/pep-0655/
-[PEP 692 - `**TypedDict` (kwargs)]: https://peps.python.org/pep-0692/
-[PEP 695 - Type Parameter Syntax]: https://peps.python.org/pep-0695/
-[PEP 728 - `closed` and `extra_items`]: https://peps.python.org/pep-0728/
-[PEP 747 - `TypeForm`]: https://peps.python.org/pep-0747/
-[PEP 764 - Inline typed dictionaries]: https://peps.python.org/pep-0764/
-[PEP 821 - `**TypedDict` (Callable)]: https://peps.python.org/pep-0821/
-[PEP 827 - Type Manipulation]: https://peps.python.org/pep-0827/
-
 ## Splitting one big file
 
 [was too large]: https://github.com/dangotbanned/mosaic/commit/d0f225cddfb173da0aea024ad6d03ce4a5041f51
@@ -154,7 +107,6 @@ And here is the same thing in Observable Plot?
 [explanation]: ./intersection.md
 [extension fields]: https://json-schema.org/blog/posts/custom-annotations-will-continue#too-long-read-anyway
 [`pyrefly`]: https://pyrefly.org/en/docs/
-[complex example]: ../tests/test_examples/test_splom.py
 
 ## General
 
