@@ -21,6 +21,7 @@ FrameExclude = TypeAliasType(
     "FrameExclude",
     L["CURRENT ROW", "GROUP", "NO OTHERS", "TIES", "current row", "group", "no others", "ties"],
 )
+_Frame = TypeAliasType("_Frame", ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue])
 
 
 @final
@@ -159,11 +160,7 @@ class _Aggregation(Generic[_A]):
         func, column = next(it)
         return f"col({column!r}).{func}().{s.removeprefix('.')}"
 
-    def _fmt_frame(
-        self,
-        name: L["groups", "range", "rows"],
-        value: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue],
-    ) -> str:
+    def _fmt_frame(self, name: L["groups", "range", "rows"], value: _Frame) -> str:
         g = repr(value) if isinstance(value, str) else f"{value[0]!r}, {value[1]!r}"
         return f"{name}({g})"
 
@@ -197,22 +194,19 @@ class _Aggregation(Generic[_A]):
         return type(self)(inner)
 
     def groups(self, arg: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue], /) -> Self:
-        inner = self._inner.copy()
-        inner["groups"] = arg
-        # pyrefly: ignore [bad-specialization]
-        return type(self)(inner)
+        return type(self)(_extent(self._inner, "groups", arg))
 
     def rows(self, arg: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue], /) -> Self:
-        inner = self._inner.copy()
-        inner["rows"] = arg
-        # pyrefly: ignore [bad-specialization]
-        return type(self)(inner)
+        return type(self)(_extent(self._inner, "rows", arg))
 
     def range(self, arg: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue], /) -> Self:
-        inner = self._inner.copy()
-        inner["range"] = arg
-        # pyrefly: ignore [bad-specialization]
-        return type(self)(inner)
+        return type(self)(_extent(self._inner, "range", arg))
+
+
+def _extent(inner: _A, key: L["groups", "range", "rows"], value: _Frame) -> _A:
+    inner = inner.copy()  # pyrefly: ignore [bad-assignment]
+    inner[key] = value
+    return inner
 
 
 @final
