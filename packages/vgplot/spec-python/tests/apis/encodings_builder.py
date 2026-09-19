@@ -220,7 +220,7 @@ class Agg(_Aggregation[A]):
 
     def __repr__(self) -> str:
         s = super().__repr__()
-        return s if not self._inner.get("distinct") else f"{s}.distinct()"
+        return s if not self._inner.get("distinct") else f"{s.removesuffix('.')}.distinct()"
 
     def distinct(self) -> Agg[A]:
         inner = self._inner.copy()
