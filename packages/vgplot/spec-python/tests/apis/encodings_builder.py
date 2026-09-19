@@ -8,7 +8,8 @@ Inspired by [Polars] and [Mosaic SQL]
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final, Generic, Literal as L, final
+from functools import partial
+from typing import TYPE_CHECKING, Any, Final, Generic, Literal as L, final
 
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import Self, TypeAliasType, TypeVar, Unpack
@@ -22,6 +23,24 @@ FrameExclude = TypeAliasType(
     L["CURRENT ROW", "GROUP", "NO OTHERS", "TIES", "current row", "group", "no others", "ties"],
 )
 _Frame = TypeAliasType("_Frame", ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue])
+
+
+_AGG_UNARY: Final = {
+    "avg": (ms.Avg, "avg"),
+    "count": (ms.Count, "count"),
+    "first": (ms.First, "first"),
+    "last": (ms.Last, "last"),
+    "max": (ms.Max, "max"),
+    "median": (ms.Median, "median"),
+    "min": (ms.Min, "min"),
+    "mode": (ms.Mode, "mode"),
+    "product": (ms.Product, "product"),
+    "std": (ms.Stddev, "stddev"),
+    "std_pop": (ms.StddevPop, "stddev_pop"),
+    "sum": (ms.Sum, "sum"),
+    "var": (ms.Variance, "variance"),
+    "var_pop": (ms.VarPop, "var_pop"),
+}
 
 
 @final
@@ -54,9 +73,39 @@ class Col:
         kwds["interval"] = "number"
         return ms.Bin(bin=self._name, **kwds)
 
-    # TODO @dangotbanned: Remaining `AggregateTransform`
-    def first(self) -> Agg[ms.First]:
-        return Agg(ms.First(first=self._name))
+    if TYPE_CHECKING:
+
+        def avg(self) -> Agg[ms.Avg]: ...
+        def count(self) -> Agg[ms.Count]: ...
+        def first(self) -> Agg[ms.First]: ...
+        def last(self) -> Agg[ms.Last]: ...
+        def max(self) -> Agg[ms.Max]: ...
+        def median(self) -> Agg[ms.Median]: ...
+        def min(self) -> Agg[ms.Min]: ...
+        def mode(self) -> Agg[ms.Mode]: ...
+        def product(self) -> Agg[ms.Product]: ...
+        def std(self) -> Agg[ms.Stddev]: ...
+        def std_pop(self) -> Agg[ms.StddevPop]: ...
+        def sum(self) -> Agg[ms.Sum]: ...
+        def var(self) -> Agg[ms.Variance]: ...
+        def var_pop(self) -> Agg[ms.VarPop]: ...
+    else:
+
+        def __getattr__(self, attr: str) -> Any:
+            if got := _AGG_UNARY.get(attr):
+                tp, param_name = got
+                return partial(Agg, tp({param_name: self._name}))
+            msg = f"{self.__class__.__name__!r} has no attribute {attr!r}"
+            raise AttributeError(msg)
+
+    def arg_max(self, by: str | ms.ParamRef) -> Agg[ms.Argmax]:
+        return Agg(ms.Argmax(argmax=(self._name, by)))
+
+    def arg_min(self, by: str | ms.ParamRef) -> Agg[ms.Argmin]:
+        return Agg(ms.Argmin(argmin=(self._name, by)))
+
+    def quantile(self, p: str | ms.ParamRef | float) -> Agg[ms.Quantile]:
+        return Agg(ms.Quantile(quantile=(self._name, p)))
 
     # TODO @dangotbanned: Remaining `WindowTransform`
     def first_value(self) -> Window[ms.FirstValue]:
@@ -245,5 +294,11 @@ def col(name: str | ms.ParamRef) -> Col:
 
     >>> expr.distinct()
     col('a').first().over('b', order_by=('c', 'd')).distinct()
+
+    >>> col("b").count().distinct()
+    col('b').count().distinct()
+
+    >>> col("c").max().over("d")
+    col('c').max().over('d')
     """
     return Col(name)
