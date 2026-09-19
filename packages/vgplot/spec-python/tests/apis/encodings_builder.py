@@ -8,6 +8,7 @@ Inspired by [Polars] and [Mosaic SQL]
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from functools import partial
 from typing import TYPE_CHECKING, Any, Final, Generic, Literal as L, final
 
@@ -194,7 +195,8 @@ class _Aggregation(Generic[_A]):
             s = f"over({s})"
         elif len(d) == 1:
             func, column = next(iter(d.items()))
-            return f"col({column!r}).{func}()"
+            return self._fmt_function(column, func)  # pyrefly: ignore[bad-argument-type]
+
         for name in ("groups", "range", "rows"):
             if found := d.get(name):
                 # NOTE: This one is unreasonable to expect a type checker to be happy with
@@ -206,7 +208,19 @@ class _Aggregation(Generic[_A]):
             not in {"exclude", "groups", "range", "rows", "partition_by", "order_by", "distinct"}
         )
         func, column = next(it)
-        return f"col({column!r}).{func}().{s.removeprefix('.')}"
+        return f"{self._fmt_function(column, func)}.{s.removeprefix('.')}"  # pyrefly: ignore[bad-argument-type]
+
+    def _fmt_function(self, column: str | Sequence[Any] | float | None, function: str) -> str:
+        s = f"{function}()"
+        if not column:
+            return s
+        if not isinstance(column, str):
+            if not isinstance(column, Sequence):
+                # NOTE: Inherited `float` typing
+                msg = f"{column!r} is not a column name"
+                raise TypeError(msg)
+            (column,) = column
+        return f"col({column!r}).{s}"
 
     def _fmt_frame(self, name: L["groups", "range", "rows"], value: _Frame) -> str:
         g = repr(value) if isinstance(value, str) else f"{value[0]!r}, {value[1]!r}"
