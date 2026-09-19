@@ -173,8 +173,6 @@ A = TypeVar("A", bound=ms.AggregateTransform, covariant=True)
 W = TypeVar("W", bound=ms.WindowTransform, covariant=True)
 
 
-# NOTE: `pyrefly` complains about `copy` 7 times
-# https://github.com/facebook/pyrefly/issues/4990
 class _Aggregation(Generic[_A]):
     __slots__ = ("_inner",)
 
@@ -199,6 +197,7 @@ class _Aggregation(Generic[_A]):
             return f"col({column!r}).{func}()"
         for name in ("groups", "range", "rows"):
             if found := d.get(name):
+                # NOTE: This one is unreasonable to expect a type checker to be happy with
                 s = f"{s}.{self._fmt_frame(name, found)}"  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type]
         it = (
             (k, v)
@@ -213,6 +212,7 @@ class _Aggregation(Generic[_A]):
         g = repr(value) if isinstance(value, str) else f"{value[0]!r}, {value[1]!r}"
         return f"{name}({g})"
 
+    # NOTE: pyrefly bug https://github.com/facebook/pyrefly/issues/4990
     def to_dict(self, *, copy: bool = False) -> _A:
         # pyrefly: ignore [bad-return]
         return self._inner if not copy else self._inner.copy()
@@ -233,12 +233,14 @@ class _Aggregation(Generic[_A]):
             inner["partition_by"] = partition_by
         if order := order_by:
             inner["order_by"] = (order,) if isinstance(order, str) else tuple(order)
+        # NOTE: pyrefly bug https://github.com/facebook/pyrefly/issues/4990
         # pyrefly: ignore [bad-specialization]
         return type(self)(inner)
 
     def exclude(self, frame: FrameExclude, /) -> Self:
         inner = self._inner.copy()
         inner["exclude"] = frame
+        # NOTE: pyrefly bug https://github.com/facebook/pyrefly/issues/4990
         # pyrefly: ignore [bad-specialization]
         return type(self)(inner)
 
@@ -253,6 +255,7 @@ class _Aggregation(Generic[_A]):
 
 
 def _extent(inner: _A, key: L["groups", "range", "rows"], value: _Frame) -> _A:
+    # NOTE: pyrefly bug https://github.com/facebook/pyrefly/issues/4990
     inner = inner.copy()  # pyrefly: ignore [bad-assignment]
     inner[key] = value
     return inner
@@ -274,6 +277,7 @@ class Agg(_Aggregation[A]):
     def distinct(self) -> Agg[A]:
         inner = self._inner.copy()
         inner["distinct"] = True
+        # NOTE: pyrefly bug https://github.com/facebook/pyrefly/issues/4990
         # pyrefly: ignore [bad-return, bad-specialization]
         return Agg(inner)
 
