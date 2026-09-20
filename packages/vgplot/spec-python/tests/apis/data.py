@@ -105,5 +105,28 @@ class Data:
         rows = (dict(zip(column_names, row, strict=False)) for row in named_columns.values())
         return cls.from_rows(name, *rows)
 
+    def source(self, filter_by: ms.ParamRef | None = None, *, optimize: bool = True) -> ms.PlotFrom:
+        """Create an input data specification for a plot mark.
+
+        Args:
+            filter_by: A selection that filters the mark data.
+            optimize: A flag to enable any mark-specific query optimizations.
+                If `false`, optimizations are disabled to aid testing and debugging.
+
+        Examples:
+            >>> file = "data/flights-200k.parquet"
+            >>> Data.from_parquet(file, "flights").source(ms.ParamRef("$brush"))
+            {'source': 'flights', 'filter_by': '$brush'}
+
+            >>> Data.from_parquet(file).source(optimize=False)
+            {'source': 'flights-200k', 'optimize': False}
+        """
+        result: ms.PlotFrom = {"source": self.name}
+        if filter_by:
+            result["filter_by"] = filter_by
+        if not optimize:
+            result["optimize"] = optimize
+        return result
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(name={self.name!r}, options={self.options!r})"
