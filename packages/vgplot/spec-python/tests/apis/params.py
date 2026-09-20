@@ -1,0 +1,272 @@
+"""A typing-first counterpart to `params.py`.
+
+Mostly doing as a learning/experimental exercise.
+
+If this were the direction to go in, it could be (at least partially) generated from the spec.
+
+## Notes/Changes
+- `Protocol`s mostly aligned with `Param.ts` interfaces
+- `ParamTemporal` is equivalent to `ParamDate`
+    - but unparsing is on demand
+- `selection` is gone
+    - You can get the same API by creating a module named `selection`,
+      and aliasing the classmethods
+
+## Planned
+- Implement the protocols
+- Experiment with simpler ways to handle parameter names
+    - [`inspect.currentframe`] is heavy machinery and can cause reference cycles
+
+[`inspect.currentframe`]: https://docs.python.org/3/library/inspect.html#the-interpreter-stack
+"""
+
+from __future__ import annotations
+
+# pyright: reportUnusedVariable=false
+import datetime as dt
+from collections.abc import Collection, Sequence
+from typing import Final, Generic, Literal, NewType, final, overload
+
+from mosaic_spec import ParamLiteral as Lit, ParamRef as Ref
+from mosaic_spec._typing_compat import Protocol, Self, TypeAliasType, TypedDict, TypeVar, Unpack
+
+Name = TypeAliasType("Name", str)
+"""`{name}`"""
+
+
+Select = Literal["crossfilter", "intersect", "single", "union"]
+"""The type of reactive parameter."""
+
+Temporal = TypeAliasType("Temporal", dt.date | dt.datetime | dt.time)
+
+_TP_LIT: Final = (int, str, float, type(None))
+ISO_8601 = NewType("ISO_8601", str)
+
+_SelectT = TypeVar("_SelectT", bound=Select | Literal["value"])
+
+
+class CanRef(Protocol):
+    __slots__ = ()
+
+    def __repr__(self) -> Ref: ...
+    def ref(self) -> Ref: ...
+
+
+# TODO @dangotbanned: Add `to_dict`, `to_json`
+class ParamBase(CanRef, Protocol[_SelectT]):
+    """Base properties shared by Param definitions."""
+
+    __slots__ = ("name",)
+
+    # NOTE: Excluded from `__slots__` as its a class-var for value, but instance-attr for select
+    select: _SelectT
+    """The type of reactive parameter."""
+
+    name: Name
+    """The name of the parameter."""
+
+    def __repr__(self) -> Ref:
+        """Interpolate the parameter in a query."""
+        return Ref(f"${self.name}")
+
+    def ref(self) -> Ref:
+        # NOTE: `ParamRef` should not be a user-facing concept
+        # - parameters are become references when you refer to them
+        #   - in python, everything is a pointer
+        return Ref(f"${self.name}")
+
+
+_ValueT = TypeVar("_ValueT", covariant=True)
+
+
+class _ParamValue(ParamBase[Literal["value"]], Generic[_ValueT]):
+    """A Param that wraps a value."""
+
+    __slots__ = ("value",)
+    select = "value"
+    value: _ValueT
+    """The initial parameter value."""
+
+    def __init__(self, name: Name, value: _ValueT) -> None:
+        self.name = name
+        self.value = value
+
+
+# TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
+@final
+class Param(_ParamValue[Lit]):
+    """A Param definition."""
+
+    __slots__ = ()
+
+
+# TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
+@final
+class ParamArray(_ParamValue[tuple["Lit | ParamDef", ...]]):
+    """An Array-valued Param definition."""
+
+    __slots__ = ()
+
+
+_TemporalT = TypeVar("_TemporalT", bound=Temporal, covariant=True)
+
+
+# TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
+@final
+class ParamTemporal(_ParamValue[_TemporalT]):
+    """A Temporal-valued Param definition."""
+
+    __slots__ = ()
+
+    @property
+    def date(self) -> ISO_8601:
+        """Convert to an ISO date/time string to be parsed to a Date object."""
+        # TODO @dangotbanned: Raise a ty issue?
+        # all 3 signatures allow 0-args, return type is the same
+        return ISO_8601(self.value.isoformat())  # ty: ignore[invalid-argument-type]
+
+
+_Include = TypeVar("_Include")
+
+
+class _Opts(TypedDict, Generic[_Include], total=False, closed=True):
+    cross: bool
+    """A flag for cross-filtering, where selections made in a plot filter others but not oneself.
+
+    (default `False`, except for `crossfilter` selections).
+    """
+
+    empty: bool
+    """A flag for setting an initial empty selection state.
+
+    - If `True`, a selection with no clauses corresponds to an empty selection with no records.
+    - If `False`, a selection with no clauses selects all values.
+    """
+
+    include: _Include
+    """Upstream selections whose clauses should be included as part of this selection.
+
+    Any clauses or activations published to the upstream selections will be relayed to this selection.
+    """
+
+
+# TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
+@final
+class Selection(ParamBase[Select]):
+    __slots__ = ("opts", "select")
+    select: Select
+    """The type of reactive parameter."""
+
+    opts: _Opts[Sequence[ParamDef]]
+
+    def __init__(self, name: Name, select: Select, /, kwds: _Opts[Sequence[ParamDef]]) -> None:
+        self.select = select
+        self.opts = kwds
+        self.name = name
+
+    @classmethod
+    def _from_options(cls, name: Name, select: Select, /, kwds: SelectionOpts) -> Self:
+        opts: _Opts[Sequence[ParamDef]] = {}
+        if (cross := kwds.get("cross")) is not None:
+            opts["cross"] = cross
+        if (empty := kwds.get("empty")) is not None:
+            opts["empty"] = empty
+        if include := kwds.get("include"):
+            opts["include"] = (include,) if not isinstance(include, Collection) else tuple(include)
+        return cls(name, select, opts)
+
+
+ParamDef = TypeAliasType("ParamDef", Param | ParamArray | ParamTemporal[Temporal] | Selection)
+"""A Param or Selection definition."""
+
+
+Params = TypeAliasType("Params", dict[str, ParamDef])
+"""Top-level Param and Selection definitions."""
+
+# NOTE: user-facing version with permissive include
+SelectionOpts = TypeAliasType("SelectionOpts", _Opts[ParamDef | Collection[ParamDef]])
+
+
+@final
+class _ParamBuilder:
+    """A partially initialized param.
+
+    To create a parameter, call with an optional default value.
+
+    To create a selection, call either `single`, `union`, `cross` or `intersect` methods.
+    """
+
+    __slots__ = ("_name",)
+
+    def __init__(self, name: Name, /) -> None:
+        self._name: Final[Name] = name
+
+    @overload
+    def __call__(self, value: Lit = None, /) -> Param: ...
+    @overload
+    def __call__(self, value: _TemporalT, /) -> ParamTemporal[_TemporalT]: ...
+    @overload
+    def __call__(self, value: Collection[Lit | ParamDef], /) -> ParamArray: ...
+    def __call__(
+        self, value: Lit | _TemporalT | Collection[Lit | ParamDef] = None, /
+    ) -> Param | ParamArray | ParamTemporal[_TemporalT]:
+        """Initialize a param with a value."""
+        name = self._name
+        if not isinstance(value, _TP_LIT):
+            if not isinstance(value, (dt.date, dt.datetime, dt.time)):
+                return ParamArray(name, tuple(value))
+            if isinstance(value, Collection):
+                raise TypeError
+
+            return ParamTemporal(name, value)
+        return Param(name, value)
+
+    def single(self, **kwds: Unpack[SelectionOpts]) -> Selection:
+        return Selection._from_options(self._name, "single", kwds)
+
+    def cross(self, **kwds: Unpack[SelectionOpts]) -> Selection:
+        return Selection._from_options(self._name, "crossfilter", kwds)
+
+    def union(self, **kwds: Unpack[SelectionOpts]) -> Selection:
+        return Selection._from_options(self._name, "union", kwds)
+
+    def intersect(self, **kwds: Unpack[SelectionOpts]) -> Selection:
+        return Selection._from_options(self._name, "intersect", kwds)
+
+
+@final
+class _P:
+    __slots__ = ()
+
+    def __getattr__(self, name: Name) -> _ParamBuilder:
+        return _ParamBuilder(name)
+
+
+p: Final = _P()
+"""Create a `Param` or `Selection`."""
+
+
+def sql(expr: str) -> str:
+    return expr
+
+
+# ruff: noqa: F841
+def ctx() -> None:
+    point = p.point(dt.date(2013, 5, 13))
+
+    y = sql(
+        f"Close / (SELECT max(Close) FROM stocks WHERE Symbol = source.Symbol AND Date = {p.point})"  # ruff: ignore[hardcoded-sql-expression]
+    )
+
+    array_1 = p.array_1((1, 2, 3))
+    time_1 = p.time(dt.time(12, 30))
+    date_1 = p.date(dt.date(1970, 1, 2))
+    datetime_1 = p.datetime(dt.datetime(1970, 1, 2, 12, 30))
+
+    # NOTE: `athletes.py` example
+    category = p.category.intersect()
+    query = p.query.intersect(include=category)
+    hover = p.hover.intersect(empty=True)
+
+    param_sel_2 = p.union.union(empty=False, include=[time_1, date_1])
+    param_sel_5 = p.single.single(cross=True, include=p.date(dt.date(1970, 1, 2)))
