@@ -8,6 +8,7 @@ Inspired by [Polars] and [Mosaic SQL]
 
 from __future__ import annotations
 
+import builtins
 from collections.abc import Mapping, Sequence
 from functools import partial
 from typing import TYPE_CHECKING, Any, Final, Generic, Literal as L, final, overload
@@ -35,8 +36,9 @@ _NegativeInteger = TypeAliasType(
 )
 
 _AGG_UNARY: Final[Mapping[str, tuple[type[ms.AggregateTransform], str]]] = {
-    "avg": (ms.Avg, "avg"),
+    "mean": (ms.Avg, "avg"),
     "count": (ms.Count, "count"),
+    "len": (ms.Count, "count"),
     "first": (ms.First, "first"),
     "last": (ms.Last, "last"),
     "max": (ms.Max, "max"),
@@ -90,13 +92,13 @@ class Col:
 
     if TYPE_CHECKING:
 
-        def avg(self) -> Agg[ms.Avg]: ...
-        def count(self) -> Agg[ms.Count]: ...
         def first(self) -> Agg[ms.First]: ...
         def first_value(self) -> Window[ms.FirstValue]: ...
         def last(self) -> Agg[ms.Last]: ...
         def last_value(self) -> Window[ms.LastValue]: ...
+        def len(self) -> Agg[ms.Count]: ...
         def max(self) -> Agg[ms.Max]: ...
+        def mean(self) -> Agg[ms.Avg]: ...
         def median(self) -> Agg[ms.Median]: ...
         def min(self) -> Agg[ms.Min]: ...
         def mode(self) -> Agg[ms.Mode]: ...
@@ -107,6 +109,9 @@ class Col:
         def sum(self) -> Agg[ms.Sum]: ...
         def var(self) -> Agg[ms.Variance]: ...
         def var_pop(self) -> Agg[ms.VarPop]: ...
+
+        count = len  # ruff: ignore[builtin-attribute-shadowing]
+
     else:
 
         def __getattr__(self, attr: str) -> Any:
@@ -123,6 +128,11 @@ class Col:
     # https://duckdb.org/docs/current/sql/functions/window_functions#nth_valueexpr-nth-order-by-ordering-ignore-nulls
     def nth_value(self, nth: int | ms.ParamRef, /) -> Window[ms.NthValue]:
         return Window(ms.NthValue(nth_value=(self._name, nth)))
+
+    def n_unique(self) -> Agg[ms.Count]:
+        return self.len().distinct()
+
+    count_distinct = n_unique
 
     def quantile(self, p: str | ms.ParamRef | float) -> Agg[ms.Quantile]:
         return Agg(ms.Quantile(quantile=(self._name, p)))
@@ -238,7 +248,7 @@ class _Aggregation(Generic[_A]):
                 s = f"over(order_by={d['order_by']!r})"
         elif s:
             s = f"over({s})"
-        elif len(d) == 1:
+        elif builtins.len(d) == 1:
             func, column = next(iter(d.items()))
             return self._fmt_function(column, func)  # pyrefly: ignore[bad-argument-type]
 
@@ -341,7 +351,6 @@ class Agg(_Aggregation[A]):
         return Agg(inner)
 
 
-# TODO @dangotbanned: window functions that don't require a column
 # TODO @dangotbanned: intervals
 def col(name: str | ms.ParamRef) -> Col:
     """Create a column expression.
@@ -367,8 +376,23 @@ def col(name: str | ms.ParamRef) -> Col:
     return Col(name)
 
 
+def len() -> Agg[ms.Count]:
+    return Agg(ms.Count(count=()))
+
+
+def n_unique() -> Agg[ms.Count]:
+    return len().distinct()
+
+
+count = len
+count_distinct = n_unique
+
+
 def row_index() -> Window[ms.RowNumber]:
     return Window(ms.RowNumber(row_number=None))
+
+
+row_number = row_index
 
 
 def rank() -> Window[ms.Rank]:
