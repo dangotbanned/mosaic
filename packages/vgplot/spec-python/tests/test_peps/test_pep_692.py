@@ -5,11 +5,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final, assert_type
+from typing import TYPE_CHECKING, Final
 
 import pytest
 
 import mosaic_spec as ms
+from mosaic_spec._typing_compat import assert_type
 from tests.apis import encodings as e
 
 if TYPE_CHECKING:
