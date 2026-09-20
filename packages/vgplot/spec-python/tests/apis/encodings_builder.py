@@ -8,9 +8,9 @@ Inspired by [Polars] and [Mosaic SQL]
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from functools import partial
-from typing import TYPE_CHECKING, Any, Final, Generic, Literal as L, final
+from typing import TYPE_CHECKING, Any, Final, Generic, Literal as L, final, overload
 
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import Self, TypeAliasType, TypeVar, Unpack
@@ -24,9 +24,17 @@ FrameExclude = TypeAliasType(
     L["CURRENT ROW", "GROUP", "NO OTHERS", "TIES", "current row", "group", "no others", "ties"],
 )
 _Frame = TypeAliasType("_Frame", ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue])
+Arg = TypeAliasType("Arg", ms.ParamRef | bool | float | str)
+_PositiveInteger = TypeAliasType(
+    "_PositiveInteger",
+    L[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
+)
+_NegativeInteger = TypeAliasType(
+    "_NegativeInteger",
+    L[-1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15, -16, -17, -18, -19, -20],
+)
 
-
-_AGG_UNARY: Final = {
+_AGG_UNARY: Final[Mapping[str, tuple[type[ms.AggregateTransform], str]]] = {
     "avg": (ms.Avg, "avg"),
     "count": (ms.Count, "count"),
     "first": (ms.First, "first"),
@@ -41,6 +49,12 @@ _AGG_UNARY: Final = {
     "sum": (ms.Sum, "sum"),
     "var": (ms.Variance, "variance"),
     "var_pop": (ms.VarPop, "var_pop"),
+}
+
+_WINDOW_UNARY: Final[Mapping[str, tuple[type[ms.FirstValue | ms.LastValue | ms.NTile], str]]] = {
+    "first_value": (ms.FirstValue, "first_value"),
+    "last_value": (ms.LastValue, "last_value"),
+    "ntile": (ms.NTile, "ntile"),
 }
 
 
@@ -79,11 +93,14 @@ class Col:
         def avg(self) -> Agg[ms.Avg]: ...
         def count(self) -> Agg[ms.Count]: ...
         def first(self) -> Agg[ms.First]: ...
+        def first_value(self) -> Window[ms.FirstValue]: ...
         def last(self) -> Agg[ms.Last]: ...
+        def last_value(self) -> Window[ms.LastValue]: ...
         def max(self) -> Agg[ms.Max]: ...
         def median(self) -> Agg[ms.Median]: ...
         def min(self) -> Agg[ms.Min]: ...
         def mode(self) -> Agg[ms.Mode]: ...
+        def ntile(self) -> Window[ms.NTile]: ...
         def product(self) -> Agg[ms.Product]: ...
         def std(self) -> Agg[ms.Stddev]: ...
         def std_pop(self) -> Agg[ms.StddevPop]: ...
@@ -93,11 +110,7 @@ class Col:
     else:
 
         def __getattr__(self, attr: str) -> Any:
-            if got := _AGG_UNARY.get(attr):
-                tp, param_name = got
-                return partial(Agg, tp({param_name: self._name}))
-            msg = f"{self.__class__.__name__!r} has no attribute {attr!r}"
-            raise AttributeError(msg)
+            return _col_getattr(self, attr)
 
     def arg_max(self, by: str | ms.ParamRef) -> Agg[ms.Argmax]:
         return Agg(ms.Argmax(argmax=(self._name, by)))
@@ -105,12 +118,44 @@ class Col:
     def arg_min(self, by: str | ms.ParamRef) -> Agg[ms.Argmin]:
         return Agg(ms.Argmin(argmin=(self._name, by)))
 
+    # TODO @dangotbanned: Report upstream bug, should not be optional
+    # https://github.com/uwdata/mosaic/blob/a2d19c3126beceb322119a7d471698bb850bcb3b/packages/vgplot/spec/src/spec/Transform.ts#L443
+    # https://duckdb.org/docs/current/sql/functions/window_functions#nth_valueexpr-nth-order-by-ordering-ignore-nulls
+    def nth_value(self, nth: int | ms.ParamRef, /) -> Window[ms.NthValue]:
+        return Window(ms.NthValue(nth_value=(self._name, nth)))
+
     def quantile(self, p: str | ms.ParamRef | float) -> Agg[ms.Quantile]:
         return Agg(ms.Quantile(quantile=(self._name, p)))
 
-    # TODO @dangotbanned: Remaining `WindowTransform`
-    def first_value(self) -> Window[ms.FirstValue]:
-        return Window(ms.FirstValue(first_value=self._name))
+    @overload
+    def shift(self, n: _PositiveInteger = 1, fill_value: Arg | None = None) -> Window[ms.Lag]: ...
+    @overload
+    def shift(self, n: _NegativeInteger, fill_value: Arg | None = None) -> Window[ms.Lead]: ...
+    @overload
+    def shift(self, n: int, fill_value: Arg | None = None) -> Window[ms.Lag | ms.Lead]: ...
+    def shift(self, n: int = 1, fill_value: Arg | None = None) -> Window[ms.Lag | ms.Lead]:
+        if n >= 1:
+            args = (self._name, n) if fill_value is None else (self._name, n, fill_value)
+            return Window(ms.Lag(lag=args))
+        if n < 0:
+            n = abs(n)
+            args = (self._name, n) if fill_value is None else (self._name, n, fill_value)
+            return Window(ms.Lead(lead=args))
+        msg = "`n` must be a non-zero integer"
+        raise TypeError(msg)
+
+
+def _col_getattr(self: Col, attr: str, /) -> partial[Agg[Any]] | partial[Window[Any]]:
+    # NOTE: Provides some limited type checking for `Col.__getattr__`,
+    # which is not visible to a type checker
+    if agg_unary := _AGG_UNARY.get(attr):
+        tp, param_name = agg_unary
+        return partial(Agg, tp({param_name: self._name}))
+    if window_unary := _WINDOW_UNARY.get(attr):
+        tp, param_name = window_unary
+        return partial(Window, tp({param_name: self._name}))
+    msg = f"{self.__class__.__name__!r} has no attribute {attr!r}"
+    raise AttributeError(msg)
 
 
 @final
@@ -320,3 +365,19 @@ def col(name: str | ms.ParamRef) -> Col:
     col('c').max().over('d')
     """
     return Col(name)
+
+
+def row_index() -> Window[ms.RowNumber]:
+    return Window(ms.RowNumber(row_number=None))
+
+
+def rank() -> Window[ms.Rank]:
+    return Window(ms.Rank(rank=None))
+
+
+def dense_rank() -> Window[ms.DenseRank]:
+    return Window(ms.DenseRank(dense_rank=None))
+
+
+def percent_rank() -> Window[ms.PercentRank]:
+    return Window(ms.PercentRank(percent_rank=None))
