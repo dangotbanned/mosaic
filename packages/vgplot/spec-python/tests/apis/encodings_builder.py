@@ -4,6 +4,26 @@ Inspired by [Polars] and [Mosaic SQL]
 
 [Polars]: https://docs.pola.rs/user-guide/expressions/window-functions/
 [Mosaic SQL]: https://idl.uw.edu/mosaic/sql/
+
+## Findings
+
+- The docs from each required transform key should be duplicated into the class doc
+    - Current class docs are not that helpful
+- Implementation was pretty quick
+- Type checking on this module is expensive
+    - `ty` (*probably a bug*)
+        - total         :   4.58s
+        - this module   :   4.57s
+        - test_splom.py :   0.74s
+    - `pyright`         :
+        - total         :  64.83s
+        - this module   :   2.53s
+        - test_splom.py :   0.60s
+    - Haven't found the source yet
+        - Maybe the type variables?
+- Found a [pyrefly bug](https://github.com/facebook/pyrefly/issues/4990)
+- `WindowOptions` really needs docs
+    - suggest adapting from [DuckDB](https://duckdb.org/docs/current/sql/functions/window_functions#evaluation)
 """
 
 from __future__ import annotations
