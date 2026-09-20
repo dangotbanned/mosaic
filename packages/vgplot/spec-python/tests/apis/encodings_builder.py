@@ -160,10 +160,12 @@ def _col_getattr(self: Col, attr: str, /) -> partial[Agg[Any]] | partial[Window[
     # which is not visible to a type checker
     if agg_unary := _AGG_UNARY.get(attr):
         tp, param_name = agg_unary
-        return partial(Agg, tp({param_name: self._name}))
+        args: Any = {param_name: self._name}
+        return partial(Agg, tp(args))
     if window_unary := _WINDOW_UNARY.get(attr):
         tp, param_name = window_unary
-        return partial(Window, tp({param_name: self._name}))
+        args: Any = {param_name: self._name}
+        return partial(Window, tp(args))
     msg = f"{self.__class__.__name__!r} has no attribute {attr!r}"
     raise AttributeError(msg)
 
