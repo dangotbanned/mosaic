@@ -105,7 +105,7 @@ class Data:
         rows = (dict(zip(column_names, row, strict=False)) for row in named_columns.values())
         return cls.from_rows(name, *rows)
 
-    def source(self, filter_by: ms.ParamRef | None = None, *, optimize: bool = True) -> ms.PlotFrom:
+    def source(self, filter_by: ms.ParamRef | None = None, *, optimize: bool = True) -> Source:
         """Create an input data specification for a plot mark.
 
         Args:
@@ -116,17 +116,32 @@ class Data:
         Examples:
             >>> file = "data/flights-200k.parquet"
             >>> Data.from_parquet(file, "flights").source(ms.ParamRef("$brush"))
-            {'source': 'flights', 'filter_by': '$brush'}
+            Source({'source': 'flights', 'filter_by': '$brush'})
 
             >>> Data.from_parquet(file).source(optimize=False)
-            {'source': 'flights-200k', 'optimize': False}
+            Source({'source': 'flights-200k', 'optimize': False})
         """
         result: ms.PlotFrom = {"source": self.name}
+        if (not filter_by) and optimize:
+            return Source(result)
         if filter_by:
             result["filter_by"] = filter_by
         if not optimize:
             result["optimize"] = optimize
-        return result
+        return Source(result)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(name={self.name!r}, options={self.options!r})"
+
+
+@final
+class Source:
+    """An input data specification for a plot mark."""
+
+    __slots__ = ("options",)
+
+    def __init__(self, options: ms.PlotFrom) -> None:
+        self.options: ms.PlotFrom = options
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.options!r})"

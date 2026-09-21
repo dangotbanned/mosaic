@@ -50,12 +50,10 @@ Generally this'll be descriptor magic
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from mosaic_spec._typing_compat import TypeAliasType, TypeVar
-
-if TYPE_CHECKING:
-    from tests.apis.data import Data
+from tests.apis.data import Data, Source
 
 Incomplete = TypeAliasType("Incomplete", Any)
 
@@ -87,8 +85,8 @@ class _Mixed:
     - It turns out that only `Text*` is optional data here, but all permit it
     """
 
-    def __init__(self, data: Data) -> None:
-        self._data: Data = data
+    def __init__(self, data: Source) -> None:
+        self._data: Source = data
 
     def __call__(self, *args: Incomplete, **kwds: Incomplete) -> Incomplete: ...
 
@@ -169,8 +167,8 @@ class MarksNs:
     - Working out propagating data first
     """
 
-    def __init__(self, data: Data) -> None:
-        self._data: Data = data
+    def __init__(self, data: Source) -> None:
+        self._data: Source = data
 
     @property
     def area(self) -> AreaNs:
@@ -230,7 +228,10 @@ class MarksNs:
     def link(self) -> Direct: ...
 
     raster: _Mixed
-    rect: _Mixed
+
+    @property
+    def rect(self) -> RectNs:
+        return RectNs(self._data)
 
     def regression_y(self) -> Direct: ...
 
