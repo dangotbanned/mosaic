@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from copy import deepcopy
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Final, Literal as L, final, overload
+from typing import TYPE_CHECKING, Any, Final, Generic, Literal as L, final, overload
 
 import mosaic_spec as ms
 from mosaic_spec._gen.data import _DataOptions
-from mosaic_spec._typing_compat import TypeAliasType
+from mosaic_spec._typing_compat import TypeAliasType, TypeVar
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping
+    from collections.abc import Iterator, Mapping
 
     from mosaic_spec._typing_compat import Self, Unpack
-    from tests.apis.params import ParamDef
+    from tests.apis.params import Param, ParamDef
 
 __all__ = ("query",)
 
@@ -71,6 +71,10 @@ class Data:
         self.name: str = name
         self.options: DataOptions = options
 
+    @property
+    def _source(self) -> str:
+        return self.name
+
     @classmethod
     def from_csv(cls, file: str | Path, /, name: str = "", **kwds: Unpack[CSVOptions]) -> Self:
         file, name = _into_file_name(file, name)
@@ -109,7 +113,7 @@ class Data:
 
     def source(
         self, filter_by: ParamDef | None = None, *, optimize: L[False] | None = None
-    ) -> Source:
+    ) -> DataSource:
         """Create an input data specification for a plot mark.
 
         Args:
@@ -126,13 +130,7 @@ class Data:
             >>> Data.from_parquet(file).source(optimize=False)
             Source({'source': 'flights-200k', 'optimize': False})
         """
-        if filter_by:
-            if optimize is None:
-                return Source(self.name, filter_by)
-            return Source(self.name, filter_by, optimize=optimize)
-        if optimize is False:
-            return Source(self.name, optimize=optimize)
-        return Source(self.name)
+        return DataSource(self, filter_by, optimize=optimize)
 
     @overload
     def filter(self, filter_by: ParamDef, /) -> Source: ...
@@ -157,10 +155,10 @@ class Data:
             options = deepcopy(self.options)
             options["where"] = by
             return Data(self.name, options)
-        return Source(self.name, by)
+        return DataSource(self, by)
 
     def no_optimizations(self) -> Source:
-        return Source(self.name, optimize=False)
+        return DataSource(self, optimize=False)
 
     def to_dict(self) -> ms.Data:
         return {self.name: self.options}
@@ -169,28 +167,56 @@ class Data:
         return f"{self.__class__.__name__}(name={self.name!r}, options={self.options!r})"
 
 
-# TODO @dangotbanned: Keep a (real) reference to `Data`
-@final
-class Source:
-    """An input data specification for a plot mark."""
+S = TypeVar("S", Data, "Param")
 
-    __slots__ = ("filter_by", "optimize", "source")
+
+class _Source(Generic[S]):
+    __slots__ = ("_filter_by", "_optimize", "_source")
 
     def __init__(
-        self, source: str, filter_by: ParamDef | None = None, *, optimize: bool | None = None
+        self, source: S, filter_by: ParamDef | None = None, *, optimize: L[False] | None = None
     ) -> None:
-        self.source = source
-        self.filter_by = filter_by
+        self._source: S = source
+        """The name of the backing data table."""
+        self._filter_by: ParamDef | None = filter_by
         """Ideally want to pull param defs from here in the spec."""
-        self.optimize = optimize
+        self._optimize: L[False] | None = optimize
 
-    def to_dict(self) -> ms.PlotFrom:
-        result: ms.PlotFrom = {"source": self.source}
-        if self.filter_by:
-            result["filter_by"] = self.filter_by.ref()
-        if self.optimize is not None:
-            result["optimize"] = self.optimize
+    def _plot_source(self) -> ms.PlotFrom:
+        result: ms.PlotFrom = {"source": self._source._source}
+        if filter_by := self._filter_by:
+            result["filter_by"] = filter_by.ref()
+        if self._optimize is False:
+            result["optimize"] = False
         return result
 
+    def _iter_params(self) -> Iterator[ParamDef]:
+        if self._filter_by:
+            yield self._filter_by
+
+    def _iter_data(self) -> Iterator[Data]:
+        yield from ()
+
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.to_dict()!r})"
+        return f"Source({self._plot_source()})"
+
+
+@final
+class DataSource(_Source[Data]):
+    __slots__ = ()
+
+    def _iter_data(self) -> Iterator[Data]:
+        yield self._source
+
+
+@final
+class ParamSource(_Source["Param"]):
+    __slots__ = ()
+
+    def _iter_params(self) -> Iterator[ParamDef]:
+        yield self._source
+        yield from super()._iter_params()
+
+
+Source = TypeAliasType("Source", DataSource | ParamSource)
+"""An input data specification for a plot mark."""

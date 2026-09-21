@@ -25,17 +25,20 @@ from __future__ import annotations
 # pyright: reportUnusedVariable=false
 import datetime as dt
 from collections.abc import Collection
-from typing import Final, Generic, Literal, NewType, final, overload
+from typing import TYPE_CHECKING, Final, Generic, Literal as L, NewType, final, overload
 
 import mosaic_spec as ms
 from mosaic_spec import ParamLiteral as Lit, ParamRef as Ref
 from mosaic_spec._typing_compat import Protocol, Self, TypeAliasType, TypedDict, TypeVar, Unpack
 
+if TYPE_CHECKING:
+    from tests.apis.data import ParamSource
+
 Name = TypeAliasType("Name", str)
 """`{name}`"""
 
 
-Select = Literal["crossfilter", "intersect", "single", "union"]
+Select = L["crossfilter", "intersect", "single", "union"]
 """The type of reactive parameter."""
 
 Temporal = TypeAliasType("Temporal", dt.date | dt.datetime | dt.time)
@@ -43,7 +46,7 @@ Temporal = TypeAliasType("Temporal", dt.date | dt.datetime | dt.time)
 _TP_LIT: Final = (int, str, float, type(None))
 ISO_8601 = NewType("ISO_8601", str)
 
-_SelectT = TypeVar("_SelectT", bound=Select | Literal["value"])
+_SelectT = TypeVar("_SelectT", bound=Select | L["value"])
 
 
 class CanRef(Protocol):
@@ -82,7 +85,7 @@ class ParamBase(CanRef, Protocol[_SelectT]):
 _ValueT = TypeVar("_ValueT", covariant=True)
 
 
-class _ParamValue(ParamBase[Literal["value"]], Generic[_ValueT]):
+class _ParamValue(ParamBase[L["value"]], Generic[_ValueT]):
     """A Param that wraps a value."""
 
     __slots__ = ("value",)
@@ -104,6 +107,18 @@ class Param(_ParamValue[Lit]):
 
     def to_dict(self) -> ms.Params:
         return {self.name: self.value}
+
+    @property
+    def _source(self) -> Ref:
+        return self.ref()
+
+    def source(
+        self, filter_by: ParamDef | None = None, *, optimize: L[False] | None = None
+    ) -> ParamSource:
+        """Create an input data specification for a plot mark."""
+        from tests.apis.data import ParamSource
+
+        return ParamSource(self, filter_by, optimize=optimize)
 
 
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
