@@ -24,9 +24,10 @@ from __future__ import annotations
 
 # pyright: reportUnusedVariable=false
 import datetime as dt
-from collections.abc import Collection, Sequence
+from collections.abc import Collection
 from typing import Final, Generic, Literal, NewType, final, overload
 
+import mosaic_spec as ms
 from mosaic_spec import ParamLiteral as Lit, ParamRef as Ref
 from mosaic_spec._typing_compat import Protocol, Self, TypeAliasType, TypedDict, TypeVar, Unpack
 
@@ -75,6 +76,8 @@ class ParamBase(CanRef, Protocol[_SelectT]):
         #   - in python, everything is a pointer
         return Ref(f"${self.name}")
 
+    def to_dict(self) -> ms.Params: ...
+
 
 _ValueT = TypeVar("_ValueT", covariant=True)
 
@@ -99,6 +102,9 @@ class Param(_ParamValue[Lit]):
 
     __slots__ = ()
 
+    def to_dict(self) -> ms.Params:
+        return {self.name: self.value}
+
 
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
@@ -106,6 +112,19 @@ class ParamArray(_ParamValue[tuple["Lit | ParamDef", ...]]):
     """An Array-valued Param definition."""
 
     __slots__ = ()
+
+    def to_dict(self) -> ms.Params:
+        param_defs = {}
+        values = []
+        for value in self.value:
+            if isinstance(value, _TP_PARAM_DEF):
+                param_defs.update(value.to_dict())
+                v = value.ref()
+            else:
+                v = value
+            values.append(v)
+        param_defs[self.name] = values
+        return param_defs
 
 
 _TemporalT = TypeVar("_TemporalT", bound=Temporal, covariant=True)
@@ -125,11 +144,11 @@ class ParamTemporal(_ParamValue[_TemporalT]):
         # all 3 signatures allow 0-args, return type is the same
         return ISO_8601(self.value.isoformat())  # ty: ignore[invalid-argument-type]
 
+    def to_dict(self) -> dict[str, ms.ParamDate]:
+        return {self.name: {"date": self.date}}
 
-_Include = TypeVar("_Include")
 
-
-class _Opts(TypedDict, Generic[_Include], total=False, closed=True):
+class _CrossEmptyOpen(TypedDict, total=False):
     cross: bool
     """A flag for cross-filtering, where selections made in a plot filter others but not oneself.
 
@@ -143,7 +162,13 @@ class _Opts(TypedDict, Generic[_Include], total=False, closed=True):
     - If `False`, a selection with no clauses selects all values.
     """
 
-    include: _Include
+
+class _CrossEmpty(_CrossEmptyOpen, closed=True): ...
+
+
+# NOTE: user-facing version with permissive include
+class SelectionOpts(_CrossEmptyOpen, total=False, closed=True):
+    include: ParamDef | Collection[ParamDef]
     """Upstream selections whose clauses should be included as part of this selection.
 
     Any clauses or activations published to the upstream selections will be relayed to this selection.
@@ -153,38 +178,51 @@ class _Opts(TypedDict, Generic[_Include], total=False, closed=True):
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
 class Selection(ParamBase[Select]):
-    __slots__ = ("opts", "select")
+    __slots__ = ("include", "kwds", "select")
     select: Select
     """The type of reactive parameter."""
 
-    opts: _Opts[Sequence[ParamDef]]
+    kwds: _CrossEmpty
+    include: tuple[ParamDef, ...]
 
-    def __init__(self, name: Name, select: Select, /, kwds: _Opts[Sequence[ParamDef]]) -> None:
+    def __init__(
+        self, name: Name, select: Select, /, kwds: _CrossEmpty, include: tuple[ParamDef, ...] = ()
+    ) -> None:
         self.select = select
-        self.opts = kwds
+        self.kwds = kwds
         self.name = name
+        self.include = include
 
     @classmethod
     def _from_options(cls, name: Name, select: Select, /, kwds: SelectionOpts) -> Self:
-        opts: _Opts[Sequence[ParamDef]] = {}
+        opts: _CrossEmpty = {}
         if (cross := kwds.get("cross")) is not None:
             opts["cross"] = cross
         if (empty := kwds.get("empty")) is not None:
             opts["empty"] = empty
         if include := kwds.get("include"):
-            opts["include"] = (include,) if not isinstance(include, Collection) else tuple(include)
+            incl = (include,) if not isinstance(include, Collection) else tuple(include)
+            return cls(name, select, opts, incl)
         return cls(name, select, opts)
+
+    def to_dict(self) -> ms.Params:
+        self_dict: ms.Selection = {"select": self.select, **self.kwds}
+        if include := self.include:
+            param_defs = {}
+            param_refs = []
+            for param in include:
+                param_defs.update(param.to_dict())
+                param_refs.append(param.ref())
+            self_dict["include"] = param_refs
+            param_defs[self.name] = self_dict
+            return param_defs
+        return {self.name: self_dict}
 
 
 ParamDef = TypeAliasType("ParamDef", Param | ParamArray | ParamTemporal[Temporal] | Selection)
 """A Param or Selection definition."""
 
-
-Params = TypeAliasType("Params", dict[str, ParamDef])
-"""Top-level Param and Selection definitions."""
-
-# NOTE: user-facing version with permissive include
-SelectionOpts = TypeAliasType("SelectionOpts", _Opts[ParamDef | Collection[ParamDef]])
+_TP_PARAM_DEF: Final = Param, ParamArray, ParamTemporal, Selection
 
 
 @final

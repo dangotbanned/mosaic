@@ -52,8 +52,12 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
+import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, TypeVar
+from tests.apis import encodings_builder as eb
+from tests.apis.components_spec import Plot, VConcatSpec
 from tests.apis.data import Data, Source
+from tests.apis.params import p
 
 Incomplete = TypeAliasType("Incomplete", Any)
 
@@ -154,6 +158,39 @@ class AreaNs(_Mixed):
     def y(self) -> Incomplete: ...
 
 
+class RectNs(_Mixed):
+    def __call__(self, *args: Incomplete, **kwds: Incomplete) -> Incomplete:
+        """Create a rect mark.
+
+        The rectangle extends horizontally from **x1** to **x2**, and vertically from **y1** to **y2**.
+        The position channels are often derived with a transform.
+
+        When **y** extends from zero, for example for a histogram where the height of each rect reflects a count of values,
+        use the rectY mark for an implicit stackY transform; similarly, if **x** extends from zero,
+        use the rectX mark for an implicit stackX transform.
+
+        If an **interval** is specified, then **x1** and **x2** are derived from
+        **x**, and **y1** and **y2** are derived from **y**,
+        each representing the lower and upper bound of the containing interval, respectively.
+
+        Both *x* and *y* should be quantitative or temporal; otherwise, use a bar or cell mark.
+        """
+
+    def x(self, *args: Incomplete, **kwds: Incomplete) -> Incomplete:
+        """Create a rectX mark.
+
+        Like rect, but if neither **x1** nor **x2** is specified, apply an implicit stackX transform is applied to **x**,
+        and if **x** is not specified, it defaults to the identity function, assuming that *data* is an array of numbers [*x₀*, *x₁*, *x₂*, …].
+        """
+
+    def y(self, *args: Incomplete, **kwds: Incomplete) -> Incomplete:
+        """Create a rectY mark.
+
+        Like rect, but if neither **y1** nor **y2** is specified, apply an implicit stackY transform is applied to **y**,
+        and if **y** is not specified, it defaults to the identity function, assuming that *data* is an array of numbers [*y₀*, *y₁*, *y₂*, …].
+        """
+
+
 @data_optional
 class TextNs(_Mixed):
     def x(self) -> Incomplete: ...
@@ -231,6 +268,7 @@ class MarksNs:
 
     @property
     def rect(self) -> RectNs:
+        """Create a rect mark."""
         return RectNs(self._data)
 
     def regression_y(self) -> Direct: ...
@@ -257,3 +295,41 @@ class MarksNs:
     @property
     def waffle(self) -> WaffleNs:
         return WaffleNs()
+
+
+def crossfilter_example() -> None:
+    data = Data.from_parquet("data/flights-200k.parquet", "flights")
+    # NOTE: aiming for this to be like `Data.from_*(...).mark.*`
+    # - maybe have `mark` available on `Data`, and change `source` -> `Data.filter`?
+    # - might also need to keep `Data` inside `Source` for later?
+
+    # NOTE:
+    brush = p.brush.cross()
+
+    mark = MarksNs(data.source(filter_by=brush.ref()))
+
+    rect_y_1 = mark.rect.y(
+        x=eb.col("delay").bin(), y=eb.len(), fill="steelblue", inset_left=0.5, inset_right=0.5
+    )
+    rect_y_2 = mark.rect.y(
+        x=eb.col("time").bin(), y=eb.len(), fill="steelblue", inset_left=0.5, inset_right=0.5
+    )
+    interval = ms.IntervalX(select="intervalX", bind=brush.ref())
+    _spec = VConcatSpec(
+        vconcat=(
+            Plot(
+                plot=(rect_y_1, interval),
+                x={"domain": "Fixed", "label": "Arrival Delay (min)", "label_anchor": "center"},
+                y={"tick_format": "s"},
+                height=200,
+            ),
+            Plot(
+                plot=(rect_y_2, interval),
+                x={"domain": "Fixed", "label": "Departure Time (hour)", "label_anchor": "center"},
+                y={"tick_format": "s"},
+                height=200,
+            ),
+        ),
+        params=brush.to_dict(),
+        data=data.to_dict(),
+    )

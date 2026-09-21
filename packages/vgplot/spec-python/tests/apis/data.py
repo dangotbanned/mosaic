@@ -130,6 +130,9 @@ class Data:
             result["optimize"] = optimize
         return Source(result)
 
+    def to_dict(self) -> ms.Data:
+        return {self.name: self.options}
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(name={self.name!r}, options={self.options!r})"
 
