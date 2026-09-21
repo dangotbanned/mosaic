@@ -306,7 +306,7 @@ def crossfilter_example() -> None:
     # NOTE:
     brush = p.brush.cross()
 
-    mark = MarksNs(data.source(filter_by=brush.ref()))
+    mark = MarksNs(data.filter(brush))
 
     rect_y_1 = mark.rect.y(
         x=eb.col("delay").bin(), y=eb.len(), fill="steelblue", inset_left=0.5, inset_right=0.5
