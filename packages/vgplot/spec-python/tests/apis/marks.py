@@ -89,8 +89,8 @@ class _Mixed:
     - It turns out that only `Text*` is optional data here, but all permit it
     """
 
-    def __init__(self, data: Source) -> None:
-        self._data: Source = data
+    def __init__(self, source: Source) -> None:
+        self._source: Source = source
 
     def __call__(self, *args: Incomplete, **kwds: Incomplete) -> Incomplete: ...
 
@@ -204,12 +204,12 @@ class MarksNs:
     - Working out propagating data first
     """
 
-    def __init__(self, data: Source) -> None:
-        self._data: Source = data
+    def __init__(self, source: Source) -> None:
+        self._source: Source = source
 
     @property
     def area(self) -> AreaNs:
-        return AreaNs(self._data)
+        return AreaNs(self._source)
 
     def arrow(self) -> Direct: ...
 
@@ -269,7 +269,7 @@ class MarksNs:
     @property
     def rect(self) -> RectNs:
         """Create a rect mark."""
-        return RectNs(self._data)
+        return RectNs(self._source)
 
     def regression_y(self) -> Direct: ...
 
@@ -283,7 +283,7 @@ class MarksNs:
 
     @property
     def text(self) -> TextNs:
-        return TextNs(self._data)
+        return TextNs(self._source)
 
     @property
     def tick(self) -> TickNs:
