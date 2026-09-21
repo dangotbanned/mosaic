@@ -53,8 +53,8 @@ from collections.abc import Callable
 from typing import Any
 
 import mosaic_spec as ms
-from mosaic_spec._typing_compat import TypeAliasType, TypeVar
-from tests.apis import encodings_builder as eb
+from mosaic_spec._typing_compat import TypeAliasType, TypeVar, Unpack
+from tests.apis import _marks, encodings_builder as eb
 from tests.apis.components_spec import Plot, VConcatSpec
 from tests.apis.data import Data, Source
 from tests.apis.params import p
@@ -91,8 +91,6 @@ class _Mixed:
 
     def __init__(self, source: Source) -> None:
         self._source: Source = source
-
-    def __call__(self, *args: Incomplete, **kwds: Incomplete) -> Incomplete: ...
 
 
 def data_never(f: _Fn, /) -> _Fn:
@@ -159,7 +157,7 @@ class AreaNs(_Mixed):
 
 
 class RectNs(_Mixed):
-    def __call__(self, *args: Incomplete, **kwds: Incomplete) -> Incomplete:
+    def __call__(self, **kwds: Unpack[_marks.RectOptions]) -> ms.Rect:
         """Create a rect mark.
 
         The rectangle extends horizontally from **x1** to **x2**, and vertically from **y1** to **y2**.
@@ -176,19 +174,23 @@ class RectNs(_Mixed):
         Both *x* and *y* should be quantitative or temporal; otherwise, use a bar or cell mark.
         """
 
-    def x(self, *args: Incomplete, **kwds: Incomplete) -> Incomplete:
+        return ms.Rect(data=self._source.to_dict(), mark="rect", **kwds)
+
+    def x(self, **kwds: Unpack[_marks.RectXOptions]) -> ms.RectX:
         """Create a rectX mark.
 
         Like rect, but if neither **x1** nor **x2** is specified, apply an implicit stackX transform is applied to **x**,
         and if **x** is not specified, it defaults to the identity function, assuming that *data* is an array of numbers [*x₀*, *x₁*, *x₂*, …].
         """
+        return ms.RectX(data=self._source.to_dict(), mark="rectX", **kwds)
 
-    def y(self, *args: Incomplete, **kwds: Incomplete) -> Incomplete:
+    def y(self, **kwds: Unpack[_marks.RectYOptions]) -> ms.RectY:
         """Create a rectY mark.
 
         Like rect, but if neither **y1** nor **y2** is specified, apply an implicit stackY transform is applied to **y**,
         and if **y** is not specified, it defaults to the identity function, assuming that *data* is an array of numbers [*y₀*, *y₁*, *y₂*, …].
         """
+        return ms.RectY(data=self._source.to_dict(), mark="rectY", **kwds)
 
 
 @data_optional
@@ -309,10 +311,18 @@ def crossfilter_example() -> None:
     mark = MarksNs(data.filter(brush))
 
     rect_y_1 = mark.rect.y(
-        x=eb.col("delay").bin(), y=eb.len(), fill="steelblue", inset_left=0.5, inset_right=0.5
+        x=eb.col("delay").bin(),
+        y=eb.len().to_dict(),
+        fill="steelblue",
+        inset_left=0.5,
+        inset_right=0.5,
     )
     rect_y_2 = mark.rect.y(
-        x=eb.col("time").bin(), y=eb.len(), fill="steelblue", inset_left=0.5, inset_right=0.5
+        x=eb.col("time").bin(),
+        y=eb.len().to_dict(),
+        fill="steelblue",
+        inset_left=0.5,
+        inset_right=0.5,
     )
     interval = ms.IntervalX(select="intervalX", bind=brush.ref())
     _spec = VConcatSpec(
