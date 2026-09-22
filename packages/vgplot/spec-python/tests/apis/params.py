@@ -34,19 +34,11 @@ from mosaic_spec._typing_compat import Protocol, Self, TypeAliasType, TypedDict,
 if TYPE_CHECKING:
     from tests.apis.data import ParamSource
 
-Name = TypeAliasType("Name", str)
-"""`{name}`"""
-
-
-Select = L["crossfilter", "intersect", "single", "union"]
-"""The type of reactive parameter."""
 
 Temporal = TypeAliasType("Temporal", dt.date | dt.datetime | dt.time)
 
 _TP_LIT: Final = (int, str, float, type(None))
 ISO_8601 = NewType("ISO_8601", str)
-
-_SelectT = TypeVar("_SelectT", bound=Select | L["value"])
 
 
 class CanRef(Protocol):
@@ -56,17 +48,12 @@ class CanRef(Protocol):
     def ref(self) -> Ref: ...
 
 
-# TODO @dangotbanned: Add `to_dict`, `to_json`
-class ParamBase(CanRef, Protocol[_SelectT]):
+class ParamBase(CanRef, Protocol):
     """Base properties shared by Param definitions."""
 
     __slots__ = ("name",)
 
-    # NOTE: Excluded from `__slots__` as its a class-var for value, but instance-attr for select
-    select: _SelectT
-    """The type of reactive parameter."""
-
-    name: Name
+    name: str
     """The name of the parameter."""
 
     def __repr__(self) -> Ref:
@@ -75,8 +62,7 @@ class ParamBase(CanRef, Protocol[_SelectT]):
 
     def ref(self) -> Ref:
         # NOTE: `ParamRef` should not be a user-facing concept
-        # - parameters are become references when you refer to them
-        #   - in python, everything is a pointer
+        # - parameters become references when you refer to them
         return Ref(f"${self.name}")
 
     def to_dict(self) -> ms.Params: ...
@@ -85,15 +71,14 @@ class ParamBase(CanRef, Protocol[_SelectT]):
 _ValueT = TypeVar("_ValueT", covariant=True)
 
 
-class _ParamValue(ParamBase[L["value"]], Generic[_ValueT]):
+class _ParamValue(ParamBase, Generic[_ValueT]):
     """A Param that wraps a value."""
 
     __slots__ = ("value",)
-    select = "value"
     value: _ValueT
     """The initial parameter value."""
 
-    def __init__(self, name: Name, value: _ValueT) -> None:
+    def __init__(self, name: str, value: _ValueT) -> None:
         self.name = name
         self.value = value
 
@@ -152,15 +137,11 @@ class ParamTemporal(_ParamValue[_TemporalT]):
 
     __slots__ = ()
 
-    @property
-    def date(self) -> ISO_8601:
-        """Convert to an ISO date/time string to be parsed to a Date object."""
+    def to_dict(self) -> dict[str, ms.ParamDate]:
         # TODO @dangotbanned: Raise a ty issue?
         # all 3 signatures allow 0-args, return type is the same
-        return ISO_8601(self.value.isoformat())  # ty: ignore[invalid-argument-type]
-
-    def to_dict(self) -> dict[str, ms.ParamDate]:
-        return {self.name: {"date": self.date}}
+        date = ISO_8601(self.value.isoformat())  # ty: ignore[invalid-argument-type]
+        return {self.name: {"date": date}}
 
 
 class _CrossEmptyOpen(TypedDict, total=False):
@@ -190,9 +171,15 @@ class SelectionOpts(_CrossEmptyOpen, total=False, closed=True):
     """
 
 
+Select = L["crossfilter", "intersect", "single", "union"]
+"""The type of reactive parameter."""
+
+
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
-class Selection(ParamBase[Select]):
+class Selection(ParamBase):
+    """A Selection definition."""
+
     __slots__ = ("include", "kwds", "select")
     select: Select
     """The type of reactive parameter."""
@@ -201,7 +188,7 @@ class Selection(ParamBase[Select]):
     include: tuple[ParamDef, ...]
 
     def __init__(
-        self, name: Name, select: Select, /, kwds: _CrossEmpty, include: tuple[ParamDef, ...] = ()
+        self, name: str, select: Select, /, kwds: _CrossEmpty, include: tuple[ParamDef, ...] = ()
     ) -> None:
         self.select = select
         self.kwds = kwds
@@ -209,7 +196,7 @@ class Selection(ParamBase[Select]):
         self.include = include
 
     @classmethod
-    def _from_options(cls, name: Name, select: Select, /, kwds: SelectionOpts) -> Self:
+    def _from_options(cls, name: str, select: Select, /, kwds: SelectionOpts) -> Self:
         opts: _CrossEmpty = {}
         if (cross := kwds.get("cross")) is not None:
             opts["cross"] = cross
@@ -251,8 +238,8 @@ class _ParamBuilder:
 
     __slots__ = ("_name",)
 
-    def __init__(self, name: Name, /) -> None:
-        self._name: Final[Name] = name
+    def __init__(self, name: str, /) -> None:
+        self._name: Final[str] = name
 
     @overload
     def __call__(self, value: Lit = None, /) -> Param: ...
@@ -291,7 +278,7 @@ class _ParamBuilder:
 class _P:
     __slots__ = ()
 
-    def __getattr__(self, name: Name) -> _ParamBuilder:
+    def __getattr__(self, name: str) -> _ParamBuilder:
         return _ParamBuilder(name)
 
 
