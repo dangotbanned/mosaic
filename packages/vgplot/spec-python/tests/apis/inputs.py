@@ -180,6 +180,9 @@ class _Input(Generic[_O]):
     options: _O
     _INPUT: ClassVar[L["menu", "search", "slider", "table"]]
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.options!r}"
+
 
 _SO = TypeVar("_SO", bound=_NonTableOptions)
 
@@ -226,6 +229,9 @@ class Table(_Input[TableOptions]):
     def __init__(self, source: Param | str, **options: Unpack[TableOptions]) -> None:
         self.source = source
         self.options = options
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(source={self.source!r}, options={self.options!r}"
 
 
 InputWidget = TypeAliasType("InputWidget", Menu | Search | Slider | Table)

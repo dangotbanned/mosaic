@@ -33,7 +33,7 @@ from mosaic_spec._typing_compat import Protocol, Self, TypeAliasType, TypedDict,
 
 if TYPE_CHECKING:
     from tests.apis.data import ParamSource
-
+    from tests.apis.inputs import Menu, MenuOptions
 
 Temporal = TypeAliasType("Temporal", dt.date | dt.datetime | dt.time)
 
@@ -104,6 +104,23 @@ class Param(_ParamValue[Lit]):
         from tests.apis.data import ParamSource
 
         return ParamSource(self, filter_by, optimize=optimize)
+
+    def menu(
+        self, into: L["bind", "filter_by"] = "bind", /, **options: Unpack[MenuOptions]
+    ) -> Menu:
+        """Create a menu input widget, passing this param `into` either `bind` or `filter_by`.
+
+        >>> unit = p.Unit(10)
+        >>> unit.menu(options=[1, 2, 5, 10, 25, 50, 100])
+        Menu({'options': [1, 2, 5, 10, 25, 50, 100], 'bind': $Unit}
+
+        >>> p.predicate(False).menu("filter_by", options=[False, True])
+        Menu({'options': [False, True], 'filter_by': $predicate}
+        """
+        from tests.apis.inputs import Menu
+
+        options[into] = self
+        return Menu(**options)
 
 
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
@@ -219,6 +236,19 @@ class Selection(ParamBase):
             param_defs[self.name] = self_dict
             return param_defs
         return {self.name: self_dict}
+
+    def menu(
+        self, into: L["bind", "filter_by"] = "bind", /, **options: Unpack[MenuOptions]
+    ) -> Menu:
+        """Create a menu input widget, passing this selection `into` either `bind` or `filter_by`.
+
+        >>> p.query.cross().menu(column="partial_t", label="Partial t")
+        Menu({'column': 'partial_t', 'label': 'Partial t', 'bind': $query}
+        """
+        from tests.apis.inputs import Menu
+
+        options[into] = self
+        return Menu(**options)
 
 
 ParamDef = TypeAliasType("ParamDef", Param | ParamArray | ParamTemporal[Temporal] | Selection)
