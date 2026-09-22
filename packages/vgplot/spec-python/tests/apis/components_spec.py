@@ -14,9 +14,11 @@ import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, Unpack
 from tests.apis._marks import MarkData
 from tests.apis.attributes import PlotAttributes
+from tests.apis.inputs import InputWidget
 
 PlotMark = TypeAliasType("PlotMark", MarkData[Any])
 IntoPlot = TypeAliasType("IntoPlot", ms.PlotInteractor | ms.PlotLegend | PlotMark)
+"""All of these need a `plot` method."""
 
 
 class View(Protocol):
@@ -33,18 +35,7 @@ class View(Protocol):
     def to_spec(self) -> Spec: ...
 
 
-Component = TypeAliasType(
-    "Component",
-    View
-    | ms.HSpace
-    | ms.Legend
-    | ms.Menu
-    | PlotMark
-    | ms.Search
-    | ms.Slider
-    | ms.Table
-    | ms.VSpace,
-)
+Component = TypeAliasType("Component", View | InputWidget | PlotMark | ms.VSpace | ms.HSpace)
 """A specification component such as a plot, input widget, or layout."""
 
 
