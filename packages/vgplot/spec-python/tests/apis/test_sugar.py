@@ -18,7 +18,6 @@ def test_crossfilter() -> None:
 
     mark = MarksNs(data.filter(brush))
 
-    # TODO @dangotbanned: Accept `MarkData` higher up (need `Plot` & `Spec` concepts)
     rect_y_1 = mark.rect.y(
         x=eb.col("delay").bin(),
         y=eb.len().to_dict(),
@@ -36,21 +35,18 @@ def test_crossfilter() -> None:
     interval = ms.IntervalX(select="intervalX", bind=brush.ref())
     view = vg.vconcat(
         vg.plot(
-            rect_y_1._mark(),
+            rect_y_1,
             interval,
             x={"domain": "Fixed", "label": "Arrival Delay (min)", "label_anchor": "center"},
             y={"tick_format": "s"},
             height=200,
         ),
         vg.plot(
-            rect_y_2._mark(),
+            rect_y_2,
             interval,
             x={"domain": "Fixed", "label": "Departure Time (hour)", "label_anchor": "center"},
             y={"tick_format": "s"},
             height=200,
         ),
     )
-
-    # TODO @dangotbanned: Needs to accept mappings in constructor
-    # goodbye dataclass
-    _spec = vg.Spec(view, params=brush.to_dict(), data=data.to_dict())  # ty: ignore[invalid-argument-type]
+    _spec = view.to_spec()

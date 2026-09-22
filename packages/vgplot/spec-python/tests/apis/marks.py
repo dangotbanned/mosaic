@@ -49,17 +49,15 @@ Generally this'll be descriptor magic
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator
-from functools import partial
-from typing import TYPE_CHECKING, Any, Protocol
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, Literal as L
 
-import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, TypeVar, Unpack
+from tests.apis._marks import MarkData
 
 if TYPE_CHECKING:
     from tests.apis import _marks
-    from tests.apis.data import Data, Source
-    from tests.apis.params import ParamDef
+    from tests.apis.data import Source
 
 Incomplete = TypeAliasType("Incomplete", Any)
 
@@ -103,34 +101,6 @@ def data_never(f: _Fn, /) -> _Fn:
 def data_optional(f: _Fn, /) -> _Fn:
     """(Visually) signal that a mark **doesn't require** `data`."""
     return f
-
-
-class IntoMark(Protocol):
-    def __call__(self, *, data: ms.PlotFrom) -> ms.PlotMark: ...
-
-
-class MarkData:
-    """A mark that requires data.
-
-    Wrapper to allow deferring param & data refs
-    """
-
-    def __init__(self, source: Source, into_mark: IntoMark) -> None:
-        self._source: Source = source
-        self._into_mark: IntoMark = into_mark
-        """Might need to make less opaque.
-
-        `IntoMark` doesn't provide a means to iterate over params.
-        """
-
-    def _mark(self) -> ms.PlotMark:
-        return self._into_mark(data=self._source._plot_source())
-
-    def _iter_params(self) -> Iterator[ParamDef]:
-        yield from self._source._iter_params()
-
-    def _iter_data(self) -> Iterator[Data]:
-        yield from self._source._iter_data()
 
 
 @data_never
@@ -187,7 +157,9 @@ class AreaNs(_Mixed):
 
 
 class RectNs(_Mixed):
-    def __call__(self, **kwds: Unpack[_marks.RectOptions]) -> MarkData:
+    def __call__(
+        self, **kwds: Unpack[_marks.RectOptions]
+    ) -> MarkData[L["rect"], _marks.RectOptions]:
         """Create a rect mark.
 
         The rectangle extends horizontally from **x1** to **x2**, and vertically from **y1** to **y2**.
@@ -204,23 +176,23 @@ class RectNs(_Mixed):
         Both *x* and *y* should be quantitative or temporal; otherwise, use a bar or cell mark.
         """
 
-        return MarkData(self._source, partial(ms.Rect, mark="rect", **kwds))
+        return MarkData("rect", self._source, kwds)
 
-    def x(self, **kwds: Unpack[_marks.RectXOptions]) -> MarkData:
+    def x(self, **kwds: Unpack[_marks.RectXOptions]) -> MarkData[L["rectX"], _marks.RectXOptions]:
         """Create a rectX mark.
 
         Like rect, but if neither **x1** nor **x2** is specified, apply an implicit stackX transform is applied to **x**,
         and if **x** is not specified, it defaults to the identity function, assuming that *data* is an array of numbers [*x₀*, *x₁*, *x₂*, …].
         """
-        return MarkData(self._source, partial(ms.RectX, mark="rectX", **kwds))
+        return MarkData("rectX", self._source, kwds)
 
-    def y(self, **kwds: Unpack[_marks.RectYOptions]) -> MarkData:
+    def y(self, **kwds: Unpack[_marks.RectYOptions]) -> MarkData[L["rectY"], _marks.RectYOptions]:
         """Create a rectY mark.
 
         Like rect, but if neither **y1** nor **y2** is specified, apply an implicit stackY transform is applied to **y**,
         and if **y** is not specified, it defaults to the identity function, assuming that *data* is an array of numbers [*y₀*, *y₁*, *y₂*, …].
         """
-        return MarkData(self._source, partial(ms.RectY, mark="rectY", **kwds))
+        return MarkData("rectY", self._source, kwds)
 
 
 @data_optional

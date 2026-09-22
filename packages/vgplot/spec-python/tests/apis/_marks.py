@@ -2,16 +2,98 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, Literal as L
+from typing import TYPE_CHECKING, Final, Generic, Literal as L, final, get_args
 
 import mosaic_spec as ms
 from mosaic_spec._gen.marks import _MarkOptions
-from mosaic_spec._typing_compat import TypeAliasType, TypedDict, TypeVar
+from mosaic_spec._typing_compat import ReadOnly, TypeAliasType, TypedDict, TypeVar
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from mosaic_spec import ParamRef
+    from tests.apis.data import Data, Source
+    from tests.apis.params import ParamDef
 
 _CurveT = TypeVar("_CurveT")
+
+MarkName = TypeAliasType(
+    "MarkName",
+    L[
+        "area",
+        "areaX",
+        "areaY",
+        "arrow",
+        "axisFx",
+        "axisFy",
+        "axisX",
+        "axisY",
+        "barX",
+        "barY",
+        "cell",
+        "cellX",
+        "cellY",
+        "circle",
+        "contour",
+        "delaunayLink",
+        "delaunayMesh",
+        "denseLine",
+        "density",
+        "densityX",
+        "densityY",
+        "dot",
+        "dotX",
+        "dotY",
+        "errorbarX",
+        "errorbarY",
+        "frame",
+        "geo",
+        "graticule",
+        "gridFx",
+        "gridFy",
+        "gridX",
+        "gridY",
+        "heatmap",
+        "hexagon",
+        "hexbin",
+        "hexgrid",
+        "hull",
+        "image",
+        "line",
+        "lineX",
+        "lineY",
+        "link",
+        "raster",
+        "rasterTile",
+        "rect",
+        "rectX",
+        "rectY",
+        "regressionY",
+        "ruleX",
+        "ruleY",
+        "sphere",
+        "spike",
+        "text",
+        "textX",
+        "textY",
+        "tickX",
+        "tickY",
+        "vector",
+        "vectorX",
+        "vectorY",
+        "voronoi",
+        "voronoiMesh",
+        "waffleX",
+        "waffleY",
+    ],
+)
+"""The type of `ms.PlotMark["mark"]`."""
+
+MARK_NAMES: Final = frozenset[MarkName](get_args(MarkName.__value__))
+"""All supported values for `ms.PlotMark["mark"]`."""
+
+
+MBound = TypeVar("MBound", bound=MarkName)
 
 
 class InsetOptions(TypedDict, total=False):
@@ -183,3 +265,215 @@ RectXOptions = TypeAliasType(
 RectYOptions = TypeAliasType(
     "RectYOptions", _RectOptions[ms.ChannelValueIntervalSpec, ms.ChannelValueSpec]
 )
+
+
+class _DensityXMap(TypedDict, closed=True):
+    areaX: ReadOnly[type[ms.DensityXAreaX]]
+    dotX: ReadOnly[type[ms.DensityXDotX]]
+    lineX: ReadOnly[type[ms.DensityXLineX]]
+    textX: ReadOnly[type[ms.DensityXTextX]]
+
+
+class _DensityYMap(TypedDict, closed=True):
+    areaY: ReadOnly[type[ms.DensityYAreaY]]
+    circle: ReadOnly[type[ms.DensityYDot]]
+    dot: ReadOnly[type[ms.DensityYDot]]
+    dotY: ReadOnly[type[ms.DensityYDot]]
+    hexagon: ReadOnly[type[ms.DensityYDot]]
+    lineY: ReadOnly[type[ms.DensityYLineY]]
+    text: ReadOnly[type[ms.DensityYText]]
+    textY: ReadOnly[type[ms.DensityYText]]
+
+
+class _MarkMap(TypedDict, closed=True):
+    """Singleton type for expressing the key's relation.
+
+    For most marks this is an inverse mapping, derived by:
+
+    ```py
+    class Area(TypedDict):
+        mark: Literal["area"]
+
+
+    {"area": Area}
+    ```
+
+    The exclusions are `"densityX"` and `"densityY"`,
+    which each discriminate further via the `"type"` key.
+    """
+
+    area: ReadOnly[type[ms.Area]]
+    areaX: ReadOnly[type[ms.AreaX]]
+    areaY: ReadOnly[type[ms.AreaY]]
+    arrow: ReadOnly[type[ms.Arrow]]
+    axisFx: ReadOnly[type[ms.AxisFx]]
+    axisFy: ReadOnly[type[ms.AxisFy]]
+    axisX: ReadOnly[type[ms.AxisX]]
+    axisY: ReadOnly[type[ms.AxisY]]
+    barX: ReadOnly[type[ms.BarX]]
+    barY: ReadOnly[type[ms.BarY]]
+    cell: ReadOnly[type[ms.Cell]]
+    cellX: ReadOnly[type[ms.CellX]]
+    cellY: ReadOnly[type[ms.CellY]]
+    circle: ReadOnly[type[ms.Circle]]
+    contour: ReadOnly[type[ms.Contour]]
+    delaunayLink: ReadOnly[type[ms.DelaunayLink]]
+    delaunayMesh: ReadOnly[type[ms.DelaunayMesh]]
+    denseLine: ReadOnly[type[ms.DenseLine]]
+    density: ReadOnly[type[ms.Density]]
+    densityX: ReadOnly[_DensityXMap]
+    densityY: ReadOnly[_DensityYMap]
+    dot: ReadOnly[type[ms.Dot]]
+    dotX: ReadOnly[type[ms.DotX]]
+    dotY: ReadOnly[type[ms.DotY]]
+    errorbarX: ReadOnly[type[ms.ErrorBarX]]
+    errorbarY: ReadOnly[type[ms.ErrorBarY]]
+    frame: ReadOnly[type[ms.Frame]]
+    geo: ReadOnly[type[ms.Geo]]
+    graticule: ReadOnly[type[ms.Graticule]]
+    gridFx: ReadOnly[type[ms.GridFx]]
+    gridFy: ReadOnly[type[ms.GridFy]]
+    gridX: ReadOnly[type[ms.GridX]]
+    gridY: ReadOnly[type[ms.GridY]]
+    heatmap: ReadOnly[type[ms.Heatmap]]
+    hexagon: ReadOnly[type[ms.Hexagon]]
+    hexbin: ReadOnly[type[ms.Hexbin]]
+    hexgrid: ReadOnly[type[ms.Hexgrid]]
+    hull: ReadOnly[type[ms.Hull]]
+    image: ReadOnly[type[ms.Image]]
+    line: ReadOnly[type[ms.Line]]
+    lineX: ReadOnly[type[ms.LineX]]
+    lineY: ReadOnly[type[ms.LineY]]
+    link: ReadOnly[type[ms.Link]]
+    raster: ReadOnly[type[ms.Raster]]
+    rasterTile: ReadOnly[type[ms.RasterTile]]
+    rect: ReadOnly[type[ms.Rect]]
+    rectX: ReadOnly[type[ms.RectX]]
+    rectY: ReadOnly[type[ms.RectY]]
+    regressionY: ReadOnly[type[ms.RegressionY]]
+    ruleX: ReadOnly[type[ms.RuleX]]
+    ruleY: ReadOnly[type[ms.RuleY]]
+    sphere: ReadOnly[type[ms.Sphere]]
+    spike: ReadOnly[type[ms.Spike]]
+    text: ReadOnly[type[ms.Text]]
+    textX: ReadOnly[type[ms.TextX]]
+    textY: ReadOnly[type[ms.TextY]]
+    tickX: ReadOnly[type[ms.TickX]]
+    tickY: ReadOnly[type[ms.TickY]]
+    vector: ReadOnly[type[ms.Vector]]
+    vectorX: ReadOnly[type[ms.VectorX]]
+    vectorY: ReadOnly[type[ms.VectorY]]
+    voronoi: ReadOnly[type[ms.Voronoi]]
+    voronoiMesh: ReadOnly[type[ms.VoronoiMesh]]
+    waffleX: ReadOnly[type[ms.WaffleX]]
+    waffleY: ReadOnly[type[ms.WaffleY]]
+
+
+MARK_MAP: Final = _MarkMap(
+    area=ms.Area,
+    areaX=ms.AreaX,
+    areaY=ms.AreaY,
+    arrow=ms.Arrow,
+    axisFx=ms.AxisFx,
+    axisFy=ms.AxisFy,
+    axisX=ms.AxisX,
+    axisY=ms.AxisY,
+    barX=ms.BarX,
+    barY=ms.BarY,
+    cell=ms.Cell,
+    cellX=ms.CellX,
+    cellY=ms.CellY,
+    circle=ms.Circle,
+    contour=ms.Contour,
+    delaunayLink=ms.DelaunayLink,
+    delaunayMesh=ms.DelaunayMesh,
+    denseLine=ms.DenseLine,
+    density=ms.Density,
+    densityX=_DensityXMap(
+        areaX=ms.DensityXAreaX, dotX=ms.DensityXDotX, lineX=ms.DensityXLineX, textX=ms.DensityXTextX
+    ),
+    densityY=_DensityYMap(
+        areaY=ms.DensityYAreaY,
+        circle=ms.DensityYDot,
+        dot=ms.DensityYDot,
+        dotY=ms.DensityYDot,
+        hexagon=ms.DensityYDot,
+        lineY=ms.DensityYLineY,
+        text=ms.DensityYText,
+        textY=ms.DensityYText,
+    ),
+    dot=ms.Dot,
+    dotX=ms.DotX,
+    dotY=ms.DotY,
+    errorbarX=ms.ErrorBarX,
+    errorbarY=ms.ErrorBarY,
+    frame=ms.Frame,
+    geo=ms.Geo,
+    graticule=ms.Graticule,
+    gridFx=ms.GridFx,
+    gridFy=ms.GridFy,
+    gridX=ms.GridX,
+    gridY=ms.GridY,
+    heatmap=ms.Heatmap,
+    hexagon=ms.Hexagon,
+    hexbin=ms.Hexbin,
+    hexgrid=ms.Hexgrid,
+    hull=ms.Hull,
+    image=ms.Image,
+    line=ms.Line,
+    lineX=ms.LineX,
+    lineY=ms.LineY,
+    link=ms.Link,
+    raster=ms.Raster,
+    rasterTile=ms.RasterTile,
+    rect=ms.Rect,
+    rectX=ms.RectX,
+    rectY=ms.RectY,
+    regressionY=ms.RegressionY,
+    ruleX=ms.RuleX,
+    ruleY=ms.RuleY,
+    sphere=ms.Sphere,
+    spike=ms.Spike,
+    text=ms.Text,
+    textX=ms.TextX,
+    textY=ms.TextY,
+    tickX=ms.TickX,
+    tickY=ms.TickY,
+    vector=ms.Vector,
+    vectorX=ms.VectorX,
+    vectorY=ms.VectorY,
+    voronoi=ms.Voronoi,
+    voronoiMesh=ms.VoronoiMesh,
+    waffleX=ms.WaffleX,
+    waffleY=ms.WaffleY,
+)
+
+
+OptionsT = TypeVar("OptionsT", bound=_MarkOptions, default=_MarkOptions, covariant=True)
+
+
+@final
+class MarkData(Generic[MBound, OptionsT]):
+    """A mark that requires data.
+
+    Wrapper to allow deferring param & data refs
+    """
+
+    mark: MBound
+    source: Source
+    kwds: OptionsT
+
+    def __init__(self, mark: MBound, source: Source, kwds: OptionsT) -> None:
+        self.mark: MBound = mark
+        self.source: Source = source
+        self.kwds: OptionsT = kwds
+
+    def _iter_params(self) -> Iterator[ParamDef]:
+        # `kwds` doesn't accept ParamDef yet (doing that is out of scope for now)
+        yield from self.source._iter_params()
+
+    def _iter_data(self) -> Iterator[Data]:
+        yield from self.source._iter_data()
+
+    def _plot_source(self) -> ms.PlotFrom:
+        return self.source._plot_source()

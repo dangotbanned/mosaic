@@ -8,24 +8,97 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import TYPE_CHECKING, Union, final
+from typing import Any, Protocol, final
 
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, Unpack
+from tests.apis._marks import MarkData
 from tests.apis.attributes import PlotAttributes
 
-if TYPE_CHECKING:
-    from collections.abc import Sequence
+PlotMark = TypeAliasType("PlotMark", MarkData[Any])
+IntoPlot = TypeAliasType("IntoPlot", ms.PlotInteractor | ms.PlotLegend | PlotMark)
 
 
-class _View:
+class View(Protocol):
+    """A top-level component.
+
+    - Covers 53/55 examples
+        - Skips 2 which use `Table`
+    - Everything else can be nested within these to fit
+    - Reduces the `Spec` intersection from **80** alternatives
+    """
+
     __slots__ = ()
+
+    def to_spec(self) -> Spec: ...
+
+
+Component = TypeAliasType(
+    "Component",
+    View
+    | ms.HSpace
+    | ms.Legend
+    | ms.Menu
+    | PlotMark
+    | ms.Search
+    | ms.Slider
+    | ms.Table
+    | ms.VSpace,
+)
+"""A specification component such as a plot, input widget, or layout."""
+
+
+class Spec(Protocol):
+    """A declarative Mosaic specification."""
+
+    __slots__ = ()
+    view: View
+    """The top-level component."""
+
+    config: ms.Config
+    """Configuration options."""
+
+    data: dict[str, ms.DataDefinition]
+    """Dataset definitions."""
+
+    meta: ms.Meta
+    """Specification metadata."""
+
+    params: dict[str, ms.ParamDefinition]
+    """Param and Selection definitions."""
+
+    plot_defaults: PlotAttributes
+    """A default set of attributes to apply to all plot components."""
+
+
+class _ViewImpl(View):
+    __slots__ = ()
+
+    def to_spec(self) -> SpecImpl:
+        return SpecImpl(self)
+
+    # NOTE: Every example that uses either `*space` is covered by these two methods
+    def hspace(self, space: float | str, *then: Component) -> HConcat:
+        """Add horizontal space between components.
+
+        Numeric values indicate screen pixels.
+        String values may use CSS units (em, pt, px, etc).
+        """
+        return hconcat(self, {"hspace": space}, *then)
+
+    def vspace(self, space: float | str, *then: Component) -> VConcat:
+        """Add vertical space between components.
+
+        Numeric values indicate screen pixels.
+        String values may use CSS units (em, pt, px, etc).
+        """
+        return vconcat(self, {"vspace": space}, *then)
 
 
 @final
-class Plot(_View):
+class Plot(_ViewImpl):
     __slots__ = ("elements", "options")
-    elements: tuple[ms.PlotInteractor | ms.PlotLegend | ms.PlotMark, ...]
+    elements: tuple[IntoPlot, ...]
     """An array of plot marks, interactors, or legends.
 
     Marks are graphical elements that make up plot layers.
@@ -33,18 +106,12 @@ class Plot(_View):
     """
     options: PlotAttributes
 
-    def __init__(
-        self,
-        elements: tuple[ms.PlotInteractor | ms.PlotLegend | ms.PlotMark, ...],
-        options: PlotAttributes,
-    ) -> None:
+    def __init__(self, elements: tuple[IntoPlot, ...], options: PlotAttributes) -> None:
         self.elements = elements
         self.options = options
 
 
-def plot(
-    *elements: ms.PlotInteractor | ms.PlotLegend | ms.PlotMark, **options: Unpack[PlotAttributes]
-) -> Plot:
+def plot(*elements: IntoPlot, **options: Unpack[PlotAttributes]) -> Plot:
     return Plot(elements, options)
 
 
@@ -56,28 +123,8 @@ def hconcat(*rows: Component) -> HConcat:
     return HConcat(rows)
 
 
-# NOTE: pyright gets tripped up if this is declared after `{H,V}Concat`
-Component = TypeAliasType(
-    "Component",
-    Union[
-        Plot,
-        "HConcat",
-        "VConcat",
-        ms.HSpace,
-        ms.Legend,
-        ms.Menu,
-        ms.PlotMark,
-        ms.Search,
-        ms.Slider,
-        ms.Table,
-        ms.VSpace,
-    ],
-)
-"""A specification component such as a plot, input widget, or layout."""
-
-
 @final
-class HConcat(_View):
+class HConcat(_ViewImpl):
     """A hconcat component."""
 
     __slots__ = ("rows",)
@@ -89,30 +136,20 @@ class HConcat(_View):
 
 
 @final
-class VConcat(_View):
+class VConcat(_ViewImpl):
     """A vconcat component."""
 
     __slots__ = ("columns",)
-    columns: Sequence[Component]
+    columns: tuple[Component, ...]
 
     def __init__(self, columns: tuple[Component, ...]) -> None:
         self.columns = columns
 
 
-View = TypeAliasType("View", Plot | HConcat | VConcat)
-"""A top-level component.
-
-- Covers 53/55 examples
-    - Skips 2 which use `Table`
-- Everything else can be nested within these to fit
-- Reduces the `Spec` intersection from **80** alternatives
-"""
-
-
 # TODO @dangotbanned: Use `test_apis.data`
 # TODO @dangotbanned: Use `test_apis.params`
 @dataclasses.dataclass
-class Spec:
+class SpecImpl:
     """A declarative Mosaic specification."""
 
     view: View
