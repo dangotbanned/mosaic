@@ -7,30 +7,53 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
+import dataclasses
+from typing import TYPE_CHECKING, Union, final
 
 import mosaic_spec as ms
-from mosaic_spec._gen.inputs import _TableOpen
-from mosaic_spec._typing_compat import TypeAliasType, TypedDict
-from tests.apis.attributes import PlotAttributes, _PlotOptions
+from mosaic_spec._typing_compat import TypeAliasType, Unpack
+from tests.apis.attributes import PlotAttributes
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-class _Plot(_PlotOptions):
-    """A plot component."""
+class _View:
+    __slots__ = ()
 
-    plot: Sequence[ms.PlotInteractor | ms.PlotLegend | ms.PlotMark]
+
+@final
+class Plot(_View):
+    __slots__ = ("elements", "options")
+    elements: tuple[ms.PlotInteractor | ms.PlotLegend | ms.PlotMark, ...]
     """An array of plot marks, interactors, or legends.
 
     Marks are graphical elements that make up plot layers.
     Unless otherwise configured, interactors will use the nearest previous mark as a basis for which data fields to select.
     """
+    options: PlotAttributes
+
+    def __init__(
+        self,
+        elements: tuple[ms.PlotInteractor | ms.PlotLegend | ms.PlotMark, ...],
+        options: PlotAttributes,
+    ) -> None:
+        self.elements = elements
+        self.options = options
 
 
-class Plot(_Plot, closed=True):
-    """A plot component."""
+def plot(
+    *elements: ms.PlotInteractor | ms.PlotLegend | ms.PlotMark, **options: Unpack[PlotAttributes]
+) -> Plot:
+    return Plot(elements, options)
+
+
+def vconcat(*columns: Component) -> VConcat:
+    return VConcat(columns)
+
+
+def hconcat(*rows: Component) -> HConcat:
+    return HConcat(rows)
 
 
 # NOTE: pyright gets tripped up if this is declared after `{H,V}Concat`
@@ -53,55 +76,59 @@ Component = TypeAliasType(
 """A specification component such as a plot, input widget, or layout."""
 
 
-class _HConcat(TypedDict):
+@final
+class HConcat(_View):
     """A hconcat component."""
 
-    hconcat: Sequence[Component]
-    """Horizontally concatenate components in a row layout."""
+    __slots__ = ("rows",)
+
+    rows: tuple[Component, ...]
+
+    def __init__(self, rows: tuple[Component, ...]) -> None:
+        self.rows = rows
 
 
-class _VConcat(TypedDict):
+@final
+class VConcat(_View):
     """A vconcat component."""
 
-    vconcat: Sequence[Component]
-    """Vertically concatenate components in a column layout."""
+    __slots__ = ("columns",)
+    columns: Sequence[Component]
+
+    def __init__(self, columns: tuple[Component, ...]) -> None:
+        self.columns = columns
 
 
-class HConcat(_HConcat, closed=True):
-    """A hconcat component."""
+View = TypeAliasType("View", Plot | HConcat | VConcat)
+"""A top-level component.
 
-
-class VConcat(_VConcat, closed=True):
-    """A vconcat component."""
+- Covers 53/55 examples
+    - Skips 2 which use `Table`
+- Everything else can be nested within these to fit
+- Reduces the `Spec` intersection from **80** alternatives
+"""
 
 
 # TODO @dangotbanned: Use `test_apis.data`
 # TODO @dangotbanned: Use `test_apis.params`
-class SpecHead(TypedDict, total=False):
-    config: ms.Config
+@dataclasses.dataclass
+class Spec:
+    """A declarative Mosaic specification."""
+
+    view: View
+    """The top-level component."""
+
+    config: ms.Config = dataclasses.field(default_factory=ms.Config)
     """Configuration options."""
-    data: ms.Data
+
+    data: dict[str, ms.DataDefinition] = dataclasses.field(default_factory=dict)
     """Dataset definitions."""
-    meta: ms.Meta
+
+    meta: ms.Meta = dataclasses.field(default_factory=ms.Meta)
     """Specification metadata."""
-    params: ms.Params
+
+    params: dict[str, ms.ParamDefinition] = dataclasses.field(default_factory=dict)
     """Param and Selection definitions."""
-    plot_defaults: PlotAttributes
+
+    plot_defaults: PlotAttributes = dataclasses.field(default_factory=PlotAttributes)
     """A default set of attributes to apply to all plot components."""
-
-
-class HConcatSpec(SpecHead, _HConcat, closed=True): ...
-
-
-class VConcatSpec(SpecHead, _VConcat, closed=True): ...
-
-
-class PlotSpec(SpecHead, _Plot, closed=True): ...
-
-
-class TableSpec(SpecHead, _TableOpen, closed=True): ...
-
-
-# NOTE: This covers all 55 examples and reduces the `Spec` union from 80 -> 4
-Spec = TypeAliasType("Spec", PlotSpec | HConcatSpec | VConcatSpec | TableSpec)
-"""A declarative Mosaic specification."""

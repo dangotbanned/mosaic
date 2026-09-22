@@ -195,8 +195,16 @@ class Facet(_Grid, _Label, total=False, closed=True):
     """Set the same default (`ParamRef | float`) or multiple defaults (`ms.Margins`) for margins."""
 
 
-# NOTE: Top-level, can be inhereted by `Plot`, `PlotAttributes`
-class _PlotOptions(_Align, _Axis[L["both", "bottom", "left", "right", "top"]], total=False):
+class PlotAttributes(
+    _Align, _Axis[L["both", "bottom", "left", "right", "top"]], total=False, closed=True
+):
+    """*Attributes* are plot-level settings.
+
+    They are represented in a style closer to [Observable Plot](https://observablehq.github.io/plot/api#options).
+
+    For example, `width` and `height` are available at the plot-level, but scale settings are grouped together.
+    """
+
     aria_description: str | None
     """The [aria-description attribute][1] on the SVG root.
 
@@ -234,7 +242,3 @@ class _PlotOptions(_Align, _Axis[L["both", "bottom", "left", "right", "top"]], t
     y: Y
     xy_domain: Fixed | ParamRef | Sequence[Any]
     """Set the *x* and *y* scale domains."""
-
-
-# NOTE: Concrete, can be used in `SpecHead`
-class PlotAttributes(_PlotOptions, closed=True): ...
