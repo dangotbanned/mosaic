@@ -51,14 +51,15 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator
 from functools import partial
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, TypeVar, Unpack
-from tests.apis import _marks, encodings_builder as eb
-from tests.apis.components_spec import Plot, VConcatSpec
-from tests.apis.data import Data, Source
-from tests.apis.params import ParamDef, p
+
+if TYPE_CHECKING:
+    from tests.apis import _marks
+    from tests.apis.data import Data, Source
+    from tests.apis.params import ParamDef
 
 Incomplete = TypeAliasType("Incomplete", Any)
 
@@ -326,50 +327,3 @@ class MarksNs:
     @property
     def waffle(self) -> WaffleNs:
         return WaffleNs()
-
-
-def crossfilter_example() -> None:
-    data = Data.from_parquet("data/flights-200k.parquet", "flights")
-    # NOTE: aiming for this to be like `Data.from_*(...).mark.*`
-    # - maybe have `mark` available on `Data`, and change `source` -> `Data.filter`?
-    # - might also need to keep `Data` inside `Source` for later?
-
-    # NOTE:
-    brush = p.brush.cross()
-
-    mark = MarksNs(data.filter(brush))
-
-    # TODO @dangotbanned: Accept `MarkData` higher up (need `Plot` & `Spec` concepts)
-    rect_y_1 = mark.rect.y(
-        x=eb.col("delay").bin(),
-        y=eb.len().to_dict(),
-        fill="steelblue",
-        inset_left=0.5,
-        inset_right=0.5,
-    )
-    rect_y_2 = mark.rect.y(
-        x=eb.col("time").bin(),
-        y=eb.len().to_dict(),
-        fill="steelblue",
-        inset_left=0.5,
-        inset_right=0.5,
-    )
-    interval = ms.IntervalX(select="intervalX", bind=brush.ref())
-    _spec = VConcatSpec(
-        vconcat=(
-            Plot(
-                plot=(rect_y_1._mark(), interval),
-                x={"domain": "Fixed", "label": "Arrival Delay (min)", "label_anchor": "center"},
-                y={"tick_format": "s"},
-                height=200,
-            ),
-            Plot(
-                plot=(rect_y_2._mark(), interval),
-                x={"domain": "Fixed", "label": "Departure Time (hour)", "label_anchor": "center"},
-                y={"tick_format": "s"},
-                height=200,
-            ),
-        ),
-        params=brush.to_dict(),
-        data=data.to_dict(),
-    )
