@@ -216,6 +216,8 @@ extend-safe-fixes                        = [
   "unnecessary-multiline-docstring",
   "redundant-none-literal",
   "none-not-at-end-of-union",
+  "trailing-whitespace",
+  "blank-line-with-whitespace",
 ]
 future-annotations                       = true
 flake8-builtins.ignorelist               = ["format", "input", "id"]
