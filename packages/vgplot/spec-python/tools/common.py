@@ -11,9 +11,7 @@ from typing import TYPE_CHECKING, Any, Final, NewType
 if TYPE_CHECKING:
     from collections.abc import Callable, Collection, Iterable, Iterator, Mapping
 
-    from typing_extensions import (
-        Sentinel as sentinel,  # ruff: ignore[camelcase-imported-as-lowercase]
-    )
+    from typing_extensions import Sentinel as sentinel  # ruff: ignore[camelcase-imported-as-lowercase]
 
     MISSING = sentinel("MISSING")
 else:
