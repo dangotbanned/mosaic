@@ -20,16 +20,26 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     import mosaic_spec as ms
-    from mosaic_spec import Fixed, Interval, LabelArrow, ParamRef
+    from mosaic_spec import Fixed, Interval, LabelArrow
+    from tests.apis.params import ParamDef
 
 
 ScaleT = TypeVar("ScaleT")
 AxisT = TypeVar("AxisT")
 
 
+class Margins(TypedDict, total=False, closed=True):
+    """Set multiple margin values."""
+
+    bottom: ParamDef | float
+    left: ParamDef | float
+    right: ParamDef | float
+    top: ParamDef | float
+
+
 # NOTE: super minimal
 class _Align(TypedDict, total=False):
-    align: ParamRef | float
+    align: ParamDef | float
     """How to distribute unused space in the **range** for *point* and *band* scales. A number in [0, 1], such as:
 
     - 0 - use the start of the range, putting unused space at the end
@@ -41,20 +51,20 @@ class _Align(TypedDict, total=False):
 
 
 class _Axis(TypedDict, Generic[AxisT], total=False):
-    axis: AxisT | ParamRef | bool | None
+    axis: AxisT | ParamDef | bool | None
 
 
 class _DomainRange(TypedDict, total=False):
-    domain: Fixed | ParamRef | Sequence[Any]
-    range: Fixed | ParamRef | Sequence[Any]
+    domain: Fixed | ParamDef | Sequence[Any]
+    range: Fixed | ParamDef | Sequence[Any]
 
 
 class _Scale(TypedDict, Generic[ScaleT], total=False):
-    scale: ScaleT | ParamRef | None
+    scale: ScaleT | ParamDef | None
 
 
 class _Grid(TypedDict, total=False):
-    grid: Interval | ParamRef | Sequence[Any] | bool | str
+    grid: Interval | ParamDef | Sequence[Any] | bool | str
     """Whether to show a grid aligned with the scale's ticks.
 
     - If true, show a grid with the currentColor stroke
@@ -67,7 +77,7 @@ class _Grid(TypedDict, total=False):
 
 
 class _Label(TypedDict, total=False):
-    label: ParamRef | str | None
+    label: ParamDef | str | None
     """A textual label to show on the axis or legend.
 
     If null, show no label.
@@ -77,12 +87,12 @@ class _Label(TypedDict, total=False):
 
 
 class _ReverseTickFormat(TypedDict, total=False):
-    reverse: ParamRef | bool
+    reverse: ParamDef | bool
     """Whether to reverse the scale's encoding.
 
     Equivalent to reversing either the **domain** or **range**.
     """
-    tick_format: ParamRef | str | None
+    tick_format: ParamDef | str | None
     """How to format inputs (abstract values) for axis tick labels.
 
     One of:
@@ -96,13 +106,13 @@ class _ReverseTickFormat(TypedDict, total=False):
 
 # NOTE: more specialized
 class _BaseClampConstantExponentNicePercentZero(TypedDict, total=False):
-    base: ParamRef | float
-    clamp: ParamRef | bool
-    constant: ParamRef | float
-    exponent: ParamRef | float
-    nice: ms.Interval | ms.ParamRef | bool | float
-    percent: ParamRef | bool
-    zero: ParamRef | bool
+    base: ParamDef | float
+    clamp: ParamDef | bool
+    constant: ParamDef | float
+    exponent: ParamDef | float
+    nice: ms.Interval | ParamDef | bool | float
+    percent: ParamDef | bool
+    zero: ParamDef | bool
     """Whether the **domain** must include zero.
 
     - If the domain minimum is positive, it will be set to zero
@@ -116,41 +126,41 @@ class _ColorContinuous(
 
 
 class _AxisX(_Axis[L["both", "bottom", "top"]], total=False):
-    inset_left: ParamRef | float
-    inset_right: ParamRef | float
+    inset_left: ParamDef | float
+    inset_right: ParamDef | float
 
 
 class _AxisY(_Axis[L["both", "left", "right"]], total=False):
-    inset_bottom: ParamRef | float
-    inset_top: ParamRef | float
+    inset_bottom: ParamDef | float
+    inset_top: ParamDef | float
 
 
 class _Position(_Align, _DomainRange, _Grid, _Label, _ReverseTickFormat, total=False):
-    aria_description: ParamRef | str
+    aria_description: ParamDef | str
     """A textual description for the axis in the accessibility tree."""
-    aria_label: ParamRef | str
+    aria_label: ParamDef | str
     """A short label representing the axis in the accessibility tree."""
-    font_variant: ParamRef | str
-    inset: ParamRef | float
-    label_anchor: L["bottom", "center", "left", "right", "top"] | ParamRef
-    label_offset: ParamRef | float
-    line: ParamRef | bool
-    padding: ParamRef | float
-    padding_inner: ParamRef | float
-    padding_outer: ParamRef | float
-    round: ParamRef | bool
-    tick_padding: ParamRef | float
-    tick_rotate: ParamRef | float
-    tick_size: ParamRef | float
-    tick_spacing: ParamRef | float
-    ticks: Interval | ParamRef | Sequence[Any] | float
+    font_variant: ParamDef | str
+    inset: ParamDef | float
+    label_anchor: L["bottom", "center", "left", "right", "top"] | ParamDef
+    label_offset: ParamDef | float
+    line: ParamDef | bool
+    padding: ParamDef | float
+    padding_inner: ParamDef | float
+    padding_outer: ParamDef | float
+    round: ParamDef | bool
+    tick_padding: ParamDef | float
+    tick_rotate: ParamDef | float
+    tick_size: ParamDef | float
+    tick_spacing: ParamDef | float
+    ticks: Interval | ParamDef | Sequence[Any] | float
     """The desired approximate number of axis ticks, or an explicit array of tick values, or an interval such as *day* or *month*."""
 
 
 class _XY(
     _Position, _BaseClampConstantExponentNicePercentZero, _Scale[PositionScaleType], total=False
 ):
-    label_arrow: LabelArrow | ParamRef
+    label_arrow: LabelArrow | ParamDef
     """Whether to apply a directional arrow such as → or ↑ to the axis scale label.
 
     If *auto* (the default), the presence of the arrow depends on whether the scale is ordinal.
@@ -180,19 +190,19 @@ class Symbol(_DomainRange, _Scale[DiscreteScaleType], closed=True): ...
 
 
 class Color(_ColorContinuous[ColorScaleType], _ReverseTickFormat, total=False, closed=True):
-    interpolate: ms.Interpolate | ParamRef
-    n: ParamRef | float
-    pivot: Any | ParamRef
-    scheme: ms.ColorScheme | ParamRef
-    symmetric: ParamRef | bool
+    interpolate: ms.Interpolate | ParamDef
+    n: ParamDef | float
+    pivot: Any | ParamDef
+    scheme: ms.ColorScheme | ParamDef
+    symmetric: ParamDef | bool
 
 
 class Opacity(_ColorContinuous[ContinuousScaleType], _ReverseTickFormat, closed=True): ...
 
 
 class Facet(_Grid, _Label, total=False, closed=True):
-    margin: ParamRef | float | ms.Margins  # `facet_margin`, `facet_margin_*`
-    """Set the same default (`ParamRef | float`) or multiple defaults (`ms.Margins`) for margins."""
+    margin: ParamDef | float | Margins  # `facet_margin`, `facet_margin_*`
+    """Set the same default (`ParamDef | float`) or multiple defaults (`Margins`) for margins."""
 
 
 class PlotAttributes(
@@ -215,18 +225,18 @@ class PlotAttributes(
 
     [1]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
     """
-    aspect_ratio: ParamRef | bool | float | None
-    clip: L["frame", "sphere"] | ParamRef | bool | None
+    aspect_ratio: ParamDef | bool | float | None
+    clip: L["frame", "sphere"] | ParamDef | bool | None
     color: Color
     facet: Facet
     fx: Fx
     fy: Fy
-    grid: ParamRef | bool | str
-    height: ParamRef | float
-    inset: ParamRef | float
+    grid: ParamDef | bool | str
+    height: ParamDef | float
+    inset: ParamDef | float
     length: Length
-    margin: ParamRef | float | ms.Margins  # `margin`, `margin_*`, `margins`
-    """Set the same deafult (`ParamRef | float`) or multiple defaults (`ms.Margins`) for margins."""
+    margin: ParamDef | float | Margins  # `margin`, `margin_*`, `margins`
+    """Set the same deafult (`ParamDef | float`) or multiple defaults (`Margins`) for margins."""
 
     name: str
     """A unique name for the plot.
@@ -235,10 +245,10 @@ class PlotAttributes(
     """
     opacity: Opacity
     r: R
-    style: ms.CSSStyles | ParamRef | None
+    style: ms.CSSStyles | ParamDef | None
     symbol: Symbol
-    width: ParamRef | float
+    width: ParamDef | float
     x: X
     y: Y
-    xy_domain: Fixed | ParamRef | Sequence[Any]
+    xy_domain: Fixed | ParamDef | Sequence[Any]
     """Set the *x* and *y* scale domains."""
