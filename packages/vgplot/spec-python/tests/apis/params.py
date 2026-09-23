@@ -195,22 +195,22 @@ Select = L["crossfilter", "intersect", "single", "union"]
 # TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
 class Selection(ParamBase):
-    """A Selection definition."""
+    """A Param that can be used to interactively filter a data source."""
 
-    __slots__ = ("include", "kwds", "select")
-    select: Select
-    """The type of reactive parameter."""
+    __slots__ = ("_include", "_kwds", "_strategy")
+    _strategy: Select
+    """A resolution strategy to merge clauses into client-specific predicates."""
 
-    kwds: _CrossEmpty
-    include: tuple[ParamDef, ...]
+    _kwds: _CrossEmpty
+    _include: tuple[ParamDef, ...]
 
     def __init__(
         self, name: str, select: Select, /, kwds: _CrossEmpty, include: tuple[ParamDef, ...] = ()
     ) -> None:
-        self.select = select
-        self.kwds = kwds
+        self._strategy = select
+        self._kwds = kwds
         self.name = name
-        self.include = include
+        self._include = include
 
     @classmethod
     def _from_options(cls, name: str, select: Select, /, kwds: SelectionOpts) -> Self:
@@ -225,8 +225,8 @@ class Selection(ParamBase):
         return cls(name, select, opts)
 
     def to_dict(self) -> ms.Params:
-        self_dict: ms.Selection = {"select": self.select, **self.kwds}
-        if include := self.include:
+        self_dict: ms.Selection = {"select": self._strategy, **self._kwds}
+        if include := self._include:
             param_defs = {}
             param_refs = []
             for param in include:
