@@ -129,70 +129,16 @@ class _2DOptions(TypedDict, total=False):
     """
 
 
-class _Interval1DOptions(_IntervalOptions, _1DOptions, closed=True): ...
+class Interval1DOptions(_IntervalOptions, _1DOptions, closed=True): ...
 
 
-class _Interval2DOptions(_IntervalOptions, _2DOptions, closed=True): ...
+class IntervalOptions(_IntervalOptions, _2DOptions, closed=True): ...
 
 
-class _PanZoom1DOptions(_1DOptions, closed=True): ...
+class PanZoom1DOptions(_1DOptions, closed=True): ...
 
 
-class _PanZoom2DOptions(_2DOptions, closed=True): ...
-
-
-def nearest_x(bind: Selection, /, **options: Unpack[NearestOptions]) -> Nearest:
-    """Select values from the mark closest to the pointer *x* location."""
-    return Nearest(bind, "nearestX", options)
-
-
-def nearest_y(bind: Selection, /, **options: Unpack[NearestOptions]) -> Nearest:
-    """Select values from the mark closest to the pointer *y* location."""
-    return Nearest(bind, "nearestY", options)
-
-
-def pan(bind_x: Selection, bind_y: Selection, /, **options: Unpack[_PanZoom2DOptions]) -> None:
-    """Pan a plot along both the `x` and `y` scales."""
-
-
-def pan_x(bind: Selection, /, **options: Unpack[_PanZoom1DOptions]) -> None:
-    """Pan a plot along the `x` scale only.
-
-    The output selection for the `x` domain.
-
-    A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zoom interval [x1, x2].
-    """
-
-
-def pan_y(bind: Selection, /, **options: Unpack[_PanZoom1DOptions]) -> None:
-    """Pan a plot along the `y` scale only.
-
-    The output selection for the `y` domain.
-
-    A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zoom interval [y1, y2].
-    """
-
-
-def pan_zoom(bind_x: Selection, bind_y: Selection, /, **options: Unpack[_PanZoom2DOptions]) -> None:
-    """Pan and zoom a plot along both the `x` and `y` scales."""
-
-
-def pan_zoom_x(bind: Selection, /, **options: Unpack[_PanZoom1DOptions]) -> None:
-    """Pan and zoom a plot along the `x` scale only.
-
-    The output selection for the `x` domain.
-
-    A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zoom interval [x1, x2].
-    """
-
-
-def pan_zoom_y(bind: Selection, /, **options: Unpack[_PanZoom1DOptions]) -> None:
-    """Pan and zoom a plot along the `y` scale only.
-
-    The output selection for the `y` domain.
-
-    A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zoom interval [y1, y2].
-    """
+class PanZoomOptions(_2DOptions, closed=True): ...
 
 
 _SelectKind = TypeAliasType(
@@ -244,15 +190,15 @@ class Interval(_SelectStatic):
 
     A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi].
     """
-    options: _Interval2DOptions
+    options: IntervalOptions
     _SELECT = "intervalXY"
 
-    def __init__(self, bind: Selection, /, **options: Unpack[_Interval2DOptions]) -> None:
+    def __init__(self, bind: Selection, /, **options: Unpack[IntervalOptions]) -> None:
         self.bind = bind
         self.options = options
 
 
-# TODO @dangotbanned: `Nearest` can share a base class with this
+# TODO @dangotbanned: `Interval1D`, `Nearest`, `PanZoom1D` (+ some of `PanZoom` ) can share a base class
 # - generic over options and select
 # - add docs separately, but define slots in parent
 @final
@@ -266,10 +212,10 @@ class Interval1D(_Interactor):
     A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi].
     """
 
-    options: _Interval1DOptions
+    options: Interval1DOptions
 
     def __init__(
-        self, bind: Selection, select: L["intervalX", "intervalY"], options: _Interval1DOptions
+        self, bind: Selection, select: L["intervalX", "intervalY"], options: Interval1DOptions
     ) -> None:
         self.bind = bind
         self._select: L["intervalX", "intervalY"] = select
@@ -284,14 +230,100 @@ class Interval1D(_Interactor):
 interval: Final = Interval
 
 
-def interval_x(bind: Selection, /, **options: Unpack[_Interval1DOptions]) -> Interval1D:
+def interval_x(bind: Selection, /, **options: Unpack[Interval1DOptions]) -> Interval1D:
     """Select a continuous 1D interval selection over the `x` scale domain."""
     return Interval1D(bind, "intervalX", options)
 
 
-def interval_y(bind: Selection, /, **options: Unpack[_Interval1DOptions]) -> Interval1D:
+def interval_y(bind: Selection, /, **options: Unpack[Interval1DOptions]) -> Interval1D:
     """Select a continuous 1D interval selection over the `y` scale domain."""
     return Interval1D(bind, "intervalY", options)
+
+
+@final
+class PanZoom(_Interactor):
+    """Pan/zoom along both the `x` and `y` scales."""
+
+    __slots__ = ("_select", "bind_x", "bind_y", "options")
+    bind_x: Selection
+    bind_y: Selection
+    options: PanZoomOptions
+
+    def __init__(
+        self,
+        bind_x: Selection,
+        bind_y: Selection,
+        select: L["pan", "panZoom"],
+        options: PanZoomOptions,
+    ) -> None:
+        self.bind_x = bind_x
+        self.bind_y = bind_y
+        self._select: L["pan", "panZoom"] = select
+        self.options = options
+
+    @property
+    def select(self) -> L["pan", "panZoom"]:
+        return self._select
+
+
+def pan(bind_x: Selection, bind_y: Selection, /, **options: Unpack[PanZoomOptions]) -> PanZoom:
+    """Pan a plot along both the `x` and `y` scales."""
+    return PanZoom(bind_x, bind_y, "pan", options)
+
+
+def pan_zoom(
+    bind_x: Selection, bind_y: Selection, /, **options: Unpack[PanZoomOptions]
+) -> PanZoom:
+    """Pan and zoom a plot along both the `x` and `y` scales."""
+    return PanZoom(bind_x, bind_y, "panZoom", options)
+
+
+@final
+class PanZoom1D(_Interactor):
+    """Pan/zoom along either the `x` or `y` scale."""
+
+    __slots__ = ("_select", "bind", "options")
+    bind: Selection
+    """The output selection.
+
+    A clause of the form `field BETWEEN value1 AND value2` is added for the current pan/zoom interval [value1, value2].
+    """
+
+    options: PanZoom1DOptions
+
+    def __init__(
+        self,
+        bind: Selection,
+        select: L["panX", "panY", "panZoomX", "panZoomY"],
+        options: PanZoom1DOptions,
+    ) -> None:
+        self.bind = bind
+        self._select: L["panX", "panY", "panZoomX", "panZoomY"] = select
+        self.options = options
+
+    @property
+    def select(self) -> L["panX", "panY", "panZoomX", "panZoomY"]:
+        return self._select
+
+
+def pan_x(bind: Selection, /, **options: Unpack[PanZoom1DOptions]) -> PanZoom1D:
+    """Pan a plot along the `x` scale only."""
+    return PanZoom1D(bind, "panX", options)
+
+
+def pan_y(bind: Selection, /, **options: Unpack[PanZoom1DOptions]) -> PanZoom1D:
+    """Pan a plot along the `y` scale only."""
+    return PanZoom1D(bind, "panY", options)
+
+
+def pan_zoom_x(bind: Selection, /, **options: Unpack[PanZoom1DOptions]) -> PanZoom1D:
+    """Pan and zoom a plot along the `x` scale only."""
+    return PanZoom1D(bind, "panZoomX", options)
+
+
+def pan_zoom_y(bind: Selection, /, **options: Unpack[PanZoom1DOptions]) -> PanZoom1D:
+    """Pan and zoom a plot along the `y` scale only."""
+    return PanZoom1D(bind, "panZoomY", options)
 
 
 @final
@@ -315,6 +347,16 @@ class Nearest(_Interactor):
     @property
     def select(self) -> L["nearestX", "nearestY"]:
         return self._select
+
+
+def nearest_x(bind: Selection, /, **options: Unpack[NearestOptions]) -> Nearest:
+    """Select values from the mark closest to the pointer *x* location."""
+    return Nearest(bind, "nearestX", options)
+
+
+def nearest_y(bind: Selection, /, **options: Unpack[NearestOptions]) -> Nearest:
+    """Select values from the mark closest to the pointer *y* location."""
+    return Nearest(bind, "nearestY", options)
 
 
 class _RegionToggle(_SelectStatic):
@@ -390,7 +432,8 @@ class Highlight(_SelectStatic):
 
 
 Interactor = TypeAliasType(
-    "Interactor", Highlight | Interval | Interval1D | Nearest | Region | Toggle
+    "Interactor",
+    Highlight | Interval | Interval1D | Nearest | PanZoom | PanZoom1D | Region | Toggle,
 )
 """Interactors imbue plots with interactive behavior.
 
