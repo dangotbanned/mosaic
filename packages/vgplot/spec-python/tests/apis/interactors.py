@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, Literal as L, final
+from typing import TYPE_CHECKING, ClassVar, Final, Literal as L, final
 
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, TypedDict, TypeVar, Unpack
@@ -183,11 +183,6 @@ def pan_zoom_y(bind: Selection, /, **kwds: Unpack[_PanZoom1DOptions]) -> None:
     """
 
 
-def interval_x(bind: Selection, /, **kwds: Unpack[_Interval1DOptions]) -> None: ...
-def interval_y(bind: Selection, /, **kwds: Unpack[_Interval1DOptions]) -> None: ...
-def interval_xy(bind: Selection, /, **kwds: Unpack[_Interval2DOptions]) -> None: ...
-
-
 _SelectKind = TypeAliasType(
     "_SelectKind",
     L[
@@ -218,6 +213,75 @@ class _Interactor:
         raise NotImplementedError(msg)
 
 
+class _SelectStatic(_Interactor):
+    __slots__ = ()
+    _SELECT: ClassVar[_SelectKind]
+
+    @property
+    def select(self) -> _SelectKind:
+        return self._SELECT
+
+
+@final
+class Interval(_SelectStatic):
+    """Select a continuous 2D interval selection over both the `x` and `y` scale domains."""
+
+    __slots__ = ("bind", "options")
+    bind: Selection
+    """The output selection.
+
+    A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi].
+    """
+    options: _Interval2DOptions
+    _SELECT = "intervalXY"
+
+    def __init__(self, bind: Selection, /, **options: Unpack[_Interval2DOptions]) -> None:
+        self.bind = bind
+        self.options = options
+
+
+# TODO @dangotbanned: `Nearest` can share a base class with this
+# - generic over options and select
+# - add docs separately, but define slots in parent
+@final
+class Interval1D(_Interactor):
+    """Select a continuous 1D interval selection over either the `x` or `y` scale domain."""
+
+    __slots__ = ("_select", "bind", "options")
+    bind: Selection
+    """The output selection.
+
+    A clause of the form `field BETWEEN lo AND hi` is added for the currently selected interval [lo, hi].
+    """
+
+    options: _Interval1DOptions
+
+    def __init__(
+        self, bind: Selection, select: L["intervalX", "intervalY"], options: _Interval1DOptions
+    ) -> None:
+        self.bind = bind
+        self._select: L["intervalX", "intervalY"] = select
+        self.options = options
+
+    @property
+    def select(self) -> L["intervalX", "intervalY"]:
+        return self._select
+
+
+# NOTE: constructor alias for symmetry or whatever
+interval: Final = Interval
+
+
+def interval_x(bind: Selection, /, **options: Unpack[_Interval1DOptions]) -> Interval1D:
+    """Select a continuous 1D interval selection over the `x` scale domain."""
+    return Interval1D(bind, "intervalX", options)
+
+
+def interval_y(bind: Selection, /, **options: Unpack[_Interval1DOptions]) -> Interval1D:
+    """Select a continuous 1D interval selection over the `y` scale domain."""
+    return Interval1D(bind, "intervalY", options)
+
+
 @final
 class Nearest(_Interactor):
     __slots__ = ("_select", "bind", "options")
@@ -239,15 +303,6 @@ class Nearest(_Interactor):
     @property
     def select(self) -> L["nearestX", "nearestY"]:
         return self._select
-
-
-class _SelectStatic(_Interactor):
-    __slots__ = ()
-    _SELECT: ClassVar[_SelectKind]
-
-    @property
-    def select(self) -> _SelectKind:
-        return self._SELECT
 
 
 class _RegionToggle(_SelectStatic):
@@ -322,7 +377,9 @@ class Highlight(_SelectStatic):
         self.options = options
 
 
-Interactor = TypeAliasType("Interactor", Highlight | Nearest | Region | Toggle)
+Interactor = TypeAliasType(
+    "Interactor", Highlight | Interval | Interval1D | Nearest | Region | Toggle
+)
 """Interactors imbue plots with interactive behavior.
 
 This includes selecting or highlighting values, and panning or zooming the display.
