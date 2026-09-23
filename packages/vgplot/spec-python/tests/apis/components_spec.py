@@ -14,7 +14,7 @@ from typing import Any, Protocol, final
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, Unpack
 from tests.apis._marks import MarkData
-from tests.apis.attributes import PlotAttributes
+from tests.apis.attributes import AttrsMut, PlotAttributes
 from tests.apis.inputs import InputWidget
 from tests.apis.interactors import (
     Interactor as Interactor,
@@ -106,18 +106,21 @@ class _ViewImpl(View):
 
 @final
 class Plot(_ViewImpl):
-    __slots__ = ("elements", "options")
+    __slots__ = ("_options", "elements")
     elements: tuple[IntoPlot, ...]
     """An array of plot marks, interactors, or legends.
 
     Marks are graphical elements that make up plot layers.
     Unless otherwise configured, interactors will use the nearest previous mark as a basis for which data fields to select.
     """
-    options: PlotAttributes
+    _options: PlotAttributes
 
     def __init__(self, elements: tuple[IntoPlot, ...], options: PlotAttributes) -> None:
         self.elements = elements
-        self.options = options
+        self._options = options
+
+    def with_attrs(self, attributes: AttrsMut, /) -> Plot:
+        return Plot(self.elements, attributes.to_dict())
 
 
 def plot(*elements: IntoPlot, **options: Unpack[PlotAttributes]) -> Plot:

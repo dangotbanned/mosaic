@@ -11,10 +11,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, Literal as L
+from copy import deepcopy
+from typing import TYPE_CHECKING, Any, Generic, Literal as L, final, overload
 
 from mosaic_spec import ColorScaleType, ContinuousScaleType, DiscreteScaleType, PositionScaleType
-from mosaic_spec._typing_compat import TypedDict, TypeVar
+from mosaic_spec._typing_compat import Self, TypedDict, TypeVar, Unpack
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -236,7 +237,7 @@ class PlotAttributes(
     inset: ParamDef | float
     length: Length
     margin: ParamDef | float | Margins  # `margin`, `margin_*`, `margins`
-    """Set the same deafult (`ParamDef | float`) or multiple defaults (`Margins`) for margins."""
+    """Set the same default (`ParamDef | float`) or multiple defaults (`Margins`) for margins."""
 
     name: str
     """A unique name for the plot.
@@ -252,3 +253,111 @@ class PlotAttributes(
     y: Y
     xy_domain: Fixed | ParamDef | Sequence[Any]
     """Set the *x* and *y* scale domains."""
+
+
+class _BaseAttrs:
+    __slots__ = ("_options",)
+
+    def _update(self, **changes: Unpack[PlotAttributes]) -> Self:
+        msg = f"{self.__class__.__name__}._update() is not yet implemented"
+        raise NotImplementedError(msg)
+
+    def height(self, _: ParamDef | float, /) -> Self:
+        return self._update(height=_)
+
+    def width(self, _: ParamDef | float, /) -> Self:
+        return self._update(width=_)
+
+    def color(self, **options: Unpack[Color]) -> Self:
+        return self._update(color=options)
+
+    def facet(self, **options: Unpack[Facet]) -> Self:
+        return self._update(facet=options)
+
+    def fx(self, **options: Unpack[Fx]) -> Self:
+        return self._update(fx=options)
+
+    def fy(self, **options: Unpack[Fy]) -> Self:
+        return self._update(fy=options)
+
+    def length(self, **options: Unpack[Length]) -> Self:
+        return self._update(length=options)
+
+    @overload
+    def margin(self, margin: ParamDef | float, /) -> Self: ...
+    @overload
+    def margin(self, /, **options: Unpack[Margins]) -> Self: ...
+    def margin(self, margin: ParamDef | float | None = None, /, **options: Unpack[Margins]) -> Self:
+        """Set the same default (`ParamDef | float`) or multiple defaults (`Margins`) for margins."""
+        if margin is not None:
+            return self._update(margin=margin)
+        return self._update(margin=options)
+
+    def opacity(self, **options: Unpack[Opacity]) -> Self:
+        return self._update(opacity=options)
+
+    def r(self, **options: Unpack[R]) -> Self:
+        return self._update(r=options)
+
+    def style(self, **options: Unpack[ms.CSSStyles]) -> Self:
+        return self._update(style=options)
+
+    def symbol(self, **options: Unpack[Symbol]) -> Self:
+        return self._update(symbol=options)
+
+    def x(self, **options: Unpack[X]) -> Self:
+        return self._update(x=options)
+
+    def y(self, **options: Unpack[Y]) -> Self:
+        return self._update(y=options)
+
+
+@final
+class AttrsMut(_BaseAttrs):
+    """A mutating builder for `PlotAttributes`.
+
+    Method calls return the same object with changes.
+    """
+
+    __slots__ = ("_options",)
+
+    def _update(self, **changes: Unpack[PlotAttributes]) -> Self:
+        self._options.update(changes)
+        return self
+
+    def __init__(self, options: PlotAttributes) -> None:
+        self._options: PlotAttributes = options
+
+    def clone(self) -> Self:
+        """Return a deep copy."""
+        return self.__class__(deepcopy(self._options))
+
+    def __deepcopy__(self, memo: Any, /) -> Self:
+        return self.clone()
+
+    def __repr__(self) -> str:
+        return repr(self._options)
+
+    def to_dict(self) -> PlotAttributes:
+        return self._options
+
+
+def attrs_mut(**options: Unpack[PlotAttributes]) -> AttrsMut:
+    """Define plot-level settings.
+
+    >>> attrs_mut(height=400, width=400)
+    {'height': 400, 'width': 400}
+
+    Supports method-chaining, with full static typing:
+
+    >>> axes = (
+    ...     attrs_mut()
+    ...     .x(domain=(0, 100), inset_left=36)
+    ...     .y(domain=(0, 100))
+    ...     .margin(left=0, right=35)
+    ...     .width(680)
+    ... )
+    >>> axes
+    {'x': {'domain': (0, 100), 'inset_left': 36}, 'y': {'domain': (0, 100)}, 'margin': {'left': 0, 'right': 35}, 'width': 680}
+    """
+    return AttrsMut(options)
