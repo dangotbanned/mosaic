@@ -151,33 +151,45 @@ def nearest_y(bind: Selection, /, **options: Unpack[NearestOptions]) -> Nearest:
     return Nearest(bind, "nearestY", options)
 
 
-def pan(bind_x: Selection, bind_y: Selection, /, **kwds: Unpack[_PanZoom2DOptions]) -> None: ...
-def pan_x(bind: Selection, /, **kwds: Unpack[_PanZoom1DOptions]) -> None:
-    """The output selection for the `x` domain.
+def pan(bind_x: Selection, bind_y: Selection, /, **options: Unpack[_PanZoom2DOptions]) -> None:
+    """Pan a plot along both the `x` and `y` scales."""
+
+
+def pan_x(bind: Selection, /, **options: Unpack[_PanZoom1DOptions]) -> None:
+    """Pan a plot along the `x` scale only.
+
+    The output selection for the `x` domain.
 
     A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zoom interval [x1, x2].
     """
 
 
-def pan_y(bind: Selection, /, **kwds: Unpack[_PanZoom1DOptions]) -> None:
-    """The output selection for the `y` domain.
+def pan_y(bind: Selection, /, **options: Unpack[_PanZoom1DOptions]) -> None:
+    """Pan a plot along the `y` scale only.
+
+    The output selection for the `y` domain.
 
     A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zoom interval [y1, y2].
     """
 
 
-def pan_zoom(
-    bind_x: Selection, bind_y: Selection, /, **kwds: Unpack[_PanZoom2DOptions]
-) -> None: ...
-def pan_zoom_x(bind: Selection, /, **kwds: Unpack[_PanZoom1DOptions]) -> None:
-    """The output selection for the `x` domain.
+def pan_zoom(bind_x: Selection, bind_y: Selection, /, **options: Unpack[_PanZoom2DOptions]) -> None:
+    """Pan and zoom a plot along both the `x` and `y` scales."""
+
+
+def pan_zoom_x(bind: Selection, /, **options: Unpack[_PanZoom1DOptions]) -> None:
+    """Pan and zoom a plot along the `x` scale only.
+
+    The output selection for the `x` domain.
 
     A clause of the form `field BETWEEN x1 AND x2` is added for the current pan/zoom interval [x1, x2].
     """
 
 
-def pan_zoom_y(bind: Selection, /, **kwds: Unpack[_PanZoom1DOptions]) -> None:
-    """The output selection for the `y` domain.
+def pan_zoom_y(bind: Selection, /, **options: Unpack[_PanZoom1DOptions]) -> None:
+    """Pan and zoom a plot along the `y` scale only.
+
+    The output selection for the `y` domain.
 
     A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zoom interval [y1, y2].
     """
