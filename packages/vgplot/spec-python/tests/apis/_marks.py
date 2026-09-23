@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final, Generic, Literal as L, final, get_args
+from typing import TYPE_CHECKING, Final, Generic, Literal as L, final
 
 import mosaic_spec as ms
 from mosaic_spec._gen.marks import _MarkOptions
 from mosaic_spec._typing_compat import ReadOnly, TypeAliasType, TypedDict, TypeVar
+from tests.apis.protocols import MarkName
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -16,81 +17,6 @@ if TYPE_CHECKING:
     from tests.apis.params import ParamDef
 
 _CurveT = TypeVar("_CurveT")
-
-MarkName = TypeAliasType(
-    "MarkName",
-    L[
-        "area",
-        "areaX",
-        "areaY",
-        "arrow",
-        "axisFx",
-        "axisFy",
-        "axisX",
-        "axisY",
-        "barX",
-        "barY",
-        "cell",
-        "cellX",
-        "cellY",
-        "circle",
-        "contour",
-        "delaunayLink",
-        "delaunayMesh",
-        "denseLine",
-        "density",
-        "densityX",
-        "densityY",
-        "dot",
-        "dotX",
-        "dotY",
-        "errorbarX",
-        "errorbarY",
-        "frame",
-        "geo",
-        "graticule",
-        "gridFx",
-        "gridFy",
-        "gridX",
-        "gridY",
-        "heatmap",
-        "hexagon",
-        "hexbin",
-        "hexgrid",
-        "hull",
-        "image",
-        "line",
-        "lineX",
-        "lineY",
-        "link",
-        "raster",
-        "rasterTile",
-        "rect",
-        "rectX",
-        "rectY",
-        "regressionY",
-        "ruleX",
-        "ruleY",
-        "sphere",
-        "spike",
-        "text",
-        "textX",
-        "textY",
-        "tickX",
-        "tickY",
-        "vector",
-        "vectorX",
-        "vectorY",
-        "voronoi",
-        "voronoiMesh",
-        "waffleX",
-        "waffleY",
-    ],
-)
-"""The type of `ms.PlotMark["mark"]`."""
-
-MARK_NAMES: Final = frozenset[MarkName](get_args(MarkName.__value__))
-"""All supported values for `ms.PlotMark["mark"]`."""
 
 
 MBound = TypeVar("MBound", bound=MarkName)
