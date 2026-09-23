@@ -55,7 +55,7 @@ class HighlightOptions(TypedDict, total=False, closed=True):
 # TODO @dangotbanned: Report `nearest` as missing from `Spec` exports
 # https://github.com/uwdata/mosaic/blob/80c72fc4e360f354b57f5369e6799561d86272b6/packages/vgplot/spec/src/spec/PlotInteractor.ts#L4
 # https://github.com/uwdata/mosaic/blob/80c72fc4e360f354b57f5369e6799561d86272b6/packages/vgplot/spec/src/spec/interactors/Nearest.ts#L32-L36
-class _NearestOptions(TypedDict, total=False, closed=True):
+class NearestOptions(TypedDict, total=False, closed=True):
     channels: Sequence[ChannelName]
     """The encoding channels whose domain values should be selected.
 
@@ -141,12 +141,14 @@ class _PanZoom1DOptions(_1DOptions, closed=True): ...
 class _PanZoom2DOptions(_2DOptions, closed=True): ...
 
 
-def nearest_x(bind: Selection, /, **kwds: Unpack[_NearestOptions]) -> None:
+def nearest_x(bind: Selection, /, **options: Unpack[NearestOptions]) -> Nearest:
     """Select values from the mark closest to the pointer *x* location."""
+    return Nearest(bind, "nearestX", options)
 
 
-def nearest_y(bind: Selection, /, **kwds: Unpack[_NearestOptions]) -> None:
+def nearest_y(bind: Selection, /, **options: Unpack[NearestOptions]) -> Nearest:
     """Select values from the mark closest to the pointer *y* location."""
+    return Nearest(bind, "nearestY", options)
 
 
 def pan(bind_x: Selection, bind_y: Selection, /, **kwds: Unpack[_PanZoom2DOptions]) -> None: ...
@@ -186,29 +188,69 @@ def interval_y(bind: Selection, /, **kwds: Unpack[_Interval1DOptions]) -> None: 
 def interval_xy(bind: Selection, /, **kwds: Unpack[_Interval2DOptions]) -> None: ...
 
 
+_SelectKind = TypeAliasType(
+    "_SelectKind",
+    L[
+        "highlight",
+        "intervalX",
+        "intervalXY",
+        "intervalY",
+        "nearestX",
+        "nearestY",
+        "pan",
+        "panX",
+        "panY",
+        "panZoom",
+        "panZoomX",
+        "panZoomY",
+        "region",
+        "toggle",
+    ],
+)
+
+
 class _Interactor:
     __slots__ = ()
-    _SELECT: ClassVar[
-        L[
-            "highlight",
-            "intervalX",
-            "intervalXY",
-            "intervalY",
-            "nearestX",
-            "nearestY",
-            "pan",
-            "panX",
-            "panY",
-            "panZoom",
-            "panZoomX",
-            "panZoomY",
-            "region",
-            "toggle",
-        ]
-    ]
+
+    @property
+    def select(self) -> _SelectKind:
+        msg = f"{self.__class__.__name__}.select is not yet implemented"
+        raise NotImplementedError(msg)
 
 
-class _RegionToggle(_Interactor):
+@final
+class Nearest(_Interactor):
+    __slots__ = ("_select", "bind", "options")
+    bind: Selection
+    """The output selection.
+
+    A clause of the form `field = value` is added for the currently nearest value.
+    """
+
+    options: NearestOptions
+
+    def __init__(
+        self, bind: Selection, select: L["nearestX", "nearestY"], options: NearestOptions
+    ) -> None:
+        self.bind = bind
+        self._select: L["nearestX", "nearestY"] = select
+        self.options = options
+
+    @property
+    def select(self) -> L["nearestX", "nearestY"]:
+        return self._select
+
+
+class _SelectStatic(_Interactor):
+    __slots__ = ()
+    _SELECT: ClassVar[_SelectKind]
+
+    @property
+    def select(self) -> _SelectKind:
+        return self._SELECT
+
+
+class _RegionToggle(_SelectStatic):
     __slots__ = ("bind", "channels")
     bind: Selection
     """The output selection.
@@ -265,7 +307,7 @@ class Toggle(_RegionToggle):
 
 
 @final
-class Highlight(_Interactor):
+class Highlight(_SelectStatic):
     """Highlight selected marks by deemphasizing the others."""
 
     __slots__ = ("by", "options")
@@ -280,7 +322,7 @@ class Highlight(_Interactor):
         self.options = options
 
 
-Interactor = TypeAliasType("Interactor", Highlight | Region | Toggle)
+Interactor = TypeAliasType("Interactor", Highlight | Nearest | Region | Toggle)
 """Interactors imbue plots with interactive behavior.
 
 This includes selecting or highlighting values, and panning or zooming the display.
