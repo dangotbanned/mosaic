@@ -226,10 +226,6 @@ class Interval1D(_Interactor):
         return self._select
 
 
-# NOTE: constructor alias for symmetry or whatever
-interval: Final = Interval
-
-
 def interval_x(bind: Selection, /, **options: Unpack[Interval1DOptions]) -> Interval1D:
     """Select a continuous 1D interval selection over the `x` scale domain."""
     return Interval1D(bind, "intervalX", options)
@@ -271,9 +267,7 @@ def pan(bind_x: Selection, bind_y: Selection, /, **options: Unpack[PanZoomOption
     return PanZoom(bind_x, bind_y, "pan", options)
 
 
-def pan_zoom(
-    bind_x: Selection, bind_y: Selection, /, **options: Unpack[PanZoomOptions]
-) -> PanZoom:
+def pan_zoom(bind_x: Selection, bind_y: Selection, /, **options: Unpack[PanZoomOptions]) -> PanZoom:
     """Pan and zoom a plot along both the `x` and `y` scales."""
     return PanZoom(bind_x, bind_y, "panZoom", options)
 
@@ -443,3 +437,27 @@ To determine which fields (database columns) an interactor should select,
 an interactor defaults to looking at the corresponding encoding channels for the most recently added mark.
 Alternatively, interactors accept options that explicitly indicate which data fields should be selected.
 """
+
+# NOTE: constructor aliases for symmetry or whatever
+interval: Final = Interval
+highlight: Final = Highlight
+region: Final = Region
+toggle: Final = Toggle
+
+__all__ = (
+    "Interactor",
+    "highlight",
+    "interval",
+    "interval_x",
+    "interval_y",
+    "nearest_x",
+    "nearest_y",
+    "pan",
+    "pan_x",
+    "pan_y",
+    "pan_zoom",
+    "pan_zoom_x",
+    "pan_zoom_y",
+    "region",
+    "toggle",
+)

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import mosaic_spec as ms
 from tests.apis import components_spec as vg, encodings_builder as eb
 from tests.apis.data import Data
 from tests.apis.marks import MarksNs
@@ -32,18 +31,17 @@ def test_crossfilter() -> None:
         inset_left=0.5,
         inset_right=0.5,
     )
-    interval = ms.IntervalX(select="intervalX", bind=brush.ref())
     view = vg.vconcat(
         vg.plot(
             rect_y_1,
-            interval,
+            vg.interval_x(brush),
             x={"domain": "Fixed", "label": "Arrival Delay (min)", "label_anchor": "center"},
             y={"tick_format": "s"},
             height=200,
         ),
         vg.plot(
             rect_y_2,
-            interval,
+            vg.interval_x(brush),
             x={"domain": "Fixed", "label": "Departure Time (hour)", "label_anchor": "center"},
             y={"tick_format": "s"},
             height=200,

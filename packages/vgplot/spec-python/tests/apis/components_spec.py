@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+# ruff: file-ignore[useless-import-alias]
 import dataclasses
 from typing import Any, Protocol, final
 
@@ -15,10 +16,26 @@ from mosaic_spec._typing_compat import TypeAliasType, Unpack
 from tests.apis._marks import MarkData
 from tests.apis.attributes import PlotAttributes
 from tests.apis.inputs import InputWidget
-from tests.apis.interactors import Interactor
+from tests.apis.interactors import (
+    Interactor as Interactor,
+    highlight as highlight,
+    interval as interval,
+    interval_x as interval_x,
+    interval_y as interval_y,
+    nearest_x as nearest_x,
+    nearest_y as nearest_y,
+    pan as pan,
+    pan_x as pan_x,
+    pan_y as pan_y,
+    pan_zoom as pan_zoom,
+    pan_zoom_x as pan_zoom_x,
+    pan_zoom_y as pan_zoom_y,
+    region as region,
+    toggle as toggle,
+)
 
 PlotMark = TypeAliasType("PlotMark", MarkData[Any])
-IntoPlot = TypeAliasType("IntoPlot", ms.PlotInteractor | Interactor | ms.PlotLegend | PlotMark)
+IntoPlot = TypeAliasType("IntoPlot", Interactor | ms.PlotLegend | PlotMark)
 """All of these need a `plot` method."""
 
 
