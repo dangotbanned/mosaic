@@ -20,7 +20,7 @@ ChannelName = TypeAliasType("ChannelName", ms.ChannelName | L["color"])
 """The set of known channel names."""
 
 
-class _HighlightOptions(TypedDict, total=False, closed=True):
+class HighlightOptions(TypedDict, total=False, closed=True):
     fill: str
     """The fill color of deemphasized marks.
 
@@ -96,7 +96,7 @@ class _BrushPeers(_Peers, total=False):
 class ToggleOptions(_Peers, closed=True): ...
 
 
-class _RegionOptions(_BrushPeers, closed=True): ...
+class RegionOptions(_BrushPeers, closed=True): ...
 
 
 class _IntervalOptions(_BrushPeers, total=False):
@@ -139,21 +139,6 @@ class _PanZoom1DOptions(_1DOptions, closed=True): ...
 
 
 class _PanZoom2DOptions(_2DOptions, closed=True): ...
-
-
-def highlight(by: Selection, /, **kwds: Unpack[_HighlightOptions]) -> None:
-    """Highlight selected marks by deemphasizing the others."""
-
-
-# NOTE: `Toggle.{bind,channels}` shares these docs
-def region(
-    bind: Selection, *channels: Unpack[OneOrMore[ChannelName]], **kwds: Unpack[_RegionOptions]
-) -> None:
-    """Select aspects of individual marks within a 2D range.
-
-    - bind: The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values.
-    - channels: The encoding channels over which to select values. For a selected mark, selection clauses will cover the backing data fields for each channel.
-    """
 
 
 def nearest_x(bind: Selection, /, **kwds: Unpack[_NearestOptions]) -> None:
@@ -223,14 +208,8 @@ class _Interactor:
     ]
 
 
-# TODO @dangotbanned: Report `ToggleZ` as missing from `Spec` exports (less important than `Nearest`)
-# https://github.com/uwdata/mosaic/blob/80c72fc4e360f354b57f5369e6799561d86272b6/packages/vgplot/spec/src/spec/PlotInteractor.ts#L7
-# https://github.com/uwdata/mosaic/blob/80c72fc4e360f354b57f5369e6799561d86272b6/packages/vgplot/spec/src/spec/interactors/Toggle.ts#L49-L56
-@final
-class Toggle(_Interactor):
-    """Select individual data values by clicking / shift-clicking points."""
-
-    __slots__ = ("bind", "channels", "options")
+class _RegionToggle(_Interactor):
+    __slots__ = ("bind", "channels")
     bind: Selection
     """The output selection.
 
@@ -243,6 +222,34 @@ class Toggle(_Interactor):
     For a selected mark, selection clauses will cover the backing data fields for each channel.
     """
 
+
+@final
+class Region(_RegionToggle):
+    """Select aspects of individual marks within a 2D range."""
+
+    __slots__ = ("options",)
+    options: RegionOptions
+    _SELECT = "region"
+
+    def __init__(
+        self,
+        bind: Selection,
+        *channels: Unpack[OneOrMore[ChannelName]],
+        **options: Unpack[RegionOptions],
+    ) -> None:
+        self.bind = bind
+        self.channels = channels
+        self.options = options
+
+
+# TODO @dangotbanned: Report `ToggleZ` as missing from `Spec` exports (less important than `Nearest`)
+# https://github.com/uwdata/mosaic/blob/80c72fc4e360f354b57f5369e6799561d86272b6/packages/vgplot/spec/src/spec/PlotInteractor.ts#L7
+# https://github.com/uwdata/mosaic/blob/80c72fc4e360f354b57f5369e6799561d86272b6/packages/vgplot/spec/src/spec/interactors/Toggle.ts#L49-L56
+@final
+class Toggle(_RegionToggle):
+    """Select individual data values by clicking / shift-clicking points."""
+
+    __slots__ = ("options",)
     options: ToggleOptions
     _SELECT = "toggle"
 
@@ -257,7 +264,23 @@ class Toggle(_Interactor):
         self.options = options
 
 
-Interactor = TypeAliasType("Interactor", Toggle)
+@final
+class Highlight(_Interactor):
+    """Highlight selected marks by deemphasizing the others."""
+
+    __slots__ = ("by", "options")
+    by: Selection
+    """The input selection. Unselected marks are deemphasized."""
+
+    options: HighlightOptions
+    _SELECT = "highlight"
+
+    def __init__(self, by: Selection, /, **options: Unpack[HighlightOptions]) -> None:
+        self.by = by
+        self.options = options
+
+
+Interactor = TypeAliasType("Interactor", Highlight | Region | Toggle)
 """Interactors imbue plots with interactive behavior.
 
 This includes selecting or highlighting values, and panning or zooming the display.
