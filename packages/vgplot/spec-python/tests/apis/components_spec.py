@@ -15,9 +15,10 @@ from mosaic_spec._typing_compat import TypeAliasType, Unpack
 from tests.apis._marks import MarkData
 from tests.apis.attributes import PlotAttributes
 from tests.apis.inputs import InputWidget
+from tests.apis.interactors import Interactor
 
 PlotMark = TypeAliasType("PlotMark", MarkData[Any])
-IntoPlot = TypeAliasType("IntoPlot", ms.PlotInteractor | ms.PlotLegend | PlotMark)
+IntoPlot = TypeAliasType("IntoPlot", ms.PlotInteractor | Interactor | ms.PlotLegend | PlotMark)
 """All of these need a `plot` method."""
 
 

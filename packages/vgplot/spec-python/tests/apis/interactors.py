@@ -1,12 +1,3 @@
-"""Interactors imbue plots with interactive behavior.
-
-This includes selecting or highlighting values, and panning or zooming the display.
-
-To determine which fields (database columns) an interactor should select,
-an interactor defaults to looking at the corresponding encoding channels for the most recently added mark.
-Alternatively, interactors accept options that explicitly indicate which data fields should be selected.
-"""
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, Literal as L, final
@@ -264,3 +255,14 @@ class Toggle(_Interactor):
         self.bind = bind
         self.channels = channels
         self.options = options
+
+
+Interactor = TypeAliasType("Interactor", Toggle)
+"""Interactors imbue plots with interactive behavior.
+
+This includes selecting or highlighting values, and panning or zooming the display.
+
+To determine which fields (database columns) an interactor should select,
+an interactor defaults to looking at the corresponding encoding channels for the most recently added mark.
+Alternatively, interactors accept options that explicitly indicate which data fields should be selected.
+"""
