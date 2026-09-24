@@ -1,43 +1,20 @@
-"""Defining everything structurally."""
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal as L
 
-import mosaic_spec as ms
-from mosaic_spec._typing_compat import Protocol, TypeAliasType as Type, TypedDict
+from mosaic_spec._typing_compat import (
+    Protocol,
+    Self,
+    TypeAliasType as Type,
+    TypedDict,
+    TypeVar,
+    Unpack,
+)
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Mapping
-
+    import mosaic_spec as ms
     from tests.apis.attributes import PlotAttributes
 
-
-DataType = Type("DataType", L["csv", "json", "parquet", "spatial", "table"])
-Input = Type("Input", L["menu", "search", "slider", "table"])
-LegendKind = Type("LegendKind", L["color", "opacity", "symbol"])
-
-# NOTE: Both of these use `select` as a discriminator (upstream)
-SelectionStrategy = Type("SelectionStrategy", L["crossfilter", "intersect", "single", "union"])
-InteractorSelect = Type(
-    "InteractorSelect",
-    L[
-        "highlight",
-        "intervalX",
-        "intervalXY",
-        "intervalY",
-        "nearestX",
-        "nearestY",
-        "pan",
-        "panX",
-        "panY",
-        "panZoom",
-        "panZoomX",
-        "panZoomY",
-        "region",
-        "toggle",
-    ],
-)
 
 MarkName = Type(
     "MarkName",
@@ -129,38 +106,18 @@ class SpecHead(TypedDict, total=False, closed=True):
     """A default set of attributes to apply to all plot components."""
 
 
-class HasParams(Protocol):
-    __slots__ = ()
-
-    def _iter_params(self) -> Iterator[Param]: ...
+ViewT = TypeVar("ViewT", bound="View", infer_variance=True)
 
 
-class HasData(Protocol):
-    __slots__ = ()
-
-    def _iter_data(self) -> Iterator[Data]: ...
-
-
-class HasViews(Protocol):
-    __slots__ = ()
-
-    def _iter_views(self) -> Iterator[View]: ...
-
-
-class CanPlot(Protocol):
-    __slots__ = ()
-
-    def plot(self) -> Plot: ...
-
-
-class Spec(Protocol):
+class Spec(Protocol[ViewT]):
     """A declarative Mosaic specification."""
 
-    __slots__ = ()
-    view: View
+    __slots__ = ("options", "view")
+    view: ViewT
     """The top-level component."""
 
     options: SpecHead
+    """Top-level specification properties."""
 
 
 class View(Protocol):
@@ -174,96 +131,4 @@ class View(Protocol):
 
     __slots__ = ()
 
-    def to_spec(self) -> Spec: ...
-    def _iter_views(self) -> Iterator[View]: ...
-
-
-class Plot(View, Protocol):
-    __slots__ = ()
-
-    def _iter_elements(self) -> Iterator[Element]: ...
-    def _iter_views(self) -> Iterator[View]:
-        yield self
-
-
-class Concat(View, Protocol):
-    __slots__ = ()
-
-    def _iter_components(self) -> Iterator[Component]: ...
-
-
-class Widget(HasParams, Protocol):
-    __slots__ = ()
-
-    @property
-    def input(self) -> Input: ...
-
-
-class Interactor(HasParams, CanPlot, Protocol):
-    __slots__ = ()
-
-    @property
-    def select(self) -> InteractorSelect: ...
-
-
-class Legend(HasParams, CanPlot, Protocol):
-    __slots__ = ()
-
-    @property
-    def legend(self) -> LegendKind: ...
-
-
-class Mark(HasData, HasParams, CanPlot, Protocol):
-    __slots__ = ()
-
-    @property
-    def mark(self) -> Mark: ...
-
-
-Element = Type("Element", Interactor | Mark | Legend)
-"""Marks, interactors, or legends."""
-
-Component = Type("Component", View | Widget | Mark | ms.HSpace | ms.VSpace)
-"""A specification component such as a plot, input widget, or layout."""
-
-
-class Data(HasData, Protocol):
-    __slots__ = ()
-
-    # NOTE: Doesn't need `to_dict`
-    @property
-    def name(self) -> str: ...
-    @property
-    def type(self) -> DataType: ...
-    def _iter_data(self) -> Iterator[Data]:
-        yield self
-
-
-# NOTE: Can always have params, but the actual source is either data or param
-class Source(HasData, HasParams, Protocol):
-    """An input data specification for a plot mark."""
-
-    __slots__ = ()
-
-
-class Param(HasParams, Protocol):
-    __slots__ = ()
-
-    @property
-    def name(self) -> str: ...
-    def __repr__(self) -> ms.ParamRef:
-        """Interpolate the parameter in a query."""
-        return self.ref()
-
-    def ref(self) -> ms.ParamRef:
-        return ms.ParamRef(f"${self.name}")
-
-    def to_dict(self) -> Mapping[str, ms.ParamDefinition]:
-        """Convert the current and all nested params into a dictionary."""
-
-
-class Selection(Param, Protocol):
-    __slots__ = ()
-
-    @property
-    def strategy(self) -> SelectionStrategy: ...
+    def to_spec(self, **options: Unpack[SpecHead]) -> Spec[Self]: ...

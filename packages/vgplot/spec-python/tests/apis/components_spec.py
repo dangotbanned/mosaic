@@ -8,13 +8,11 @@
 from __future__ import annotations
 
 # ruff: file-ignore[useless-import-alias]
-import dataclasses
-from typing import Any, Protocol, final
+from typing import TYPE_CHECKING, Any, final
 
 import mosaic_spec as ms
-from mosaic_spec._typing_compat import TypeAliasType, Unpack
+from mosaic_spec._typing_compat import Self, TypeAliasType, Unpack
 from tests.apis._marks import MarkData
-from tests.apis.attributes import AttrsMut, PlotAttributes
 from tests.apis.inputs import InputWidget
 from tests.apis.interactors import (
     Interactor as Interactor,
@@ -33,58 +31,25 @@ from tests.apis.interactors import (
     region as region,
     toggle as toggle,
 )
+from tests.apis.protocols import Spec, SpecHead, View, ViewT
+
+if TYPE_CHECKING:
+    from tests.apis.attributes import AttrsMut, PlotAttributes
 
 PlotMark = TypeAliasType("PlotMark", MarkData[Any])
 IntoPlot = TypeAliasType("IntoPlot", Interactor | ms.PlotLegend | PlotMark)
 """All of these need a `plot` method."""
 
 
-class View(Protocol):
-    """A top-level component.
-
-    - Covers 53/55 examples
-        - Skips 2 which use `Table`
-    - Everything else can be nested within these to fit
-    - Reduces the `Spec` intersection from **80** alternatives
-    """
-
-    __slots__ = ()
-
-    def to_spec(self) -> Spec: ...
-
-
 Component = TypeAliasType("Component", View | InputWidget | PlotMark | ms.VSpace | ms.HSpace)
 """A specification component such as a plot, input widget, or layout."""
-
-
-class Spec(Protocol):
-    """A declarative Mosaic specification."""
-
-    __slots__ = ()
-    view: View
-    """The top-level component."""
-
-    config: ms.Config
-    """Configuration options."""
-
-    data: dict[str, ms.DataDefinition]
-    """Dataset definitions."""
-
-    meta: ms.Meta
-    """Specification metadata."""
-
-    params: dict[str, ms.ParamDefinition]
-    """Param and Selection definitions."""
-
-    plot_defaults: PlotAttributes
-    """A default set of attributes to apply to all plot components."""
 
 
 class _ViewImpl(View):
     __slots__ = ()
 
-    def to_spec(self) -> SpecImpl:
-        return SpecImpl(self)
+    def to_spec(self, **options: Unpack[SpecHead]) -> SpecImpl[Self]:
+        return SpecImpl(self, options)
 
     # NOTE: Every example that uses either `*space` is covered by these two methods
     def hspace(self, space: float | str, *then: Component) -> HConcat:
@@ -160,24 +125,11 @@ class VConcat(_ViewImpl):
 
 # TODO @dangotbanned: Use `test_apis.data`
 # TODO @dangotbanned: Use `test_apis.params`
-@dataclasses.dataclass
-class SpecImpl:
+class SpecImpl(Spec[ViewT]):
     """A declarative Mosaic specification."""
 
-    view: View
-    """The top-level component."""
+    __slots__ = ()
 
-    config: ms.Config = dataclasses.field(default_factory=ms.Config)
-    """Configuration options."""
-
-    data: dict[str, ms.DataDefinition] = dataclasses.field(default_factory=dict)
-    """Dataset definitions."""
-
-    meta: ms.Meta = dataclasses.field(default_factory=ms.Meta)
-    """Specification metadata."""
-
-    params: dict[str, ms.ParamDefinition] = dataclasses.field(default_factory=dict)
-    """Param and Selection definitions."""
-
-    plot_defaults: PlotAttributes = dataclasses.field(default_factory=PlotAttributes)
-    """A default set of attributes to apply to all plot components."""
+    def __init__(self, view: ViewT, options: SpecHead | None = None) -> None:
+        self.view: ViewT = view
+        self.options: SpecHead = options or {}
