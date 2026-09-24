@@ -8,7 +8,7 @@
 from __future__ import annotations
 
 # ruff: file-ignore[useless-import-alias]
-from typing import TYPE_CHECKING, Any, final
+from typing import TYPE_CHECKING, final
 
 from mosaic_spec._typing_compat import Self, TypeVar, Unpack
 from tests.apis.interactors import (
@@ -28,7 +28,16 @@ from tests.apis.interactors import (
     region as region,
     toggle as toggle,
 )
-from tests.apis.protocols import IntoComponent, IntoPlot, Spec, SpecHead, View
+from tests.apis.protocols import (
+    IntoComponent,
+    IntoPlot,
+    Spec,
+    SpecHConcat,
+    SpecHead,
+    SpecPlot,
+    SpecVConcat,
+    View,
+)
 
 if TYPE_CHECKING:
     import mosaic_spec as ms
@@ -149,7 +158,16 @@ class SpecImpl(Spec[ViewT]):
         self.view: ViewT = view
         self.options: SpecHead = options or {}
 
-    def to_dict(self) -> dict[str, Any]:
-        _data = self.options.get("data", {})
-        _params = self.options.get("params", {})
-        raise NotImplementedError
+    def to_dict(self) -> SpecPlot | SpecVConcat | SpecHConcat:
+        data = self.options.get("data", {})
+        params = self.options.get("params", {})
+
+        converted_view = self.view.to_dict(data, params)
+        head = self.options | {"data": data, "params": params}
+        # NOTE: branching is for type checking, but it might be a better idea to do this on the other side
+        # (where the union doesn't exist)
+        if "plot" in converted_view:
+            return {**converted_view, **head}
+        if "vconcat" in converted_view:
+            return {**converted_view, **head}
+        return {**converted_view, **head}

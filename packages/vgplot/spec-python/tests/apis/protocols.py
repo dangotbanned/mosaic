@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Literal as L
 
 import mosaic_spec as ms
+from mosaic_spec._gen.layout import _HConcatOpen, _VConcatOpen
+from mosaic_spec._gen.plot import _PlotOpen
 from mosaic_spec._typing_compat import (
     Protocol,
     Self,
@@ -89,7 +91,7 @@ MarkName = Type(
 """The type of `ms.PlotMark["mark"]`."""
 
 
-class SpecHead(TypedDict, total=False, closed=True):
+class _SpecHead(TypedDict, total=False):
     config: ms.Config
     """Configuration options."""
 
@@ -104,6 +106,18 @@ class SpecHead(TypedDict, total=False, closed=True):
 
     plot_defaults: PlotAttributes
     """A default set of attributes to apply to all plot components."""
+
+
+class SpecHead(_SpecHead, closed=True): ...
+
+# NOTE: Required for the `PlotAttributes` override vs `ms.spec.*` version
+class SpecPlot(_SpecHead, _PlotOpen, closed=True): ...
+
+
+class SpecHConcat(_SpecHead, _HConcatOpen, closed=True): ...
+
+
+class SpecVConcat(_SpecHead, _VConcatOpen, closed=True): ...
 
 
 ViewT = TypeVar("ViewT", bound="View", infer_variance=True)
