@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, final
 
 import mosaic_spec as ms
-from mosaic_spec._typing_compat import Self, TypeAliasType, Unpack
+from mosaic_spec._typing_compat import Self, TypeAliasType, TypeVar, Unpack
 from tests.apis._marks import MarkData
 from tests.apis.inputs import InputWidget
 from tests.apis.interactors import (
@@ -31,7 +31,7 @@ from tests.apis.interactors import (
     region as region,
     toggle as toggle,
 )
-from tests.apis.protocols import Spec, SpecHead, View, ViewT
+from tests.apis.protocols import Spec, SpecHead, View
 
 if TYPE_CHECKING:
     from tests.apis.attributes import AttrsMut, PlotAttributes
@@ -67,6 +67,15 @@ class _ViewImpl(View):
         String values may use CSS units (em, pt, px, etc).
         """
         return vconcat(self, {"vspace": space}, *then)
+
+    def to_dict(
+        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
+    ) -> ms.Plot | ms.VConcat | ms.HConcat:
+        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
+        raise NotImplementedError(msg)
+
+
+ViewT = TypeVar("ViewT", bound=_ViewImpl, infer_variance=True)
 
 
 @final
@@ -133,3 +142,8 @@ class SpecImpl(Spec[ViewT]):
     def __init__(self, view: ViewT, options: SpecHead | None = None) -> None:
         self.view: ViewT = view
         self.options: SpecHead = options or {}
+
+    def to_dict(self) -> dict[str, Any]:
+        _data = self.options.get("data", {})
+        _params = self.options.get("params", {})
+        raise NotImplementedError
