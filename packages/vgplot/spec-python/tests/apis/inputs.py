@@ -7,6 +7,7 @@ from mosaic_spec._typing_compat import TypeAliasType, TypedDict, TypeVar, Unpack
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
 
+    import mosaic_spec as ms
     from mosaic_spec._gen.inputs import Options as Option
     from tests.apis.params import Param, Selection
 
@@ -182,6 +183,12 @@ class _Input(Generic[_O]):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.options!r}"
+
+    def to_dict(
+        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
+    ) -> ms.Menu | ms.Search | ms.Slider | ms.Table:
+        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
+        raise NotImplementedError(msg)
 
 
 _SO = TypeVar("_SO", bound=_NonTableOptions)

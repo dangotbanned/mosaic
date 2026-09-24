@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal as L
 
+import mosaic_spec as ms
 from mosaic_spec._typing_compat import (
     Protocol,
     Self,
@@ -12,7 +13,6 @@ from mosaic_spec._typing_compat import (
 )
 
 if TYPE_CHECKING:
-    import mosaic_spec as ms
     from tests.apis.attributes import PlotAttributes
 
 
@@ -132,3 +132,22 @@ class View(Protocol):
     __slots__ = ()
 
     def to_spec(self, **options: Unpack[SpecHead]) -> Spec[Self]: ...
+
+
+R = TypeVar("R", infer_variance=True)
+
+
+class ToDict(Protocol[R]):
+    __slots__ = ()
+
+    def to_dict(
+        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
+    ) -> R: ...
+
+
+_IntoDict = Type("_IntoDict", R | ToDict[R], type_params=(R,))
+"""A converted `R`, or an object that can be converted into `R`."""
+
+IntoPlot = Type("IntoPlot", _IntoDict[ms.PlotInteractor | ms.PlotLegend | ms.PlotMark])
+IntoComponent = Type("IntoComponent", _IntoDict[ms.Component])
+"""A specification component such as a plot, input widget, or layout."""

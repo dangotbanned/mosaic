@@ -170,6 +170,12 @@ class _Interactor:
         msg = f"{self.__class__.__name__}.select is not yet implemented"
         raise NotImplementedError(msg)
 
+    def to_dict(
+        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
+    ) -> ms.PlotInteractor:
+        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
+        raise NotImplementedError(msg)
+
 
 class _SelectStatic(_Interactor):
     __slots__ = ()

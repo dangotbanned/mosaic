@@ -10,10 +10,7 @@ from __future__ import annotations
 # ruff: file-ignore[useless-import-alias]
 from typing import TYPE_CHECKING, Any, final
 
-import mosaic_spec as ms
-from mosaic_spec._typing_compat import Self, TypeAliasType, TypeVar, Unpack
-from tests.apis._marks import MarkData
-from tests.apis.inputs import InputWidget
+from mosaic_spec._typing_compat import Self, TypeVar, Unpack
 from tests.apis.interactors import (
     Interactor as Interactor,
     highlight as highlight,
@@ -31,18 +28,11 @@ from tests.apis.interactors import (
     region as region,
     toggle as toggle,
 )
-from tests.apis.protocols import Spec, SpecHead, View
+from tests.apis.protocols import IntoComponent, IntoPlot, Spec, SpecHead, View
 
 if TYPE_CHECKING:
+    import mosaic_spec as ms
     from tests.apis.attributes import AttrsMut, PlotAttributes
-
-PlotMark = TypeAliasType("PlotMark", MarkData[Any])
-IntoPlot = TypeAliasType("IntoPlot", Interactor | ms.PlotLegend | PlotMark)
-"""All of these need a `plot` method."""
-
-
-Component = TypeAliasType("Component", View | InputWidget | PlotMark | ms.VSpace | ms.HSpace)
-"""A specification component such as a plot, input widget, or layout."""
 
 
 class _ViewImpl(View):
@@ -52,7 +42,7 @@ class _ViewImpl(View):
         return SpecImpl(self, options)
 
     # NOTE: Every example that uses either `*space` is covered by these two methods
-    def hspace(self, space: float | str, *then: Component) -> HConcat:
+    def hspace(self, space: float | str, *then: IntoComponent) -> HConcat:
         """Add horizontal space between components.
 
         Numeric values indicate screen pixels.
@@ -60,7 +50,7 @@ class _ViewImpl(View):
         """
         return hconcat(self, {"hspace": space}, *then)
 
-    def vspace(self, space: float | str, *then: Component) -> VConcat:
+    def vspace(self, space: float | str, *then: IntoComponent) -> VConcat:
         """Add vertical space between components.
 
         Numeric values indicate screen pixels.
@@ -96,16 +86,22 @@ class Plot(_ViewImpl):
     def with_attrs(self, attributes: AttrsMut, /) -> Plot:
         return Plot(self.elements, attributes.to_dict())
 
+    def to_dict(
+        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
+    ) -> ms.Plot:
+        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
+        raise NotImplementedError(msg)
+
 
 def plot(*elements: IntoPlot, **options: Unpack[PlotAttributes]) -> Plot:
     return Plot(elements, options)
 
 
-def vconcat(*columns: Component) -> VConcat:
+def vconcat(*columns: IntoComponent) -> VConcat:
     return VConcat(columns)
 
 
-def hconcat(*rows: Component) -> HConcat:
+def hconcat(*rows: IntoComponent) -> HConcat:
     return HConcat(rows)
 
 
@@ -115,10 +111,16 @@ class HConcat(_ViewImpl):
 
     __slots__ = ("rows",)
 
-    rows: tuple[Component, ...]
+    rows: tuple[IntoComponent, ...]
 
-    def __init__(self, rows: tuple[Component, ...]) -> None:
+    def __init__(self, rows: tuple[IntoComponent, ...]) -> None:
         self.rows = rows
+
+    def to_dict(
+        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
+    ) -> ms.HConcat:
+        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
+        raise NotImplementedError(msg)
 
 
 @final
@@ -126,14 +128,18 @@ class VConcat(_ViewImpl):
     """A vconcat component."""
 
     __slots__ = ("columns",)
-    columns: tuple[Component, ...]
+    columns: tuple[IntoComponent, ...]
 
-    def __init__(self, columns: tuple[Component, ...]) -> None:
+    def __init__(self, columns: tuple[IntoComponent, ...]) -> None:
         self.columns = columns
 
+    def to_dict(
+        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
+    ) -> ms.VConcat:
+        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
+        raise NotImplementedError(msg)
 
-# TODO @dangotbanned: Use `test_apis.data`
-# TODO @dangotbanned: Use `test_apis.params`
+
 class SpecImpl(Spec[ViewT]):
     """A declarative Mosaic specification."""
 
