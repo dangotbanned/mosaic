@@ -147,6 +147,9 @@ class View(Protocol):
     __slots__ = ()
 
     def to_spec(self, **options: Unpack[SpecHead]) -> Spec[Self]: ...
+    def to_dict(
+        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
+    ) -> ms.Plot | ms.VConcat | ms.HConcat: ...
 
 
 R = TypeVar("R", infer_variance=True)

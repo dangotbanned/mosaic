@@ -69,12 +69,6 @@ class _ViewImpl(View):
         """
         return vconcat(self, {"vspace": space}, *then)
 
-    def to_dict(
-        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
-    ) -> ms.Plot | ms.VConcat | ms.HConcat:
-        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
-        raise NotImplementedError(msg)
-
 
 ViewT = TypeVar("ViewT", bound=_ViewImpl, infer_variance=True)
 
