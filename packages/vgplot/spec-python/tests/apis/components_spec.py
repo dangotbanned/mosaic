@@ -7,9 +7,12 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 # ruff: file-ignore[useless-import-alias]
 from typing import TYPE_CHECKING, final
 
+import mosaic_spec as ms
 from mosaic_spec._typing_compat import Self, TypeVar, Unpack
 from tests.apis.interactors import (
     Interactor as Interactor,
@@ -40,7 +43,6 @@ from tests.apis.protocols import (
 )
 
 if TYPE_CHECKING:
-    import mosaic_spec as ms
     from tests.apis.attributes import AttrsMut, PlotAttributes
 
 
@@ -128,8 +130,9 @@ class HConcat(_ViewImpl):
     def to_dict(
         self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
     ) -> ms.HConcat:
-        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
-        raise NotImplementedError(msg)
+        hconcat = [c.to_dict(data, params) if not isinstance(c, Mapping) else c for c in self.rows]
+        # NOTE: only ty complains, and doesn't report a useful error
+        return ms.HConcat(hconcat=hconcat)  # ty: ignore[invalid-argument-type]
 
 
 @final
@@ -145,8 +148,10 @@ class VConcat(_ViewImpl):
     def to_dict(
         self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
     ) -> ms.VConcat:
-        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
-        raise NotImplementedError(msg)
+        vconcat = [
+            c.to_dict(data, params) if not isinstance(c, Mapping) else c for c in self.columns
+        ]
+        return ms.VConcat(vconcat=vconcat)  # ty: ignore[invalid-argument-type]
 
 
 class SpecImpl(Spec[ViewT]):
