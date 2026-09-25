@@ -67,6 +67,7 @@ ignore = [
 
 [tool.pytest]
 strict_xfail = true
+addopts = ["--import-mode=importlib"]
 
 [tool.pytest_env]
 MODIN_ENGINE = "python"
