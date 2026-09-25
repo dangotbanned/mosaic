@@ -110,6 +110,7 @@ class _SpecHead(TypedDict, total=False):
 
 class SpecHead(_SpecHead, closed=True): ...
 
+
 # NOTE: Required for the `PlotAttributes` override vs `ms.spec.*` version
 class SpecPlot(_SpecHead, _PlotOpen, closed=True): ...
 

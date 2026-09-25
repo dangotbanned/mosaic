@@ -21,10 +21,10 @@ from collections.abc import Iterator, Sequence
 from itertools import chain
 from typing import TYPE_CHECKING, Any, Final, Literal as L, LiteralString as LS
 
-import fs
 import msgspec
 from typing_extensions import TypedDict
 
+from tools import fs
 from tools.codegen import markdown
 from tools.common import (
     PyIdentifierSnake,

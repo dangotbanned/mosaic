@@ -41,9 +41,10 @@ def get_console() -> Console:
 
 def print_path(message: str, path: Path) -> None:
     """Display a clickable link to a filepath."""
-    from fs import SPEC_PYTHON
     from rich.style import Style
     from rich.text import Text
+
+    from tools.fs import SPEC_PYTHON
 
     text = Text(path.relative_to(SPEC_PYTHON).as_posix(), Style(link=path.as_uri()))
     get_console().print(f"{message} at:", text)
