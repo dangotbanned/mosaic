@@ -9,10 +9,11 @@ from mosaic_spec._gen.data import _DataOptions
 from mosaic_spec._typing_compat import TypeAliasType, TypeVar
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Mapping
+    from collections.abc import Mapping
 
     from mosaic_spec._typing_compat import Self, Unpack
     from tests.apis.params import Param, ParamDef
+    from tests.apis.protocols import DataDefs, ParamDefs
 
 __all__ = ("query",)
 
@@ -160,9 +161,6 @@ class Data:
     def no_optimizations(self) -> Source:
         return DataSource(self, optimize=False)
 
-    def to_dict(self) -> ms.Data:
-        return {self.name: self.options}
-
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(name={self.name!r}, options={self.options!r})"
 
@@ -177,9 +175,7 @@ class _Source(Generic[S]):
         self, source: S, filter_by: ParamDef | None = None, *, optimize: L[False] | None = None
     ) -> None:
         self._source: S = source
-        """The name of the backing data table."""
         self._filter_by: ParamDef | None = filter_by
-        """Ideally want to pull param defs from here in the spec."""
         self._optimize: L[False] | None = optimize
 
     def _plot_source(self) -> ms.PlotFrom:
@@ -190,32 +186,43 @@ class _Source(Generic[S]):
             result["optimize"] = False
         return result
 
-    def _iter_params(self) -> Iterator[ParamDef]:
-        if self._filter_by:
-            yield self._filter_by
-
-    def _iter_data(self) -> Iterator[Data]:
-        yield from ()
-
     def __repr__(self) -> str:
         return f"Source({self._plot_source()})"
+
+    def _collect_source_data_params(self, data: DataDefs, params: ParamDefs) -> None:
+        raise NotImplementedError
+
+    def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.PlotFrom:
+        self._collect_source_data_params(data, params)
+        result: ms.PlotFrom = {"source": self._source._source}
+        if filter_by := self._filter_by:
+            filter_by_ref = filter_by.ref()
+            if filter_by.name not in params:
+                params |= filter_by.to_dict()
+            result["filter_by"] = filter_by_ref
+        if self._optimize is False:
+            result["optimize"] = False
+        return result
 
 
 @final
 class DataSource(_Source[Data]):
     __slots__ = ()
 
-    def _iter_data(self) -> Iterator[Data]:
-        yield self._source
+    def _collect_source_data_params(self, data: DataDefs, params: ParamDefs) -> None:
+        source_name = self._source.name
+        if source_name not in data:
+            data[source_name] = self._source.options
 
 
 @final
 class ParamSource(_Source["Param"]):
     __slots__ = ()
 
-    def _iter_params(self) -> Iterator[ParamDef]:
-        yield self._source
-        yield from super()._iter_params()
+    def _collect_source_data_params(self, data: DataDefs, params: ParamDefs) -> None:
+        source_name = self._source.name
+        if source_name not in params:
+            params |= self._source.to_dict()
 
 
 Source = TypeAliasType("Source", DataSource | ParamSource)

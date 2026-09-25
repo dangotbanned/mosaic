@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from inspect import getattr_static as _getattr_static
 from typing import TYPE_CHECKING, Literal as L
 
 import mosaic_spec as ms
@@ -10,8 +11,10 @@ from mosaic_spec._typing_compat import (
     Self,
     TypeAliasType as Type,
     TypedDict,
+    TypeIs,
     TypeVar,
     Unpack,
+    sentinel,
 )
 
 if TYPE_CHECKING:
@@ -161,6 +164,19 @@ class ToDict(Protocol[R]):
     __slots__ = ()
 
     def to_dict(self, data: DataDefs, params: ParamDefs) -> R: ...
+
+
+_SENTINEL = sentinel("_SENTINEL")
+
+
+def _is_to_dict(obj: _IntoDict[R]) -> TypeIs[ToDict[R]]:
+    return _getattr_static(obj, "to_dict", _SENTINEL) is not _SENTINEL
+
+
+def into_dict(obj: _IntoDict[R], data: DataDefs, params: ParamDefs) -> R:
+    if not _is_to_dict(obj):
+        return obj
+    return obj.to_dict(data, params)
 
 
 _IntoDict = Type("_IntoDict", R | ToDict[R], type_params=(R,))

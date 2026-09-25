@@ -7,14 +7,11 @@ from typing import TYPE_CHECKING, Final, Generic, Literal as L, final
 import mosaic_spec as ms
 from mosaic_spec._gen.marks import _MarkOptions
 from mosaic_spec._typing_compat import ReadOnly, TypeAliasType, TypedDict, TypeVar
-from tests.apis.protocols import MarkName
+from tests.apis.protocols import MarkName, into_dict
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
-
     from mosaic_spec import ParamRef
-    from tests.apis.data import Data, Source
-    from tests.apis.params import ParamDef
+    from tests.apis.data import Source
     from tests.apis.protocols import DataDefs, ParamDefs
 
 _CurveT = TypeVar("_CurveT")
@@ -395,16 +392,8 @@ class MarkData(Generic[MBound, OptionsT]):
         self.source: Source = source
         self.kwds: OptionsT = kwds
 
-    def _iter_params(self) -> Iterator[ParamDef]:
-        # `kwds` doesn't accept ParamDef yet (doing that is out of scope for now)
-        yield from self.source._iter_params()
-
-    def _iter_data(self) -> Iterator[Data]:
-        yield from self.source._iter_data()
-
-    def _plot_source(self) -> ms.PlotFrom:
-        return self.source._plot_source()
-
+    # TODO @dangotbanned: Revisit type ignore when `OptionsT` accepts `Param`
     def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.PlotMark:
-        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
-        raise NotImplementedError(msg)
+        source = self.source.to_dict(data, params)
+        options = {k: into_dict(v, data, params) for k, v in self.kwds.items()}
+        return {"mark": self.mark, "data": source, **options}  # ty: ignore[invalid-return-type]  # pyrefly: ignore[bad-return] # pyright: ignore[reportReturnType]
