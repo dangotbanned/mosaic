@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     import mosaic_spec as ms
     from mosaic_spec._gen.inputs import Options as Option
     from tests.apis.params import Param, Selection
+    from tests.apis.protocols import DataDefs, ParamDefs
 
 
 # NOTE: Will reuse the options on the Param-side (e.g. `menu(bind=param, ...)` -> `param.menu(...)`)
@@ -185,7 +186,7 @@ class _Input(Generic[_O]):
         return f"{self.__class__.__name__}({self.options!r}"
 
     def to_dict(
-        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
+        self, data: DataDefs, params: ParamDefs
     ) -> ms.Menu | ms.Search | ms.Slider | ms.Table:
         msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
         raise NotImplementedError(msg)

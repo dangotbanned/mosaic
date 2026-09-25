@@ -32,8 +32,10 @@ from tests.apis.interactors import (
     toggle as toggle,
 )
 from tests.apis.protocols import (
+    DataDefs,
     IntoComponent,
     IntoPlot,
+    ParamDefs,
     Spec,
     SpecHConcat,
     SpecHead,
@@ -91,9 +93,7 @@ class Plot(_ViewImpl):
     def with_attrs(self, attributes: AttrsMut, /) -> Plot:
         return Plot(self.elements, attributes.to_dict())
 
-    def to_dict(
-        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
-    ) -> ms.Plot:
+    def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.Plot:
         msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
         raise NotImplementedError(msg)
 
@@ -121,9 +121,7 @@ class HConcat(_ViewImpl):
     def __init__(self, rows: tuple[IntoComponent, ...]) -> None:
         self.rows = rows
 
-    def to_dict(
-        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
-    ) -> ms.HConcat:
+    def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.HConcat:
         hconcat = [c.to_dict(data, params) if not isinstance(c, Mapping) else c for c in self.rows]
         # NOTE: only ty complains, and doesn't report a useful error
         return ms.HConcat(hconcat=hconcat)  # ty: ignore[invalid-argument-type]
@@ -139,9 +137,7 @@ class VConcat(_ViewImpl):
     def __init__(self, columns: tuple[IntoComponent, ...]) -> None:
         self.columns = columns
 
-    def to_dict(
-        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
-    ) -> ms.VConcat:
+    def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.VConcat:
         vconcat = [
             c.to_dict(data, params) if not isinstance(c, Mapping) else c for c in self.columns
         ]

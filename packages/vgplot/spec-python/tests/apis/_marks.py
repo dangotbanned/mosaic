@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from mosaic_spec import ParamRef
     from tests.apis.data import Data, Source
     from tests.apis.params import ParamDef
+    from tests.apis.protocols import DataDefs, ParamDefs
 
 _CurveT = TypeVar("_CurveT")
 
@@ -404,8 +405,6 @@ class MarkData(Generic[MBound, OptionsT]):
     def _plot_source(self) -> ms.PlotFrom:
         return self.source._plot_source()
 
-    def to_dict(
-        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
-    ) -> ms.PlotMark:
+    def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.PlotMark:
         msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
         raise NotImplementedError(msg)

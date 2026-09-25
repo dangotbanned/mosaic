@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from tests.apis.params import Selection
+    from tests.apis.protocols import DataDefs, ParamDefs
 
 T = TypeVar("T", infer_variance=True)
 
@@ -170,9 +171,7 @@ class _Interactor:
         msg = f"{self.__class__.__name__}.select is not yet implemented"
         raise NotImplementedError(msg)
 
-    def to_dict(
-        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
-    ) -> ms.PlotInteractor:
+    def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.PlotInteractor:
         msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
         raise NotImplementedError(msg)
 

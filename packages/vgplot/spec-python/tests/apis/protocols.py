@@ -91,17 +91,21 @@ MarkName = Type(
 """The type of `ms.PlotMark["mark"]`."""
 
 
+DataDefs = Type("DataDefs", dict[str, ms.DataDefinition])
+ParamDefs = Type("ParamDefs", dict[str, ms.ParamDefinition])
+
+
 class _SpecHead(TypedDict, total=False):
     config: ms.Config
     """Configuration options."""
 
-    data: dict[str, ms.DataDefinition]
+    data: DataDefs
     """Dataset definitions."""
 
     meta: ms.Meta
     """Specification metadata."""
 
-    params: dict[str, ms.ParamDefinition]
+    params: ParamDefs
     """Param and Selection definitions."""
 
     plot_defaults: PlotAttributes
@@ -147,9 +151,7 @@ class View(Protocol):
     __slots__ = ()
 
     def to_spec(self, **options: Unpack[SpecHead]) -> Spec[Self]: ...
-    def to_dict(
-        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
-    ) -> ms.Plot | ms.VConcat | ms.HConcat: ...
+    def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.Plot | ms.VConcat | ms.HConcat: ...
 
 
 R = TypeVar("R", infer_variance=True)
@@ -158,9 +160,7 @@ R = TypeVar("R", infer_variance=True)
 class ToDict(Protocol[R]):
     __slots__ = ()
 
-    def to_dict(
-        self, data: dict[str, ms.DataDefinition], params: dict[str, ms.ParamDefinition]
-    ) -> R: ...
+    def to_dict(self, data: DataDefs, params: ParamDefs) -> R: ...
 
 
 _IntoDict = Type("_IntoDict", R | ToDict[R], type_params=(R,))
