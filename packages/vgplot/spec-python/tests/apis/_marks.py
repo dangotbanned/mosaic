@@ -6,13 +6,15 @@ from typing import TYPE_CHECKING, Final, Generic, Literal as L, final
 
 import mosaic_spec as ms
 from mosaic_spec._gen.marks import _MarkOptions
-from mosaic_spec._typing_compat import ReadOnly, TypeAliasType, TypedDict, TypeVar
+from mosaic_spec._typing_compat import ReadOnly, TypeAliasType, TypedDict, TypeVar, Unpack
 from tests.apis.protocols import MarkName, into_dict
 
 if TYPE_CHECKING:
     from mosaic_spec import ParamRef
+    from tests.apis.attributes import PlotAttributes
+    from tests.apis.components_spec import Plot
     from tests.apis.data import Source
-    from tests.apis.protocols import DataDefs, ParamDefs
+    from tests.apis.protocols import DataDefs, IntoPlot, ParamDefs
 
 _CurveT = TypeVar("_CurveT")
 
@@ -397,3 +399,23 @@ class MarkData(Generic[MBound, OptionsT]):
         source = self.source.to_dict(data, params)
         options = {k: into_dict(v, data, params) for k, v in self.kwds.items()}
         return {"mark": self.mark, "data": source, **options}  # ty: ignore[invalid-return-type]  # pyrefly: ignore[bad-return] # pyright: ignore[reportReturnType]
+
+    def plot(self, *elements: IntoPlot, **options: Unpack[PlotAttributes]) -> Plot:
+        """Create a new Plot, layering any additional `elements` on top of this mark.
+
+        Shorthand for:
+        ```py
+        plot(self, *elements, **options)
+        ```
+
+        ## Notes
+        Observable's [`Mark.plot`][1]  *looks like* it does this in a different order,
+        but [2] and [3] state `self` is the bottom layer.
+
+        [1]: https://github.com/observablehq/plot/blob/535723d5e433727720d9b673c31622821bb03210/src/index.js#L5-L7
+        [2]: https://observablehq.github.io/plot/features/plots#mark_plot
+        [3]: https://github.com/observablehq/plot/blob/535723d5e433727720d9b673c31622821bb03210/src/mark.d.ts#L486-L492
+        """
+        from tests.apis.components_spec import Plot
+
+        return Plot((self, *elements), options)

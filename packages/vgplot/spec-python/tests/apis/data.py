@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from collections.abc import Mapping
 
     from mosaic_spec._typing_compat import Self, Unpack
+    from tests.apis.marks import MarksNs
     from tests.apis.params import Param, ParamDef
     from tests.apis.protocols import DataDefs, ParamDefs
 
@@ -209,6 +210,12 @@ class DataSource(_Source[Data, str]):
             result["optimize"] = False
         return f"Source({result})"
 
+    @property
+    def mark(self) -> MarksNs:
+        from tests.apis.marks import MarksNs
+
+        return MarksNs(self)
+
 
 @final
 class ParamSource(_Source["Param", ms.ParamRef]):
@@ -225,6 +232,12 @@ class ParamSource(_Source["Param", ms.ParamRef]):
         if self._optimize is False:
             result["optimize"] = False
         return f"Source({result})"
+
+    @property
+    def mark(self) -> MarksNs:
+        from tests.apis.marks import MarksNs
+
+        return MarksNs(self)
 
 
 Source = TypeAliasType("Source", DataSource | ParamSource)
