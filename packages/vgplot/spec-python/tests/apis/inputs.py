@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ClassVar, Generic, Literal as L, final
+from typing import TYPE_CHECKING, Any, Generic, Literal as L, final
 
+import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, TypedDict, TypeVar, Unpack
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
 
-    import mosaic_spec as ms
     from mosaic_spec._gen.inputs import Options as Option
     from tests.apis.params import Param, Selection
     from tests.apis.protocols import DataDefs, ParamDefs
@@ -159,7 +159,7 @@ class MenuOptions(_NonTableOptions, total=False, closed=True):
     """
 
     list_match: L["all", "any"]
-    """Required if the database column is an list, this property determines how to match the selected menu option against the list values."""
+    """Required if the database column is a list, this property determines how to match the selected menu option against the list values."""
 
     options: Sequence[Any | Option]
     """An array of menu options, as literal values or option objects.
@@ -172,64 +172,75 @@ class MenuOptions(_NonTableOptions, total=False, closed=True):
     """The initial selected menu value."""
 
 
-_O = TypeVar("_O", bound=_BaseOptions)
+OptionsT = TypeVar(
+    "OptionsT", MenuOptions, SearchOptions, SliderOptions, TableOptions, infer_variance=True
+)
+_OutputT = TypeVar("_OutputT", ms.Menu, ms.Search, ms.Slider, ms.Table, infer_variance=True)
 
 
-class _Input(Generic[_O]):
+class _Input(Generic[OptionsT, _OutputT]):
     """Base input widget."""
 
     __slots__ = ("options",)
-    options: _O
-    _INPUT: ClassVar[L["menu", "search", "slider", "table"]]
+    options: OptionsT
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.options!r}"
-
-    def to_dict(
-        self, data: DataDefs, params: ParamDefs
-    ) -> ms.Menu | ms.Search | ms.Slider | ms.Table:
-        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
+    def _partial(self, params: ParamDefs) -> _OutputT:
+        """Fill-in all required argumnts for `_OutputT`."""
+        msg = f"{self.__class__.__name__}.__partial() is not yet implemented"
         raise NotImplementedError(msg)
 
+    # TODO @dangotbanned: Try to find a "type-checker-pleasing" version
+    def to_dict(self, data: DataDefs, params: ParamDefs) -> _OutputT:
+        options = self.options
+        result = self._partial(params)
+        if "bind" in options:
+            result["bind"] = options.pop("bind").ref(params)  # pyrefly: ignore[missing-attribute]
+        if "filter_by" in options:
+            result["filter_by"] = options.pop("filter_by").ref(params)  # pyrefly: ignore[missing-attribute]
+        result.update(options)  # ty: ignore[invalid-argument-type] # pyright: ignore[reportCallIssue, reportArgumentType]
+        return result
 
-_SO = TypeVar("_SO", bound=_NonTableOptions)
-
-
-class _NonTable(_Input[_SO], Generic[_SO]):
-    __slots__ = ()
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.options!r})"
 
 
 @final
-class Menu(_NonTable[MenuOptions]):
+class Menu(_Input[MenuOptions, ms.Menu]):
     __slots__ = ()
-    _INPUT = "menu"
 
+    # NOTE: `Unpack[<typed-dict>]` cannot be generic
     def __init__(self, **options: Unpack[MenuOptions]) -> None:
         self.options = options
 
+    def _partial(self, params: ParamDefs) -> ms.Menu:
+        return {"input": "menu"}
+
 
 @final
-class Search(_NonTable[SearchOptions]):
+class Search(_Input[SearchOptions, ms.Search]):
     __slots__ = ()
-    _INPUT = "search"
 
     def __init__(self, **options: Unpack[SearchOptions]) -> None:
         self.options = options
 
+    def _partial(self, params: ParamDefs) -> ms.Search:
+        return {"input": "search"}
+
 
 @final
-class Slider(_NonTable[SliderOptions]):
+class Slider(_Input[SliderOptions, ms.Slider]):
     __slots__ = ()
-    _INPUT = "slider"
 
     def __init__(self, **options: Unpack[SliderOptions]) -> None:
         self.options = options
 
+    def _partial(self, params: ParamDefs) -> ms.Slider:
+        return {"input": "slider"}
+
 
 @final
-class Table(_Input[TableOptions]):
+class Table(_Input[TableOptions, ms.Table]):
     __slots__ = ("source",)
-    _INPUT = "table"
 
     source: Param | str
     """The name of a database table to use as a data source for this widget."""
@@ -237,6 +248,13 @@ class Table(_Input[TableOptions]):
     def __init__(self, source: Param | str, **options: Unpack[TableOptions]) -> None:
         self.source = source
         self.options = options
+
+    def _partial(self, params: ParamDefs) -> ms.Table:
+        source = self.source
+        return {
+            "input": "table",
+            "source": (source.ref(params) if not isinstance(source, str) else source),
+        }
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(source={self.source!r}, options={self.options!r}"

@@ -30,22 +30,17 @@ from typing import TYPE_CHECKING, Final, Generic, Literal as L, NewType, final, 
 import mosaic_spec as ms
 from mosaic_spec import ParamLiteral as Lit, ParamRef as Ref
 from mosaic_spec._typing_compat import Protocol, Self, TypeAliasType, TypedDict, TypeVar, Unpack
+from tests.apis.protocols import CanRef
 
 if TYPE_CHECKING:
     from tests.apis.data import ParamSource
     from tests.apis.inputs import Menu, MenuOptions
+    from tests.apis.protocols import ParamDefs
 
 Temporal = TypeAliasType("Temporal", dt.date | dt.datetime | dt.time)
 
 _TP_LIT: Final = (int, str, float, type(None))
 ISO_8601 = NewType("ISO_8601", str)
-
-
-class CanRef(Protocol):
-    __slots__ = ()
-
-    def __repr__(self) -> Ref: ...
-    def ref(self) -> Ref: ...
 
 
 class ParamBase(CanRef, Protocol):
@@ -56,16 +51,11 @@ class ParamBase(CanRef, Protocol):
     name: str
     """The name of the parameter."""
 
+    # TODO @dangotbanned: Don't allow this
+    # need a solution like t-strings, which preserves the interpolated value
     def __repr__(self) -> Ref:
         """Interpolate the parameter in a query."""
         return Ref(f"${self.name}")
-
-    def ref(self) -> Ref:
-        # NOTE: `ParamRef` should not be a user-facing concept
-        # - parameters become references when you refer to them
-        return Ref(f"${self.name}")
-
-    def to_dict(self) -> ms.Params: ...
 
 
 _ValueT = TypeVar("_ValueT", covariant=True)
@@ -83,19 +73,17 @@ class _ParamValue(ParamBase, Generic[_ValueT]):
         self.value = value
 
 
-# TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
 class Param(_ParamValue[Lit]):
     """A Param definition."""
 
     __slots__ = ()
 
-    def to_dict(self) -> ms.Params:
-        return {self.name: self.value}
-
-    @property
-    def _source(self) -> Ref:
-        return self.ref()
+    def ref(self, params: ParamDefs) -> Ref:
+        name = self.name
+        if name not in params:
+            params[name] = self.value
+        return Ref(f"${name}")
 
     def source(
         self, filter_by: ParamDef | None = None, *, optimize: L[False] | None = None
@@ -112,10 +100,10 @@ class Param(_ParamValue[Lit]):
 
         >>> unit = p.Unit(10)
         >>> unit.menu(options=[1, 2, 5, 10, 25, 50, 100])
-        Menu({'options': [1, 2, 5, 10, 25, 50, 100], 'bind': $Unit}
+        Menu({'options': [1, 2, 5, 10, 25, 50, 100], 'bind': $Unit})
 
         >>> p.predicate(False).menu("filter_by", options=[False, True])
-        Menu({'options': [False, True], 'filter_by': $predicate}
+        Menu({'options': [False, True], 'filter_by': $predicate})
         """
         from tests.apis.inputs import Menu
 
@@ -123,42 +111,37 @@ class Param(_ParamValue[Lit]):
         return Menu(**options)
 
 
-# TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
 class ParamArray(_ParamValue[tuple["Lit | ParamDef", ...]]):
     """An Array-valued Param definition."""
 
     __slots__ = ()
 
-    def to_dict(self) -> ms.Params:
-        param_defs = {}
-        values = []
-        for value in self.value:
-            if isinstance(value, _TP_PARAM_DEF):
-                param_defs.update(value.to_dict())
-                v = value.ref()
-            else:
-                v = value
-            values.append(v)
-        param_defs[self.name] = values
-        return param_defs
+    def ref(self, params: ParamDefs) -> Ref:
+        name = self.name
+        if name not in params:
+            tps = _TP_PARAM_DEF
+            params[name] = [v.ref(params) if isinstance(v, tps) else v for v in self.value]
+        return Ref(f"${name}")
 
 
 _TemporalT = TypeVar("_TemporalT", bound=Temporal, covariant=True)
 
 
-# TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
 class ParamTemporal(_ParamValue[_TemporalT]):
     """A Temporal-valued Param definition."""
 
     __slots__ = ()
 
-    def to_dict(self) -> dict[str, ms.ParamDate]:
-        # TODO @dangotbanned: Raise a ty issue?
-        # all 3 signatures allow 0-args, return type is the same
-        date = ISO_8601(self.value.isoformat())  # ty: ignore[invalid-argument-type]
-        return {self.name: {"date": date}}
+    def ref(self, params: ParamDefs) -> Ref:
+        name = self.name
+        if name not in params:
+            # TODO @dangotbanned: Raise a ty issue?
+            # all 3 signatures allow 0-args, return type is the same
+            date = ISO_8601(self.value.isoformat())  # ty: ignore[invalid-argument-type]
+            params[name] = {"date": date}
+        return Ref(f"${name}")
 
 
 class _CrossEmptyOpen(TypedDict, total=False):
@@ -192,7 +175,6 @@ Select = L["crossfilter", "intersect", "single", "union"]
 """The type of reactive parameter."""
 
 
-# TODO @dangotbanned: De-dup with `@dataclass(frozen=True, slots=True, repr=False)`
 @final
 class Selection(ParamBase):
     """A Param that can be used to interactively filter a data source."""
@@ -224,18 +206,14 @@ class Selection(ParamBase):
             return cls(name, select, opts, incl)
         return cls(name, select, opts)
 
-    def to_dict(self) -> ms.Params:
-        self_dict: ms.Selection = {"select": self._strategy, **self._kwds}
-        if include := self._include:
-            param_defs = {}
-            param_refs = []
-            for param in include:
-                param_defs.update(param.to_dict())
-                param_refs.append(param.ref())
-            self_dict["include"] = param_refs
-            param_defs[self.name] = self_dict
-            return param_defs
-        return {self.name: self_dict}
+    def ref(self, params: ParamDefs) -> Ref:
+        name = self.name
+        if name not in params:
+            self_dict: ms.Selection = {"select": self._strategy, **self._kwds}
+            if include := self._include:
+                self_dict["include"] = [p.ref(params) for p in include]
+            params[name] = self_dict
+        return Ref(f"${name}")
 
     def menu(
         self, into: L["bind", "filter_by"] = "bind", /, **options: Unpack[MenuOptions]
@@ -243,7 +221,7 @@ class Selection(ParamBase):
         """Create a menu input widget, passing this selection `into` either `bind` or `filter_by`.
 
         >>> p.query.cross().menu(column="partial_t", label="Partial t")
-        Menu({'column': 'partial_t', 'label': 'Partial t', 'bind': $query}
+        Menu({'column': 'partial_t', 'label': 'Partial t', 'bind': $query})
         """
         from tests.apis.inputs import Menu
 

@@ -157,6 +157,7 @@ class View(Protocol):
     def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.Plot | ms.VConcat | ms.HConcat: ...
 
 
+T = TypeVar("T", infer_variance=True)
 R = TypeVar("R", infer_variance=True)
 
 
@@ -185,3 +186,14 @@ _IntoDict = Type("_IntoDict", R | ToDict[R], type_params=(R,))
 IntoPlot = Type("IntoPlot", _IntoDict[ms.PlotInteractor | ms.PlotLegend | ms.PlotMark])
 IntoComponent = Type("IntoComponent", _IntoDict[ms.Component])
 """A specification component such as a plot, input widget, or layout."""
+
+
+class CanRef(Protocol):
+    __slots__ = ()
+
+    def ref(self, params: ParamDefs) -> ms.ParamRef:
+        """Return a reference to this Param, updating `params` with any unseen."""
+        ...
+
+
+MaybeParam = Type("MaybeParam", CanRef | T, type_params=(T,))

@@ -166,9 +166,10 @@ class Data:
 
 
 S = TypeVar("S", Data, "Param")
+V = TypeVar("V", str, ms.ParamRef)
 
 
-class _Source(Generic[S]):
+class _Source(Generic[S, V]):
     __slots__ = ("_filter_by", "_optimize", "_source")
 
     def __init__(
@@ -178,51 +179,52 @@ class _Source(Generic[S]):
         self._filter_by: ParamDef | None = filter_by
         self._optimize: L[False] | None = optimize
 
-    def _plot_source(self) -> ms.PlotFrom:
-        result: ms.PlotFrom = {"source": self._source._source}
-        if filter_by := self._filter_by:
-            result["filter_by"] = filter_by.ref()
-        if self._optimize is False:
-            result["optimize"] = False
-        return result
-
-    def __repr__(self) -> str:
-        return f"Source({self._plot_source()})"
-
-    def _collect_source_data_params(self, data: DataDefs, params: ParamDefs) -> None:
+    def _source_value(self, data: DataDefs, params: ParamDefs) -> V:
         raise NotImplementedError
 
     def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.PlotFrom:
-        self._collect_source_data_params(data, params)
-        result: ms.PlotFrom = {"source": self._source._source}
+        result: ms.PlotFrom = {"source": self._source_value(data, params)}
         if filter_by := self._filter_by:
-            filter_by_ref = filter_by.ref()
-            if filter_by.name not in params:
-                params |= filter_by.to_dict()
-            result["filter_by"] = filter_by_ref
+            result["filter_by"] = filter_by.ref(params)
         if self._optimize is False:
             result["optimize"] = False
         return result
 
 
 @final
-class DataSource(_Source[Data]):
+class DataSource(_Source[Data, str]):
     __slots__ = ()
 
-    def _collect_source_data_params(self, data: DataDefs, params: ParamDefs) -> None:
+    def _source_value(self, data: DataDefs, params: ParamDefs) -> str:
         source_name = self._source.name
         if source_name not in data:
             data[source_name] = self._source.options
+        return source_name
+
+    def __repr__(self) -> str:
+        result: ms.PlotFrom = {"source": self._source.name}
+        if filter_by := self._filter_by:
+            result["filter_by"] = filter_by.__repr__()
+        if self._optimize is False:
+            result["optimize"] = False
+        return f"Source({result})"
 
 
 @final
-class ParamSource(_Source["Param"]):
+class ParamSource(_Source["Param", ms.ParamRef]):
     __slots__ = ()
 
-    def _collect_source_data_params(self, data: DataDefs, params: ParamDefs) -> None:
-        source_name = self._source.name
-        if source_name not in params:
-            params |= self._source.to_dict()
+    def _source_value(self, data: DataDefs, params: ParamDefs) -> ms.ParamRef:
+        # needs to traverse the param every time, since it may include others we can't see yet
+        return self._source.ref(params)
+
+    def __repr__(self) -> str:
+        result: ms.PlotFrom = {"source": self._source.__repr__()}
+        if filter_by := self._filter_by:
+            result["filter_by"] = filter_by.__repr__()
+        if self._optimize is False:
+            result["optimize"] = False
+        return f"Source({result})"
 
 
 Source = TypeAliasType("Source", DataSource | ParamSource)
