@@ -255,9 +255,6 @@ class Region(_RegionToggle):
         self.options = options
 
 
-# TODO @dangotbanned: Report `ToggleZ` as missing from `Spec` exports (less important than `Nearest`)
-# https://github.com/uwdata/mosaic/blob/80c72fc4e360f354b57f5369e6799561d86272b6/packages/vgplot/spec/src/spec/PlotInteractor.ts#L7
-# https://github.com/uwdata/mosaic/blob/80c72fc4e360f354b57f5369e6799561d86272b6/packages/vgplot/spec/src/spec/interactors/Toggle.ts#L49-L56
 @final
 class Toggle(_RegionToggle):
     """Select individual data values by clicking / shift-clicking points."""
