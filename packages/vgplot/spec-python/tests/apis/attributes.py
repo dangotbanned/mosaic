@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     import mosaic_spec as ms
     from mosaic_spec import Fixed, Interval, LabelArrow
     from tests.apis.params import ParamDef
+    from tests.apis.protocols import DataDefs, ParamDefs
 
 
 ScaleT = TypeVar("ScaleT")
@@ -253,6 +254,11 @@ class PlotAttributes(
     y: Y
     xy_domain: Fixed | ParamDef | Sequence[Any]
     """Set the *x* and *y* scale domains."""
+
+
+def to_dict(self: PlotAttributes, data: DataDefs, params: ParamDefs) -> ms.PlotAttributes:
+    msg = "TODO: PlotAttributes.to_dict(...) "
+    raise NotImplementedError(msg)
 
 
 class _BaseAttrs:

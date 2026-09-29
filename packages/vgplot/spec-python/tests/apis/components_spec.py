@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, final
 
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import Self, TypeVar, Unpack
+from tests.apis.attributes import to_dict as attributes_to_dict
 from tests.apis.interactors import (
     Interactor as Interactor,
     highlight as highlight,
@@ -94,8 +95,13 @@ class Plot(_ViewImpl):
         return Plot(self.elements, attributes.to_dict())
 
     def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.Plot:
-        msg = f"{self.__class__.__name__}.to_dict() is not yet implemented"
-        raise NotImplementedError(msg)
+        elements = [
+            c.to_dict(data, params) if not isinstance(c, Mapping) else c for c in self.elements
+        ]
+        # NOTE: only ty complains, and doesn't report a useful error
+        if opts := self._options:
+            return ms.Plot(plot=elements, **attributes_to_dict(opts, data, params))  # ty: ignore[invalid-argument-type]
+        return ms.Plot(plot=elements)  # ty: ignore[invalid-argument-type]
 
 
 def plot(*elements: IntoPlot, **options: Unpack[PlotAttributes]) -> Plot:
