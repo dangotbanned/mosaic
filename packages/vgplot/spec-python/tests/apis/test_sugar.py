@@ -10,6 +10,7 @@ from tests.apis.params import p
 
 def test_crossfilter() -> None:
     data = Data.from_parquet("data/flights-200k.parquet", "flights")
+    file_name = data.options.get("file", "")
     brush = p.brush.cross()
     attrs_1 = (
         attrs_mut()
@@ -44,3 +45,7 @@ def test_crossfilter() -> None:
         )
     )
     _spec = vg.vconcat(plot_delay, plot_time).to_spec()
+    spec_spec = _spec.to_dict()
+    assert spec_spec.keys() == {"vconcat", "data", "params"}
+    assert "data" in spec_spec
+    assert spec_spec["data"] == {"flights": {"file": file_name, "type": "parquet"}}
