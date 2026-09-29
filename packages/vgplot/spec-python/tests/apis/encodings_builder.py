@@ -35,16 +35,21 @@ from typing import TYPE_CHECKING, Any, Final, Generic, Literal as L, final, over
 
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import Self, TypeAliasType, TypeVar, Unpack
+from tests.apis.params import TP_PARAM_DEF
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable
+
+    from tests.apis.protocols import DataDefs, ParamDefs
 
 
 FrameExclude = TypeAliasType(
     "FrameExclude",
     L["CURRENT ROW", "GROUP", "NO OTHERS", "TIES", "current row", "group", "no others", "ties"],
 )
+# TODO @dangotbanned: Support `ParamDef`
 _Frame = TypeAliasType("_Frame", ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue])
+# TODO @dangotbanned: Support `ParamDef`
 Arg = TypeAliasType("Arg", ms.ParamRef | bool | float | str)
 _PositiveInteger = TypeAliasType(
     "_PositiveInteger",
@@ -87,11 +92,13 @@ class Col:
     def __repr__(self) -> str:
         return f"col({self._name!r})"
 
+    # TODO @dangotbanned: Support `ParamDef`
     def __init__(self, name: str | ms.ParamRef) -> None:
         self._name: str | ms.ParamRef = name
 
-    def to_dict(self) -> ms.Column:
-        return ms.Column(column=self._name)
+    def to_dict(self, data: DataDefs, params: ParamDefs) -> ms.Column:
+        name = self._name
+        return ms.Column(column=(name.ref(params) if isinstance(name, TP_PARAM_DEF) else name))  # pyright: ignore[reportUnnecessaryIsInstance]
 
     @property
     def dt(self) -> _DateNS:
@@ -137,12 +144,15 @@ class Col:
         def __getattr__(self, attr: str) -> Any:
             return _col_getattr(self, attr)
 
+    # TODO @dangotbanned: Support `ParamDef`
     def arg_max(self, by: str | ms.ParamRef) -> Agg[ms.Argmax]:
         return Agg(ms.Argmax(argmax=(self._name, by)))
 
+    # TODO @dangotbanned: Support `ParamDef`
     def arg_min(self, by: str | ms.ParamRef) -> Agg[ms.Argmin]:
         return Agg(ms.Argmin(argmin=(self._name, by)))
 
+    # TODO @dangotbanned: Support `ParamDef`
     def nth_value(self, nth: int | ms.ParamRef, /) -> Window[ms.NthValue]:
         return Window(ms.NthValue(nth_value=(self._name, nth)))
 
@@ -151,9 +161,11 @@ class Col:
 
     count_distinct = n_unique
 
+    # TODO @dangotbanned: Support `ParamDef`
     def quantile(self, p: str | ms.ParamRef | float) -> Agg[ms.Quantile]:
         return Agg(ms.Quantile(quantile=(self._name, p)))
 
+    # TODO @dangotbanned: Support `ParamDef`
     @overload
     def shift(self, n: _PositiveInteger = 1, fill_value: Arg | None = None) -> Window[ms.Lag]: ...
     @overload
@@ -174,7 +186,7 @@ class Col:
 
 def _col_getattr(self: Col, attr: str, /) -> partial[Agg[Any]] | partial[Window[Any]]:
     # NOTE: Provides some limited type checking for `Col.__getattr__`,
-    # which is not visible to a type checker
+    # where that function body is not visible to a type checker
     if agg_unary := _AGG_UNARY.get(attr):
         tp, param_name = agg_unary
         args: Any = {param_name: self._name}
@@ -305,6 +317,7 @@ class _Aggregation(Generic[_A]):
         # pyrefly: ignore [bad-return]
         return self._inner if not copy else self._inner.copy()
 
+    # TODO @dangotbanned: Support `ParamDef`
     def over(
         self,
         partition_by: str | ms.ParamRef | Iterable[str | ms.ParamRef] = (),
@@ -332,12 +345,15 @@ class _Aggregation(Generic[_A]):
         # pyrefly: ignore [bad-specialization]
         return type(self)(inner)
 
+    # TODO @dangotbanned: Support `ParamDef`
     def groups(self, arg: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue], /) -> Self:
         return type(self)(_extent(self._inner, "groups", arg))
 
+    # TODO @dangotbanned: Support `ParamDef`
     def rows(self, arg: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue], /) -> Self:
         return type(self)(_extent(self._inner, "rows", arg))
 
+    # TODO @dangotbanned: Support `ParamDef`
     def range(self, arg: ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue], /) -> Self:
         return type(self)(_extent(self._inner, "range", arg))
 
@@ -370,6 +386,7 @@ class Agg(_Aggregation[A]):
         return Agg(inner)
 
 
+# TODO @dangotbanned: Support `ParamDef`
 # TODO @dangotbanned: intervals
 def col(name: str | ms.ParamRef) -> Col:
     """Create a column expression.
@@ -399,6 +416,7 @@ def len() -> Agg[ms.Count]:
     return Agg(ms.Count(count=()))
 
 
+# TODO @dangotbanned: Support `ParamDef`
 def n_unique(name: str | ms.ParamRef) -> Agg[ms.Count]:
     return col(name).n_unique()
 
