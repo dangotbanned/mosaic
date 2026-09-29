@@ -402,8 +402,8 @@ def len() -> Agg[ms.Count]:
     return Agg(ms.Count(count=()))
 
 
-def n_unique() -> Agg[ms.Count]:
-    return len().distinct()
+def n_unique(name: str | ms.ParamRef) -> Agg[ms.Count]:
+    return col(name).n_unique()
 
 
 count = len
