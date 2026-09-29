@@ -120,7 +120,7 @@ class ParamArray(_ParamValue[tuple["Lit | ParamDef", ...]]):
     def ref(self, params: ParamDefs) -> Ref:
         name = self.name
         if name not in params:
-            tps = _TP_PARAM_DEF
+            tps = TP_PARAM_DEF
             params[name] = [v.ref(params) if isinstance(v, tps) else v for v in self.value]
         return Ref(f"${name}")
 
@@ -232,7 +232,7 @@ class Selection(ParamBase):
 ParamDef = TypeAliasType("ParamDef", Param | ParamArray | ParamTemporal[Temporal] | Selection)
 """A Param or Selection definition."""
 
-_TP_PARAM_DEF: Final = Param, ParamArray, ParamTemporal, Selection
+TP_PARAM_DEF: Final = Param, ParamArray, ParamTemporal, Selection
 
 
 @final

@@ -11,16 +11,19 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from copy import deepcopy
+from itertools import chain
 from typing import TYPE_CHECKING, Any, Generic, Literal as L, final, overload
 
+import mosaic_spec as ms
 from mosaic_spec import ColorScaleType, ContinuousScaleType, DiscreteScaleType, PositionScaleType
 from mosaic_spec._typing_compat import Self, TypedDict, TypeVar, Unpack
+from tests.apis.params import TP_PARAM_DEF
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterator, Sequence
 
-    import mosaic_spec as ms
     from mosaic_spec import Fixed, Interval, LabelArrow
     from tests.apis.params import ParamDef
     from tests.apis.protocols import DataDefs, ParamDefs
@@ -246,6 +249,7 @@ class PlotAttributes(
     The name is used by standalone legend components to to lookup the plot and access scale mappings.
     """
     opacity: Opacity
+    # TODO @dangotbanned: Add `projection`
     r: R
     style: ms.CSSStyles | ParamDef | None
     symbol: Symbol
@@ -256,9 +260,37 @@ class PlotAttributes(
     """Set the *x* and *y* scale domains."""
 
 
-def to_dict(self: PlotAttributes, data: DataDefs, params: ParamDefs) -> ms.PlotAttributes:
-    msg = "TODO: PlotAttributes.to_dict(...) "
-    raise NotImplementedError(msg)
+_SPECIAL = frozenset(
+    (
+        "color",
+        "facet",
+        "facet_margin",
+        "fx",
+        "fy",
+        "length",
+        "margin",
+        "opacity",
+        "r",
+        "symbol",
+        "x",
+        "y",
+    )
+)
+
+
+# TODO @dangotbanned: Replace with something type-safe (must be < 100 LOC)
+def to_dict(self: PlotAttributes, _: DataDefs, params: ParamDefs, /) -> ms.PlotAttributes:
+    """Flatten the hierarchical attributes and collect params."""
+    it = chain.from_iterable(_iter_to_dict(k, v, params) for k, v in self.items())
+    return ms.PlotAttributes(it)  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type] # pyright: ignore[reportArgumentType]
+
+
+def _iter_to_dict(key: str, value: Any, params: ParamDefs) -> Iterator[tuple[Any, Any]]:
+    if key not in _SPECIAL or not isinstance(value, Mapping):
+        yield key, (value.ref(params) if isinstance(value, TP_PARAM_DEF) else value)
+    else:
+        for k_inner, v_inner in value.items():
+            yield from _iter_to_dict(f"{key}_{k_inner}", v_inner, params)
 
 
 class _BaseAttrs:
