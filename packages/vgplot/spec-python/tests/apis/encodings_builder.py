@@ -143,9 +143,6 @@ class Col:
     def arg_min(self, by: str | ms.ParamRef) -> Agg[ms.Argmin]:
         return Agg(ms.Argmin(argmin=(self._name, by)))
 
-    # TODO @dangotbanned: Report upstream bug, should not be optional
-    # https://github.com/uwdata/mosaic/blob/a2d19c3126beceb322119a7d471698bb850bcb3b/packages/vgplot/spec/src/spec/Transform.ts#L443
-    # https://duckdb.org/docs/current/sql/functions/window_functions#nth_valueexpr-nth-order-by-ordering-ignore-nulls
     def nth_value(self, nth: int | ms.ParamRef, /) -> Window[ms.NthValue]:
         return Window(ms.NthValue(nth_value=(self._name, nth)))
 
