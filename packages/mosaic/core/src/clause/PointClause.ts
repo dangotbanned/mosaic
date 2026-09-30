@@ -1,7 +1,7 @@
-import type { ExprNode, ExprValue } from "@uwdata/mosaic-sql";
-import { asNode, isInDistinct, literal, and, or, isNotDistinct } from "@uwdata/mosaic-sql";
-import { isMosaicClient, type MosaicClient } from "../MosaicClient.js";
-import type { ClauseMetadata, ClauseSource, SelectionClause } from "./SelectionClause.js";
+import type { ExprNode, ExprValue } from '@uwdata/mosaic-sql';
+import { asNode, isInDistinct, literal, and, or, isNotDistinct } from '@uwdata/mosaic-sql';
+import { isMosaicClient, type MosaicClient } from '../MosaicClient.js';
+import type { ClauseMetadata, ClauseSource, SelectionClause } from './SelectionClause.js';
 
 /**
  * Selection clause metadata indicating selection of one or more discrete
@@ -82,7 +82,7 @@ export function clausePoints(
 ): SelectionClause {
   fields = fields.map(f => asNode(f));
   let predicate: ExprNode | null = null;
-  if (value?.length) {
+  if (value != null) {
     const clauses = value.length && fields.length === 1
       ? [isInDistinct(fields[0], value.map(v => literal(v[0])))]
       : value.map(v => and(v.map((_, i) => isNotDistinct(fields[i], literal(_)))));

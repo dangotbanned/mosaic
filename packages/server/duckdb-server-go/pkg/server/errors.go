@@ -24,28 +24,31 @@ func (e *authorizationError) Unwrap() error {
 
 type errorResponse struct {
 	status  int
-	code    string
 	message string
 }
 
 func classifyError(err error) errorResponse {
+	var sizeErr *http.MaxBytesError
+	if errors.As(err, &sizeErr) {
+		return errorResponse{http.StatusRequestEntityTooLarge, http.StatusText(http.StatusRequestEntityTooLarge)}
+	}
+
 	var authErr *authorizationError
 	if errors.As(err, &authErr) {
 		switch {
 		case errors.Is(authErr, ErrInvalidCommand):
-			return errorResponse{http.StatusBadRequest, "bad_request", http.StatusText(http.StatusBadRequest)}
+			return errorResponse{http.StatusBadRequest, http.StatusText(http.StatusBadRequest)}
 		case errors.Is(authErr, ErrUnauthenticated):
-			return errorResponse{http.StatusUnauthorized, "unauthenticated", http.StatusText(http.StatusUnauthorized)}
+			return errorResponse{http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized)}
 		case errors.Is(authErr, ErrPermissionDenied):
-			return errorResponse{http.StatusForbidden, "forbidden", http.StatusText(http.StatusForbidden)}
+			return errorResponse{http.StatusForbidden, http.StatusText(http.StatusForbidden)}
 		default:
-			return errorResponse{http.StatusInternalServerError, "internal_error", "authorization failed"}
+			return errorResponse{http.StatusInternalServerError, "authorization failed"}
 		}
 	}
 
 	response := errorResponse{
 		status:  http.StatusInternalServerError,
-		code:    "internal_error",
 		message: err.Error(),
 	}
 
@@ -54,22 +57,37 @@ func classifyError(err error) errorResponse {
 		paramsError  queryParamsError
 	)
 	switch {
+	case errors.Is(err, query.ErrInvalidPolicy):
+		response.message = http.StatusText(http.StatusInternalServerError)
+	case errors.Is(err, query.ErrAccessDenied):
+		response.status = http.StatusForbidden
 	case errors.Is(err, query.ErrExecWithValidation),
 		errors.Is(err, query.ErrUnsupportedStatement),
 		errors.As(err, &errorDetails),
 		errors.As(err, &paramsError):
 		response.status = http.StatusBadRequest
-		response.code = "bad_request"
-	case errors.Is(err, query.ErrAccessDenied):
-		response.status = http.StatusForbidden
-		response.code = "forbidden"
 	}
 
+	if errors.Is(err, query.ErrValidation) {
+		response.message = http.StatusText(response.status)
+	}
 	return response
 }
 
 func (s *handler) classifyAndLogError(err error) errorResponse {
 	response := classifyError(err)
+	var sizeErr *http.MaxBytesError
+	if errors.As(err, &sizeErr) {
+		s.logger.Warn("server: request body exceeds message limit", "limit", sizeErr.Limit)
+		return response
+	}
+	if errors.Is(err, query.ErrValidation) {
+		if response.status == http.StatusInternalServerError {
+			s.logger.Error("server: query validator failed", "error", err)
+		} else {
+			s.logger.Warn("server: query validation failed", "error", err)
+		}
+	}
 	if response.status != http.StatusInternalServerError {
 		return response
 	}
