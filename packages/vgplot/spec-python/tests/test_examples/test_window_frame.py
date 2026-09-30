@@ -1,6 +1,7 @@
-"""Window frame.
+"""Time-Based Moving Average.
 
-*Missing description*
+Moving averages of Apple stock prices, using `range` window frames that span 15 days (black) and 3
+months (red) around each date.
 """
 
 from __future__ import annotations
