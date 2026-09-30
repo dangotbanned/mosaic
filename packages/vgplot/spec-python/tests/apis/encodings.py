@@ -12,77 +12,82 @@ from typing import Any, overload
 import mosaic_spec as ms
 from mosaic_spec._typing_compat import TypeAliasType, Unpack
 
-Arg = TypeAliasType("Arg", ms.ParamRef | bool | float | str)
-
+FillValue = TypeAliasType("FillValue", ms.TransformField | float | str | bool | None)
 
 # NOTE: `AggregateTransform`
 
 
-def argmax(col: Arg, by: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Argmax:
+def argmax(
+    col: ms.TransformField, by: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]
+) -> ms.Argmax:
     return ms.Argmax(argmax=(col, by), **kwds)
 
 
-def argmin(col: Arg, by: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Argmin:
+def argmin(
+    col: ms.TransformField, by: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]
+) -> ms.Argmin:
     return ms.Argmin(argmin=(col, by), **kwds)
 
 
-def avg(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Avg:
+def avg(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.Avg:
     return ms.Avg(avg=col, **kwds)
 
 
-def count(col: Arg | tuple[()] = (), **kwds: Unpack[ms.AggregateOptions]) -> ms.Count:
+def count(col: ms.TransformField | tuple[()] = (), **kwds: Unpack[ms.AggregateOptions]) -> ms.Count:
     return ms.Count(count=col, **kwds)
 
 
-def first(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.First:
+def first(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.First:
     return ms.First(first=col, **kwds)
 
 
-def last(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Last:
+def last(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.Last:
     return ms.Last(last=col, **kwds)
 
 
-def max(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Max:
+def max(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.Max:
     return ms.Max(max=col, **kwds)
 
 
-def median(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Median:
+def median(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.Median:
     return ms.Median(median=col, **kwds)
 
 
-def min(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Min:
+def min(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.Min:
     return ms.Min(min=col, **kwds)
 
 
-def mode(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Mode:
+def mode(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.Mode:
     return ms.Mode(mode=col, **kwds)
 
 
-def product(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Product:
+def product(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.Product:
     return ms.Product(product=col, **kwds)
 
 
-def quantile(col: Arg, p: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Quantile:
+def quantile(
+    col: ms.TransformField, p: ms.TransformField | float, **kwds: Unpack[ms.AggregateOptions]
+) -> ms.Quantile:
     return ms.Quantile(quantile=(col, p), **kwds)
 
 
-def stddev(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Stddev:
+def stddev(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.Stddev:
     return ms.Stddev(stddev=col, **kwds)
 
 
-def stddev_pop(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.StddevPop:
+def stddev_pop(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.StddevPop:
     return ms.StddevPop(stddev_pop=col, **kwds)
 
 
-def sum(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Sum:
+def sum(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.Sum:
     return ms.Sum(sum=col, **kwds)
 
 
-def variance(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.Variance:
+def variance(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.Variance:
     return ms.Variance(variance=col, **kwds)
 
 
-def var_pop(col: Arg, **kwds: Unpack[ms.AggregateOptions]) -> ms.VarPop:
+def var_pop(col: ms.TransformField, **kwds: Unpack[ms.AggregateOptions]) -> ms.VarPop:
     return ms.VarPop(var_pop=col, **kwds)
 
 
@@ -97,49 +102,70 @@ def dense_rank(**kwds: Unpack[ms.WindowOptions]) -> ms.DenseRank:
     return {"dense_rank": None, **kwds}
 
 
-def first_value(col: Arg, **kwds: Unpack[ms.WindowOptions]) -> ms.FirstValue:
+def first_value(col: ms.TransformField, **kwds: Unpack[ms.WindowOptions]) -> ms.FirstValue:
     return ms.FirstValue(first_value=col, **kwds)
 
 
 @overload
-def lag(col: Arg, /, **kwds: Unpack[ms.WindowOptions]) -> ms.Lag: ...
+def lag(col: ms.TransformField, /, **kwds: Unpack[ms.WindowOptions]) -> ms.Lag: ...
 @overload
-def lag(col: Arg, offset: Arg, /, **kwds: Unpack[ms.WindowOptions]) -> ms.Lag: ...
-@overload
-def lag(col: Arg, offset: Arg, default: Arg, /, **kwds: Unpack[ms.WindowOptions]) -> ms.Lag: ...
 def lag(
-    *args: Unpack[tuple[Arg, Unpack[tuple[Any, ...]]]], **kwds: Unpack[ms.WindowOptions]
+    col: ms.TransformField, offset: ms.TransformField | float, /, **kwds: Unpack[ms.WindowOptions]
+) -> ms.Lag: ...
+@overload
+def lag(
+    col: ms.TransformField,
+    offset: ms.TransformField | float,
+    default: FillValue,
+    /,
+    **kwds: Unpack[ms.WindowOptions],
+) -> ms.Lag: ...
+def lag(
+    *args: Unpack[tuple[ms.TransformField, Unpack[tuple[Any, ...]]]],
+    **kwds: Unpack[ms.WindowOptions],
 ) -> ms.Lag:
     return ms.Lag(lag=args, **kwds)
 
 
-def last_value(col: Arg, **kwds: Unpack[ms.WindowOptions]) -> ms.LastValue:
+def last_value(col: ms.TransformField, **kwds: Unpack[ms.WindowOptions]) -> ms.LastValue:
     return ms.LastValue(last_value=col, **kwds)
 
 
 @overload
-def lead(col: Arg, /, **kwds: Unpack[ms.WindowOptions]) -> ms.Lead: ...
+def lead(col: ms.TransformField, /, **kwds: Unpack[ms.WindowOptions]) -> ms.Lead: ...
 @overload
-def lead(col: Arg, offset: Arg, /, **kwds: Unpack[ms.WindowOptions]) -> ms.Lead: ...
-@overload
-def lead(col: Arg, offset: Arg, default: Arg, /, **kwds: Unpack[ms.WindowOptions]) -> ms.Lead: ...
 def lead(
-    *args: Unpack[tuple[Arg, Unpack[tuple[Any, ...]]]], **kwds: Unpack[ms.WindowOptions]
+    col: ms.TransformField, offset: ms.TransformField | float, /, **kwds: Unpack[ms.WindowOptions]
+) -> ms.Lead: ...
+@overload
+def lead(
+    col: ms.TransformField,
+    offset: ms.TransformField | float,
+    default: FillValue,
+    /,
+    **kwds: Unpack[ms.WindowOptions],
+) -> ms.Lead: ...
+def lead(
+    *args: Unpack[tuple[ms.TransformField, Unpack[tuple[Any, ...]]]],
+    **kwds: Unpack[ms.WindowOptions],
 ) -> ms.Lead:
     return ms.Lead(lead=args, **kwds)
 
 
 @overload
-def nth_value(col: Arg, /, **kwds: Unpack[ms.WindowOptions]) -> ms.NthValue: ...
+def nth_value(col: ms.TransformField, /, **kwds: Unpack[ms.WindowOptions]) -> ms.NthValue: ...
 @overload
-def nth_value(col: Arg, offset: Arg, /, **kwds: Unpack[ms.WindowOptions]) -> ms.NthValue: ...
 def nth_value(
-    *args: Unpack[tuple[Arg, Unpack[tuple[Any, ...]]]], **kwds: Unpack[ms.WindowOptions]
+    col: ms.TransformField, offset: ms.TransformField | float, /, **kwds: Unpack[ms.WindowOptions]
+) -> ms.NthValue: ...
+def nth_value(
+    *args: Unpack[tuple[ms.TransformField, Unpack[tuple[Any, ...]]]],
+    **kwds: Unpack[ms.WindowOptions],
 ) -> ms.NthValue:
     return ms.NthValue(nth_value=args, **kwds)
 
 
-def ntile(buckets: Arg, **kwds: Unpack[ms.WindowOptions]) -> ms.NTile:
+def ntile(buckets: ms.TransformField, **kwds: Unpack[ms.WindowOptions]) -> ms.NTile:
     return ms.NTile(ntile=buckets, **kwds)
 
 
@@ -158,39 +184,39 @@ def row_number(**kwds: Unpack[ms.WindowOptions]) -> ms.RowNumber:
 # NOTE: `ColumnTransform`
 
 
-def bin(col: Arg, **kwds: Unpack[ms.BinOptions]) -> ms.Bin:
+def bin(col: ms.TransformField, **kwds: Unpack[ms.BinOptions]) -> ms.Bin:
     return ms.Bin(bin=col, **kwds)
 
 
-def centroid(col: Arg) -> ms.Centroid:
+def centroid(col: ms.TransformField) -> ms.Centroid:
     return ms.Centroid(centroid=col)
 
 
-def centroid_x(col: Arg) -> ms.CentroidX:
+def centroid_x(col: ms.TransformField) -> ms.CentroidX:
     return ms.CentroidX(centroid_x=col)
 
 
-def centroid_y(col: Arg) -> ms.CentroidY:
+def centroid_y(col: ms.TransformField) -> ms.CentroidY:
     return ms.CentroidY(centroid_y=col)
 
 
-def geojson(col: Arg) -> ms.GeoJSON:
+def geojson(col: ms.TransformField) -> ms.GeoJSON:
     return ms.GeoJSON(geojson=col)
 
 
-def column(col: Arg) -> ms.Column:
+def column(col: str | ms.ParamRef) -> ms.Column:
     return ms.Column(column=col)
 
 
-def date_day(col: Arg) -> ms.DateDay:
+def date_day(col: ms.TransformField) -> ms.DateDay:
     return ms.DateDay(date_day=col)
 
 
-def date_month(col: Arg) -> ms.DateMonth:
+def date_month(col: ms.TransformField) -> ms.DateMonth:
     return ms.DateMonth(date_month=col)
 
 
-def date_month_day(col: Arg) -> ms.DateMonthDay:
+def date_month_day(col: ms.TransformField) -> ms.DateMonthDay:
     return ms.DateMonthDay(date_month_day=col)
 
 

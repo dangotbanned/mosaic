@@ -48,6 +48,21 @@ class Highlight(TypedDict, total=False, closed=True):
     """The stroke opacity of deemphasized marks. By default the stroke opacity is unchanged."""
 
 
+class Nearest(TypedDict, total=False, closed=True):
+    """A nearest interactor."""
+
+    bind: Required[ParamRef]
+    """The output selection. A clause of the form `field = value` is added for the currently nearest value."""
+    channels: Sequence[str]
+    """The encoding channels whose domain values should be selected. For example, a setting of `['color']` selects the data value backing the color channel, whereas `['x', 'z']` selects both x and z channel domain values. If unspecified, the selected channels default to match the current pointer settings: a `nearestX` interactor selects the `['x']` channels, while a `nearest` interactor selects the `['x', 'y']` channels."""
+    fields: Sequence[str]
+    """The fields (database column names) to use in generated selection clause predicates. If unspecified, the fields backing the selected *channels* in the first valid prior mark definition are used by default."""
+    max_radius: float
+    """The maximum radius of a nearest selection (default 40). Marks with (x, y) coordinates outside this radius will not be selected as nearest points."""
+    select: Required[L["nearest"]]
+    """Select values from the mark closest to the pointer."""
+
+
 class _NearestOptions(TypedDict, total=False):
     bind: Required[ParamRef]
     """The output selection. A clause of the form `field = value` is added for the currently nearest value."""
@@ -68,6 +83,17 @@ class _PanZoomOptions(TypedDict, total=False):
     """The output selection for the `y` domain. A clause of the form `field BETWEEN y1 AND y2` is added for the current pan/zom interval [y1, y2]."""
     yfield: str
     """The name of the field (database column) over which the `y`-component of the pan/zoom interval should be defined. If unspecified, the `y` channel field of the first valid prior mark definition is used."""
+
+
+class ToggleZ(TypedDict, total=False, closed=True):
+    """A toggleZ interactor."""
+
+    bind: Required[ParamRef]
+    """The output selection. A clause of the form `(field = value1) OR (field = value2) ...` is added for the currently selected values."""
+    peers: bool
+    """A flag indicating if peer (sibling) marks are excluded when cross-filtering (default `true`). If set, peer marks will not be filtered by this interactor's selection in cross-filtering setups."""
+    select: Required[L["toggleZ"]]
+    """Select individual values in the `z` scale domain. Clicking or touching a mark toggles its selection status."""
 
 
 class _ToggleOptions(TypedDict, total=False):
@@ -224,6 +250,7 @@ PlotInteractor = TypeAliasType(
     | IntervalX
     | IntervalXY
     | IntervalY
+    | Nearest
     | NearestX
     | NearestY
     | Pan
@@ -236,7 +263,8 @@ PlotInteractor = TypeAliasType(
     | Toggle
     | ToggleColor
     | ToggleX
-    | ToggleY,
+    | ToggleY
+    | ToggleZ,
 )
 """A plot interactor entry."""
 
@@ -247,6 +275,7 @@ __all__ = (
     "IntervalX",
     "IntervalXY",
     "IntervalY",
+    "Nearest",
     "NearestX",
     "NearestY",
     "Pan",
@@ -261,4 +290,5 @@ __all__ = (
     "ToggleColor",
     "ToggleX",
     "ToggleY",
+    "ToggleZ",
 )

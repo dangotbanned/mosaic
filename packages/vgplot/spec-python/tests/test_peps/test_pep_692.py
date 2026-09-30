@@ -126,7 +126,7 @@ def test_vgplot_column() -> None:
     assert_type(e.col(centroid=("a",)), ms.Centroid)
     assert_type(e.col(centroid_x="a"), ms.CentroidX)
     # TODO @dangotbanned: Raise an issue about `Arg` containing `boolean | number` for column refs?
-    assert_type(e.col(centroid_y=1), ms.CentroidY)
+
     assert_type(e.col(column=ms.ParamRef("$param")), ms.Column)
     assert_type(e.col(date_day="c"), ms.DateDay)
     assert_type(e.col(date_month=(ms.ParamRef("$param"),)), ms.DateMonth)
@@ -136,6 +136,7 @@ def test_vgplot_column() -> None:
     e.col(bin="d", column="a")  # ty: ignore[no-matching-overload] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportCallIssue]
     e.col(bin=["a", "b"])  # ty: ignore[invalid-argument-type] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportArgumentType]
     e.col(bin="a", step="yes please")  # ty: ignore[invalid-argument-type] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportArgumentType]
+    e.col(centroid_y=1)  # ty: ignore[invalid-argument-type] # pyrefly: ignore[no-matching-overload] # pyright: ignore[reportArgumentType]
 
     assert_type(e.col(**e.date_month_day("a")), ms.DateMonthDay)
     with pytest.raises(TypeError):

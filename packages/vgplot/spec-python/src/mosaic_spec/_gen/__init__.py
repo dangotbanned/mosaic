@@ -24,6 +24,7 @@ from mosaic_spec._gen.interactors import (
     IntervalX,
     IntervalXY,
     IntervalY,
+    Nearest,
     NearestX,
     NearestY,
     Pan,
@@ -38,6 +39,7 @@ from mosaic_spec._gen.interactors import (
     ToggleColor,
     ToggleX,
     ToggleY,
+    ToggleZ,
 )
 from mosaic_spec._gen.layout import HConcat, HSpace, VConcat, VSpace
 from mosaic_spec._gen.marks import (
@@ -367,6 +369,7 @@ __all__ = (
     "Mode",
     "Months",
     "NTile",
+    "Nearest",
     "NearestX",
     "NearestY",
     "NthValue",
@@ -442,6 +445,7 @@ __all__ = (
     "ToggleColor",
     "ToggleX",
     "ToggleY",
+    "ToggleZ",
     "Transform",
     "TransformField",
     "VConcat",

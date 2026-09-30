@@ -49,8 +49,7 @@ FrameExclude = TypeAliasType(
 )
 # TODO @dangotbanned: Support `ParamDef`
 _Frame = TypeAliasType("_Frame", ms.ParamRef | tuple[ms.FrameValue, ms.FrameValue])
-# TODO @dangotbanned: Support `ParamDef`
-Arg = TypeAliasType("Arg", ms.ParamRef | bool | float | str)
+FillValue = TypeAliasType("FillValue", ms.TransformField | float | str | bool | None)
 _PositiveInteger = TypeAliasType(
     "_PositiveInteger",
     L[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
@@ -167,19 +166,19 @@ class Col:
 
     # TODO @dangotbanned: Support `ParamDef`
     @overload
-    def shift(self, n: _PositiveInteger = 1, fill_value: Arg | None = None) -> Window[ms.Lag]: ...
+    def shift(self, n: _PositiveInteger = 1, fill_value: FillValue = None) -> Window[ms.Lag]: ...
     @overload
-    def shift(self, n: _NegativeInteger, fill_value: Arg | None = None) -> Window[ms.Lead]: ...
+    def shift(self, n: _NegativeInteger, fill_value: FillValue = None) -> Window[ms.Lead]: ...
     @overload
-    def shift(self, n: int, fill_value: Arg | None = None) -> Window[ms.Lag | ms.Lead]: ...
-    def shift(self, n: int = 1, fill_value: Arg | None = None) -> Window[ms.Lag | ms.Lead]:
+    def shift(self, n: int, fill_value: FillValue = None) -> Window[ms.Lag | ms.Lead]: ...
+    def shift(self, n: int = 1, fill_value: FillValue = None) -> Window[ms.Lag | ms.Lead]:
         if n >= 1:
             args = (self._name, n) if fill_value is None else (self._name, n, fill_value)
-            return Window(ms.Lag(lag=args))
+            return Window(ms.Lag(lag=args))  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type] # pyright: ignore[reportArgumentType]
         if n < 0:
             n = abs(n)
             args = (self._name, n) if fill_value is None else (self._name, n, fill_value)
-            return Window(ms.Lead(lead=args))
+            return Window(ms.Lead(lead=args))  # ty: ignore[invalid-argument-type] # pyrefly: ignore[bad-argument-type] # pyright: ignore[reportArgumentType]
         msg = "`n` must be a non-zero integer"
         raise TypeError(msg)
 
@@ -281,7 +280,7 @@ class _Aggregation(Generic[_A]):
             s = f"over({s})"
         elif builtins.len(d) == 1:
             func, column = next(iter(d.items()))
-            return self._fmt_function(column, func)  # pyrefly: ignore[bad-argument-type]
+            return self._fmt_function(column, func)
 
         for name in ("groups", "range", "rows"):
             if found := d.get(name):
@@ -294,17 +293,13 @@ class _Aggregation(Generic[_A]):
             not in {"exclude", "groups", "range", "rows", "partition_by", "order_by", "distinct"}
         )
         func, column = next(it)
-        return f"{self._fmt_function(column, func)}.{s.removeprefix('.')}"  # pyrefly: ignore[bad-argument-type]
+        return f"{self._fmt_function(column, func)}.{s.removeprefix('.')}"
 
-    def _fmt_function(self, column: str | Sequence[Any] | float | None, function: str) -> str:
+    def _fmt_function(self, column: ms.TransformField | Any, function: str) -> str:
         s = f"{function}()"
         if not column:
             return s
-        if not isinstance(column, str):
-            if not isinstance(column, Sequence):
-                # NOTE: Inherited `float` typing
-                msg = f"{column!r} is not a column name"
-                raise TypeError(msg)
+        if not isinstance(column, str) and isinstance(column, Sequence):
             (column,) = column
         return f"col({column!r}).{s}"
 

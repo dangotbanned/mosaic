@@ -28,6 +28,20 @@ scope.ref_follow_depth         = 6
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
+id                             = "expression"
+scope.include.id               = ["mosaic"]
+scope.include.definition.names = ["AggregateExpression", "SQLExpression"]
+
+[[convert.to_mlir.actions]]
+# NOTE: `_typing.py` handles the cycle between  `TransformField` & `Transform` following (#1257)
+action                         = "new-tree"
+id                             = "_typing"
+scope.include.id               = ["mosaic"]
+scope.include.definition.names = ["TransformField"]
+into_ext_ref                   = { "SQLExpression" = "expression", "Transform" = "transform" }
+
+[[convert.to_mlir.actions]]
+action                         = "new-tree"
 id                             = "typing"
 scope.include.id               = ["mosaic"]
 scope.include.definition.names = [
@@ -79,11 +93,14 @@ scope.over                     = "descendants"
 scope.ref_follow_depth         = 2
 
 [[convert.to_mlir.actions]]
+# TODO @dangotbanned: Fix `NamedTuple` optional
 action                         = "new-tree"
 id                             = "transform"
 scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["Transform", "IntervalTransform"]
 scope.over                     = "descendants"
+# TODO @dangotbanned: Consider lowering this?
+# `TransformField`, `SQLExpression` are already in other modules
 scope.ref_follow_depth         = 10
 
 [[convert.to_mlir.actions]]
@@ -93,12 +110,6 @@ scope.include.id               = ["mosaic"]
 scope.include.definition.names = ["DataDefinition", "Data"]
 scope.over                     = "descendants"
 scope.ref_follow_depth         = 1
-
-[[convert.to_mlir.actions]]
-action                         = "new-tree"
-id                             = "expression"
-scope.include.id               = ["mosaic"]
-scope.include.definition.names = ["AggregateExpression", "SQLExpression"]
 
 [[convert.to_mlir.actions]]
 action                         = "new-tree"
